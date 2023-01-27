@@ -15,54 +15,34 @@ date: 2022-01-18
 * TOC
 {:toc}
 
-## Main Content
-Your survey starts here. You can refer to the [source code](https://github.com/lilianweng/lil-log/tree/master/_posts) of [lil's blogs](https://lilianweng.github.io/lil-log/) for article structure ideas or Markdown syntax. We've provided a [sample post](https://ucladeepvision.github.io/CS188-Projects-2022Winter/2017/06/21/an-overview-of-deep-learning.html) from Lilian Weng and you can find the source code [here](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2022Winter/main/_posts/2017-06-21-an-overview-of-deep-learning.md)
+## Three Most Relevant Research Papers
 
-## Basic Syntax
-### Image
-Please create a folder with the name of your team id under /assets/images/, put all your images into the folder and reference the images in your main content.
+**3D Shape Generation and Completion through Point-Voxel Diffusion**
 
-You can add an image to your survey like this:
-![YOLO]({{ '/assets/images/UCLAdeepvision/object_detection.png' | relative_url }})
-{: style="width: 400px; max-width: 100%;"}
-*Fig 1. YOLO: An object detection method in computer vision* [1].
+[summary here]
 
-Please cite the image if it is taken from other people's work.
+Website article: https://alexzhou907.github.io/pvd
 
+Paper: https://arxiv.org/abs/2104.03670
 
-### Table
-Here is an example for creating tables, including alignment syntax.
+**PointFlow: 3D Point Cloud Generation with Continuous Normalizing Flows**
 
-|             | column 1    |  column 2     |
-| :---        |    :----:   |          ---: |
-| row1        | Text        | Text          |
-| row2        | Text        | Text          |
+[summary here]
 
+Website article: https://www.guandaoyang.com/PointFlow/
 
+Paper: https://arxiv.org/abs/1906.12320
 
-### Code Block
-```
-# This is a sample code block
-import torch
-print (torch.__version__)
-```
+**Cascaded Refinement Network for Point Cloud Completion**
 
+[summary here]
 
-### Formula
-Please use latex to generate formulas, such as:
+Paper: https://arxiv.org/abs/2004.03327
 
-$$
-\tilde{\mathbf{z}}^{(t)}_i = \frac{\alpha \tilde{\mathbf{z}}^{(t-1)}_i + (1-\alpha) \mathbf{z}_i}{1-\alpha^t}
-$$
+## References
 
-or you can write in-text formula $$y = wx + b$$.
+[1] Zhou, Linqi et al. "3D Shape Generation and Completion Through Point-Voxel Diffusion." *Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV).* 2021.
 
-### More Markdown Syntax
-You can find more Markdown syntax at [this page](https://www.markdownguide.org/basic-syntax/).
+[2] Yang, Guandao et al. "PointFlow: 3D Point Cloud Generation with Continuous Normalizing Flows." (2019).
 
-## Reference
-Please make sure to cite properly in your work, for example:
-
-[1] Redmon, Joseph, et al. "You only look once: Unified, real-time object detection." *Proceedings of the IEEE conference on computer vision and pattern recognition*. 2016.
-
----
+[3] Wang, Xiaogang et al. “Cascaded Refinement Network for Point Cloud Completion.” *2020 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)* (2020): 787-796.
