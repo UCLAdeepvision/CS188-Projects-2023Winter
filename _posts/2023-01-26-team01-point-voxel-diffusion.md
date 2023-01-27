@@ -1,13 +1,13 @@
 ---
 layout: post
 comments: true
-title: Post Template
-author: UCLAdeepvision
+title: Point-Voxel Diffusion
+author: Michael Simon
 date: 2022-01-18
 ---
 
 
-> This block is a brief introduction of your project. You can put your abstract here or any headers you want the readers to know.
+> 3D Point Clouds are becoming more and more common as CV models are applied to real world applications like Autonomous Driving. In this blog we explore the cutting edge implementations of 3D Point Cloud Diffusion and its applications in 3D modeling, including generation and completion. Specifically, Point-Voxel Diffusion can assist in clarifying noisy 3D point cloud scans with multiple completion candidates, as well synthesizing realistic smooth shapes
 
 
 <!--more-->
