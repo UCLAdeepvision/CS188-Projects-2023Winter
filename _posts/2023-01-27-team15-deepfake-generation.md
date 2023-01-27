@@ -22,10 +22,13 @@ http://noiselab.ucsd.edu/ECE228_2018/Reports/Report16.pdf [1]
 
 This article discusses Generative Adversarial Networks (GANs) which are deep learning models which utilize two sub-models to learn patterns in data. This paper discusses a cycle-GAN network with the goals of helping with object transfiguration and style transfer.
 
+Code: see paper itself https://www.semanticscholar.org/paper/Deep-Fakes-%E2%80%9D-using-Generative-Adversarial-Networks-Shen/26a5010ea2048793965810f2bd8b2d257aa4f7b9#extracted
+
 **StarGAN: Unified Generative Adversarial Networks for Multi-Domain Image-to-Image Translation** 
 https://arxiv.org/abs/1711.09020 [2]
 
 This publication discusses StarGAN, a novel method of performing image to image translations using only one model.
+
 Code: https://github.com/yunjey/StarGAN
 
 
@@ -33,6 +36,7 @@ Code: https://github.com/yunjey/StarGAN
 https://arxiv.org/abs/2003.00696 [3]
 
 This paper proposes a differentiable global-flow local-attention framework that can be used on feature inputs. This is useful for spatial transformation and person image generation.
+
 Code: https://github.com/RenYurui/Global-Flow-Local-Attention
 
 ## References
