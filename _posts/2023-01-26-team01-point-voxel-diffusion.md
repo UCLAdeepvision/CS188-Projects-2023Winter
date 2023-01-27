@@ -17,18 +17,23 @@ date: 2022-01-18
 ## Three Most Relevant Research Papers
 
 **3D Shape Generation and Completion through Point-Voxel Diffusion**
+
 [summary here]
 
 Website article: https://alexzhou907.github.io/pvd
+
 Paper: https://arxiv.org/abs/2104.03670
 
 **PointFlow: 3D Point Cloud Generation with Continuous Normalizing Flows**
+
 [summary here]
 
 Website article: https://www.guandaoyang.com/PointFlow/
+
 Paper: https://arxiv.org/abs/1906.12320
 
 **Cascaded Refinement Network for Point Cloud Completion**
+
 [summary here]
 
 Paper: https://arxiv.org/abs/2004.03327
