@@ -2,7 +2,7 @@
 layout: post
 comments: true
 title: Driving Simulator
-author: Siwei Yuan, Hanyun Qiu
+author: Siwei Yuan, Yunqiu Han
 date: 2023-01-28
 ---
 
