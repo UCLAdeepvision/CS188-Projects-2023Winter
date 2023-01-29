@@ -1,9 +1,9 @@
 ---
 layout: post
 comments: true
-title: Post Template
-author: UCLAdeepvision
-date: 2022-01-18
+title: Medical Imaging
+author: Team 37
+date: 2022-01-27
 ---
 
 
@@ -16,7 +16,27 @@ date: 2022-01-18
 {:toc}
 
 ## Main Content
-Your survey starts here. You can refer to the [source code](https://github.com/lilianweng/lil-log/tree/master/_posts) of [lil's blogs](https://lilianweng.github.io/lil-log/) for article structure ideas or Markdown syntax. We've provided a [sample post](https://ucladeepvision.github.io/CS188-Projects-2022Winter/2017/06/21/an-overview-of-deep-learning.html) from Lilian Weng and you can find the source code [here](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2022Winter/main/_posts/2017-06-21-an-overview-of-deep-learning.md)
+Medical Imaging
+
+
+Medical Image Segmentation refers to  the process of taking 2D or 3D image data and dividing  it into regions of interest. An example might be to take a Computed Tomography (CT) scan and isolate a particular anomaly within a patient. Doing medical image segmentation by hand can be a cumbersome task. Thus, the goal of this project is to automate this task with deep learning, with accuracy close to human standards.
+
+Relevant Links:
+
+[A collection of recent image segmentation methods, categorized by regions of the human body](https://github.com/JunMa11/SOTA-MedSeg)
+
+[A student project from last year in this class. They have specifically studied PDV-Net and ResUNet++.](https://ucladeepvision.github.io/CS188-Projects-2022Winter/2022/01/27/team07-medical-image-segmentation.html)
+
+[A review paper discussing the various methods in deep learning used for medical imaging.](https://link.springer.com/article/10.1007/s12194-017-0406-5#Sec12)
+
+[A medical imaging toolkit for deep learning.](https://github.com/fepegar/torchio/)
+
+[A paper that focuses on data preparation of medical imaging data for use in machine learning.](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7104701/)
+
+[Meta analysis of diagnostic accuracy of deep learning methods in medical imaging.](https://www.nature.com/articles/s41746-021-00438-z)
+
+
+
 
 ## Basic Syntax
 ### Image
