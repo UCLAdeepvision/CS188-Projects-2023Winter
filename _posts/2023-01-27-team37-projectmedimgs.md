@@ -7,7 +7,7 @@ date: 2022-01-27
 ---
 
 
-> This block is a brief introduction of your project. You can put your abstract here or any headers you want the readers to know.
+> Project Proposal
 
 
 <!--more-->
@@ -15,7 +15,7 @@ date: 2022-01-27
 * TOC
 {:toc}
 
-## Main Content
+## Proposal
 Medical Imaging
 
 
@@ -37,7 +37,7 @@ Relevant Links:
 
 
 
-
+<!---
 ## Basic Syntax
 ### Image
 Please create a folder with the name of your team id under /assets/images/, put all your images into the folder and reference the images in your main content.
@@ -86,3 +86,4 @@ Please make sure to cite properly in your work, for example:
 [1] Redmon, Joseph, et al. "You only look once: Unified, real-time object detection." *Proceedings of the IEEE conference on computer vision and pattern recognition*. 2016.
 
 ---
+-->
