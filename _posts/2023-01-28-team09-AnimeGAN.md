@@ -7,7 +7,7 @@ date: 2023-1-28
 ---
 
 
-> Generative adversarial network (GAN) is a type of generative nurel network capable of varies task such as image creation, super-resolution, and image classifications[1]. This project will explore the usage of GAN model on the specific domain of **anime character** and try to find improvemnts on current GAN model such as image quality, style specifications and training optimizations (sample size reductions etc.).
+> Generative adversarial network (GAN) is a type of generative nural network capable of varies tasks such as image creation, super-resolution, and image classifications[1]. This project will explore the usage of GAN model on the specific domain of **anime character** and try to find improvemnts on current GAN model such as image quality, style specifications and training optimizations (sample size reductions etc.).
 
 
 <!--more-->
@@ -19,7 +19,7 @@ date: 2023-1-28
 ![WaifuLab]({{'/assets/images/team09/proposal_waifu_lab.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
 *Fig 1. Sample Output from WaifuLab (GAN)[2].
 
-Recent progress on anime art generation has sparked a sense of excitement in both the AI and anime community. Many AI generated arts have emerged on the internet. As shown in Fig 1, it is an anime character generated using the online tool [WaifuLab](https://waifulabs.com/generate)[2] which relies on a generator model called GAN. GAN (generative adversarial network) is the base model for many current art generator AI. The project will explore the usage of GAN on anime character generations and try different variations of GAN (possibly other models) to find potential improvements on the style (specifically the hand parts of the art) and resolution of the image output. Since the time of this project is limited, it is also necessary to explore ways of reducing the training times for GAN using smaller sample size.    
+Recent progress on anime art generation has sparked a sense of excitement in both the AI and anime community. Many AI generated arts have emerged on the internet. As shown in Fig 1, it is an anime character generated using the online tool [WaifuLab](https://waifulabs.com/generate)[2] which relies on a generator model called GAN. GAN (generative adversarial network) is the base model for many current art generator AIs. The project will explore the usage of GAN on anime character generations and try different variations of GAN (possibly other models) to find potential improvements on the style (specifically the hand parts of the art) and resolution of the image output. Since the time of this project is limited, it is also necessary to explore ways of reducing the training time for GAN using smaller sample size.    
 
 ## Related Works
 - Creswell A., White T., et al. ["Generative Adversarial Networks: An Overview"](https://ieeexplore.ieee.org/abstract/document/8253599/authors#authors)
