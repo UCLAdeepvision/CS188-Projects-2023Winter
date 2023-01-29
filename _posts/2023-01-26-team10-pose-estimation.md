@@ -2,7 +2,7 @@
 layout: post
 comments: true
 title: Post Template
-author: Michael Yu and Jordan Liao
+author: Michael Yu and Zhuoran Liao
 date: 2023-01-28
 ---
 
