@@ -19,7 +19,7 @@ date: 2023-01-24
 
 ### Topic: Panoptic Segmentation
 
-*Description of Project*
+Andrew Fantino and Nicholas Oosthuizen will explore the topic of panoptic segmentation. They will describe the concepts behind it and assess several different models, describing their architectures and comparing their performance. 
 
 ### Relevant Papers
 
