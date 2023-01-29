@@ -15,7 +15,7 @@ date: 2023-01-28
 * TOC
 {:toc}
 
-## Three Relevent Research Papers
+## Three Relevant Research Papers
 
 1. ##### Learning 3D Human Dynamics from Video 
   - [Paper] https://arxiv.org/abs/1812.01601
