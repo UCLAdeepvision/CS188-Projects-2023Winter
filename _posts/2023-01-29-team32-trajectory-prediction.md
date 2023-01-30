@@ -12,12 +12,24 @@ date: 2023-01-29
 
 ## Articles and Repositories
 
-- [Stepwise Goal-Driven Networks for Trajectory Prediction](https://doi.org/10.48550/arXiv.2103.14107) [1]
-    - Repository: [SGNet.pytorch](https://github.com/ChuhuaW/SGNet.pytorch) [2]
-- [GRIP++: Enhanced Graph-based Interaction-aware Trajectory Prediction for Autonomous Driving](https://doi.org/10.48550/arXiv.1907.07792) [3]
-    - Repository: [GRIP](https://github.com/xincoder/GRIP) [4]
-- [Convolutional Social Pooling for Vehicle Trajectory Prediction](https://doi.org/10.48550/arXiv.1805.06771) [5]
-    - Repository: [conv-social-pooling](https://github.com/nachiket92/conv-social-pooling) [6]
+1) Stepwise Goal-Driven Networks for Trajectory Prediction
+    - Paper: https://doi.org/10.48550/arXiv.2103.14107 [1]
+    - Repository: https://github.com/ChuhuaW/SGNet.pytorch [2]
+    - This paper introduces a recurrent neural network (RNN) called Stepwise Goal-Driven Network (SGNet) for predicting trajectories of observed agents (e.g. cars and pedestrians).
+    - Unlike previous research which model an agent as having a single, long-term goal, SGNet draws on research in psychology and cognitive science to model an agent as having a single, long-term _intention_ that involves a series of goals over time.
+    - To this end, SGNet estimates and uses goals at multiple time scales to predict agents' trajectories. It comprises an encoder that captures historical information, a stepwise goal estimator that predicts successive goals into the future, and a decoder to predict future trajectory.
+2) GRIP++: Enhanced Graph-based Interaction-aware Trajectory Prediction for Autonomous Driving
+    - Paper: https://doi.org/10.48550/arXiv.1907.07792 [3]
+    - Repository: https://github.com/xincoder/GRIP [4]
+    - This paper introduces an improvement on Graph-based Interaction-aware Trajectory Prediction (GRIP), called GRIP++, to handle both highway and urban scenarios.
+    - Specifically, while GRIP performed well for highway traffic, urban traffic is much more complex, involving diverse agents with varying motion patterns and whose behavior affect one another. In addition, GRIP used a fixed graph to represent the relationships between agents, leading to potential performance degradation for urban traffic.
+    - GRIP++ addresses these limitations by employing both fixed and dynamic graphs to represent the interactions between many different kinds of agents and predict trajectories for all traffic agents simultaneously.
+3) Convolutional Social Pooling for Vehicle Trajectory Prediction
+    - Paper: https://doi.org/10.48550/arXiv.1805.06771 [5]
+    - Repository: https://github.com/nachiket92/conv-social-pooling [6]
+    - This paper introduces a long short-term memory (LSTM) encoder-decoder model that learns interdependencies in vehicle motion and predicts future vehicle trajectories in terms of maneuver classes.
+    - This model uses a new technique called _convolutional social pooling_, which involves applying convolutional and max-pooling layers to LSTM social tensors, to encode the historical motion of neighboring vehicles.
+    - The model also exploits structure in vehicle motion and lane structure on highways to bin future trajectories into six maneuvers (e.g. lane change to the left, brake in current lane, etc.) and to model interaction between vehicles.
 
 ## References
 
