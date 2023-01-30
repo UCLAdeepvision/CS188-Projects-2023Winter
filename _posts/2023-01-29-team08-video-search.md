@@ -1,7 +1,7 @@
 ---
 layout: post
 comments: true
-title: Proposal
+title: Video Grounding
 author: Enoch Xu, JR Bronkar (Team 08)
 date: 2023-01-29
 ---
@@ -26,7 +26,10 @@ This will involve both NLP and CV processing and depending on the time involved,
 - 'TubeDETR: Spatio-Temporal Video Grounding with Transformers' [Paper](https://arxiv.org/abs/2203.16434) [3]
 
 ## Reference
+
 [1] Zhang, Songyang, et al. “Learning 2d Temporal Adjacent Networks for Moment Localization with Natural Language.” ArXiv.org, 26 Dec. 2020, https://arxiv.org/abs/1912.03590. 
+
 [2] Liu, Daizong, et al. “Unsupervised Temporal Video Grounding with Deep Semantic Clustering.” ArXiv.org, 14 Jan. 2022, https://arxiv.org/abs/2201.05307.
+
 [3] Yang, Antoine, et al. “Tubedetr: Spatio-Temporal Video Grounding with Transformers.” ArXiv.org, 9 June 2022, https://arxiv.org/abs/2203.16434.
 ---
