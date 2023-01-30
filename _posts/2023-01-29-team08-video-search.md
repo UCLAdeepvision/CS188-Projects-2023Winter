@@ -22,7 +22,7 @@ This will involve both NLP and CV processing and depending on the time involved,
 
 ### Three Relevant Papers
 - 'Learning 2D Temporal Adjacent Networks for Moment Localization with Natural Language' [Paper](https://arxiv.org/abs/1912.03590) [1]
-- 'Unsupervised Temporal Video Grounding with Deep Semantic Clustering' [[Code](https://github.com/hasibzunair/adversarial-lesions) [Paper](https://arxiv.org/abs/2201.05307) [2]
+- 'Unsupervised Temporal Video Grounding with Deep Semantic Clustering' [Paper](https://arxiv.org/abs/2201.05307) [2]
 - 'TubeDETR: Spatio-Temporal Video Grounding with Transformers' [Paper](https://arxiv.org/abs/2203.16434) [3]
 
 ## Reference
