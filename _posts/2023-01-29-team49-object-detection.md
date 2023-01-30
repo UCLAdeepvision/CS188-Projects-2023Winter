@@ -6,6 +6,8 @@ author: Ben Klingher, Erik Ren
 date: 2023-01-29
 ---
 
+<!--more-->
+
 # Study of Object Detection Techniques using MMDetection Toolkit
 
 ## Introduction
