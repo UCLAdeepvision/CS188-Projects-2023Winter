@@ -32,4 +32,5 @@ This will involve both NLP and CV processing and depending on the time involved,
 [2] Liu, Daizong, et al. “Unsupervised Temporal Video Grounding with Deep Semantic Clustering.” ArXiv.org, 14 Jan. 2022, https://arxiv.org/abs/2201.05307.
 
 [3] Yang, Antoine, et al. “Tubedetr: Spatio-Temporal Video Grounding with Transformers.” ArXiv.org, 9 June 2022, https://arxiv.org/abs/2203.16434.
+
 ---
