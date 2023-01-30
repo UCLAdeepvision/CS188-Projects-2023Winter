@@ -17,9 +17,16 @@ date: 2022-01-29
 
 ## References and Code Bases
 Jimmy Ba, Volodymyr Mnih, Koray Kavukcuoglu: "Multiple Object Recognition with Visual Attention"
--article: https://paperswithcode.com/paper/multiple-object-recognition-with-visual
--code: https://paperswithcode.com/paper/multiple-object-recognition-with-visual#code
+    -article: https://paperswithcode.com/paper/multiple-object-recognition-with-visual
+    -code: https://paperswithcode.com/paper/multiple-object-recognition-with-visual#code
 
+Dumitru Erhan, Christian Szegedy, Alexander Toshev, Dragomir Anguelov: "Scalable Object Detection Using Neural Networks"
+    -article: https://paperswithcode.com/paper/scalable-object-detection-using-deep-neural
+    -code: https://paperswithcode.com/paper/scalable-object-detection-using-deep-neural#code
+
+Xingyi Zhou, Dequan Wang, Philipp Krähenbühl: "Objects as Points"
+    -article: https://www.semanticscholar.org/paper/Objects-as-Points-Zhou-Wang/6a2e2fd1b5bb11224daef98b3fb6d029f68a73f2
+    -code: https://github.com/xingyizhou/CenterNet
 ## Basic Syntax
 ### Image
 
