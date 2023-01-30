@@ -6,32 +6,25 @@ author: Ian Galvez, James Youn
 date: 2023-01-29
 ---
 
-> We will be working on visual physical reasoning.
-
-
-<!--more-->
-{: class="table-of-content"}
-* TOC
-{:toc}
+> Our project will be based around the topic of **visual physical reasoning**. Essentially, visual physical reasoning deals with whether computers can answer "common sense" queries about an image, such as "how many chairs are at the table?", or "where is the red cube in relation to the purple ball?"
 
 ## Three Relevant Research Papers
-1. ##### GLIDE: Towards Photorealistic Image Generation and Editing with Text-Guided Diffusion Models
-  - [Paper] https://arxiv.org/abs/2112.10741
-  - [Code] https://github.com/openai/glide-text2im
-2. ##### Hierarchical Text-Conditional Image Generation with CLIP Latents
-  - [Paper] https://arxiv.org/abs/2204.06125
-  - [Code] https://github.com/openai/CLIP
-3. ##### Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding
-  - [Paper] https://arxiv.org/abs/2205.11487 
-  - [Code] https://github.com/lucidrains/imagen-pytorch
+1. ##### A simple neural network module for relational reasoning
+  - [Paper] https://arxiv.org/abs/1706.01427v1
+  - [Code] https://github.com/kimhc6028/relational-networks
+2. ##### CLEVR-Dialog: A Diagnostic Dataset for Multi-Round Reasoning in Visual Dialog
+  - [Paper] https://arxiv.org/abs/1903.03166v2
+  - [Code] https://github.com/satwikkottur/clevr-dialog
+3. ##### Inferring and Executing Programs for Visual Reasoning
+  - [Paper] https://arxiv.org/abs/1705.03633v1 
+  - [Code] https://github.com/facebookresearch/clevr-iep
 
-## Reference
-Please make sure to cite properly in your work, for example:
+## References
 
-[1] Nichol, A., Dhariwal, P., Ramesh, A., Shyam, P., Mishkin, P., McGrew, B., Sutskever, I., & Chen, M. (2021). GLIDE: Towards Photorealistic Image Generation and Editing with Text-Guided Diffusion Models. ArXiv. https://doi.org/10.48550/arXiv.2112.10741
+[1] Adam Santoro, David Raposo, David G.T. Barrett, Mateusz Malinowski, Razvan Pascanu, Peter Battaglia, Timothy Lillicrap (2017). A simple neural network module for relational reasoning. ArXiv. https://arxiv.org/abs/1706.01427v1
 
-[2] Ramesh, A., Dhariwal, P., Nichol, A., Chu, C., & Chen, M. (2022). Hierarchical Text-Conditional Image Generation with CLIP Latents. ArXiv. https://doi.org/10.48550/arXiv.2204.06125
+[2] Satwik Kottur, José M. F. Moura, Devi Parikh, Dhruv Batra, Marcus Rohrbach (2019). CLEVR-Dialog: A Diagnostic Dataset for Multi-Round Reasoning in Visual Dialog. ArXiv. https://arxiv.org/abs/1903.03166v2
 
-[3] Saharia, C., Chan, W., Saxena, S., Li, L., Whang, J., Denton, E., Ghasemipour, S. K., Ayan, B. K., Mahdavi, S. S., Lopes, R. G., Salimans, T., Ho, J., Fleet, D. J., & Norouzi, M. (2022). Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding. ArXiv. https://doi.org/10.48550/arXiv.2205.11487
+[3] Justin Johnson, Bharath Hariharan, Laurens van der Maaten, Judy Hoffman, Li Fei-Fei, C. Lawrence Zitnick, Ross Girshick (2017). Inferring and Executing Programs for Visual Reasoning. ArXiv. https://arxiv.org/abs/1705.03633v1
 
 ---
