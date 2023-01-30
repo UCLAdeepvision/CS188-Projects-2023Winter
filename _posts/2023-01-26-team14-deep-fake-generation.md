@@ -1,9 +1,9 @@
 ---
 layout: post
 comments: true
-title: Post Template
-author: UCLAdeepvision
-date: 2022-01-18
+title: Deep Fake Generation
+author: Sarah Mauricio and Andres Cruz
+date: 2023-01-26
 ---
 
 
@@ -16,7 +16,22 @@ date: 2022-01-18
 {:toc}
 
 ## Main Content
-Your survey starts here. You can refer to the [source code](https://github.com/lilianweng/lil-log/tree/master/_posts) of [lil's blogs](https://lilianweng.github.io/lil-log/) for article structure ideas or Markdown syntax. We've provided a [sample post](https://ucladeepvision.github.io/CS188-Projects-2022Winter/2017/06/21/an-overview-of-deep-learning.html) from Lilian Weng and you can find the source code [here](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2022Winter/main/_posts/2017-06-21-an-overview-of-deep-learning.md)
+
+We will be working on deep fake generation.
+
+[1] Goodfellow, Ian J., et al. Generative Adversarial Networks. 2014. DOI.org (Datacite), https://doi.org/10.48550/ARXIV.1406.2661.
+
+https://github.com/eriklindernoren/PyTorch-GAN/blob/master/implementations/gan/gan.py
+
+[2] Tolosana, Ruben, et al. DeepFakes and Beyond: A Survey of Face Manipulation and Fake Detection. 2020. DOI.org (Datacite), https://doi.org/10.48550/ARXIV.2001.00179.
+
+https://github.com/deepfakes/faceswap
+
+[3] Zhang, Tao. “Deepfake Generation and Detection, a Survey.” Multimedia Tools and Applications, vol. 81, no. 5, Feb. 2022, pp. 6259–76. DOI.org (Crossref), https://doi.org/10.1007/s11042-021-11733-y.
+
+https://github.com/Deepfakes/
+
+
 
 ## Basic Syntax
 ### Image
