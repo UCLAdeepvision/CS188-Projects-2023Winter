@@ -7,7 +7,7 @@ date: 2022-01-29
 ---
 
 
-> In this project, we wish to see how the accuracy of a machine learning model to recognize images containing certain objects can be improved. We plan to do this by highlighting smaller portions of the given images to narrow our model's focus onto more relevant parts of the image. This way, extraneous unhelpful noise will be dramatically reduced
+> In this project, we wish to evaluate the accuracy of a machine learning model to recognize images containing certain objects and explore any possible improvements. We plan to do this by segmenting the given images to narrow our model's focus onto more relevant parts of the image. This way, extraneous unhelpful noise will be dramatically reduced.
 
 
 <!--more-->
@@ -16,17 +16,37 @@ date: 2022-01-29
 {:toc}
 
 ## References and Code Bases
-Jimmy Ba, Volodymyr Mnih, Koray Kavukcuoglu: "Multiple Object Recognition with Visual Attention"
-    -article: https://paperswithcode.com/paper/multiple-object-recognition-with-visual
-    -code: https://paperswithcode.com/paper/multiple-object-recognition-with-visual#code
 
-Dumitru Erhan, Christian Szegedy, Alexander Toshev, Dragomir Anguelov: "Scalable Object Detection Using Neural Networks"
-    -article: https://paperswithcode.com/paper/scalable-object-detection-using-deep-neural
-    -code: https://paperswithcode.com/paper/scalable-object-detection-using-deep-neural#code
+**Multiple Object Recognition with Visual Attention**
 
-Xingyi Zhou, Dequan Wang, Philipp Krähenbühl: "Objects as Points"
-    -article: https://www.semanticscholar.org/paper/Objects-as-Points-Zhou-Wang/6a2e2fd1b5bb11224daef98b3fb6d029f68a73f2
-    -code: https://github.com/xingyizhou/CenterNet
+Jimmy Ba, Volodymyr Mnih, Koray Kavukcuoglu
+- [Paper](https://paperswithcode.com/paper/multiple-object-recognition-with-visual)
+- [Code](https://paperswithcode.com/paper/multiple-object-recognition-with-visual#code)
+
+**Scalable Object Detection Using Neural Networks**
+
+Dumitru Erhan, Christian Szegedy, Alexander Toshev, Dragomir Anguelov
+- [Paper](https://paperswithcode.com/paper/scalable-object-detection-using-deep-neural)
+- [Code](https://paperswithcode.com/paper/scalable-object-detection-using-deep-neural#code)
+
+**Objects as Points**
+
+Xingyi Zhou, Dequan Wang, Philipp Krähenbühl
+- [Paper](https://www.semanticscholar.org/paper/Objects-as-Points-Zhou-Wang/6a2e2fd1b5bb11224daef98b3fb6d029f68a73f2)
+- [Code](https://github.com/xingyizhou/CenterNet)
+
+**Pointly-Supervised Instance Segmentation**
+
+Bowen Cheng, Omkar Parkhi, Alexander Kirillov: Pointly-Supervised Instance Segmentation
+- [Paper](https://arxiv.org/pdf/2104.06404.pdf)
+- [Code](https://github.com/facebookresearch/detectron2/tree/main/projects/PointSup)
+
+**End-to-End Object Detection with Transformers**
+
+Nicolas Carion, Francisco Massa, Gabriel Synnaeve, Nicolas Usunier, Alexander Kirillov, Sergey Zagoruyko
+- [Paper](https://arxiv.org/pdf/2005.12872.pdf)
+- [Code](https://github.com/facebookresearch/detr#detr-end-to-end-object-detection-with-transformers)
+
 ## Basic Syntax
 ### Image
 
