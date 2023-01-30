@@ -1,10 +1,16 @@
 ---
 layout: post
 comments: true
-title: Post Template
-author: UCLAdeepvision
-date: 2022-01-18
+title: Deepfake Generation
+author: Freddy Aguilar, Luis Frias
+date: 2022-01-30
 ---
+
+> Deepfake Generation
+<!--more-->
+{: class="table-of-content"}
+* TOC
+{:toc}
 
 ## Project Proposal
 We chose to explore the topic of [deepfake generation](https://github.com/aerophile/awesome-deepfakes) which is when we alter the facial details within an image to have the person appear as someone else.
