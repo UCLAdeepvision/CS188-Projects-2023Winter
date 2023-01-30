@@ -6,14 +6,9 @@ author: Evan He, Samarth Upadhyaya
 date: 2017-06-21 01:09:00
 ---
 
-> This project focuses on the generating images from text using diffusion models.
+> This project focuses on the generation of images from text using diffusion models.
 
 <!--more-->
-
-{: class="table-of-content"}
-
-- TOC
-    {:toc}
 
 ## Most Influential Papers
 
