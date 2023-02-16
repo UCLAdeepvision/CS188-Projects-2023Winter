@@ -11,7 +11,7 @@ date: 2023-01-26
 <!--more-->
 
 * [Introduction](https://github.com/acruz0426/CS188-Projects-2023Winter/blob/main/_posts/2023-01-26-team14-deep-fake-generation.md#introduction-)
-* [What is Deepfake] (#deepfake)
+* [What is Deepfake](#deepfake)
     * [Example: Image-to-Image Translation] (#i2i)
     * [Example: Image Animation] (#ia)
 * [What is Generative Adversarial Networks (GAN)] (#GAN)
