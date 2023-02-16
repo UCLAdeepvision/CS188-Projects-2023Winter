@@ -7,14 +7,12 @@ date: 2023-01-26
 ---
 
 
-> This block is a brief introduction of your project. You can put your abstract here or any headers you want the readers to know.
-
-
+> The use of deep learning methods in deep fake generation has contributed to the rise of fake of fake images which has some very serious ethical dilemmas. We will look at two different ways to generate deepfake pictures and videos, and will then focus in on Image-to-Image Translation. __ and __ are two different models we will by studying to create deep fake images using Image-to-Image Translation.
 <!--more-->
 {: class="table-of-content"}
 * Introduction
 * What is Deepfake
-    * Example: Image to Image Translation
+    * Example: Image-to-Image Translation
     * Example: Image Animation
 * Cycle-Consistent Adversarial Networks
     * Motivation
@@ -36,7 +34,7 @@ We will be working on deep fake generation.
 
 ## What is Deepfake
 
-### Example: Image-To-Image Translation
+### Example: Image-to-Image Translation
 
 ### Example: Image Animation
 
