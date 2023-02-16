@@ -12,12 +12,57 @@ date: 2023-01-26
 
 <!--more-->
 {: class="table-of-content"}
-* TOC
+* Introduction
+* What is Deepfake
+    * Example: Image to Image Translation
+    * Example: Image Animation
+* Cycle-Consistent Adversarial Networks
+    * Motivation
+    * Architecture 
+    * Architecture Blocks and Code Implementation
+    * Results
+* Conditional Adversarial Networks
+    * Motivation
+    * Architecture 
+    * Architecture Blocks and Code Implementation
+    * Results
+* Demo
+* References
 {:toc}
 
-## Main Content
+## Introduction
 
 We will be working on deep fake generation.
+
+## What is Deepfake
+
+### Example: Image-To-Image Translation
+
+### Example: Image Animation
+
+## Cycle-Consistent Adversarial Networks
+
+### Motivation
+
+### Architecture
+
+### Architecture Blocks and Code Implementation
+
+### Results
+
+## Conditional Adversarial Networks
+
+### Motivation
+
+### Architecture
+
+### Architecture Blocks and Code Implementation
+
+### Results
+
+## Demo
+
+## References
 
 [1] Goodfellow, Ian J., et al. Generative Adversarial Networks. 2014. DOI.org (Datacite), https://doi.org/10.48550/ARXIV.1406.2661.
 
