@@ -10,7 +10,7 @@ date: 2023-01-26
 > The use of deep learning methods in deep fake generation has contributed to the rise of fake of fake images which has some very serious ethical dilemmas. We will look at two different ways to generate deepfake pictures and videos, and will then focus in on Image-to-Image Translation. __ and __ are two different models we will by studying to create deep fake images using Image-to-Image Translation.
 <!--more-->
 
-* [Introduction] (https://github.com/acruz0426/CS188-Projects-2023Winter/blob/main/_posts/2023-01-26-team14-deep-fake-generation.md#introduction-)
+* [Introduction](https://github.com/acruz0426/CS188-Projects-2023Winter/blob/main/_posts/2023-01-26-team14-deep-fake-generation.md#introduction-)
 * [What is Deepfake] (#deepfake)
     * [Example: Image-to-Image Translation] (#i2i)
     * [Example: Image Animation] (#ia)
