@@ -6,9 +6,11 @@ author: Sarah Mauricio and Andres Cruz
 date: 2023-01-26
 ---
 
+## Abstract
 
 > The use of deep learning methods in deep fake generation has contributed to the rise of fake of fake images which has some very serious ethical dilemmas. We will look at two different ways to generate deepfake pictures and videos, and will then focus in on Image-to-Image Translation. __ and __ are two different models we will by studying to create deep fake images using Image-to-Image Translation.
 <!--more-->
+## Table of Contents
 
 * [Introduction](#intro)
 * [What is Deepfake](#deepfake)
