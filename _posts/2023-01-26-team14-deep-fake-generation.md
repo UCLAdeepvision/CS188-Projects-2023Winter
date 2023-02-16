@@ -9,7 +9,7 @@ date: 2023-01-26
 
 > The use of deep learning methods in deep fake generation has contributed to the rise of fake of fake images which has some very serious ethical dilemmas. We will look at two different ways to generate deepfake pictures and videos, and will then focus in on Image-to-Image Translation. __ and __ are two different models we will by studying to create deep fake images using Image-to-Image Translation.
 <!--more-->
-{: class="table-of-content"}
+
 * Introduction
 * What is Deepfake
     * Example: Image-to-Image Translation
@@ -26,7 +26,6 @@ date: 2023-01-26
     * Results
 * Demo
 * References
-{:toc}
 
 ## Introduction
 
@@ -117,10 +116,3 @@ or you can write in-text formula $$y = wx + b$$.
 
 ### More Markdown Syntax
 You can find more Markdown syntax at [this page](https://www.markdownguide.org/basic-syntax/).
-
-## Reference
-Please make sure to cite properly in your work, for example:
-
-[1] Redmon, Joseph, et al. "You only look once: Unified, real-time object detection." *Proceedings of the IEEE conference on computer vision and pattern recognition*. 2016.
-
----
