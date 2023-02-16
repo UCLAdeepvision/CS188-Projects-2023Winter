@@ -10,56 +10,59 @@ date: 2023-01-26
 > The use of deep learning methods in deep fake generation has contributed to the rise of fake of fake images which has some very serious ethical dilemmas. We will look at two different ways to generate deepfake pictures and videos, and will then focus in on Image-to-Image Translation. __ and __ are two different models we will by studying to create deep fake images using Image-to-Image Translation.
 <!--more-->
 
-* Introduction
-* What is Deepfake
-    * Example: Image-to-Image Translation
-    * Example: Image Animation
-* Cycle-Consistent Adversarial Networks
-    * Motivation
-    * Architecture 
-    * Architecture Blocks and Code Implementation
-    * Results
-* Conditional Adversarial Networks
-    * Motivation
-    * Architecture 
-    * Architecture Blocks and Code Implementation
-    * Results
-* Demo
-* References
+* [Introduction] (#intro)
+* [What is Deepfake] (#deepfake)
+    * [Example: Image-to-Image Translation] (#i2i)
+    * [Example: Image Animation] (#ia)
+* [What is Generative Adversarial Networks (GAN)] (#GAN)
+* [Cycle GAN] (#cycleGAN)
+    * [Motivation] (#mot1)
+    * [Architecture] (#arch1)
+    * [Architecture] Blocks and Code Implementation (#archBlock1)
+    * [Results] (#res1)
+* [Star GAN] (#starGAN)
+    * [Motivation] (#mot2)
+    * [Architecture] (#arch2)
+    * [Architecture Blocks and Code Implementation] (#archBlock2)
+    * [Results] (#res2)
+* [Demo] (#demo)
+* [References] (#ref)
 
-## Introduction
+## Introduction <a name="intro"></a>
 
 We will be working on deep fake generation.
 
-## What is Deepfake
+## What is Deepfake <a name="deepfake"></a>
 
-### Example: Image-to-Image Translation
+### Example: Image-to-Image Translation <a name="i2i"></a>
 
-### Example: Image Animation
+### Example: Image Animation <a name="ia"></a>
 
-## Cycle-Consistent Adversarial Networks
+## What is Generative Adversarial Networks (GAN) <a name="GAN"></a>
 
-### Motivation
+## Cycle GAN <a name="cycleGAN"></a>
 
-### Architecture
+### Motivation <a name="mot1"></a>
 
-### Architecture Blocks and Code Implementation
+### Architecture <a name="arch1"></a>
+ 
+### Architecture Blocks and Code Implementation <a name="archBlocks1"></a>
 
-### Results
+### Results <a name="res1"></a>
 
-## Conditional Adversarial Networks
+## Star GAN <a name="starGAN"></a>
 
-### Motivation
+### Motivation <a name="mot2"></a>
 
-### Architecture
+### Architecture <a name="arch2"></a>
 
-### Architecture Blocks and Code Implementation
+### Architecture Blocks and Code Implementation <a name="archBlocks2"></a>
 
-### Results
+### Results <a name="res2"></a>
 
-## Demo
+## Demo <a name="demo"></a>
 
-## References
+## References <a name="ref"></a>
 
 [1] Goodfellow, Ian J., et al. Generative Adversarial Networks. 2014. DOI.org (Datacite), https://doi.org/10.48550/ARXIV.1406.2661.
 
