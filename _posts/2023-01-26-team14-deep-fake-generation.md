@@ -43,12 +43,12 @@ Deepfake is a term used to describe artificially constructed media that portrays
 Image to image translation is the process of extracting features from a source image and emulating those features in another image. An example would be Neural Style Transfer, where a source image is used to create an art style to transfer to another image.
 
 ![Style Transfer](/assets/images/team14/style_transfer.png)
-* Fig X. Example of Neural Style Transfer, https://www.v7labs.com/blog/neural-style-transfer
+* Fig X. Example of Neural Style Transfer (Image source: https://www.v7labs.com/blog/neural-style-transfer)
 
 Below are some common architectures seen for image to image translation.
 
 ![image to image](/assets/images/team14/image-to-image.png)
-* Fig X. Example of image to image translation architectures, https://www.researchgate.net/publication/366191121_Enhancing_cancer_differentiation_with_synthetic_MRI_examinations_via_generative_models_a_systematic_review
+* Fig X. Example of image to image translation architectures (Image source: https://www.researchgate.net/publication/366191121_Enhancing_cancer_differentiation_with_synthetic_MRI_examinations_via_generative_models_a_systematic_review)
 
 ### Example: Image Animation <a name="ia"></a>
 
@@ -77,9 +77,9 @@ Below we look into two different models using ideas from GAN.
 ### Motivation <a name="mot1"></a>
 
 ![unpaired images](/assets/images/team14/unpaired-images.webp)
-* Fig X. Example of paired and unpaired images, 
+* Fig X. Example of paired and unpaired images, (Image source: https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d)
 
-CycleGAN was used ino order to use unpaired image to image translations rather than paired image to image translations. This would allow for more training data and more robust outputs for translations. This model seems to work well on tasks that involve color or texture changes, like day-to-night photo translations, or photo-to-painting tasks like collection style transfer. However, tasks that require substantial geometric changes to the image, such as cat-to-dog translations, usually fail [insert citation].
+CycleGAN was used in order to use unpaired image to image translations rather than paired image to image translations. This would allow for more training data and more robust outputs for translations. This model seems to work well on tasks that involve color or texture changes, like day-to-night photo translations, or photo-to-painting tasks like collection style transfer. However, tasks that require substantial geometric changes to the image, such as cat-to-dog translations, usually fail [insert citation].
 
 ### Architecture <a name="arch1"></a>
 
@@ -87,15 +87,25 @@ CycleGAN was used ino order to use unpaired image to image translations rather t
 The architecture of CycleGAN consists of a generator taken from Johnson et al [citation here], which consists of 3 convolutional layers, 6 residual block layers, 2 transpose convolutional layers and a final convolution output layer. Should also be noted that all layers similar to Johnson et al are followed by instance normalization.
 
 ![CycleGAN Generator](/assets/images/team14/cycleGAN-generator.png)
-* Fig X. Example of CycleGAN Generator architecture, https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d
+* Fig X. Example of CycleGAN Generator architecture (Image source: https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d)
 
 The discriminator uses a 70x70 PatchGAN architecture, which are used to classify 70x70 overlapped images to see if they are real or fake. The PatchGAN architecture consists of 5 convolutional layers with instance normalization [insert citation].
 
 ![CycleGAN Discriminator](/assets/images/team14/cycleGAN-discriminator.webp)
-* Fig X. Example of CycleGAN Discriminator architecture, https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d
+* Fig X. Example of CycleGAN Discriminator architecture (Image source: https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d)
  
+ 
+#### Loss Function
+
+$$
+\tilde{\mathbf{z}}^{(t)}_i = \frac{\alpha \tilde{\mathbf{z}}^{(t-1)}_i + (1-\alpha) \mathbf{z}_i}{1-\alpha^t}
+$$
  
 ### Architecture Blocks and Code Implementation <a name="archBlocks1"></a>
+
+```
+# This is a sample code block
+```
 
 
 
