@@ -168,8 +168,10 @@ $$
 Thus, the to optimize G and D we have the following formulas:
 
 $$
-\mathbf{L}_{D} = -\mathbf{L}_{adv} + {\lambda}_{cls}\mathbf{L}^{(r)}_{cls}
-\mathbf{L}_{G} = \mathbf{L}_{adv} + {\lambda}_{cls}\mathbf{L}^{(f)}_{cls} + {\lambda}_{rec}\mathbf{L}_{rec}
+\mathbf{L}_{D} = -\mathf{L}_{adv} + {\lambda}_{cls}\mathf{L}^{(r)}_{cls}
+$$
+$$
+\mathbf{L}_{G} = \mathf{L}_{adv} + {\lambda}_{cls}\mathf{L}^{(f)}_{cls} + {\lambda}_{rec}\mathf{L}_{rec}
 $$
 
 ### Architecture Blocks and Code Implementation <a name="archBlocks2"></a>
