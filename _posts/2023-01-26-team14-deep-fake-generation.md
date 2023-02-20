@@ -40,7 +40,8 @@ We will be working on deep fake generation.
 
 ### Example: Image Animation <a name="ia"></a>
 
-Image Animation is the action of generating a video where the object from an image is animated using the action from a driving video. For example, if we had an image of a water bottle and a driving video of a ball flying across the scree, the output video would be a water bottle flying across the screen. 
+Image Animation is the action of generating a video where the object from an image is animated using the action from a driving video. For example, if we had an image of a water bottle and a driving video of a ball flying across the scree, the output video would be a water bottle flying across the screen. Thus, it will create an animation based on a single image.
+
 ![GAN Flow](/assets/images/team14/pipeline.png)
 * Fig X. Example flow of Image Animation
 
@@ -48,7 +49,7 @@ Once applying the model, we would see results similar to the following:
 
 ![Image Animation Output](/assets/images/team14/vox-teaser.gif)
 * Figure X. Example output from Image Animation
-## What is Generative Adversarial Networks (GAN) <a name="GAN"></a>
+## What is a Generative Adversarial Network (GAN) <a name="GAN"></a>
 
 Generative Adversarial Network, or GAN, is the core frameworkd behind a lot of the DeepFake alorgorithms you may come across. It is an approach to generate a model for a dataset using deep learning priciples. Generative modeling automatically discovers and learns the patterns in the data so that the model can be used to generate new images that could have been a part of the original dataset. GANs train a generative model that consists of two sub-components: the generator models which is trained to generate new images and the discriminator model which tries to classify an image as real or fake. The generative models and the discriminator model are trained together in an adversarial way, meaning until the discrimnator model classifies images incorrectly about half of the time. This would mean that the generator model generates DeepFake images that could pass as being real.
 
