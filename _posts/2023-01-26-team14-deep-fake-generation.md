@@ -137,6 +137,18 @@ The overarching goal of StarGAN is to translate images from one domain to the ot
 
 ### Architecture <a name="arch2"></a>
 
+The architecture of StarGAN consists of a generator, which consists of . 
+
+![StarGAN Generator](/assets/images/team14/star3.png)
+* Fig X. Example of StarGAN Generator Architecture (Image source: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0231719)
+
+The discriminator uses a .
+
+![StarGAN Discriminator](/assets/images/team14/star3.png)
+* Fig X. Example of StarGAN Discriminator architecture (Image source: )
+
+#### Loss Functions
+
 The discriminator produces probability distributions over source and domain labels as follows:
 
 $$
