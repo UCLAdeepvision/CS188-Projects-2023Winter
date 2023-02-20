@@ -36,11 +36,19 @@ We will be working on deep fake generation.
 
 ## What is Deepfake <a name="deepfake"></a>
 
+Deepfake is a term used to describe artificially constructed media that portrays an individual or individuals in a way that suits the creator. For example, creating image to image translations, image animations, audio reconstruction, and more. Deepfakes are created using deep neural networks architectures, such as Generative Adversarial Networks or Autoencoders.
+
 ### Example: Image-to-Image Translation <a name="i2i"></a>
+
+Image to image translation is the process of extracting features from a source image and emulating those features in another image. An example would be Neural Style Transfer, where images are synthesized in the same art style as the source image.
+
+![Style Transfer]()
+* Fig X. Example of Neural Style Transfer 
+* https://www.v7labs.com/blog/neural-style-transfer
 
 ### Example: Image Animation <a name="ia"></a>
 
-Image Animation is the action of generating a video where the object from an image is animated using the action from a driving video. For example, if we had an image of a water bottle and a driving video of a ball flying across the scree, the output video would be a water bottle flying across the screen. Thus, it will create an animation based on a single image.
+Image Animation is the action of generating a video where the object from an image is animated using the action from a driving video. For example, if we had an image of a water bottle and a driving video of a ball flying across the screen, the output video would be a water bottle flying across the screen. Thus, it will create an animation based on a single image.
 
 ![GAN Flow](/assets/images/team14/pipeline.png)
 * Fig X. Example flow of Image Animation
@@ -49,9 +57,11 @@ Once applying the model, we would see results similar to the following:
 
 ![Image Animation Output](/assets/images/team14/vox-teaser.gif)
 * Figure X. Example output from Image Animation
+
+
 ## What is a Generative Adversarial Network (GAN) <a name="GAN"></a>
 
-Generative Adversarial Network, or GAN, is the core frameworkd behind a lot of the DeepFake alorgorithms you may come across. It is an approach to generate a model for a dataset using deep learning priciples. Generative modeling automatically discovers and learns the patterns in the data so that the model can be used to generate new images that could have been a part of the original dataset. GANs train a generative model that consists of two sub-components: the generator models which is trained to generate new images and the discriminator model which tries to classify an image as real or fake. The generative models and the discriminator model are trained together in an adversarial way, meaning until the discrimnator model classifies images incorrectly about half of the time. This would mean that the generator model generates DeepFake images that could pass as being real.
+Generative Adversarial Network, or GAN, is the core frameworkd behind a lot of the DeepFake algorithms you may come across. It is an approach to generate a model for a dataset using deep learning priciples. Generative modeling automatically discovers and learns the patterns in the data so that the model can be used to generate new images that could have been a part of the original dataset. GANs train a generative model that consists of two sub-components: the generator models which is trained to generate new images and the discriminator model which tries to classify an image as real or fake. The generative models and the discriminator model are trained together in an adversarial way, meaning until the discrimnator model classifies images incorrectly about half of the time. This would mean that the generator model generates DeepFake images that could pass as being real.
 
 ![GAN Flow](/assets/images/team14/gan1.JPG)
 * Fig X. Example of GAN Flow
