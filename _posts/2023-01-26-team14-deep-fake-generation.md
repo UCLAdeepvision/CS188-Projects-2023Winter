@@ -83,7 +83,7 @@ If you are planning to use CycleGAN for a practical application, it is important
 ![CycleGAN Generator](/assets/images/team14/cycleGAN-generator.png)
 * Fig X. Example of CycleGAN Generator architecture
 
-![CycleGAN Discriminator](/assets/images/team14/cycleGAN-discriminator.webq)
+![CycleGAN Discriminator](/assets/images/team14/cycleGAN-discriminator.webp)
 * Fig X. Example of CycleGAN Discriminator architecture
  
  
