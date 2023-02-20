@@ -16,16 +16,16 @@ date: 2023-01-26
 * [What is Deepfake](#deepfake)
     * [Example: Image-to-Image Translation](#i2i)
     * [Example: Image Animation](#ia)
-* [What is Generative Adversarial Networks (GAN)](#GAN)
+* [What is a Generative Adversarial Network (GAN)](#GAN)
 * [Cycle GAN](#cycleGAN)
     * [Motivation](#mot1)
     * [Architecture](#arch1)
-    * [Architecture Blocks and Code Implementation](#archBlock1)
+    * [Architecture Blocks and Code Implementation](#archBlocks1)
     * [Results](#res1)
 * [Star GAN](#starGAN)
     * [Motivation](#mot2)
     * [Architecture](#arch2)
-    * [Architecture Blocks and Code Implementation](#archBlock2)
+    * [Architecture Blocks and Code Implementation](#archBlocks2)
     * [Results](#res2)
 * [Demo](#demo)
 * [References](#ref)
@@ -52,8 +52,8 @@ Once applying the model, we would see results similar to the following:
 
 Generative Adversarial Network, or GAN, is the core frameworkd behind a lot of the DeepFake alorgorithms you may come across. It is an approach to generate a model for a dataset using deep learning priciples. Generative modeling automatically discovers and learns the patterns in the data so that the model can be used to generate new images that could have been a part of the original dataset. GANs train a generative model that consists of two sub-components: the generator models which is trained to generate new images and the discriminator model which tries to classify an image as real or fake. The generative models and the discriminator model are trained together in an adversarial way, meaning until the discrimnator model classifies images incorrectly about half of the time. This would mean that the generator model generates DeepFake images that could pass as being real.
 
-![GAN Flow]( '/assets/images/team14/gan1.JPG' )
-*Fig X. Example of GAN Flow [1].
+![GAN Flow](/assets/images/team14/gan1.JPG)
+* Fig X. Example of GAN Flow
 
 Below we look into two different models using ideas from GAN.
 
