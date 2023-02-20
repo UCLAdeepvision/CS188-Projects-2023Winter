@@ -76,7 +76,16 @@ Below we look into two different models using ideas from GAN.
 
 ### Motivation <a name="mot1"></a>
 
+If you are planning to use CycleGAN for a practical application, it is important to be aware of its strengths and limitations. It works well on tasks that involve color or texture changes, like day-to-night photo translations, or photo-to-painting tasks like collection style transfer (see above). However, tasks that require substantial geometric changes to the image, such as cat-to-dog translations, usually fail.
+
 ### Architecture <a name="arch1"></a>
+
+![CycleGAN Generator](/assets/images/team14/cycleGAN-generator.png)
+* Fig X. Example of CycleGAN Generator architecture
+
+![CycleGAN Discriminator](/assets/images/team14/cycleGAN-discriminator.png)
+* Fig X. Example of CycleGAN Discriminator architecture
+ 
  
 ### Architecture Blocks and Code Implementation <a name="archBlocks1"></a>
 
@@ -85,12 +94,10 @@ Below we look into two different models using ideas from GAN.
 ## Star GAN <a name="starGAN"></a>
 
 ### Motivation <a name="mot2"></a>
-StarGAN is a "generative adversarial network that learns the mappings among multiple domains using only a single generator and a discriminator, training effectively from images of all domains" (Choi 2). The topology could be represented as a star where multi-domains are connected, thus receiveing the name StarGAN. 
+StarGAN is a generative adversarial network that learns the mappings among multiple domains using only a single generator and a discriminator, training effectively from images of all domains (Choi 2). The topology could be represented as a star where multi-domains are connected, thus receiveing the name StarGAN. 
 
 ![StarGAN Results](/assets/images/team14/star1.JPG)
 * Fig X. Example of multi-domain image-to-image translation on CelebA dataset using StarGAN
-
-Star GAN can create diverse images from multiple domains with good scalability. When referring to domain in this article, we will be talking about a set of images that can be grouped together because of a visually distinctive category (ie inside and outside locations can be classified as two domains). Style will be used as a unique element of an image (ie type of tree). This model acheives diversity in style by using domain-specific decoders that interpret latent style codes.To ensure images that are a part of multiple domains can be handled using a single model, the generator uses domain information to generate the images.
 
 StarGAN consists of two modules, a discriminator and a generator. The discriminator learns to differentiate between real and fake images and begins to clssify the real images with its proper domain. The gnerator takes an image and a target domain label as input and generates a fake image with them. The target domain label is then spatially replicated and concatenated with the image given as input. The generator attempts to reconstruct the orginal image via the fake image when given the original domain label. Lastly, the generator tries to generate images that are almost identical to the real images and will be classified as being from the target domain by the discriminator.
 
@@ -118,8 +125,6 @@ https://github.com/deepfakes/faceswap
 [3] Zhang, Tao. “Deepfake Generation and Detection, a Survey.” Multimedia Tools and Applications, vol. 81, no. 5, Feb. 2022, pp. 6259–76. DOI.org (Crossref), https://doi.org/10.1007/s11042-021-11733-y.
 
 [4] Brownlee, Jason. “A Gentle Introduction to Generative Adversarial Networks (Gans).” MachineLearningMastery.com, 19 July 2019, https://machinelearningmastery.com/what-are-generative-adversarial-networks-gans/. 
-
-[5] Choi, Yunjey, et al. “Papers with Code - Stargan: Unified Generative Adversarial Networks for Multi-Domain Image-to-Image Translation.” StarGAN: Unified Generative Adversarial Networks for Multi-Domain Image-to-Image Translation | Papers With Code, https://paperswithcode.com/paper/stargan-unified-generative-adversarial. 
 
 https://github.com/Deepfakes/
 
