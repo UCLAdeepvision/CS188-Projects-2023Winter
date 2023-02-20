@@ -40,11 +40,10 @@ Deepfake is a term used to describe artificially constructed media that portrays
 
 ### Example: Image-to-Image Translation <a name="i2i"></a>
 
-Image to image translation is the process of extracting features from a source image and emulating those features in another image. An example would be Neural Style Transfer, where images are synthesized in the same art style as the source image.
+Image to image translation is the process of extracting features from a source image and emulating those features in another image. An example would be Neural Style Transfer, where a source image is used to create an art style to transfer to another image.
 
 ![Style Transfer](/assets/images/team14/style_transfer.png)
-* Fig X. Example of Neural Style Transfer 
-* https://www.v7labs.com/blog/neural-style-transfer
+* Fig X. Example of Neural Style Transfer, https://www.v7labs.com/blog/neural-style-transfer
 
 ### Example: Image Animation <a name="ia"></a>
 
