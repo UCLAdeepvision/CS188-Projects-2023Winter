@@ -97,8 +97,17 @@ The discriminator uses a 70x70 PatchGAN architecture, which are used to classify
  
 #### Loss Function
 
+There are two kinds of loss in CycleGANs. There is the regular adversarial loss like other normal GANs:
+
 $$
 \tilde{\mathbf{z}}^{(t)}_i = \frac{\alpha \tilde{\mathbf{z}}^{(t-1)}_i + (1-\alpha) \mathbf{z}_i}{1-\alpha^t}
+$$
+
+Then there is also the cyclic-consistency loss which ensures that F(G(x)) ~ x and G(F(y)) ~ y
+
+$$
+\tilde{\mathbf{z}}^{(t)}_i = \frac{\alpha \tilde{\mathbf{z}}^{(t-1)}_i + (1-\alpha) \mathbf{z}_i}{1-\alpha^t}
+\mathbf{Loss}_cyc = 
 $$
  
 ### Architecture Blocks and Code Implementation <a name="archBlocks1"></a>
