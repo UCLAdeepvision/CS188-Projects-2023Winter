@@ -76,7 +76,10 @@ Below we look into two different models using ideas from GAN.
 
 ### Motivation <a name="mot1"></a>
 
-If you are planning to use CycleGAN for a practical application, it is important to be aware of its strengths and limitations. It works well on tasks that involve color or texture changes, like day-to-night photo translations, or photo-to-painting tasks like collection style transfer (see above). However, tasks that require substantial geometric changes to the image, such as cat-to-dog translations, usually fail [insert citation].
+![unpaired images](/assets/images/team14/unpaired-images.webp)
+* Fig X. Example of paired and unpaired images, 
+
+CycleGAN was used ino order to use unpaired image to image translations rather than paired image to image translations. This would allow for more training data and more robust outputs for translations. This model seems to work well on tasks that involve color or texture changes, like day-to-night photo translations, or photo-to-painting tasks like collection style transfer. However, tasks that require substantial geometric changes to the image, such as cat-to-dog translations, usually fail [insert citation].
 
 ### Architecture <a name="arch1"></a>
 
