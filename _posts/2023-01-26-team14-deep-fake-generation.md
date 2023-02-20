@@ -41,6 +41,13 @@ We will be working on deep fake generation.
 ### Example: Image Animation <a name="ia"></a>
 
 ## What is Generative Adversarial Networks (GAN) <a name="GAN"></a>
+Generative Adversarial Network, or GAN, is the core frameworkd behind a lot of the DeepFake alorgorithms you may come across. It is an approach to generate a model for a dataset using deep learning priciples. Generative modeling automatically discovers and learns the patterns in the data so that the model can be used to generate new images that could have been a part of the original dataset. GANs train a generative model that consists of two sub-components: the generator models which is trained to generate new images and the discriminator model which tries to classify an image as real or fake. The generative models and the discriminator model are trained together in an adversarial way, meaning until the discrimnator model classifies images incorrectly about half of the time. This would mean that the generator model generates DeepFake images that could pass as being real.
+
+![GAN Flow]({{ '/assets/images/team14/gan1.JPG' }})
+{: style="width: 400px; max-width: 100%;"}
+*Fig 1. Example of GAN Flow [1].
+
+Below we look into two different models using ideas from GAN.
 
 ## Cycle GAN <a name="cycleGAN"></a>
 
@@ -75,6 +82,8 @@ https://github.com/eriklindernoren/PyTorch-GAN/blob/master/implementations/gan/g
 https://github.com/deepfakes/faceswap
 
 [3] Zhang, Tao. “Deepfake Generation and Detection, a Survey.” Multimedia Tools and Applications, vol. 81, no. 5, Feb. 2022, pp. 6259–76. DOI.org (Crossref), https://doi.org/10.1007/s11042-021-11733-y.
+
+[4] Brownlee, Jason. “A Gentle Introduction to Generative Adversarial Networks (Gans).” MachineLearningMastery.com, 19 July 2019, https://machinelearningmastery.com/what-are-generative-adversarial-networks-gans/. 
 
 https://github.com/Deepfakes/
 
