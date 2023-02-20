@@ -122,10 +122,35 @@ $$
 \mathbf{D} : \mathbf{x}\rightarrow\{{D_{src}(x), D_{cls}(x)}\}
 $$
 
-Adversarial Loss:
-
+To ensure the generated images are indistinguishable from the real images, adversarial loss is used:
 $$
 \mathbf{L}_{adv} = \mathbb{E}_{x}[log D_{src}(x)] + \mathbb{E}_{x,c}[log (1-D_{src}(G(x,c)))]
+$$
+Here, G generates an image G(x,c) that is conditioned on the input image, x, and the target domain label, c. D then tries to determine if it is a real or fake image. 
+
+We need to add an auxiliary classifier on top of our D and impose the domain classification loss when optimizing D and G in order to classify the output image y that was generated from our input image dx.
+
+$$
+\mathbf{L}^{(r)}_{cls} = \mathbb{E}_{x, c'}[-log D_{cls}(c'|x)]
+$$
+
+Then, our loss function for domain classification is:
+
+$$
+\mathbf{L}^{(f)}_{cls} = \mathbb{E}_{x, c}[-log D_{cls}(c|G(x,c))]
+$$
+
+Now, out adversarial and classification losses are minimized, but this does not guarantee that the translated images preserve the content of its imput images. To reduce this issue, we aneed to apply a cycle consistency loss to G:
+
+$$
+\mathbf{L}_{rec} = \mathbb{E}_{x, c, c'}[||x-G(G(x, c), c')||]
+$$
+
+Thus, the to optimize G and D we have the following formulas:
+
+$$
+\mathbf{L}_{D} = -\mathbf{L}_{adv} + {\lambda}_{cls}\mathbf{L}^{(r)}_{cls}
+\mathbf{L}_{G} = \mathbf{L}_{adv} + {\lambda}_{cls}\mathbf{L}^{(f)}_{cls} + {\lambda}_{rec}\mathbf{L}_{rec}
 $$
 
 ### Architecture Blocks and Code Implementation <a name="archBlocks2"></a>
