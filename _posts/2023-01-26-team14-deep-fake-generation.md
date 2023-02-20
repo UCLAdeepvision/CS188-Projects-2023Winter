@@ -85,7 +85,7 @@ Below we look into two different models using ideas from GAN.
 ## Star GAN <a name="starGAN"></a>
 
 ### Motivation <a name="mot2"></a>
-StarGAN is a generative adversarial network that learns the mappings among multiple domains using only a single generator and a discriminator, training effectively from images of all domains (Choi 2). The topology could be represented as a star where multi-domains are connected, thus receiveing the name StarGAN. 
+StarGAN is a "generative adversarial network that learns the mappings among multiple domains using only a single generator and a discriminator, training effectively from images of all domains" (Choi 2). The topology could be represented as a star where multi-domains are connected, thus receiveing the name StarGAN. 
 
 ![StarGAN Results](/assets/images/team14/star1.JPG)
 * Fig X. Example of multi-domain image-to-image translation on CelebA dataset using StarGAN
