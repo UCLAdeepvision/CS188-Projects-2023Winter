@@ -45,6 +45,11 @@ Image to image translation is the process of extracting features from a source i
 ![Style Transfer](/assets/images/team14/style_transfer.png)
 * Fig X. Example of Neural Style Transfer, https://www.v7labs.com/blog/neural-style-transfer
 
+Below are some common architectures seen for image to image translation.
+
+![image to image](/assets/images/team14/image-to-image.png)
+* Fig X. Example of image to image translation architectures, https://www.researchgate.net/publication/366191121_Enhancing_cancer_differentiation_with_synthetic_MRI_examinations_via_generative_models_a_systematic_review
+
 ### Example: Image Animation <a name="ia"></a>
 
 Image Animation is the action of generating a video where the object from an image is animated using the action from a driving video. For example, if we had an image of a water bottle and a driving video of a ball flying across the screen, the output video would be a water bottle flying across the screen. Thus, it will create an animation based on a single image.
@@ -76,8 +81,6 @@ Below we look into two different models using ideas from GAN.
 ### Architecture Blocks and Code Implementation <a name="archBlocks1"></a>
 
 ### Results <a name="res1"></a>
-
-"preserve key attributes between the input and the translated image by utilizing a cycle consistency loss. However, [...] only capable of learning the relations between two different domains at a time. Their approaches have limited scalability in handling multiple domains since different models should be trained for each pair of domains" (Choi 3).
 
 ## Star GAN <a name="starGAN"></a>
 
