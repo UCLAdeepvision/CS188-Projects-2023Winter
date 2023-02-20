@@ -90,6 +90,8 @@ StarGAN is a generative adversarial network that learns the mappings among multi
 ![StarGAN Results](/assets/images/team14/star1.JPG)
 * Fig X. Example of multi-domain image-to-image translation on CelebA dataset using StarGAN
 
+Star GAN can create diverse images from multiple domains with good scalability. When referring to domain in this article, we will be talking about a set of images that can be grouped together because of a visually distinctive category (ie inside and outside locations can be classified as two domains). Style will be used as a unique element of an image (ie type of tree). This model acheives diversity in style by using domain-specific decoders that interpret latent style codes.To ensure images that are a part of multiple domains can be handled using a single model, the generator uses domain information to generate the images.
+
 StarGAN consists of two modules, a discriminator and a generator. The discriminator learns to differentiate between real and fake images and begins to clssify the real images with its proper domain. The gnerator takes an image and a target domain label as input and generates a fake image with them. The target domain label is then spatially replicated and concatenated with the image given as input. The generator attempts to reconstruct the orginal image via the fake image when given the original domain label. Lastly, the generator tries to generate images that are almost identical to the real images and will be classified as being from the target domain by the discriminator.
 
 ![StarGAN Flow](/assets/images/team14/star2.JPG)
