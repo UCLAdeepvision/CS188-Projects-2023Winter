@@ -77,6 +77,8 @@ Below we look into two different models using ideas from GAN.
 
 ### Results <a name="res1"></a>
 
+"preserve key attributes between the input and the translated image by utilizing a cycle consistency loss. However, [...] only capable of learning the relations between two different domains at a time. Their approaches have limited scalability in handling multiple domains since different models should be trained for each pair of domains" (Choi 3).
+
 ## Star GAN <a name="starGAN"></a>
 
 ### Motivation <a name="mot2"></a>
