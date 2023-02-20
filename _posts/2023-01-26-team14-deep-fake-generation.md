@@ -76,18 +76,25 @@ Below we look into two different models using ideas from GAN.
 
 ### Motivation <a name="mot1"></a>
 
-If you are planning to use CycleGAN for a practical application, it is important to be aware of its strengths and limitations. It works well on tasks that involve color or texture changes, like day-to-night photo translations, or photo-to-painting tasks like collection style transfer (see above). However, tasks that require substantial geometric changes to the image, such as cat-to-dog translations, usually fail.
+If you are planning to use CycleGAN for a practical application, it is important to be aware of its strengths and limitations. It works well on tasks that involve color or texture changes, like day-to-night photo translations, or photo-to-painting tasks like collection style transfer (see above). However, tasks that require substantial geometric changes to the image, such as cat-to-dog translations, usually fail [insert citation].
 
 ### Architecture <a name="arch1"></a>
 
+
+The architecture of CycleGAN consists of a generator taken from Johnson et al [citation here], which consists of 3 convolutional layers, 6 residual block layers, 2 transpose convolutional layers and a final convolution output layer. Should also be noted that all layers similar to Johnson et al are followed by instance normalization.
+
 ![CycleGAN Generator](/assets/images/team14/cycleGAN-generator.png)
-* Fig X. Example of CycleGAN Generator architecture
+* Fig X. Example of CycleGAN Generator architecture, https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d
+
+The discriminator uses a 70x70 PatchGAN architecture, which are used to classify 70x70 overlapped images to see if they are real or fake. The PatchGAN architecture consists of 5 convolutional layers with instance normalization [insert citation].
 
 ![CycleGAN Discriminator](/assets/images/team14/cycleGAN-discriminator.webp)
-* Fig X. Example of CycleGAN Discriminator architecture
+* Fig X. Example of CycleGAN Discriminator architecture, https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d
  
  
 ### Architecture Blocks and Code Implementation <a name="archBlocks1"></a>
+
+
 
 ### Results <a name="res1"></a>
 
@@ -105,12 +112,6 @@ StarGAN consists of two modules, a discriminator and a generator. The discrimina
 * Fig X. Example flow of StarGAN where D represents the discriminator and G represents the generator
 
 ### Architecture <a name="arch2"></a>
-
-The discriminator produces probability distributions over source and domain labels as follows:
-D: x\rightarrow\left\{{D_{src}(x), D_{cls}(x)}\right\}
-
-Adversarial Loss:
-L_{adv} = \mathbb{E}_{x}[log D_{src}(x)] + \mathbb{E}_{x,c}[log (1-D_{src}(G(x,c)))]
 
 ### Architecture Blocks and Code Implementation <a name="archBlocks2"></a>
 
