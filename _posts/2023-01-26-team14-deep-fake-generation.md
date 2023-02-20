@@ -114,6 +114,8 @@ https://github.com/deepfakes/faceswap
 
 [4] Brownlee, Jason. “A Gentle Introduction to Generative Adversarial Networks (Gans).” MachineLearningMastery.com, 19 July 2019, https://machinelearningmastery.com/what-are-generative-adversarial-networks-gans/. 
 
+[5] Choi, Yunjey, et al. “Papers with Code - Stargan: Unified Generative Adversarial Networks for Multi-Domain Image-to-Image Translation.” StarGAN: Unified Generative Adversarial Networks for Multi-Domain Image-to-Image Translation | Papers With Code, https://paperswithcode.com/paper/stargan-unified-generative-adversarial. 
+
 https://github.com/Deepfakes/
 
 
