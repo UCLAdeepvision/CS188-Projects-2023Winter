@@ -107,10 +107,17 @@ StarGAN consists of two modules, a discriminator and a generator. The discrimina
 ### Architecture <a name="arch2"></a>
 
 The discriminator produces probability distributions over source and domain labels as follows:
-D: x\rightarrow\left\{{D_{src}(x), D_{cls}(x)}\right\}
+D: x\rightarrow\\{{D_{src}(x), D_{cls}(x)}\right\}
+
+$$
+\mathbf{D} : \mathbf{x}\rightarrow\{{D_{src}(x), D_{cls}(x)}\}
+$$
 
 Adversarial Loss:
-L_{adv} = \mathbb{E}_{x}[log D_{src}(x)] + \mathbb{E}_{x,c}[log (1-D_{src}(G(x,c)))]
+
+$$
+\mathbf{L}_{adv} = \mathbb{E}_{x}[log D_{src}(x)] + \mathbb{E}_{x,c}[log (1-D_{src}(G(x,c)))]
+$$
 
 ### Architecture Blocks and Code Implementation <a name="archBlocks2"></a>
 
