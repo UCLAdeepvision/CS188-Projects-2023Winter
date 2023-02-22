@@ -6,8 +6,7 @@ author: Drake Cote, Nathan Paredes-Kao
 date: 2023-01-29 01:09:00
 ---
 
->  
-
+>
 <!--more-->
 {: class="table-of-content"}
 * TOC
@@ -32,8 +31,8 @@ Deep learning has become one of the most popular tools for computer vision and m
 
 #### Proposed Sources
 
-[0] 
+[0] [Mushrooms Detection, Localization and 3D Pose Estimation....](https://arxiv.org/pdf/2201.02837.pdf) Baisa, Nathanael L., and Bashir Al-Diri. Mushrooms Detection, Localization and 3D Pose Estimation Using RGB-D Sensor for Robotic-Picking Applications. Arxiv, 8 Jan. 2022, https://arxiv.org/pdf/2201.02837.pdf. 
 
-[1] 
+[1] Mohanty, Sharada P., et al. “Using Deep Learning for Image-Based Plant Disease Detection.” Frontiers, Frontiers, 6 Sept. 2016, https://www.frontiersin.org/articles/10.3389/fpls.2016.01419/full. 
 
-[2] 
+[2] N, Skanda H. Plant Identification Methodologies Using Machine Learning ... - IJERT. Https://Www.ijert.org/, 3 Mar. 2019, https://www.ijert.org/research/plant-identification-methodologies-using-machine-learning-algorithms-IJERTV8IS030116.pdf. 
