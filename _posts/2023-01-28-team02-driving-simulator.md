@@ -14,6 +14,52 @@ date: 2023-01-28
 ## Introduction
 Driving simulators provide the fundamental platform for autonomous driving researches. By integrating various deep learning or reinforcement learning pipelines and engines, driving simulators facilitate and standardize model training, validation, testing, and evaluation. The iterations in driving simulators have aimed at a better integration of powerful DL/RL platforms and realistic scene simulations.
 
+In this paper, we study Metadrive, a lightweight driving simulator supporting compositional map generation and a variety of sensory inputs. We investigate the implementation and configuration of the environment generation, as well as agents' policies, which defines the way they interact with the environment. By gathering FPV camera image and traning customized models, we create new policies using RGB image instead of Lidar data and evaluate the performace of agents in various environments.
+
+
+## Environment Setup
+1. Create a new virtual environment for Metadrive
+   ```
+   conda create --name Metadrive python=3.8
+   conda activate Metadrive
+   ```
+2. Install metadrive as instructed here: [Metadrive](https://github.com/metadriverse/metadrive)
+3. Install relevant packages:
+   ```
+   conda install pytorch cudatoolkit=11.3 -c pytorch -c nvidia
+   conda install -c pytorch torchvision
+   ```
+
+
+## Research Direction
+Explain what we try to do and the steps needed to complete.
+
+
+
+## Environment (Map & Agent) Configuration
+The environment configuration is explained in the [Metadrive Documentation](https://metadrive-simulator.readthedocs.io/en/latest/config_system.html). For testing and concept validation purposes, we configured a fundamental environment with one-lane on each direction, and no traffic except for the agent. The block generation is also limited to Straight(S) and Circular(C).
+
+
+
+
+## Extracting FPV RGB Image From Metadrive
+
+
+
+## Training
+
+
+## Defining Our Own Policy
+
+
+## Evaluation
+
+
+
+## Future Plan & Possible Areas to Improve
+
+
+
 ## Possible project topics
 1. Integration of an existing algorithm/model with another driving simulator.
 2. Evaluation of the effect of sensory inputs removal/addition on an implemented model.
