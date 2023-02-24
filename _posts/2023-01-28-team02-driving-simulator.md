@@ -166,13 +166,22 @@ class RGBPolicy(BasePolicy):
 ## Visualization and Evaluation
 We visualized our `RGBPolicy` in the MetaDrive environment to see how it performs.
 
+![fig1]({{ '/assets/images/Team02/demo.gif' | relative_url }})
+
 
 ## Future Plan and Possible Areas to Improve
-1. Dicrete classification
-2. Fine-tune model
-3. More data & data augmentation
-4. Integrating image segmentation
-5. Extend to more complicated scenarios
+1. Dicrete classification  
+Currently, the naive implementation of the model predicts continuous steering and accleration values, and the loss function uses MSE loss. Accurately predicting continuous values can be a difficult task for a pretrained model. Thus, we can categorize the lane information into several discrete situations, e.g. straight, slight left curved, and etc. For each category, we will obtain the ground truth value for steering angle by taking the mean of all values in this specific situation. 
+2. Incorporating speed information  
+While the action space for the original IDM policy only consists of two numbers, speed is an important value to consider when predicting vehicle movement in autonomous driving. It's reasonable to believe that speed and acceleration are correlated. However, the currect approach does not take speed information into account. Therefore, after classifying the lane category, speed information can be feed into a separate model to predict the acceleration and possibily steering.
+3. Fine-tune model  
+We will try different pretrained models and finetune them to explore the most suitable model for this task.
+4. More data & data augmentation
+The current dataset we constructed only contains ~1000 images for training and ~200 images for validation. This is not enough for certain models such as ResNet or VIT. We will try data augmentation to generate more images for training and preventing overfitting.
+5. Integrating image segmentation
+Image segmentation models can be applied in this task. Before predicting the action space, we can first feed the image to the segmentation model, which may be able to extract focused and useful information specifically about the road or lane.
+6. Extend to more complicated scenarios
+If driving in a one-lane no traffic scenario is successfully solved, we will extend the project to more realistic scenarios. 
 
 
 ## Possible project topics
