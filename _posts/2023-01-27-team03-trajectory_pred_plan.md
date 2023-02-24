@@ -61,12 +61,34 @@ In comparison to Cross-Attention on the left, CG is computationally cheaper by s
 As a single CG Block is comparable to attention, the MCG blocks are comparable to transformer, which simply involves *many* stacked CG Blocks. However, MCG keeps the **running mean** or residual network information.
 
 ### Encoders
-We briefly introduce the encoders network architectures:
+We introduce the encoders network architectures:
 1. Agent History Encoder includes two LSTM networks and one MCG Block.
     * One LSTM encodes position data while the other encodes position difference data.
-    * The MCG Block 
+    * The MCG blocks that encodes the set of history elements.
     * Empirically, two LSTM might help to capture velocity *and* accelration.
-2. 
+2. Agent Interaction Encoder uses the exactly same architecture as the History Encoder with different specifications. More importantly, the input data are the interaction embedding instead of single-agent representation.
+3. Roadgraph Encoder is only consist of MCG Blocks. The input features are line segments, which has features such as starting point, ending point, and road type (crosswalk, yellowline, etc.)
+<p align="center">
+<img src="../assets/images/team03/lstm.png"  width="300" height="200">
+</p>
+
+### Predictors
+A decoder unit is primarily MCG Blocks. To make final prediction, the embeddings are passed through multiple decoders units sequentially. In the last decoder unit, an additional MLP is applied to output the soft prediction of future trajectories distribution.
+
+Finally, a Expectation Maximization (EM) algorithm with Gaussian Mixure Model (GMM) prior is trained on the distribution parameters including mean, covariance matrix, and probability.
+
+![image info](../assets/images/team03/gmm.png)
+
+Notice the GMM naturally has multiple local nodes. Therefore, it is similar to how there multiple possible future paths in reality.
+
+### Training Objective
+During training, first few seconds contexts are given to Multipath++ to find the GMM. Then, the future path predictions are compared with the groud-truth. Essentially, the training objective is to **maximize the likehood of groud-truth**.
+
+### Anchor Training
+
+### Bootstrap Aggregation
+
+
 
 ## Reference
 
