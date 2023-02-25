@@ -321,6 +321,12 @@ Mask2Former follows the same setup steps as Panoptic FPN to set up MMDetection.
 MMDetection pretrained Mask2Former Evaluation Results:
 [Implementation Link](https://colab.research.google.com/drive/1P5NI9k6qnYz0G9tsCxZ446dKjvnkWVX4?usp=sharing)
 
+| Mask2Former Resnet50 | PQ     | SQ     | RQ     | categories |
+| :--------------- | :---: | :---: | :---: | :---: |
+| All    | 51.865 | 83.071 | 61.591 | 133        |
+| Things | 57.737 | 84.043 | 68.129 | 80         |
+| Stuff  | 43.003 | 81.604 | 51.722 | 53         |
+
 ![Mask2Former Demo Image](../assets/images/team-11/mask2former_demo.png)
 *Mask2Former Sample Output*
 

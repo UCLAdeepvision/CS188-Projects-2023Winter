@@ -15,4 +15,3 @@ _site
 *.out
 *.synctex.gz
 _latex/
-*:Zone.Identifier
