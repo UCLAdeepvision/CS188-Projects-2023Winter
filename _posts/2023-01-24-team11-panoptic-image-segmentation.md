@@ -231,199 +231,104 @@ MMDetection pretrained PanopticFPN Evaluation Results:
 
 ## Maskformer with MMDetection
 
-### M.1 Background
+### Background
 
-Semantic segmentation is often approached as per pixel classification, while instance segmentation is approached as mask classification. The key insight of Cheng, Schwing, and Kirillov to create the MaskFormer model is that "mask classification is sufficiently general to solve both semantic- and instance-level segmentation tasks in a unified manner using the exact same model, loss, and training procedure." [3] Mask classification can be used to solve semantic, instance, and panoptic segmentation together.
+Semantic segmentation is often approached as per pixel classification, while instance segmentation is approached as mask classification. The key insight of Cheng, Schwing, and Kirillov to create the MaskFormer model is that "mask classification is sufficiently general to solve both semantic- and instance-level segmentation tasks in a unified manner using the exact same model, loss, and training procedure." [5] Mask classification can be used to solve semantic, instance, and panoptic segmentation together.
 
-MaskFormer is a mask classification model which predicts a set of binary masks, each associated with one global class prediction [3]. MaskFormer converts a per-pixel classification model into a mask classification model. 
-
+MaskFormer is a mask classification model which predicts a set of binary masks, each associated with one global class prediction [5]. MaskFormer converts a per-pixel classification model into a mask classification model [5]. 
 
 
 #### Maskformer Architecture
 
 ![Maskformer Architecture](../assets/images/team-11/maskformer_architecture.png)
-*Maskformer Architecture* [3]
+*Maskformer Architecture* [5]
 
-Maskformer breaks down into three modules: a pixel level module, a transformer module, and a and a segementation module. The pixel level module extracts per-pixel embeddings to generate the binary mask predictions, the transformer module computes per-segment embeddings, and the segmentation module generate the prediction pairs. 
+Maskformer breaks down into three modules: a pixel level module, a transformer module, and a segementation module. The pixel level module extracts per-pixel embeddings to generate the binary mask predictions, the transformer module computes per-segment embeddings, and the segmentation module generate the prediction pairs [5]. 
 
-The pixel-level module begins with a backbone to extract features from the input image. The features are then upsampled by a pixel decoder into per-pixel embeddings. This module can be changed for any per-pixel classification-based segmentation model.
+The pixel-level module begins with a backbone to extract features from the input image. The features are then upsampled by a pixel decoder into per-pixel embeddings. This module can be changed for any per-pixel classification-based segmentation model [5].
 
-The transfomer module uses a a Transformer decoder [Citation] to compute the per-segment embeddings from the extracted image features and learnable positional embeddings.
+The transfomer module uses a a Transformer decoder to compute the per-segment embeddings from the extracted image features and learnable positional embeddings [5].
 
-The segmentation module uses a linear classifier followed by softmax on the per-segment embeddings to get the class probabilities of each segment. A 2 hidden layer Multi-Layer Perceptron gets the mask embeddings from the per-segment embeddings. To get the final binary mask predictions, the model takes a dot product between the ith mask embeddings and the per-pixel embeddings from the pixel-level module. This dot product is followed by a sigmoid activation. 
+The segmentation module uses a linear classifier followed by softmax on the per-segment embeddings to get the class probabilities of each segment. A 2 hidden layer Multi-Layer Perceptron gets the mask embeddings from the per-segment embeddings. To get the final binary mask predictions, the model takes a dot product between the ith mask embeddings and the per-pixel embeddings from the pixel-level module. This dot product is followed by a sigmoid activation to produce the output [5]. 
 
-### M.2 Setup
+### Setup
 
-Before we do anything, let's make sure we have our Colab environment set up correctly. Mount you Google Drive, install mmcv, and install the mmdetection library in your session.
+MaskFormer follows the same setup steps as Panoptic FPN to set up MMDetection.
 
-```python
-import os
-from google.colab import drive
-drive.mount('/content/drive', force_remount=True)
+### Run Test Script
 
-# Install mmcv-full
-!pip install mmcv-full==1.7.0 -f https://download.openmmlab.com/mmcv/dist/cu117/torch1.13/index.html
-
-# Install mmdetection in colab environment
-%cd /content/drive/MyDrive/MMDet1/mmdetection
-!pip install -e .
-
-# Install panopticapi
-!pip install git+https://github.com/cocodataset/panopticapi.git
-```
-
-Download the mmdetection checkpoint files for MaskFormer, using the ResNet50 backbone.
-```python
-!mkdir -pv /content/drive/MyDrive/MMDet1/mmdetection/outputs
-!mkdir -pv /content/drive/MyDrive/MMDet1/mmdetection/results
-!mkdir -pv /content/drive/MyDrive/MMDet1/mmdetection/checkpoints/maskformer
-
-!wget -c https://download.openmmlab.com/mmdetection/v2.0/maskformer/maskformer_r50_mstrain_16x1_75e_coco/maskformer_r50_mstrain_16x1_75e_coco_20220221_141956-bc2699cb.pth \
-      -O checkpoints/maskformer/maskformer_r50_mstrain_16x1_75e_coco_20220221_141956-bc2699cb.pth
-```
+MMDetection pretrained MaskFormer Evaluation Results:
+[Implementation Link](https://colab.research.google.com/drive/1UEj1DHPcbcxhIFO2ukt9QWSG-S1zVm5z?usp=sharing)
 
 
-Test the model with the panoptic quality metric.
-```python
-! CUDA_VISIBLE_DEVICES=0
-! python tools/test.py \
-    configs/maskformer/maskformer_r50_mstrain_16x1_75e_coco.py \
-    checkpoints/maskformer/maskformer_r50_mstrain_16x1_75e_coco_20220221_141956-bc2699cb.pth \
-    --work-dir /content/drive/MyDrive/MMDet1/mmdetection/results \
-    --eval PQ \
-    --eval-options jsonfile_prefix=/content/drive/MyDrive/MMDet1/mmdetection/results
-```
+| MaskFormer Resnet | PQ     | SQ     | RQ     | categories |
+| :--------------- | :---: | :---: | :---: | :---: |
+| All    | 46.854 | 80.617 | 57.085 | 133        |
+| Things | 51.089 | 81.511 | 61.853 | 80         |
+| Stuff  | 40.463 | 79.269 | 49.888 | 53         |
 
-Generate a sample output image from the model
-```python
-from mmdet.apis import init_detector, inference_detector, show_result_pyplot
-import mmcv
-
-# Model config and checkpoint path
-config_file = 'configs/maskformer/maskformer_r50_mstrain_16x1_75e_coco.py'
-checkpoint_file = 'checkpoints/maskformer/maskformer_r50_mstrain_16x1_75e_coco_20220221_141956-bc2699cb.pth'
-
-model = init_detector(config_file, checkpoint_file, device='cpu')
-
-img = '/content/drive/MyDrive/MMDet1/mmdetection/demo/.jpg'
-result = inference_detector(model, img)
-
-show_result_pyplot(model, img, result)
-```
-
-<<<<<<< HEAD
-### MaskFormer Outputs
+![MaskFormer Demo Image](../assets/images/team-11/maskformer_demo.png)
+*MaskFormer Sample Output*
 
 ## Mask2Former with MMDetection
 
 ### Mask2Former Background
 
-While MaskFormer is a universal architecture for semantic, instance, and panoptic segmentation, it is expensive to train and does not outperform specialized segmentation models [cite? - mentioned in 4]. Masked-attention Mask Transformer, or Mask2Former, is a universal segmentation method that outperforms specialized architectures, and is simpler to train on each task. Mask2Former is similar to MaskFormer, but with several improvements. The first is using masked attention in the Transformer decoder [Cite again] rather than cross-attention. This restricts the attention on localized features centered around the predicted segments [4]. Second is using "multi-scale high-resolution features", as well as optimization improvements and calculating mask loss on randomly sampled points to save training memory.
+While MaskFormer is a universal architecture for semantic, instance, and panoptic segmentation, it is expensive to train and does not outperform specialized segmentation models [6]. Masked-attention Mask Transformer, or Mask2Former, is a universal segmentation method that outperforms specialized architectures, and is simpler to train on each task. Mask2Former is similar to MaskFormer, but with several improvements. The first is using masked attention in the Transformer decoder rather than cross-attention [6]. This restricts the attention on localized features centered around the predicted segments [6]. Second is using "multi-scale high-resolution features", as well as optimization improvements and calculating mask loss on randomly sampled points to save training memory [6].
 
 #### Mask2Former Architecture
 
 ![Mask2Former Architecture](../assets/images/team-11/mask2former_architecture.png)
-*Mask2Former Architecture* [4]
+*Mask2Former Architecture* [6]
 
-Mask2Former follows the overall meta architecture from MaskFormer: a backbone to extract image features, a pixel decoder to upsample features into per-pixel embeddings, and a Transformer decoder to compute segments from the image features, but with the changes mentioned above [4]. 
+Mask2Former follows the overall meta architecture from MaskFormer: a backbone to extract image features, a pixel decoder to upsample features into per-pixel embeddings, and a Transformer decoder to compute segments from the image features, but with the changes mentioned above [6]. 
 
 ##### Masked Attention
 
-The first of these changes is using masked attention rather than corss attention in the Transformer decoder [4]. Masked attention is "a variant of cross-attention that only attends within the foreground region of the predicted mask for each query." [4] This is achieved by adding an "attention mask to standard cross attention. [4] Cross attention computes: 
+The first of these changes is using masked attention rather than cross attention in the Transformer decoder [6]. Masked attention is "a variant of cross-attention that only attends within the foreground region of the predicted mask for each query." [6] This is achieved by adding an "attention mask" to standard cross attention. [6] Cross attention computes: 
 
 ![Cross Attention](../assets/images/team-11/cross_attention.png)
-*Cross Attention Formula* [4]
+*Cross Attention Formula* [6]
 
-l is the layer index, **X**~l~ denotes N C dimensional query features in the lth layer [4]. **X**~0~ are the input query features to the Transformer decoder [4]. **Q**~l~ is *f~Q~*(**X**~l~), where *f~Q~* is a linear transformation and **K**~l~ and **V**~l~ are the image features under transformations *f~K~* and *f~V~*. [4]
+l is the layer index, **X**~l~ denotes N C dimensional query features in the lth layer [6]. **X**~0~ are the input query features to the Transformer decoder [6]. **Q**~l~ is *f~Q~*(**X**~l~), where *f~Q~* is a linear transformation and **K**~l~ and **V**~l~ are the image features under transformations *f~K~* and *f~V~*. [6]
 
 Masked attention alters this slightly by adding a modulation factor to the softmax. 
 
 ![Mask Attention](../assets/images/team-11/masked_attention.png)
-*Mask Attention Formula* [4]
+*Mask Attention Formula* [6]
 
 ![Mask Attention Modulator](../assets/images/team-11/masked_attention_modulator.png)
-*Attention Mask at Feature (x,y)* [4]
+*Attention Mask at Feature (x,y)* [6]
 
 **M**~l-1~ is the mask prediction of the previous layer, converted to binary data with threshold 0.5. This is also resized to the same dimension as **K**~l~. 
 
 ##### High-resolution Features
 
-Higher-resolution features boost model performance, especially for small objects, but also increase computation cost [4]. To gain the benefit of higher resolution images while also limiting computation cost increases, Mask2Former uses a feature pyramid of both high and low resolution features produced by the pixel decoder: with resolutions 1/32, 1/16, and 1/8 of the original image [4]. Each of these different feature resolutions are fed to one layer of the Transformer decoder, as can be seen in the Mask2Former architecture image. This is repeated L times in the decoder, for a total of 3L layers in the Transformer decoder [4].
+Higher-resolution features boost model performance, especially for small objects, but also increase computation cost [6]. To gain the benefit of higher resolution images while also limiting computation cost increases, Mask2Former uses a feature pyramid of both high and low resolution features produced by the pixel decoder with resolutions 1/32, 1/16, and 1/8 of the original image [6]. Each of these different feature resolutions are fed to one layer of the Transformer decoder, as can be seen in the Mask2Former architecture image. This is repeated L times in the decoder, for a total of 3L layers in the Transformer decoder [6].
 
 ##### Optimization Improvements
 
-Mask2Former makes three changes to the standard Transformer decoder design [4]. The first is that Mask2Former changes the order of the self-attention and cross-attention layers (mask-attention layer), starting with the mask-attention layer rather than the self-attention layer [4]. Next the query features (**X**~0~) are made learnable, which are supervised before being used to compute masks (**M**~0~) [4]. Lastly dropout is removed, as it was not found to help performance [4].
+Mask2Former makes three changes to the standard Transformer decoder design [6]. The first is that Mask2Former changes the order of the self-attention and cross-attention layers (mask-attention layer), starting with the mask-attention layer rather than the self-attention layer [6]. Next the query features (**X**~0~) are made learnable, which are supervised before being used to compute masks (**M**~0~) [6]. Lastly dropout is removed, as it was not found to help performance [6].
 
-Finally to improve training efficienty, Mask2Former calculates the mask loss with samples of points rather than the whole image [4]. In matching loss, a set of K points is uniformly sampled for all the ground truth and prediction masks [4]. In the final loss, different sets of K points are sampled with importance sampling for each pair of predictions and ground truth [4]. This sampled loss calculation reduces required memory during training by 3x [4].
+Finally to improve training efficienty, Mask2Former calculates the mask loss with samples of points rather than the whole image [6]. In matching loss, a set of K points is uniformly sampled for all the ground truth and prediction masks [6]. In the final loss, different sets of K points are sampled with importance sampling for each pair of predictions and ground truth [6]. This sampled loss calculation reduces required memory during training by 3x [6].
 
-### Mask2Former Code Setup
+### Setup
 
-Before we do anything, let's make sure we have our Colab environment set up correctly. Mount you Google Drive, install mmcv, and install the mmdetection library in your session.
+Mask2Former follows the same setup steps as Panoptic FPN to set up MMDetection.
 
-```python
-import os
-from google.colab import drive
-drive.mount('/content/drive', force_remount=True)
+### Run Test Script
 
-# Install mmcv-full
-!pip install mmcv-full==1.7.0 -f https://download.openmmlab.com/mmcv/dist/cu117/torch1.13/index.html
+MMDetection pretrained Mask2Former Evaluation Results:
+[Implementation Link](https://colab.research.google.com/drive/1P5NI9k6qnYz0G9tsCxZ446dKjvnkWVX4?usp=sharing)
 
-# Install mmdetection in colab environment
-%cd /content/drive/MyDrive/MMDet1/mmdetection
-!pip install -e .
+![Mask2Former Demo Image](../assets/images/team-11/mask2former_demo.png)
+*Mask2Former Sample Output*
 
-# Install panopticapi
-!pip install git+https://github.com/cocodataset/panopticapi.git
-```
-
-Download the mmdetection checkpoint files for MaskFormer, using the ResNet50 backbone.
-```python
-!mkdir -pv /content/drive/MyDrive/MMDet1/mmdetection/outputs
-!mkdir -pv /content/drive/MyDrive/MMDet1/mmdetection/results
-!mkdir -pv /content/drive/MyDrive/MMDet1/mmdetection/checkpoints/mask2former
-
-!wget -c https://download.openmmlab.com/mmdetection/v2.0/mask2former/mask2former_r50_lsj_8x2_50e_coco-panoptic/mask2former_r50_lsj_8x2_50e_coco-panoptic_20220326_224516-11a44721.pth \
-      -O checkpoints/mask2former/mask2former_r50_lsj_8x2_50e_coco-panoptic_20220326_224516-11a44721.pth
-```
-
-
-Test the model with the panoptic quality metric.
-```python
-! CUDA_VISIBLE_DEVICES=0
-! python tools/test.py \
-    configs/mask2former/mask2former_r50_lsj_8x2_50e_coco-panoptic.py \
-    checkpoints/mask2former/mask2former_r50_lsj_8x2_50e_coco-panoptic_20220326_224516-11a44721.pth \
-    --out results/mask2former/mask2former_results.pkl \
-    --eval PQ \
-    --show
-```
-
-Generate a sample output image from the model
-```python
-from mmdet.apis import init_detector, inference_detector, show_result_pyplot
-import mmcv
-
-# Model config and checkpoint path
-config_file = 'configs/mask2former/mask2former_r50_lsj_8x2_50e_coco-panoptic.py'
-checkpoint_file = 'checkpoints/mask2former/mask2former_r50_lsj_8x2_50e_coco-panoptic_20220326_224516-11a44721.pth'
-
-model = init_detector(config_file, checkpoint_file, device='cpu')
-
-img = '/content/drive/MyDrive/MMDet1/mmdetection/data/coco/test2017/000000000001.jpg'
-result = inference_detector(model, img)
-
-model.show_result(img, result)
-show_result_pyplot(model, img, result)
-```
-
-### Mask2Former Outputs
-=======
 ## Evaluation
 
 ## Summary
 
 ## Conclusion
->>>>>>> 9c3cf3fe97f0353729ab2c634899afca6ce6cb4b
 
 ## Jan. 29 Submission
 
@@ -463,6 +368,12 @@ Andrew Fantino and Nicholas Oosthuizen will explore the topic of panoptic segmen
 
 <a name="ref4"></a>
 [4] [FPN Paper](https://arxiv.org/pdf/1612.03144.pdf)
+
+<a name="ref5"></a>
+[5] [MaskFormer Paper](https://arxiv.org/pdf/2107.06278.pdf)
+
+<a name="ref6"></a>
+[6] [Mask2Former Paper](https://arxiv.org/pdf/2112.01527.pdf)
 
 
 <!-- ## Main Content
