@@ -35,9 +35,10 @@ Medical imaging is very important when attempting to document the visual represe
 <div align=center>Fig 2. Mathematical representation of Logistic Regression.</div> 
 <br>
 
-The Logistic Regression model is a relatively simple model compared to other complex models like neural networks. There is a single layer of neurons where each neuron computes the weighted sum of the input features and applies the sigmoid function to the result to produce the probability estimate. It is the sigmoid function that maps the weighted sum inputs to the value between 0 and 1 which is the predicted probability that the input belongs in the right class. 
+The Logistic Regression model is a relatively simple model compared to other complex models like neural networks. There is a single layer of neurons where each neuron computes the weighted sum of the input features and applies the sigmoid function to the result to produce the probability estimate. We apply the sigmoid function to a the simple Linear Regression equation. It is the sigmoid function that maps the weighted sum inputs to the value between 0 and 1 which is the predicted probability that the input belongs in the right class. The common loss function for the Logisitic Regression model is the cross-entropy loss. This loss function measures the difference between the predicted probability distribution and the true probability distribution.  
 
 ### Code Implementation
+
 ## ResNet18
 ### Motivation
 When it comes to image classification and the Logistic Regression model is a very simple yet quick method when the result is binary. However, this does not mean we cannot use more complex neural network architectures for the task. ResNet18 is a deep neural network architecture that is designed for image classification and is a variant of the ResNet architecture that uses 18 layers including a convolutional layer, four residual blocks, and a fully connected layer. With the introduction to these residual blocks, it removes the vanishing gradient problem because as each layer calculates the gradient layer, it can become exponentially small as our input propagates through each layer. Some reasons why we want to use the ResNet18 model against our Logistic Regression are, 
