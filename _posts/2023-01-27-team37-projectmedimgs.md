@@ -6,7 +6,6 @@ author: Team 37
 date: 2022-01-27
 ---
 
-
 > Medical Imaging analysis has always been a target for the many methods in deep learning to help with diagnostics, evaluations, and quantifying of medical diseases. In this study, we learn and implement models of Logistic Regression and ResNet18 to use in medical image classification. We use image classification to train our models to find brain tumors in brain MRI images. Furthermore, we will use our own implementation of LogisticRegression and finetune our ResNet18 model to better fit our needs. 
 
 <!--more-->
