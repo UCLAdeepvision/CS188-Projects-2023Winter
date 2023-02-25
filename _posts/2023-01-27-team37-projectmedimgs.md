@@ -32,14 +32,31 @@ Medical imaging is very important when attempting to document the visual represe
 
 ![logiregfunc]({{ '/assets/images/team37/logireg-func.png' | relative_url }})
 {: style="width: 800px; max-width: 100%;"}
-<div align=center>Fig 2. Mathematical representation of Logistic Regression.</div> <br>
+<div align=center>Fig 2. Mathematical representation of Logistic Regression.</div> 
+<br>
 
 The Logistic Regression model is a relatively simple model compared to other complex models like neural networks. There is a single layer of neurons where each neuron computes the weighted sum of the input features and applies the sigmoid function to the result to produce the probability estimate. It is the sigmoid function that maps the weighted sum inputs to the value between 0 and 1 which is the predicted probability that the input belongs in the right class. 
 
 ### Code Implementation
 ## ResNet18
 ### Motivation
+When it comes to image classification and the Logistic Regression model is a very simple yet quick method when the result is binary. However, this does not mean we cannot use more complex neural network architectures for the task. ResNet18 is a deep neural network architecture that is designed for image classification and is a variant of the ResNet architecture that uses 18 layers including a convolutional layer, four residual blocks, and a fully connected layer. With the introduction to these residual blocks, it removes the vanishing gradient problem because as each layer calculates the gradient layer, it can become exponentially small as our input propagates through each layer. Some reasons why we want to use the ResNet18 model against our Logistic Regression are, 
+<ol>
+<li>Feature extraction in ResNet18 compared to Logistic Regression's manual feature extraction, can learn hierarchical features from the input image and we want to know how that compares to Logistic Regression.</li>
+<li>ResNet18 can also handle more noisy and complex input images compared to Logistic Regression since we can use the multiple layers to extract features.</li>
+<li>Performance is the final difference we want to test when compared to Logistic Regression as ResNet18 has previously reached many amazing benchmarks in image classification.</li>
+</ol>
 ### Architecture
+![logiregfunc]({{ '/assets/images/team37/resnet18-arch.png' | relative_url }})
+{: style="width: 800px; max-width: 100%;"}
+<div align=center>Fig 3. ResNet18 Architecture [2].</div> 
+<br>
+
+ResNet18 uses 18 layers residual blocks compared to other neural networks to avoid the vanishing gradient problem. The input changes each layer due the convolutional layers and pooling that occurs during the process. Each convolutional layer is followed by a batch normalization layer and a ReLu activation function. These layers contain four stages which each stage consisting of the residual blocks. Each of these residual blocks contain some convolutional layers with shortcut connections that allow the prevention of the vanishing gradient problem. 
+<br> 
+<br>
+The first convolution layer is the raw input data represented by a 3D vector which is then output with another 3D vector but with a different number of channels. Subsequent layers continue this procedure using the last layer's output as the next layer's input followed by the batch normalization and ReLu activation function. The avgpool layer reduces the height and width of our image classification without changing the number of channels. This helps reduce the spatial dimensions of a feature map while keeping the most important features of our MRI images. The FC layer or fully connected layer, connects every neuron in the previous layer to every neuron in the current layer. For our use case, we use it to map the output of the previous layer to our class labels. 
+
 ### Code Implementation
 ## Result
 ### Chart Comparison
@@ -52,6 +69,8 @@ Code Base: [Here](link)
 ## Reference
 <ol>
 <li>Torres, Renato, et al. ‘A Machine-Learning Approach to Distinguish Passengers and Drivers Reading While Driving’. Sensors, vol. 19, 07 2019, p. 3174, https://doi.org10.3390/s19143174.</li>
+    
+<li>Ramzan, Farheen, et al. ‘A Deep Learning Approach for Automated Diagnosis and Multi-Class Classification of Alzheimer’s Disease Stages Using Resting-State FMRI and Residual Neural Networks’. Journal of Medical Systems, vol. 44, 12 2019, https://doi.org10.1007/s10916-019-1475-2.</li>
 </ol>
 [A collection of recent image segmentation methods, categorized by regions of the human body](https://github.com/JunMa11/SOTA-MedSeg)
 
