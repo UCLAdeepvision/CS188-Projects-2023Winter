@@ -1,7 +1,7 @@
 ---
 layout: post
 comments: true
-title: Post Template
+title: Pose Estimation
 author: Michael Yu and Zhuoran Liao
 date: 2023-01-28
 ---
