@@ -17,41 +17,41 @@ date: 2023-01-24
 
 ## Introduction
 
-In 2019, a team from Facebook AI Research ([FAIR](https://ai.facebook.com/)) published a paper that defined a new field of computer vision called **Panoptic Image Segmentation** that combines detections of *stuff* and *things* $$^{[1]}$$. However, before we can understand what panoptic segmentation is, we must understand some background.
+In 2019, a team from Facebook AI Research ([FAIR](https://ai.facebook.com/)) published a paper that defined a new field of computer vision called **Panoptic Image Segmentation** that combines detections of *stuff* and *things* [[1](#ref1)]. However, before we can understand what panoptic segmentation is, we must understand some background.
 
 ![Cat]({{'/assets\images\team-11\cat.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
-*Fig \#. Example cat image* $$^{[2]}$$.
+*Fig \#. Example cat image* [[2](#ref2)].
 
 ### Stuff & Things
 
 Stuff
-:   amorphous and uncountable regions of similar texture or material such as grass, sky, road defined by simply assigning a class label to each pixel in an image <sup>[\[1\]](https://openaccess.thecvf.com/content_CVPR_2019/html/Kirillov_Panoptic_Segmentation_CVPR_2019_paper.html)</sup> [^1]
+:   amorphous and uncountable regions of similar texture or material such as grass, sky, road defined by simply assigning a class label to each pixel in an image  [[1](#ref1)]
 
 Things
-:   Items in an image that could possess more than 1 countable instance defined by detecting each object and delineating it with a bounding box or segmentation mask [^1]
+:   Items in an image that could possess more than 1 countable instance defined by detecting each object and delineating it with a bounding box or segmentation mask [[1](#ref1)]
 
-Although identifying stuff and things sound like similar problems, the deep learning models that perform the task vary substansially in datasets, details, and metrics[^1]
+Although identifying stuff and things sound like similar problems, the deep learning models that perform the task vary substansially in datasets, details, and metrics[[1](#ref1)]
 
 ### Semantic Segmentation
 
 Semantic segmentation is a task that indentifies stuff. **Description of how it works**
 
 ![Semantic Cat]({{'/assets\images\team-11\sem_cat.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
-*Fig \#. Semantic Segmentation on the cat image* [1].
+*Fig \#. Semantic Segmentation on the cat image* [[3](#ref3)].
 
 ### Instance Segmentation
 
 Description of how it works
 
 ![Instance Cat]({{'/assets\images\team-11\inst_cat.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
-*Fig \#. Instance Segmentation on the cat image* [1].
+*Fig \#. Instance Segmentation on the cat image* [[3](#ref3)].
 
 ### Panoptic Segmentation
 
 The paper sets the groundwork for the panoptic image segmenation problem to reconcile the dichotomy between *stuff* and *things* by combining semantic and instance segmentation
 
 ![Panoptic Cat]({{'/assets\images\team-11\pan_cat.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
-*Fig \#. Panoptic Segmentation on the cat image* [1].
+*Fig \#. Panoptic Segmentation on the cat image* [[3](#ref3)].
 
 Kirillov et al. defines a $$PS$$ *(Panoptic Score)* and the requirements for a model to be considered a "panoptic segmentation model."
 
@@ -149,30 +149,30 @@ You are now ready to get started with working with MMDetection in Colab. Please 
 
 ### Background
 
-The Panoptic FPN was designed as a single-network baseline for the panoptic segmentation task. They do this by starting from Mask R-CNN, a popular isntance segmentation model, with a Feature Pyramid Network (FPN) backbone based on ResNet. In parallel, they create a minimal semantic segmentation branch using the same features of the FPN to generate a dense-pixel output [^3]. The author's goal is to maintain top of the line performance for segementation quality ($$SQ$$) and recognition quality ($$RQ$$) [^3]
+The Panoptic FPN was designed as a single-network baseline for the panoptic segmentation task. They do this by starting from Mask R-CNN, a popular isntance segmentation model, with a Feature Pyramid Network (FPN) backbone based on ResNet. In parallel, they create a minimal semantic segmentation branch using the same features of the FPN to generate a dense-pixel output [[3](#ref3)]. The author's goal is to maintain top of the line performance for segementation quality ($$SQ$$) and recognition quality ($$RQ$$) [[3](#ref3)].
 
 ![FPN]({{'/assets\images\team-11\fpn.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
-*Fig \#. Instance Segmentation on the cat image* [1].
+*Fig \#. Instance Segmentation on the cat image* [[1](#ref1)].
 
 #### Feature Pyramid Network
 
 The FPN consists of a botton up pathway and a top-down pathway. The bottom-up pathway consists of feature maps of several scales with a scaling step of 2. Each step corresponds to a residual block stage from Resnet and the output of each step is the output of the activation function of the residual block (except for the first stage since it is so large). The stages have strides {4, 8, 16, 32} in order to downsample the feature map.
 
 ![Top_Down]({{'/assets\images\team-11\top_down_fpn.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
-*Fig \#. Instance Segmentation on the cat image* [1].
+*Fig \#. Instance Segmentation on the cat image* [[4](#ref4)].
 
 The top-down pathway starts from the deepest layer of the network and progressively upsamples it while adding in transformed versions of higher-resolution features from the bottom-up pathway. The higher stages of the top-down pathway are at a smaller resolution, but semantically stronger. The purpose of the top-down pathway is to use this information to make a spatially fine and semantically stronger feature map of the input. Finally, the output of each stage of the top-down pathway is the final output of the FPN (labeled predict in Fig. #).
 
 #### Instance Segmentation Branch
 
-Mask R-CNN is an extension on Faster R-CNN that adds an masking head branch to predict an binary mask for each bounding box prediction. Panoptic FPN uses the Mask R-CNN with the ResNet FPN as a backbone from [#] since it has been used as a foundation for all top entries in recent recognition challenges[3].
+Mask R-CNN is an extension on Faster R-CNN that adds an masking head branch to predict an binary mask for each bounding box prediction. Panoptic FPN uses the Mask R-CNN with the ResNet FPN as a backbone from [#] since it has been used as a foundation for all top entries in recent recognition challenges [[3](#ref3)].
 
 #### Semantic Segmentation Branch
 
-The semantic segmentation branch also builds on the FPN in parallel with the instance segmentation branch. This semantic segmentation branch was designed to be as simple as possible and so it only upsamples each output of the FPN layers to 1/4th total size, add each together, and perform a 1x1 conv with a 4x bilinear upsampling. Each upsampling layer consists of a 3x3 convolution, group norm, ReLU, and 2x bilinear upsampling. It is important to note that in addition to each of the stuff class of the dataset, the branch can also output a 'other' class for pixels that do not belong to any classes. This avoids the branch predicting the pixels belong to no class as a incorrect class.
+The semantic segmentation branch also builds on the FPN in parallel with the instance segmentation branch. This semantic segmentation branch was designed to be as simple as possible and so it only upsamples each output of the FPN layers to 1/4th total size, add each together, and perform a 1x1 conv with a 4x bilinear upsampling. Each upsampling layer consists of a 3x3 convolution, group norm, ReLU, and 2x bilinear upsampling. It is important to note that in addition to each of the stuff class of the dataset, the branch can also output a 'other' class for pixels that do not belong to any classes. This avoids the branch predicting the pixels belong to no class as a incorrect class [[1](#ref1)].
 
 ![Semantic_Diagram]({{'/assets\images\team-11\semantic_diagram.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
-*Fig \#. Instance Segmentation on the cat image* [1].
+*Fig \#. Instance Segmentation on the cat image* [[1](#ref1)].
 
 ### Setup
 
@@ -202,9 +202,6 @@ Panoptic Evaluation Results:
 | All    | 40.248 | 77.785 | 49.312 | 133        |
 | Things | 47.752 | 80.925 | 57.475 | 80         |
 | Stuff  | 28.922 | 73.046 | 36.991 | 53         |
-
-
-
 
 ## Maskformer with MMDetection
 
@@ -260,13 +257,17 @@ Andrew Fantino and Nicholas Oosthuizen will explore the topic of panoptic segmen
 
 ## References
 
-[^1] [Panoptic Segmentation, Kirillov et al.(2019)](https://openaccess.thecvf.com/content_CVPR_2019/html/Kirillov_Panoptic_Segmentation_CVPR_2019_paper.html)
+<a name="ref1"></a>
+[1] [Panoptic Segmentation, Kirillov et al.(2019)](https://openaccess.thecvf.com/content_CVPR_2019/html/Kirillov_Panoptic_Segmentation_CVPR_2019_paper.html)
 
-[^2] [What is Panoptic Segmentation and why you should care.](https://medium.com/@danielmechea/what-is-panoptic-segmentation-and-why-you-should-care-7f6c953d2a6a)
+<a name="ref2"></a>
+[2] [What is Panoptic Segmentation and why you should care.](https://medium.com/@danielmechea/what-is-panoptic-segmentation-and-why-you-should-care-7f6c953d2a6a)
 
-[^3] [Panoptic Feature Pyramid Networks, Kirillov et al. 2019](https://arxiv.org/pdf/1901.02446.pdf)
+<a name="ref3"></a>
+[3] [Panoptic Feature Pyramid Networks, Kirillov et al. 2019](https://arxiv.org/pdf/1901.02446.pdf)
 
-[^4] [FPN Paper](https://arxiv.org/pdf/1612.03144.pdf)
+<a name="ref4"></a>
+[4] [FPN Paper](https://arxiv.org/pdf/1612.03144.pdf)
 
 
 <!-- ## Main Content
