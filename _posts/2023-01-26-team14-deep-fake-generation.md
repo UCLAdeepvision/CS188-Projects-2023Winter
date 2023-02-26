@@ -191,6 +191,12 @@ $$
 \mathbf{L}_{G} = \mathit{L}_{adv} + {\lambda}_{cls}\mathit{L}^{f}_{cls} + {\lambda}_{rec}\mathit{L}_{rec}
 $$
 
+Lastly, we improve our lossfunction to generate higher quality images and to stabilize the trianing process. The new loss formula uses Wasserstein's GAN objective with gradient penalty:
+
+$$
+\mathbf{L}_{adv} = \mathbb{E}_{x}[D_{src}(x)] - \mathbb{E}_{x,c}[D_{src}(G(x,c))] - {\lambda}_{gp}\mathbb{E}_{{\hat}{x}}[(||{\delta}_{\hat{x}}\mathit{D}_{src}({\hat}{x})||_{2}-1)^{2}]
+$$
+
 ### Architecture Blocks and Code Implementation <a name="archBlocks2"></a>
 
 This is the ResidualBlock module.
