@@ -201,7 +201,8 @@ $$
 
 ### Architecture Blocks and Code Implementation <a name="archblocks2"></a>
 
-This is the ResidualBlock module.
+This is the ResidualBlock module. It consists of the Conv2D, instance norm, and ReLu, which are all modules in PyTorch. The goal of this module is to ensure the neural network is able to expand in depth without errors occuring during backpropgation.
+
 ```
 class ResidualBlock(nn.Module):
     def __init__(self, in_features):
