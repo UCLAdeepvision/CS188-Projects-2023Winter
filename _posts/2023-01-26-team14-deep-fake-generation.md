@@ -16,16 +16,16 @@ date: 2023-01-26
 * [What is Deepfake](#deepfake)
     * [Example: Image-to-Image Translation](#i2i)
     * [Example: Image Animation](#ia)
-* [What is a Generative Adversarial Network (GAN)](#GAN)
-* [Cycle GAN](#cycleGAN)
+* [What is a Generative Adversarial Network (GAN)](#gan)
+* [Cycle GAN](#cyclegan)
     * [Motivation](#mot1)
     * [Architecture](#arch1)
-    * [Architecture Blocks and Code Implementation](#archBlocks1)
+    * [Architecture Blocks and Code Implementation](#archblocks1)
     * [Results](#res1)
-* [Star GAN](#starGAN)
+* [Star GAN](#stargan)
     * [Motivation](#mot2)
     * [Architecture](#arch2)
-    * [Architecture Blocks and Code Implementation](#archBlocks2)
+    * [Architecture Blocks and Code Implementation](#archblocks2)
     * [Results](#res2)
 * [Demo](#demo)
 * [References](#ref)
@@ -63,7 +63,7 @@ Once applying the model, we would see results similar to the following:
 * Figure X. Example output from Image Animation
 
 
-## What is a Generative Adversarial Network (GAN) <a name="GAN"></a>
+## What is a Generative Adversarial Network (GAN) <a name="gan"></a>
 
 Generative Adversarial Network, or GAN, is the core frameworkd behind a lot of the DeepFake algorithms you may come across. It is an approach to generate a model for a dataset using deep learning priciples. Generative modeling automatically discovers and learns the patterns in the data so that the model can be used to generate new images that could have been a part of the original dataset. GANs train a generative model that consists of two sub-components: the generator models which is trained to generate new images and the discriminator model which tries to classify an image as real or fake. The generative models and the discriminator model are trained together in an adversarial way, meaning until the discrimnator model classifies images incorrectly about half of the time. This would mean that the generator model generates DeepFake images that could pass as being real.
 
@@ -72,7 +72,7 @@ Generative Adversarial Network, or GAN, is the core frameworkd behind a lot of t
 
 Below we look into two different models using ideas from GAN.
 
-## Cycle GAN <a name="cycleGAN"></a>
+## Cycle GAN <a name="cyclegan"></a>
 
 ### Motivation <a name="mot1"></a>
 
@@ -110,7 +110,7 @@ $$
 \mathbf{Loss}_cyc = 
 $$
  
-### Architecture Blocks and Code Implementation <a name="archBlocks1"></a>
+### Architecture Blocks and Code Implementation <a name="archblocks1"></a>
 
 ```
 # This is a sample code block
@@ -120,7 +120,7 @@ $$
 
 ### Results <a name="res1"></a>
 
-## Star GAN <a name="starGAN"></a>
+## Star GAN <a name="stargan"></a>
 
 ### Motivation <a name="mot2"></a>
 StarGAN is a generative adversarial network that learns the mappings among multiple domains using only a single generator and a discriminator, training effectively from images of all domains (Choi 2). The topology could be represented as a star where multi-domains are connected, thus receiveing the name StarGAN. 
@@ -197,7 +197,7 @@ $$
 \mathbf{L}_{adv} = \mathbb{E}_{x}[D_{src}(x)] - \mathbb{E}_{x,c}[D_{src}(G(x,c))] - {\lambda}_{gp}\mathbb{E}_{{\hat}{x}}[(||{\delta}_{\hat{x}}\mathit{D}_{src}({\hat}{x})||_{2}-1)^{2}]
 $$
 
-### Architecture Blocks and Code Implementation <a name="archBlocks2"></a>
+### Architecture Blocks and Code Implementation <a name="archblocks2"></a>
 
 This is the ResidualBlock module.
 ```
