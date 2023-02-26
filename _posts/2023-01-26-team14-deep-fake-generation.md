@@ -193,7 +193,27 @@ $$
 
 ### Architecture Blocks and Code Implementation <a name="archBlocks2"></a>
 
-Code for the Generator:
+This is the ResidualBlock module.
+```
+class ResidualBlock(nn.Module):
+    def __init__(self, in_features):
+        super(ResidualBlock, self).__init__()
+
+        conv_block = [
+            nn.Conv2d(in_features, in_features, 3, stride=1, padding=1, bias=False),
+            nn.InstanceNorm2d(in_features, affine=True, track_running_stats=True),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(in_features, in_features, 3, stride=1, padding=1, bias=False),
+            nn.InstanceNorm2d(in_features, affine=True, track_running_stats=True),
+        ]
+
+        self.conv_block = nn.Sequential(*conv_block)
+
+    def forward(self, x):
+        return x + self.conv_block(x)
+```
+
+The code for the Generator is as follows. It uses the ResidualBlock module that is defined above. 
 
 ```
 class GeneratorResNet(nn.Module):
@@ -243,7 +263,7 @@ class GeneratorResNet(nn.Module):
         return self.model(x)
 ```
 
-Code for the Discriminator:
+The code for the Discriminator is as follows.
 
 ```
 class Discriminator(nn.Module):
