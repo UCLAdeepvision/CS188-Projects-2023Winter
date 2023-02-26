@@ -137,15 +137,15 @@ The overarching goal of StarGAN is to translate images from one domain to the ot
 
 ### Architecture <a name="arch2"></a>
 
-The architecture of StarGAN consists of a generator, which consists of . 
+The architecture of StarGAN consists of a generator, which consists of two convolutional layers with a stride size of two for downsampling, six residual blocks, and two tranposed convolutional layers with a stride size of two for upsampling. Instance normalization is also used in all layers except the last. The architecture we use for this is an adaptation of the CycleGAN generator.
 
-![StarGAN Generator](/assets/images/team14/star3.png)
-* Fig X. Example of StarGAN Generator Architecture (Image source: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0231719)
+![StarGAN Generator](/assets/images/team14/star4.JPG)
+* Fig X. Example of StarGAN Generator Architecture (Image source: https://arxiv.org/pdf/1711.09020v3.pdf)
 
-The discriminator uses a .
+The discriminator uses a . It uses Leaky ReLU with a negative slope of 0.01.
 
-![StarGAN Discriminator](/assets/images/team14/star3.png)
-* Fig X. Example of StarGAN Discriminator architecture (Image source: )
+![StarGAN Discriminator](/assets/images/team14/star5.JPG)
+* Fig X. Example of StarGAN Discriminator architecture (Image source: https://arxiv.org/pdf/1711.09020v3.pdf)
 
 #### Loss Functions
 
