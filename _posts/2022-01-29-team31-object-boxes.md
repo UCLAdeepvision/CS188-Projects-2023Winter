@@ -1,9 +1,9 @@
 ---
 layout: post
 comments: true
-title: Object Boxes
+title: Object Detection
 author: Ryan Vuong and Travis Graening
-date: 2022-01-29
+date: 2022-02-25
 ---
 
 
@@ -15,7 +15,65 @@ date: 2022-01-29
 * TOC
 {:toc}
 
+## 1. Introduction
+Put stuff here later
+
+## 2. Setting Up YOLO v7
+
+### 2.1 Loading Pre-Trained Model
+Code based off: [Colab Notebook](https://colab.research.google.com/gist/AlexeyAB/b769f5795e65fdab80086f6cb7940dae/yolov7detection.ipynb)
+<br>
+Within the Official YOLOv7 repository, there are a few pre-trained YOLOv7 models that have been trained solely through the MS COCO Dataset. Some of these models are designed to work better on edge devices, such as YOLOv7-tiny, while others are designed to work better on stronger cloud devices, such as YOLOv7-W6. For the purposes of this demo, I will use the standard YOLOv7 pre-trained model.
+
+1. Basic Setup: import sys, torch and clone the YOLOv7 repository.
+```
+import sys
+import torch
+!git clone https://github.com/WongKinYiu/yolov7
+```
+
+2. Download the pre-trained model:
+```
+!wget https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7.pt
+```
+
+3. Run object detection:
+```
+!python detect.py --weights yolov7.pt --conf 0.25 --img-size 640 --source inference/images/yolo-test1.jpg
+```
+
+4. Define helper function to view images and load image:
+
+```
+def imShow(path):
+  import cv2
+  import matplotlib.pyplot as plt
+  %matplotlib inline
+
+  image = cv2.imread(path)
+  height, width = image.shape[:2]
+  resized_image = cv2.resize(image,(3*width, 3*height), interpolation = cv2.INTER_CUBIC)
+
+  fig = plt.gcf()
+  fig.set_size_inches(18, 10)
+  plt.axis("off")
+  plt.imshow(cv2.cvtColor(resized_image, cv2.COLOR_BGR2RGB))
+  plt.show()
+
+imShow("runs/detect/exp5/yolo-test1.jpg")
+
+```
+![friends on a hike](/../assets/images/team31/yolo-test1.jpg)
+<br>
+
+
 ## References and Code Bases
+
+**YOLOv7: Trainable bag-of-freebies sets new state-of-the-art for real-time object detectors**
+
+Chien-Yao Wang, Alexey Bochkovskiy, and Hong-Yuan Mark Liao
+- [Paper](https://arxiv.org/pdf/2207.02696.pdf)
+- [Code](https://github.com/WongKinYiu/yolov7)
 
 **Multiple Object Recognition with Visual Attention**
 
