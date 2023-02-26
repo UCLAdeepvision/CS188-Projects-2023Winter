@@ -15,28 +15,25 @@ date: 2023-01-28
 - TOC
     {:toc}
 
-## Three Most Relevant Research Papers
+## 1. Introduction and Objective
 
-**OpenPose: Realtime Multi-Person 2D Pose Estimation using Part Affinity Fields**
-<https://arxiv.org/pdf/1812.08008.pdf> [1]
+### 1.1 Introduction
 
-This paper discusses a method of generating 2D pose estimations in real time for people in an image using trained nonparametric representations.
+### 1.2 Objective
 
-Code: <https://github.com/CMU-Perceptual-Computing-Lab/openpose>
+## 2. Pose Estimation With High-Resolution Learning
 
-**Deep High-Resolution Representation Learning for Human Pose Estimation**
-<https://arxiv.org/pdf/1902.09212v1.pdf> [2]
+### 2.1 Original Downsampling Pipeline
 
-This paper describes a high-resolution neural network that connects multiple subnetworks of differing qualities together for high-performance pose tracking.
+### 2.2 Maintaining a High-Resolution Representation
 
-Code: <https://github.com/leoxiaobin/deep-high-resolution-net.pytorch>
+## 3. Setup and Preparation
 
-**DensePose: Dense Human Pose Estimation In The Wild**
-<https://arxiv.org/pdf/1802.00434v1.pdf> [3]
+### 3.1 Environment
 
-This paper proposes a model that uses dense representations of the human body with convolutional neural networks to map every pixel to a person's pose.
+### 3.2 Testing the Model
 
-Code: <https://github.com/facebookresearch/detectron2>
+## 4. Proposed Ablations and Improvements
 
 ## References
 
