@@ -120,7 +120,7 @@ $$
 The complete objective function is as follows:
 
 $$
-L(G, F, D_X, D_Y) = L_{GAN}(G,D_Y,X,Y) + L_{GAN}(G,D_Y,X,Y) + \lambda L_{cyc}(G,F)
+L(G, F, D_X, D_Y) = L_{GAN}(G,D_Y,X,Y) + L_{GAN}(F,D_X,Y,X) + \lambda L_{cyc}(G,F)
 $$
 
 where $\lambda$ controls the importance between the two types of losses.
