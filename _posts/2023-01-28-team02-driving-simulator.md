@@ -6,6 +6,9 @@ author: Siwei Yuan, Yunqiu Han
 date: 2023-01-28
 ---
 
+>Driving simulators provide the fundamental platform for autonomous driving researches. In this blog, we explores Metadrive, explains the technical details of implementing a purely visual based policy, and evalutes its performance.
+
+
 <!--more-->
 {: class="table-of-content"}
 * TOC
@@ -225,13 +228,10 @@ Image segmentation models can be applied in this task. Before predicting the act
 If driving in a one-lane no traffic scenario is successfully solved, we will extend the project to more realistic scenarios. Starting from the introduction of traffic into the scene, we will gradually move towards incoporating double lanes and even traffic blocks.
 
 ## Reference
-
- 
 [1] Q. Li, Z. Peng, L. Feng, Q. Zhang, Z. Xue, and B. Zhou, "MetaDrive: Composing Diverse Driving Scenarios for Generalizable Reinforcement Learning," arXiv, 2021. doi: 10.48550/ARXIV.2109.12674.  
 ---
 
 
 
 ## Code Repository
-
 [MetaDrive](https://github.com/metadriverse/metadrive)
