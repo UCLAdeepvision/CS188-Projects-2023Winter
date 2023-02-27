@@ -84,22 +84,26 @@ CycleGAN was used in order to use unpaired image to image translations rather th
 ### Architecture <a name="arch1"></a>
 
 
-The architecture of CycleGAN consists of a generator taken from Johnson et al [citation here], which consists of 3 convolutional layers, 6 residual block layers, 2 transpose convolutional layers and a final convolution output layer. Should also be noted that all layers similar to Johnson et al are followed by instance normalization.
+The architecture of CycleGAN consists of a generator taken from Johnson et al [3], which consists of 3 convolutional layers, 6 residual block layers, 2 transpose convolutional layers and a final convolution output layer. Should also be noted that all layers similar to Johnson et al are followed by instance normalization.
 
 ![CycleGAN Generator](/assets/images/team14/cycleGAN-generator.png)
 * Fig X. Example of CycleGAN Generator architecture (Image source: https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d)
 
-The discriminator uses a 70x70 PatchGAN architecture, which are used to classify 70x70 overlapped images to see if they are real or fake. The PatchGAN architecture consists of 5 convolutional layers with instance normalization [insert citation].
+The discriminator uses a 70x70 PatchGAN architecture, which are used to classify 70x70 overlapped images to see if they are real or fake. The PatchGAN architecture consists of 5 convolutional layers with instance normalization [5].
 
 ![CycleGAN Discriminator](/assets/images/team14/cycleGAN-discriminator.webp)
 * Fig X. Example of CycleGAN Discriminator architecture (Image source: https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d)
+
+The complete model consists of two Generators and two Discriminators. Each Generator/Discriminator pair tries to map an image from one domain to another while the other pair tries to map the reverse of the image.
+![CycleGAN Complete Model](/assets/images/team14/CycleGAN-complete.jpg)
+*  Fig X. CycleGAN architecture with all generators and discriminators.
  
  
 #### Loss Functions
 
 There are two kinds of loss in the CycleGAN architecture. There is the normal adversarial loss that we typically associate with GANs and there is the cyclic loss that is used in the CycleGAN implementation. Since the architecture contains two GAN networks, the mapping functions are from $G : X \to Y$ and $F : Y \to X$ where the discriminators are $D_Y$ and $D_X$ respectively. G will map images from the X domain to the Y domain while $D_Y$ will try to discriminate the images that G mapped. F will do the same thing however, it will do it from the Y domain over to the X domain with $D_X$ trying to discriminate the mapped images.
 
-Log likelihood loss was used for the adversarial loss in the Zhu et al's implementation. The loss function for the adversarial loss is as follows:
+Log likelihood loss was used for the adversarial loss in Zhu et al's implementation [7]. The loss function for the adversarial loss is as follows:
 
 $$
 L_{GAN}(G, D_Y, X, Y)=\mathbb{E}_{y\sim p_{data}(y)}[log\hspace{0.1cm}D_Y(y)]+\mathbb{E}_{x\sim p_{data}(x)}[log(1-D_Y(G(x)))]
@@ -121,7 +125,7 @@ $$
 
 where $\lambda$ controls the importance between the two types of losses.
 
-According to Zhu et al [], they aim to solve: 
+According to Zhu et al [7], they aim to solve: 
 
 $$
 G^{\ast}, F^{\ast} = arg\ \underset{G,F}{min}\ \underset{D_X,D_Y}{max}\ L(G, F, D_X, D_Y)
