@@ -155,9 +155,13 @@ self.leaky_relu = nn.LeakyReLU()
 
 Loss for the decoder is calculated using average displacement error [5], implemented in ```min_ade.py``` in the source [6]. The total loss is the sum of the losses of the policy header and the decoder [5].
 
-## Studies
+## Studies to Conduct
 
-[TODO] Describe studies we intend to run.
+Other encoder, aggregator, and decoder models appear to exist in the PGP repository [6], meaning after running the standard PGP model on the NuScenes dataset [7] (using the provided pretrained model), these other models should also be tested for a comparison (training from scratch). There is a config file ```pgp_gatx2_lvm_traversal.yml``` in the repository that allows for the models to be altered [6].
+
+Additionally, the config file allows for hyperparameters to be altered, which should also be done to see if results can be improved. [6]
+
+Although SGNet [1] and GRIP++ [3] differ significantly in architecture from PGP [5], perhaps some elements could be taken from these models and incorporated into PGP to see if performance can be further improved.
 
 ## References
 
@@ -172,5 +176,7 @@ Loss for the decoder is calculated using average displacement error [5], impleme
 [5] Deo, Nachiket, et al. "Multimodal Trajectory Prediction Conditioned on Lane-Graph Traversals." *ArXiv*, ArXiv, 15 Sep 2021, [www.doi.org/10.48550/arXiv.2106.15004](https://doi.org/10.48550/arXiv.2106.15004). *Papers with Code*, Papers with Code, 28 Jun 2021, [www.paperswithcode.com/paper/multimodal-trajectory-prediction-conditioned](https://paperswithcode.com/paper/multimodal-trajectory-prediction-conditioned), accessed 26 Feb 2023.
 
 [6] Deo, Nachiket. "PGP." *GitHub*, GitHub, [www.github.com/nachiket92/PGP](https://github.com/nachiket92/PGP). *Papers with Code*, Papers with Code, 28 Jun 2021, [www.paperswithcode.com/paper/multimodal-trajectory-prediction-conditioned](https://paperswithcode.com/paper/multimodal-trajectory-prediction-conditioned), accessed 26 Feb 2023.
+
+[7] *NuScenes.* Motional, 2020, [www.nuscenes.org](https://www.nuscenes.org/). Accessed 26 Feb 2023.
 
 ---
