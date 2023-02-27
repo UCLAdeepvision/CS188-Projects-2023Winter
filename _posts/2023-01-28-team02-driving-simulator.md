@@ -6,7 +6,7 @@ author: Siwei Yuan, Yunqiu Han
 date: 2023-02-26
 ---
 
->Driving simulators provide the fundamental platform for autonomous driving researches. In this blog, we explores Metadrive, explains the technical details of implementing a purely visual based policy, and evalutes its performance.
+>Driving simulators provide the fundamental platform for autonomous driving researches. In this blog, we explore Metadrive, explain the technical details of implementing a purely visual based policy, and evalute its performance.
 
 
 <!--more-->
@@ -17,7 +17,7 @@ date: 2023-02-26
 ## Introduction
 Driving simulators provide the fundamental platform for autonomous driving researches. By integrating various deep learning or reinforcement learning pipelines and engines, driving simulators facilitate and standardize model training, validation, testing, and evaluation. The iterations in driving simulators have aimed at a better integration of powerful DL/RL platforms and realistic scene simulations.
 
-In this paper, we study Metadrive, a lightweight driving simulator supporting compositional map generation and a variety of sensory inputs. We investigate the implementation and configuration of the environment generation, as well as agents' policies, which defines the way they interact with the environment. By gathering FPV camera image and traning customized models, we create new policies using RGB image instead of Lidar data and evaluate the performace of agents in various environments.
+In this paper, we study Metadrive, a lightweight driving simulator supporting compositional map generation and a variety of sensory inputs. We investigate the implementation and configuration of the environment generation, as well as agents' policies, which defines the way they interact with the environment. By gathering FPV camera image and training customized models, we create new policies using RGB image instead of Lidar data and evaluate the performance of agents in various environments.
 
 
 ## Environment Setup
@@ -35,9 +35,9 @@ In this paper, we study Metadrive, a lightweight driving simulator supporting co
 
 
 ## Research Direction
-Our goal is to study the effectiveness of supervised learning using RGB image as input, by comparing its accuracy with the RL agent in MetaDrive. We took the following steps to achieve this goal:
-1. Obtain RGB images and ground-truth actions from the driving simulation on MetaDrive using the IDM policy.
-2. Train a supervised learning model using the RGB images as input and the ground-truth actions as output.
+Our goal is to study the effectiveness of supervised learning using RGB images as input, by comparing its accuracy with the RL agent in MetaDrive. We took the following steps to achieve this goal:
+1. Obtain RGB images and ground-truth actions from the driving simulation process of MetaDrive using the IDM policy.
+2. Choose a pretrained DL model and use it to train a supervised learning model using the RGB images as inputs and the ground-truth actions as labels.
 3. Define a policy which uses the trained model to decide the action based on the observation.
 4. Evaluate the performance of the policy.
 
@@ -86,7 +86,6 @@ if PRINT_IMG and i%SAMPLING_INTERVAL == 0:
     img.save(str(img_path))
 ```
 The image obtained, as shown below, contains all the information about the lane that the agent vehicle requires to make a good prediction. 
-<!-- !!!!! ADD IMAGE HERE !!!!! -->
 ![fig2]({{ '/assets/images/Team02/fig1.png' | relative_url }})
 <!-- {: style="width: 128; max-width: 100%;"} -->
 *Fig 2. RGB Image Example*
@@ -187,20 +186,17 @@ class RGBPolicy(BasePolicy):
         return action
 
     def __convert_img_to_tensor(self, img):
-        height = img.get_read_x_size()
-        width = img.get_read_y_size()
-
-        img_tensor = torch.zeros((1, 3, height, width))
-
-        for x in range(height):
-            for y in range(width):
-                img_tensor[0,0,y,x] = img.get_red(x,y)
-                img_tensor[0,1,y,x] = img.get_green(x,y)
-                img_tensor[0,2,y,x] = img.get_blue(x,y)
-        
-        return img_tensor
+        img = np.frombuffer(myTextureObject.getRamImageAs("RGBA").getData(), dtype=np.uint8)
+        img = img.reshape((myTextureObject.getYSize(), myTextureObject.getXSize(), 4))
+        img = img[::-1]
+        img = img[...,:-1] - np.zeros_like((128,128,3))
+        img = torch.from_numpy(img)
+        img = img/255
+        img = img.permute(2, 0, 1)
+        img = torch.unsqueeze(img, 0)
+        return img
 ```
-It is worth noticing that in the above code, we have to unnormalize the values of steering angle and acceleration returned by the model. And we applied a scaling factor to the steering, which is a value determined by emperical trials.
+It is worth noticing that in the above code, we have to *unnormalize* the values of steering angle and acceleration returned by the model. And we applied a scaling factor to the steering, which is a value determined by emperical trials.
 
 
 ## Visualization and Evaluation
