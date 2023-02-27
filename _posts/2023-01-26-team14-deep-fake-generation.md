@@ -95,25 +95,33 @@ The discriminator uses a 70x70 PatchGAN architecture, which are used to classify
 * Fig X. Example of CycleGAN Discriminator architecture (Image source: https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d)
  
  
-#### Loss Function
+#### Loss Functions
 
-There are two kinds of loss in the CycleGAN architecture. There is the normal adversarial loss that we typically associate with GANs and there is the cyclic loss that is used in the CycleGAN implementation. Since the architecture contains two GAN networks, the mapping functions are from $G : X -> Y$ and $F : Y -> X$ where the discriminators are $D_Y$ and $D_X$ respectively.
+There are two kinds of loss in the CycleGAN architecture. There is the normal adversarial loss that we typically associate with GANs and there is the cyclic loss that is used in the CycleGAN implementation. Since the architecture contains two GAN networks, the mapping functions are from $G : X \to Y$ and $F : Y \to X$ where the discriminators are $D_Y$ and $D_X$ respectively.
 
 The loss function for the adversarial loss is as follows:
+
+$$
 L_{GAN}(G, D_Y, X, Y)=\mathbb{E}_{y\sim p_{data}(y)}[log\hspace{0.1cm}D_Y(y)]+\mathbb{E}_{x\sim p_{data}(x)}[log(1-D_Y(G(x)))]
 $$
+
 This loss function is for only one GAN network. So the total loss would need to include two sets of adversarial loss.
 
-Then there is also the cyclic-consistency loss which ensures that $F(G(x)) \approx x$ and $G(F(y)) \approx y$
+Then there is also the cyclic-consistency loss which ensures that $F(G(x)) \approx x$ and $G(F(y)) \approx y$.
+
 $$
 L_{cyc}(G, F)=\mathbb{E}_{x\sim p_{data}(x)}[||F(G(x))-x||_1] + \mathbb{E}_{y\sim p_{data}(y)}[||G(F(y))-y||_1]
 $$
 
 The complete objective function will be as follows:
+
 $$
 L(G, F, D_X, D_Y) = L_{GAN}(G,D_Y,X,Y) + L_{GAN}(G,D_Y,X,Y) + \lambda L_{cyc}(G,F)
 $$
+
 where $\lambda$ controls the importance between the two types of losses.
+
+
 ### Architecture Blocks and Code Implementation <a name="archblocks1"></a>
 
 ```
@@ -197,7 +205,7 @@ $$
 \mathbf{L}_{G} = \mathit{L}_{adv} + {\lambda}_{cls}\mathit{L}^{f}_{cls} + {\lambda}_{rec}\mathit{L}_{rec}
 $$
 
-Lastly, we improve our lossfunction to generate higher quality images and to stabilize the trianing process. The new loss formula uses Wasserstein's GAN objective with gradient penalty:
+Lastly, we improve our loss function to generate higher quality images and to stabilize the trianing process. The new loss formula uses Wasserstein's GAN objective with gradient penalty:
 
 $$
 \mathbf{L}_{adv} = \mathbb{E}_{x}[D_{src}(x)] - \mathbb{E}_{x,c}[D_{src}(G(x,c))] - {\lambda}_{gp}\mathbb{E}_{\hat{x}}[(||{\triangledown}_\hat{x}\mathit{D}_{src}(\hat{x})||_{2}-1)^{2}]
