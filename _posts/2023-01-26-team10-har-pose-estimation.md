@@ -110,8 +110,8 @@ We are interested in seeing the effect on AcT HAR accuracy by different augmenta
 
 ## Three Relevant Research Papers
 
-1. ##### PoseNet: A Convolutional Network for Real-Time 6-DOF Camera Relocalization
-  - [Paper] https://arxiv.org/abs/1505.07427
+1. ##### PersonLab: Person Pose Estimation and Instance Segmentation with a Bottom-Up, Part-Based, Geometric Embedding Model
+  - [Paper] https://arxiv.org/abs/1803.08225
   - [Code] https://github.com/tensorflow/tfjs-models/tree/master/pose-detection/src/posenet
 2. ##### OpenPose: Realtime Multi-Person 2D Pose Estimation using Part Affinity Fields
   - [Paper] https://arxiv.org/abs/1812.08008
@@ -124,7 +124,7 @@ We are interested in seeing the effect on AcT HAR accuracy by different augmenta
 
 ## Reference
 
-[1] A. Kendall, M. Grimes, and R. Cipolla, PoseNet: A Convolutional Network for Real-Time 6-DOF Camera Relocalization. arXiv, 2015.
+[1] G. Papandreou, T. Zhu, L.-C. Chen, S. Gidaris, J. Tompson, and K. Murphy, PersonLab: Person Pose Estimation and Instance Segmentation with a Bottom-Up, Part-Based, Geometric Embedding Model. arXiv, 2018.
 
 [2] Z. Cao, G. Hidalgo, T. Simon, S.-E. Wei, and Y. Sheikh, OpenPose: Realtime Multi-Person 2D Pose Estimation using Part Affinity Fields. arXiv, 2018.
 
