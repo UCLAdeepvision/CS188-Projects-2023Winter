@@ -21,7 +21,8 @@ date: 2023-2-26
 
 Recent progress on anime art generation has sparked a sense of excitement in both the AI and anime community. Many AI generated arts have emerged on the internet. As shown in Fig 1, it is an anime character generated using the online tool [WaifuLab](https://waifulabs.com/generate)[2] which relies on a generator model called GAN. GAN (generative adversarial network) is the base model for many current art generator AIs. The project will explore the usage of GAN on anime character generations and try different variations the discriminator to see the effect of the quality of generated anime styled images. Since the time of this project is limited, the base model used for this project is StyleGan2-ADA, which is the state of art GAN model developed by Karras T. et al and is suitable for using smaller dataset and transfer learning. 
 
-## A Brief Review of the StyleGAN Archetecture
+## A Brief Review of the StyleGAN Architecture
+### GAN Architecture
 GAN is short for generative adversarial network. There are mainly two components in this network: A generator and a descriminator. The generator is responsable for generating "fake" image of the desired type of images, while the descriminator is responsable for telling if the generated images from the generator is the real images that belong to the desired type of image or not. Therefore, in training, the two components are opposing to each other, thus, the model is able to achieve self-supervised, data driven learning.[1]
 ### Style Based Generator
 ![Style-based generator]({{'/assets/images/team09/style-based-generator.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
@@ -65,10 +66,10 @@ All model will be trained on a single Tesla T4 GPU, using docker environment pro
 
 The above results are obtained by doing transfer learning using the original StyleGAN2 model and the model is trained for ~800K iterations. The base model used is the pretrained [ffhq-256](https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/transfer-learning-source-nets/ffhq-res256-mirror-paper256-noaug.pkl) model from NVIDIA which generate realistic human faces(a completely different domain from anime). 
 ### ViT Discriminator Results
-As the model archtecture is changes, need to train from partially from seperated pretrained ViT and Generator.\
+As the model archtecture is changes, need to train partially from seperated pretrained ViT and pretrained Generator.\
 (In-progress)
 ### Evaluation and Analysis
-Select images genearted from the same seed and compare manually (aethetic appeals etc.) as well as using FID scores etc.\
+Select images generated from the same seed and compare manually (aethetic appeals etc.) as well as using FID scores etc.\
 (In-progress)
 ## Conclusion
 (In-progress)
