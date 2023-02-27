@@ -3,7 +3,7 @@ layout: post
 comments: true
 title: Melanoma Skin Cancer Detection 
 author: Akhil Vintas and Jeffrey Yang
-date: 2023-01-29
+date: 2023-02-26
 ---
 
 
@@ -17,6 +17,16 @@ date: 2023-01-29
 ## Main Content
 
 Many researchers have already provided strong models to analyze and detect melanoma. Alam Milton analyzed melanoma using an ensemble of neural networks with code provided [here](https://github.com/miltonbd/ISIC_2018_classification). Melanoma detection also has models that can outperform models, such as Pham et al's [here](https://github.com/riseoGit/melanoma-prediction/). Lastly, segmentation is also an area of need to analyze skin images, and Gorriz et. al tackle it [here](https://github.com/imatge-upc/medical-2017-nipsw). We aim to integrate these studies and code repos among others to contribute to a stronger model.
+
+
+## Task introduction and purpose
+
+Given that melonoma has many variants and that there are many ways to classify the images, we define the task clearly for the given model spun out from [] model from 2018. 
+
+
+## Model introduction
+
+
 
 <!-- ## Basic Syntax
 ### Image -->
