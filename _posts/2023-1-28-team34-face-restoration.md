@@ -18,6 +18,10 @@ date: 2023-1-29
 ## Main Content
 My project is to study the usage of Generative Adversarial Networks, and in particular the style-based GAN architecture, in order to generate photorealistic images with some noise involved, that allows it to be utilized in the application of face restoration. The models we will analyze will have been trained particularly on the human face, allowing it to enhance the image quality of real-world inputs. 
 
+## Main Focus
+
+The main focus of this project is to explore GAN architectures and how GPEN builds upon GAN architectures in order to generate high-quality images from low-quality images that could have different defects such as blur, omission of certain pixels in the image, and low-resolution. In particular, GPEN hopes to resolve most, if not all of these issues, in the wild, or in real-world scenarios, and not specially curated images. We will go further into these architectures by conducting some ablation studies on StyleGAN2-ADA and (hopefully) GPEN in order to see how the different improvements and aspects of their architectures handle image generation better than the baseline simple DCGAN architecture. 
+
 ### Algorithms
 
 This section will focus on the algorithms within each generative adversarial network, along with diagrams of their architectures. Since GPEN uses previous GAN models as a prior, the section will start with the DCGAN model as the foundation of a simple GAN leading into StyleGAN2-ADA, then illustrating how GPEN is able to take the previously mentioned GAN models and build upon it to work on the issue of Blind Face Restoration in the Wild.
@@ -34,11 +38,15 @@ Below is a picture of the min-max loss function where it details how the generat
 
 #### StyleGAN2-ADA
 
-![StyleGAN1 Adaptive Instance Normalization](../assets/images/team34/Stylegan/AdaIN.PNG)
+![GAN vs StyleGan1 Architecture](../assets/images/team34/Stylegan/traditional_vs_style.PNG)
+
+![StyleGAN1 Adaptive Instance Normalization](../assets/images/team34/Stylegan/AdaIN.PNG)    
 
 #### GPEN
 
 ![GPEN Architecture](../assets/images/team34/GPEN/GPEN-arch.PNG)
+
+
 
 ### Examples of Output
 
