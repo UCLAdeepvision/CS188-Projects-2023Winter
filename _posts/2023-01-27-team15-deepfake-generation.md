@@ -78,7 +78,61 @@ Another variation of image to image translation is done with neural style transf
 {: style="width: 300px; max-width: 100%; padding-top: 5px;"}
 *Example of neural style transfer featuring a dog and Wassily Kandinsky's Composition 7. (Image source: <https://www.tensorflow.org/tutorials/generative/style_transfer>)*
 
-**This can be done with TensorFlow, example code is shown below**
+This can be done with TensorFlow, the steps are as follows (small snippets of code are included for reference):
+- Setup
+  - Import and Configure Models
+
+    ```
+    import os
+    import tensorflow as tf`
+    # Load compressed models from tensorflow_hub'
+    os.environ['TFHUB_MODEL_LOAD_FORMAT'] = 'COMPRESSED' 
+    ```
+
+- Visualize the Input
+- Fast Style Transfer using TF-Hub
+- Define content and style representations
+- Build the model
+- Calculate style
+
+```
+def gram_matrix(input_tensor):
+  result = tf.linalg.einsum('bijc,bijd->bcd', input_tensor, input_tensor)
+  input_shape = tf.shape(input_tensor)
+  num_locations = tf.cast(input_shape[1]*input_shape[2], tf.float32)
+  return result/(num_locations)
+```
+
+- Extract style and content
+- Run gradient descent
+
+```
+@tf.function()
+def train_step(image):
+  with tf.GradientTape() as tape:
+    outputs = extractor(image)
+    loss = style_content_loss(outputs)
+
+  grad = tape.gradient(loss, image)
+  opt.apply_gradients([(grad, image)])
+  image.assign(clip_0_1(image))
+```
+
+- Add total variation loss (change train_step)
+
+```
+@tf.function()
+def train_step(image):
+  with tf.GradientTape() as tape:
+    outputs = extractor(image)
+    loss = style_content_loss(outputs)
+    loss += total_variation_weight*tf.image.total_variation(image)
+
+  grad = tape.gradient(loss, image)
+  opt.apply_gradients([(grad, image)])
+  image.assign(clip_0_1(image))
+```
+- Re-run the optimization
 
 ## Cycle-GAN Networks
 
@@ -93,16 +147,13 @@ The model is as follows:
 *Cycle-GAN model. (Image source: <https://arxiv.org/pdf/1703.10593.pdf>)*
 
 
-The model has two mapping functions:
-**include mapping functions**
-
-And adversarial discriminators $$Dx$$ and $$Dy$$. $$Dx$$ encourages $$F$$ to translate $$Y$$ into outputs indistinguishable from domain $$X$$ and vice versa for $$Dy$$ and $$G$$.
+The model has two mapping functions- $$G : X \rightarrow Y$$ and $$F : Y \rightarrow X$$- and adversarial discriminators $$Dx$$ and $$Dy$$. $$Dx$$ encourages $$F$$ to translate $$Y$$ into outputs indistinguishable from domain $$X$$ and vice versa for $$Dy$$ and $$G$$.
 
 Cycle consistency losses are introduced to capture the assumption that the translation should be cycle consistent:
 - Forward cycle consistency loss
-    - **Include from paper**
+  - $$x \rightarrow G(x) \rightarrow F(G(x)) \approx x $$
 - Backward cycle consistency loss
-    - **Include from paper**
+  - $$y \rightarrow F(y) \rightarrow G(F(y)) \approx y $$
 
 
 ## References
