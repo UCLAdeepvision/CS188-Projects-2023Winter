@@ -16,8 +16,15 @@ date: 2023-02-25
 {:toc}
 
 ## 1. Introduction
-Put stuff here later
+The main idea behind the YOLO class of object detection algorithms is summarized in its acronym: "you only look once." This means that YOLO models are single-stage, allowing them to immediately and accurately classify images. In fact, the speed is one of the major selling-points of this algorithm, allowing it to be marketed as a real-time object detector. It does this by immediately featurizing images before feeding the features into the model.
 
+YOLO v7 is the latest in a line of YOLO object detection projects, beginning in 2015. Through each iteration, the YOLO models have become faster and more accurate by changing their base CNN structures, loss functions, and box-generation approaches. One of YOLO v7s biggest changes over YOLO v6 is its use of anchor boxes, a set of pre-generated boxes with varying aspect ratios used to detect objects. YOLO v7 has also improved over previous accuracies by using a focal loss function instead of the standard cross-entropy. This loss function is better at recognizing small objects, since it focuses more heavily on difficult-to-classify objects rather than treating all equally.
+
+The YOLO v7 model itself consists of three main parts, whith anatomical names to describe their functions: a backbone, neck, and head. The backbone is the first stage reached by the input. In it, the image is broken up into essential features. This feature data is then passed to the neck, in which feature pyramids are assembled, an extremely quick and high-quality, though expensive, method of feature extraction. The actual prediction part occurs in the head, which outputs detection boxes and prediction labels.
+ 
+TODO: Algos used in backbone, neck, and head
+
+TODO: Key concepts like bag of freebies, EMA model, etc.
 ## 2. Setting Up YOLO v7
 
 ### 2.1 Loading Pre-Trained Model
