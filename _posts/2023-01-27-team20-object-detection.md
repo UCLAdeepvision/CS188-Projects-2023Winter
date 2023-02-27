@@ -8,6 +8,7 @@ date: 2023-02-26
 
 > Object detection is an invaluable computer vision task that requires locating objects in an image and classifying or identifying them. This project explains some deep learning algorithms used for object detection and explores transfer learning. Using OpenMMLab's MMDetection toolbox, we finetune various pre-trained models on custom datasets and compare the results. 
 
+
 <!--more-->
 
 {: class="table-of-content"}
@@ -196,6 +197,7 @@ One dataset we have chosen is the [Aerial Maritime dataset](https://public.robof
 ![AltText]({{ '/assets/images/team20/faster-r-cnn-2-epochs-acc-loss-plots.jpg' | relative_url }})
 {: style="width: 600px; max-width: 100%;"}
 *Figure X. Train accuracy and loss curves over time during 2 epochs of finetuning the Faster R-CNN originally trained on COCO.* [1].
+
 
 ## Relevant Papers
 
