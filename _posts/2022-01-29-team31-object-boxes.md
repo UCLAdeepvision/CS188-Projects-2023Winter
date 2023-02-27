@@ -3,11 +3,11 @@ layout: post
 comments: true
 title: Object Detection
 author: Ryan Vuong and Travis Graening
-date: 2022-02-25
+date: 2023-02-25
 ---
 
 
-> In this project, we wish to evaluate the accuracy of a machine learning model to recognize images containing certain objects and explore any possible improvements. We plan to do this by segmenting the given images to narrow our model's focus onto more relevant parts of the image. This way, extraneous unhelpful noise will be dramatically reduced.
+> In this project, we wish to dive deep and examine the YOLO v7 (You Only Look Once) object detection model while exploring any possible improvements. YOLO v7 is one of the fastest object detection models in the world today which provides highly accurate real-time object detection. During our examination, we will inspect the layers and algorithms within YOLO v7, test the pre-trained YOLO v7 model provided by the YOLO team, and train and test YOLO v7 against different datasets.
 
 
 <!--more-->
@@ -63,7 +63,9 @@ def imShow(path):
 imShow("runs/detect/exp5/yolo-test1.jpg")
 
 ```
-![friends on a hike](/../assets/images/team31/yolo-test1.jpg)
+![detected image of friends on a hike](/CS188-Projects-2023Winter/assets/images/team31/yolo-test1.jpg)
+
+[comment]: <> (<img src="/CS188-Projects-2023Winter/assets/images/team31/yolo-test1.jpg" width="640" height="640" />)
 <br>
 
 
