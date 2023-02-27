@@ -7,13 +7,14 @@ date: 2023-02-24
 ---
 
 
-> DNN driven image recognition have been used in many real-world scenarios, such as for detection of road case or people. However, the DNNs could be vulnerable to adversarial examples (AEs), which are designed by attackers and can mislead the model to predict incorrect outputs while hardly be distinguished by human eyes. This blog aims to introduce how to generate AEs and how to defend these attacks. 
+> DNN driven image recognition have been used in many real-world scenarios, such as for detection of road case or people. However, the DNNs could be vulnerable to adversarial examples (AEs), which are designed by attackers and can mislead the model to predict incorrect outputs while hardly be distinguished by human eyes. This blog aims to introduce how to generate AEs and how to defend these attacks.
 
 <!--more-->
 {: class="table-of-content"}
 
 * TOC
 {:toc}
+
 ## What is adversarial examples
 
 As we know, the deep neural network (DNN) has great ability in image classification tasks. They have made great access in the last decade, as Balda $et$ $al.$ [9] say:
@@ -24,11 +25,9 @@ However, the DNN is easily attacked by targeted attack. Images could be modified
 
 > Their success is undeniable, nevertheless a flaw has been spotted in their performance. They are not stable under adversarial perturbations. Adversarial perturbations are intentionally worst case designed noises that aim at changing the output of a DNN to an incorrect one. The perturbations are most of the time so small that an ordinary observer may not even notice it, and even the state-of-theart DNNs are highly confident in their, wrong, classification of these adversarial examples.
 
-![1677072572062](..\assets\images\23\1677072572062.png)
+![1677072572062](../assets/images/team23/1677072572062.png)
 
-<center>Fig. 1.  A demonstration of adversarial examples generated using the FGSM (introduced later). By adding an imperceptibly small vector, GoogLeNet’s classification of the image can be changed [1].
-
-
+Fig. 1.  A demonstration of adversarial examples generated using the FGSM (introduced later). By adding an imperceptibly small vector, GoogLeNet’s classification of the image can be changed [1].
 
 As shown in Fig. 1, a image of panda is added with a tiny perturbation so that it looks same to our eyes. However, the GoogLeNet produces an error classification "gibbon".  A subtle adversarial perturbation is able to change the classification outcome, and such images with adversarial perturbation are called **adversarial examples** (AEs).
 
@@ -50,30 +49,28 @@ Formally, we suppose that the DNN is trained in a classification task, which pre
 
 Before introducing AE generation techniques, we first present some preliminaries:
 
-#### Definition 1 (Score functions and classifier functions).
+#### Definition 1 (Score functions and classifier functions)
 
 A classifier is defined by the mapping $k: \mathbb{R}^M \rightarrow[K]$ that maps an input $\mathrm{x} \in \mathbb{R}^M$ to its estimated class $k(\mathbf{x}) \in[K]$. The mapping $k(\cdot)$ is itself defined by
-$$
-k(\mathbf{x})=\underset{l \in[K]}{\operatorname{argmax}}\left\{f_l(\mathbf{x})\right\},
-$$
+
+$$k(\mathbf{x})=\underset{l \in[K]}{\operatorname{argmax}}\left\{f_l(\mathbf{x})\right\},$$
+
 $f(\mathbf{x})$ given by the vector $\left(f_1(\mathbf{x}), \ldots, f_K(\mathbf{x})\right)^{\top}$ is known as score function and can be assumed to be differentiable almost everywhere for many classifiers.
 
 To impose undetectability of adversarial examples, a common way is to add perturbation to input to preserve the outcome of the ground truth classifier, also known as oracle classifier. Usually, the oracle classifier refers to the human brain. Similar to Definition 1. denote the score function of the oracle classifier as $g: \mathbb{R}^M \rightarrow \mathbb{R}^K$, which outputs a vector with entries $g_l: \mathbb{R}^M \rightarrow \mathbb{R}$ for $l=1, \ldots, K$. The adversarial perturbation $\eta$ is said to be undetectable if
-$$
-L_g(\mathbf{x}, \boldsymbol{\eta})=g_{k(\mathbf{x})}(\mathbf{x}+\boldsymbol{\eta})-\max _{l \neq k(\mathbf{x})} g_l(\mathbf{x}+\boldsymbol{\eta})>0 .
-$$
+
+$$L_g(\mathbf{x}, \boldsymbol{\eta})=g_{k(\mathbf{x})}(\mathbf{x}+\boldsymbol{\eta})-\max _{l \neq k(\mathbf{x})} g_l(\mathbf{x}+\boldsymbol{\eta})>0 .$$
 Using this notion, the problem of finding adversarial examples amounts to the following.
 
-####  Definition 2 (Adversarial Generation Problem).
+####  Definition 2 (Adversarial Generation Problem)
 
 For a given $\mathrm{x} \in \mathbb{R}^M$, the adversarial generation problem consists of finding a perturbation $\boldsymbol{\eta} \in \mathbb{R}^M$ to fool the classifier $k(\cdot)$ by the adversarial sample $\hat{\mathbf{x}}=\mathbf{x}+\boldsymbol{\eta}$ such that $k(\mathbf{x}) \neq k(\hat{\mathbf{x}})$ and the oracle classifier is not changed, i.e.,
-$$
-\begin{aligned}
+
+$$\begin{aligned}
 \text { Find : } & \boldsymbol{\eta} \\
 \text { s.t. } & L_f(\mathbf{x}, \boldsymbol{\eta})=f_{k(\mathbf{x})}(\mathbf{x}+\boldsymbol{\eta})-\max _{l \neq k(\mathbf{x})} f_l(\mathbf{x}+\boldsymbol{\eta})<0 \\
 & L_g(\mathbf{x}, \boldsymbol{\eta})=g_{k(\mathbf{x})}(\mathbf{x}+\boldsymbol{\eta})-\max _{l \neq k(\mathbf{x})} g_l(\mathbf{x}+\boldsymbol{\eta})>0
-\end{aligned}
-$$
+\end{aligned}$$
 
 For black-box attack, usually a DNN is trained to simulate the unknown target DNN, and the trained DNN is attacked by white-box attack techniques to generate AEs. It is interesting that even if the used NN structure and training process are different, they are easily attacked by adding similar perturbations only if they are trained with the same dataset. This phenomenon is named as **transferability**, which is still under-research and has not been completely illustrated.
 
@@ -86,25 +83,23 @@ FSGM is the most classical white-box attack algorithm, proposed in the work *Exp
 Given a image $x$, we want to generate an AE $\tilde x = x+\eta$ by adding a perturbation $\eta$, and we want the perturbation to be small enough to avoid discarded by the observe, i.e., $\|\boldsymbol{\eta}\|_{\infty}<\epsilon$. The AE $\tilde x$ should fool the target DNN to assign an error class to it, while the target DNN has ability to assign the correct class to $x$.
 
 For easy understand, we begin with a linear classifier.  Consider the dot product between a weight vector $w$ and an adversarial example $\tilde x$:  
-$$
-\boldsymbol{w}^{\top} \tilde{\boldsymbol{x}}=\boldsymbol{w}^{\top} \boldsymbol{x}+\boldsymbol{w}^{\top} \boldsymbol{\eta}
-$$
+
+$$\boldsymbol{w}^{\top} \tilde{\boldsymbol{x}}=\boldsymbol{w}^{\top} \boldsymbol{x}+\boldsymbol{w}^{\top} \boldsymbol{\eta}$$
 
 > The adversarial perturbation causes the activation to grow by $\boldsymbol{w}^{\top} \boldsymbol{\eta}$. We can maximize this increase subject to the max norm constraint on $\boldsymbol{\eta}$ by assigning $\eta=\operatorname{sign}(\boldsymbol{w})$. If $\boldsymbol{w}$ has $n$ dimensions and the average magnitude of an element of the weight vector is $m$, then the activation will grow by $\epsilon m n$. Since $\|\eta\|_{\infty}$ does not grow with the dimensionality of the problem but the change in activation caused by perturbation by $\eta$ can grow linearly with $n$, then for high dimensional problems, we can make many infinitesimal changes to the input that add up to one large change to the output. We can think of this as a sort of "accidental steganography," where a linear model is forced to attend exclusively to the signal that aligns most closely with its weights, even if multiple signals are present and other signals have much greater amplitude.
 
 The explanation from the paper shows that a simple linear model can have adversarial examples if its input has **sufficient dimensionality**. Their hypothesis based on linearity can explain why softmax regression is vulnerable to adversarial examples, and motivates the fast gradient sign method. As the name shows, it is a  fast way of generating AEs. Since NNs are designed in a linear manner to be easily optimized, the work hypothesize that neural networks are too linear to resist linear adversarial perturbation. Therefore, attacking NNs is similar to attacking a linear classifier.
 
 Let $\boldsymbol{\theta}$ be the parameters of a model $F$, $\boldsymbol{x}$ the input to the model, $y$ the label of $\boldsymbol{x}$ and $J(\boldsymbol{\theta}, \boldsymbol{x}, y)$ be the loss used to train the neural network. FSGM linearizes the cost function around the current value of $\boldsymbol{\theta}$, obtaining an optimal max-norm constrained pertubation of:
-$$
-\boldsymbol{\eta}=\epsilon \operatorname{sign}\left(\nabla_{\boldsymbol{x}} J(\boldsymbol{\theta}, \boldsymbol{x}, y)\right)
-$$
+
+$$\boldsymbol{\eta}=\epsilon \operatorname{sign}\left(\nabla_{\boldsymbol{x}} J(\boldsymbol{\theta}, \boldsymbol{x}, y)\right)$$
 Take the MSE as an example, $J(\boldsymbol{\theta}, \boldsymbol{x}, y) = cF(\boldsymbol{x})\nabla_xF(\boldsymbol{x}) $, where $\nabla_xF(\boldsymbol{x})$ could be quickly calculated by the  backpropagation  process. Therefore, the algorithm has a fast performance to generate AEs.
 
 The task to find an AE can be regarded to find an image vector in a sphere with radius $\epsilon$ centered on the original image vector point. And FGSM shows us an idea that with **enough numbers of dimension**, we can find a extremely small vector added to a known example to make the it move to a position of another class. The image just satisfies this condition. Therefore, the natural way is to move the example along the orthogonal direction to the nearest boundary, and FGSM tries to do the same thing. I present an example to help understanding this as follows, and it shows the case in the 2-dimension scenario.
 
-![1677186470769](..\assets\images\23\1677186470769.png)
+![1677186470769](../assets/images/team23/1677186470769.png)
 
-<center>Fig. 2.  An example of illustrating the FGSM idea.
+Fig. 2.  An example of illustrating the FGSM idea.
 Now let's see the FGSM from the view of loss function. Its mathematical nature is to force the generated AE to have a possibly much loss to be classified into the correct class. It is easy to understand that if we make the loss function of the AE as large as possible, we can hopefully make the NN misclassify it.
 
 A FGSM implementation is shown as follows:
@@ -147,7 +142,7 @@ class Net(nn.Module):
 
 The attack results are shown as follows:
 
-$\begin{array}{ll}
+$$\begin{aligned}
 \text { Epsilon: } 0 & \text { Test Accuracy }=0.981 \\
 \text { Epsilon: 0.05 } & \text { Test Accuracy }=0.943 \\
 \text { Epsilon: 0.1 } & \text { Test Accuracy }=0.851 \\
@@ -155,14 +150,13 @@ $\begin{array}{ll}
 \text { Epsilon: } 0.2 & \text { Test Accuracy }=0.430 \\
 \text { Epsilon: } 0.25 & \text { Test Accuracy }=0.208 \\
 \text { Epsilon: } 0.3 & \text { Test Accuracy }=0.087
-\end{array}$
+\end{aligned}$$
 
 Some AEs are shown as follows:
 
-![1677181438726](..\assets\images\23\1677181438726.png)
+![1677181438726](../assets/images/team23/1677181438726.png)
 
-<center>Fig. 3.  Examples of AEs that successfully fool the NN. The first line is clean images that are not modified, so they are correctly recognized by the NN.
-
+Fig. 3.  Examples of AEs that successfully fool the NN. The first line is clean images that are not modified, so they are correctly recognized by the NN.
 
 From the above results, we see that as the $\epsilon$ increases, the accuracy of the NN is greatly degraded, however, form the AEs we can see that the modification of images becomes more easy to detect by our eyes when $\epsilon$ goes too much.
 
@@ -172,49 +166,46 @@ BIM algorithm is proposed by the work *Adversarial examples in the physical worl
 
 The authors attack an  TensorFlow Camera Demo app, they took a image of washer and the app correctly recognize it. Then they use BIM to generate some AEs and print them, and the camera app misclassified the  printed AE photograph. The examples are presented as follows:
 
-![1677183273295](..\assets\images\23\1677183273295.png)
+![1677183273295](../assets/images/team23/1677183273295.png)
 
-<center>Fig. 4.  The real-world experiment that the authors conduct [4].
-
+Fig. 4.  The real-world experiment that the authors conduct [4].
 
 Now I introduce the content of BIM. It is a extension version of FGSM, which is re-presented in the following form:
-$$
-\boldsymbol{X}^{a d v}=\boldsymbol{X}+\epsilon \operatorname{sign}\left(\nabla_X J\left(\boldsymbol{X}, y_{t r u e}\right)\right)
-$$
-The authors apply FGSM multiple times with small step size, and clip pixel values of intermediate results after each step to ensure that they are in an $\epsilon$-neighbourhood of the original image: 
-$$
-\boldsymbol{X}_0^{a d v}=\boldsymbol{X}, \quad \boldsymbol{X}_{N+1}^{a d v}=C l i p_{X, \epsilon}\left\{\boldsymbol{X}_N^{a d v}+\alpha \operatorname{sign}\left(\nabla_X J\left(\boldsymbol{X}_N^{a d v}, y_{t r u e}\right)\right)\right\}
-$$
+
+$$\boldsymbol{X}^{a d v}=\boldsymbol{X}+\epsilon \operatorname{sign}\left(\nabla_X J\left(\boldsymbol{X}, y_{t r u e}\right)\right)$$
+
+The authors apply FGSM multiple times with small step size, and clip pixel values of intermediate results after each step to ensure that they are in an $\epsilon$-neighbourhood of the original image:
+
+$$\boldsymbol{X}_0^{a d v}=\boldsymbol{X}, \quad \boldsymbol{X}_{N+1}^{a d v}=C l i p_{X, \epsilon}\left\{\boldsymbol{X}_N^{a d v}+\alpha \operatorname{sign}\left(\nabla_X J\left(\boldsymbol{X}_N^{a d v}, y_{t r u e}\right)\right)\right\}$$
 
 ### Projected gradient descent (PGD)
 
 PGD algorithm is proposed in the work *Towards Deep Learning Models Resistant to Adversarial Attacks*.
 
 The topic of this work is actually how to defend AEs, which will be introduced later. Here, I mainly introduce an AE generation algorithm they mentioned. The PGD algorithm also extend the FGSM algorithm in an iterative manner. So we first re-present the FGSM as:
-$$
-x+\varepsilon \operatorname{sgn}\left(\nabla_x L(\theta, x, y)\right) .
-$$
+
+$$x+\varepsilon \operatorname{sgn}\left(\nabla_x L(\theta, x, y)\right) .$$
 The authors interpret this attack as a simple one-step scheme for maximizing the inner part of the saddle point formulation. A more powerful adversary is the multi-step variant, which is essentially projected gradient descent (PGD) on the negative loss function:
-$$
-x^{t+1}=\Pi_{x+\mathcal{S}}\left(x^t+\alpha \operatorname{sgn}\left(\nabla_x L(\theta, x, y)\right)\right) .
-$$
+
+$$x^{t+1}=\Pi_{x+\mathcal{S}}\left(x^t+\alpha \operatorname{sgn}\left(\nabla_x L(\theta, x, y)\right)\right) .$$
 
 ### DeepFool
 
 DeepFool algorithm is proposed in the work *DeepFool: a simple and accurate method to fool deep neural networks*.
 
-To overcome the non-linearity in high dimension, the authors performed an iterative attack with a linear approximation. Starting from an affine classifier, the authors found that the minimal perturbation of an affine classifier is the distance to the separating affine hyperplane $\mathcal{F}=\{x$ : $\left.w^T x+b=0\right\}$. The perturbation of an affine classifier $f$ can be $\eta^*(x)=-\frac{f(x)}{\|w\|^2} w$.
+To overcome the non-linearity in high dimension, the authors performed an iterative attack with a linear approximation. Starting from an affine classifier, the authors found that the minimal perturbation of an affine classifier is the distance to the separating affine hyperplane. The perturbation of an affine classifier $f$ can be $\eta^*(x)=-\frac{f(x)}{\|w\|^2} w$.
 
 If $f$ is a binary differentiable classifier, an iterative method is used to approximate the perturbation by considering $f$ is linearized around $x_i$ at each iteration. The minimal perturbation is computed as:
-$$
-\begin{array}{ll}
+
+$$\begin{array}{ll}
 \underset{\eta_i}{\arg \min } & \left\|\eta_i\right\|_2 \\
 \text { s.t. } & f\left(x_i\right)+\nabla f\left(x_i\right)^T \eta_i=0 .
-\end{array}
-$$
+\end{array}$$
+
 This result can also be extended to the multi-class classifier by finding the closest hyperplanes. It can also be extended to a more general $\ell_p$ norm, $p \in[0, \infty)$. DeepFool provided less perturbation compared to FGSM and JSMA did. Compared to JSMA, DeepFool also reduced the intensity of perturbation instead of the number of selected features.
 
 The detailed DeepFool algorithm for binary classifier and mutli-class case are presented as follows:
+
 $$
 \begin{aligned}
 & \hline \text { Algorithm } 1 \text { DeepFool for binary classifier } \\
@@ -272,19 +263,13 @@ Since this is the first AE defense algorithm I introduce, in this part, I will a
 
 Let's review the AE generation methods, they commonly find a small perturbation and add it to the original image to fool the NN while not discarded by human eyes. It can be regarded as a sample search in the area with a small radius $\epsilon$ centered at the original image vector point. The paper provides a good diagram to show us this case:
 
-![1677244933852](..\assets\images\23\1677244933852.png)
-
-<center> 
-    Fig. 5. A diagram of a hardness metric in [5], which is a metric defining the robustness of an NN to AEs. I will explain the underlying idea of justifying a roubustness of NNs to AEs on this basis.
-</center>
+![1677244933852](../assets/images/team23/1677244933852.png)
+Fig. 5. A diagram of a hardness metric in [5], which is a metric defining the robustness of an NN to AEs. I will explain the underlying idea of justifying a roubustness of NNs to AEs on this basis.
 
 From Fig. 5, we see that AEs are usally chosen in the gray area. If we promise that all examples in the gray area are classified as a same class as X. Then the AEs will not make sense any more. For this purpose, we need to ensure that the *smooth* of the classifier. To help understand what the *smooth* is, and why we should ensure it, I draw a diagram as follows:
 
-![1677245730994](..\assets\images\23\1677245730994.png)
-
-<center>
-    Fig. 6. An example that there is an image point of different class in the neighborhood of the target example.
-</center>
+![1677245730994](../assets/images/team23/1677245730994.png)
+Fig. 6. An example that there is an image point of different class in the neighborhood of the target example.
 
 From the above example, we see that if there is an image point of different class in the neighborhood of the target example, the interface of the classifier should be extremely bent to reach such a result. This will cause the gradient of partial classifying interface to be high, which means that the classifier is not *smooth* enough. If the classifier classify all the examples in the area of the dashed circle, then the interface is a circle and it is *smooth*, which then has a good robustness to AEs. Therefore, the aim of the AE defense algorithm is to train the target NN as *smooth* as possible to defend AEs.
 
@@ -302,11 +287,8 @@ The detailed process is presented as follows:
 
 The diagram of the algorithm is shown as follows:
 
-![1677246690126](..\assets\images\23\1677246690126.png)
-
-<center>
-   Fig. 7. Overview of the Network Distillation to defend AEs [5].
-</center>
+![1677246690126](../assets/images/team23/1677246690126.png)
+Fig. 7. Overview of the Network Distillation to defend AEs [5].
 
 ### Adversarial Training
 
@@ -316,13 +298,11 @@ I base on the work *Towards deep learning models resistant to adversarial attack
 
 First I introduce some symbols they use. For each data point $x$, the authors specify a set of allowed perturbations $\mathcal{S} \subseteq \mathbb{R}^d$ that formalizes the manipulative power of the adversary. In image classification, the authors choose $\mathcal{S}$ so that it captures perceptual similarity between images. For instance, the $\ell_{\infty}$-ball around $x$ has recently been studied as a natural notion for adversarial perturbations.
 Next, the authors modify the definition of population risk $\mathbb{E}_{\mathcal{D}}[L]$ by incorporating the above adversary. Instead of feeding samples from the distribution $\mathcal{D}$ directly into the loss $L$, the authors allow the adversary to perturb the input first. This gives rise to the following saddle point problem:
-$$
-\min _\theta \rho(\theta), \quad \text { where } \quad \rho(\theta)=\mathbb{E}_{(x, y) \sim \mathcal{D}}\left[\max _{\delta \in \mathcal{S}} L(\theta, x+\delta, y)\right]
-$$
+
+$$\min_\theta \rho(\theta), \quad \text { where } \quad \rho(\theta)=\mathbb{E}_{(x, y) \sim \mathcal{D}}\left[\max_{\delta \in \mathcal{S}} L(\theta, x+\delta, y)\right]$$
 By optimize this loss function, the interface of the classifier tends to become more robustness to AEs. The authors gives a good diagram to show us the classifier interface using ordinary training and adversarial training, shown as follows:
 
-![1677248425490](..\assets\images\23\1677248425490.png)
-
+![1677248425490](../assets/images/team23/1677248425490.png)
 Fig. 8. Illustration of the change of classifier using adversarial training [3]. Left: A set of points that can be easily separated with a simple (in this case, linear) decision boundary. Middle: The simple decision boundary does not separate the $\ell_{\infty}$-balls (here, squares) around the data points. Hence there are adversarial examples (the red stars) that will be misclassified. Right: Separating the $\ell_{\infty}$-balls requires a significantly more complicated decision boundary. The resulting classifier is robust to adversarial examples with bounded $\ell_{\infty}$-norm perturbations.
 
 Note that through the adversarial training, the robustness to the AEs become better, but it usually brings degraded performance in classifying other clear images. From Fig. 8 we can infer this result, since the classifier interface by adversarial training actually loses generalization to some extent.
@@ -335,19 +315,15 @@ We take  SafetyNet [7] as an example to introduce this way. SafetyNet extracted 
 
 SafetyNet consists of the original classifier, and an adversary detector which looks at the internal state of the later layers in the original classifier, as in Fig. 9. If the adversary detector declares that an example is adversarial, then the sample is rejected. 
 
-![1677250983379](..\assets\images\23\1677250983379.png)
-
-<center>
-    Fig. 9. Diagram of the SafetyNet [6]. SafetyNet consists of a conventional classifier with an RBFSVM that uses discrete codes computed from late stage ReLUs to detect adversarial examples.
-</center>
+![1677250983379](../assets/images/team23/1677250983379.png)
+Fig. 9. Diagram of the SafetyNet [6]. SafetyNet consists of a conventional classifier with an RBFSVM that uses discrete codes computed from late stage ReLUs to detect adversarial examples.
 
 The detailed design are shown as follows:
 
 > The adversary detector needs to be hard to attack. We force an attacker to solve a hard discrete optimization problem. For a layer of ReLUs at a high level in the classification network, we quantize each ReLU at some set of thresholds to generate a discrete code (binarized code in the case of one threshold). Our hypothesis 1 suggests that different code patterns appear for natural examples and adversarial examples. We use an adversary detector that compares a code produced at test time with a collection of examples, meaning that an attacker must make the network produce a code that is acceptable to the detector. The adversary detector in SafetyNet uses an RBF-SVM on binary or quaternary codes (activation patterns) to find adversarial examples.
 > We denote a code by c. The RBF-SVM classifies by
-> $$
-> f(\mathbf{c})=\sum_i^N \alpha_i y_i \exp \left(-\left\|\mathbf{c}-\mathbf{c}_i\right\|^2 / 2 \sigma^2\right)+b
-> $$
+>  
+> $$f(\mathbf{c})=\sum_i^N \alpha_i y_i \exp \left(-\left\|\mathbf{c}-\mathbf{c}_i\right\|^2 / 2 \sigma^2\right)+b$$
 > In this objective function, when $\sigma$ is small, the detector produces essentially no gradient unless the attacking code $\mathbf{c}$ is very close to a positive example $\mathbf{c}_i$. Our quantization process makes the detector more robust and the gradients even harder to get. Experiments show that this form of gradient obfuscation is quite robust, and that confusing the detector is very difficult without access to the RBF-SVM, and still  difficult even when access is possible.
 
 ## Code respositories
@@ -366,23 +342,22 @@ Indicators of Attack Failure: Debugging and Improving Optimization of Adversaria
 
 ## References
 
-[1] Goodfellow, I. J., Shlens, J., & Szegedy, C. (2014). Explaining and harnessing adversarial examples. *arXiv preprint arXiv:1412.6572*. 
+[1] Goodfellow, I. J., Shlens, J., & Szegedy, C. (2014). Explaining and harnessing adversarial examples. *arXiv preprint arXiv:1412.6572*.
 
-[2]  Kurakin A, Goodfellow I J, Bengio S. Adversarial examples in the physical world[M]//Artificial intelligence safety and security. Chapman and Hall/CRC, 2018: 99-112. 
+[2]  Kurakin A, Goodfellow I J, Bengio S. Adversarial examples in the physical world[M]//Artificial intelligence safety and security. Chapman and Hall/CRC, 2018: 99-112.
 
-[3]  Madry A, Makelov A, Schmidt L, et al. Towards deep learning models resistant to adversarial attacks[J]. arXiv preprint arXiv:1706.06083, 2017. 
+[3]  Madry A, Makelov A, Schmidt L, et al. Towards deep learning models resistant to adversarial attacks[J]. arXiv preprint arXiv:1706.06083, 2017.
 
 [4]  DeepFool: a simple and accurate method to fool deep neural networks.
 
-[5]  Papernot N, McDaniel P, Wu X, et al. Distillation as a defense to adversarial perturbations against deep neural networks[C]//2016 IEEE symposium on security and privacy (SP). IEEE, 2016: 582-597. 
+[5]  Papernot N, McDaniel P, Wu X, et al. Distillation as a defense to adversarial perturbations against deep neural networks[C]//2016 IEEE symposium on security and privacy (SP). IEEE, 2016: 582-597.
 
 [6]  G. Hinton, O. Vinyals, and J. Dean, “Distilling the knowledge in a neural network,” in Deep Learning and Representation Learning Workshop at NIPS 2014. arXiv preprint arXiv:1503.02531, 2014.
 
-[7]  Lu J, Issaranon T, Forsyth D. Safetynet: Detecting and rejecting adversarial examples robustly[C]//Proceedings of the IEEE international conference on computer vision. 2017: 446-454. 
+[7]  Lu J, Issaranon T, Forsyth D. Safetynet: Detecting and rejecting adversarial examples robustly[C]//Proceedings of the IEEE international conference on computer vision. 2017: 446-454.
 
-[8]  Yuan X, He P, Zhu Q, et al. Adversarial examples: Attacks and defenses for deep learning[J]. IEEE transactions on neural networks and learning systems, 2019, 30(9): 2805-2824. 
+[8]  Yuan X, He P, Zhu Q, et al. Adversarial examples: Attacks and defenses for deep learning[J]. IEEE transactions on neural networks and learning systems, 2019, 30(9): 2805-2824.
 
-[9]  Balda E R, Behboodi A, Mathar R. Adversarial examples in deep neural networks: An overview[J]. Deep Learning: Algorithms and Applications, 2020: 31-65. 
+[9]  Balda E R, Behboodi A, Mathar R. Adversarial examples in deep neural networks: An overview[J]. Deep Learning: Algorithms and Applications, 2020: 31-65.
 
 ---
-
