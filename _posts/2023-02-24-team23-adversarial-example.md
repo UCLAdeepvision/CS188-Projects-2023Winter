@@ -299,7 +299,7 @@ I base on the work *Towards deep learning models resistant to adversarial attack
 First I introduce some symbols they use. For each data point $x$, the authors specify a set of allowed perturbations $\mathcal{S} \subseteq \mathbb{R}^d$ that formalizes the manipulative power of the adversary. In image classification, the authors choose $\mathcal{S}$ so that it captures perceptual similarity between images. For instance, the $\ell_{\infty}$-ball around $x$ has recently been studied as a natural notion for adversarial perturbations.
 Next, the authors modify the definition of population risk $\mathbb{E}_{\mathcal{D}}[L]$ by incorporating the above adversary. Instead of feeding samples from the distribution $\mathcal{D}$ directly into the loss $L$, the authors allow the adversary to perturb the input first. This gives rise to the following saddle point problem:
 
-$$\min_\theta \rho(\theta), \quad \text { where } \quad \rho(\theta)=\mathbb{E}_{(x, y) \sim \mathcal{D}}\left(\max_{\delta \in \mathcal{S}} L(\theta, x+\delta, y)\right)$$
+$$\min_\theta \rho(\theta), \quad \text { where } \quad \rho(\theta)=\mathbb{E}_{(x, y) \sim \mathcal{D}}\left(\max_{\delta \in \mathcal{S}} L(\theta, x+\delta, y)\right) .$$
 By optimize this loss function, the interface of the classifier tends to become more robustness to AEs. The authors gives a good diagram to show us the classifier interface using ordinary training and adversarial training, shown as follows:
 
 ![1677248425490](../assets/images/team23/1677248425490.png)
