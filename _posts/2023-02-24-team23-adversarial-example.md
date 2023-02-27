@@ -52,7 +52,6 @@ Before introducing AE generation techniques, we first present some preliminaries
 #### Definition 1 (Score functions and classifier functions)
 
 A classifier is defined by the mapping $k: \mathbb{R}^M \rightarrow[K]$ that maps an input $\mathrm{x} \in \mathbb{R}^M$ to its estimated class $k(\mathbf{x}) \in[K]$. The mapping $k(\cdot)$ is itself defined by
-
 $$k(\mathbf{x})=\underset{l \in[K]}{\operatorname{argmax}}\left\{f_l(\mathbf{x})\right\},$$
 
 $f(\mathbf{x})$ given by the vector $\left(f_1(\mathbf{x}), \ldots, f_K(\mathbf{x})\right)^{\top}$ is known as score function and can be assumed to be differentiable almost everywhere for many classifiers.
