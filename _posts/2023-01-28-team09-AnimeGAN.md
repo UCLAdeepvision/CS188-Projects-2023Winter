@@ -28,8 +28,8 @@ GAN is short for generative adversarial network. There are mainly two components
 ![Style-based generator]({{'/assets/images/team09/style-based-generator.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
 *Fig 2. Comparison Between Tranditional Generator and Style-based Generator[3]
 
-StyleGAN model mainly improves upon the generator components. As illustrated in Figure 2, instead of generating image directly from latent code, the latent code $z$ is first transformed by the mapping layer consists of fully connected layers into new latent code $w$, then through affine matrix transformation $A$, $w$ is converted into "style": $y = (y_s, y_b)$. $y$ is then mixed into the synthesis network via $AdaIN$ operation:
-$AdaIN={y_{s,i}}\frac{x_i-\mu(x_i)}{\sigma}+y_{b,i}$.[3]
+StyleGAN model mainly improves upon the generator components. As illustrated in Figure 2, instead of generating image directly from latent code, the latent code $$z$$ is first transformed by the mapping layer consists of fully connected layers into new latent code $$w$$, then through affine matrix transformation $$A$$, $$w$$ is converted into "style": $$y=(y_s, y_b)$$. $$y$$ is then mixed into the synthesis network via $$AdaIN$$ operation:
+$$AdaIN={y_{s,i}}\frac{x_i-\mu(x_i)}{\sigma}+y_{b,i}$$.[3]
 From the equation, the feature map $x$ is first normalized, then the corresponding scale and bias is applied from the style. From the archetecture, each genearted image is based on a collection of style drew from the image samples.[3] This property of the StyleGan is particularly useful for anime character generation, as anime has unique art style and forms a distinct domain. As also described in the paper, "each styles can be expected to affect only certain aspect of the image", the architecture is capable of generating desired styled anime character as well. 
 
 ![Style-based generator revised]({{'/assets/images/team09/style-based-generator_revised.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
@@ -57,7 +57,7 @@ Instead of using convolution layers as the building block, replace by ViT layer.
 ### Dataset
 ![Sample Images From the Dataset]({{'/assets/images/team09/sample_real_images.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
 *Fig 5. Sample Images from the Dataset
-All experiment will use a relatively small [dataset](https://www.kaggle.com/datasets/tianbaiyutoby/animegirl-faces) obtained from Kaggle consists of 2434 $256\times256$ anime faces of different styles. The dataset is preprocessed by using the `dataset_tool.py` utilities provided in the StyleGAN2-ADA code [repository](https://github.com/NVlabs/stylegan2-ada-pytorch).    
+All experiment will use a relatively small [dataset](https://www.kaggle.com/datasets/tianbaiyutoby/animegirl-faces) obtained from Kaggle consists of 2434 $$256\times256$$ anime faces of different styles. The dataset is preprocessed by using the `dataset_tool.py` utilities provided in the StyleGAN2-ADA code [repository](https://github.com/NVlabs/stylegan2-ada-pytorch).    
 ### Training Environment
 All model will be trained on a single Tesla T4 GPU, using docker environment provided in the StyleGAN2-ADA code [repository](https://github.com/NVlabs/stylegan2-ada-pytorch).  
 ### Baseline Results
