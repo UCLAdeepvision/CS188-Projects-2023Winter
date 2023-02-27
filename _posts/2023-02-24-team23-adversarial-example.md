@@ -188,13 +188,9 @@ $$
 PGD algorithm is proposed in the work *Towards Deep Learning Models Resistant to Adversarial Attacks*.
 
 The topic of this work is actually how to defend AEs, which will be introduced later. Here, I mainly introduce an AE generation algorithm they mentioned. The PGD algorithm also extend the FGSM algorithm in an iterative manner. So we first re-present the FGSM as:
-$$
-x+\varepsilon \operatorname{sgn}\left(\nabla_x L(\theta, x, y)\right) .
-$$
+$$x+\varepsilon \operatorname{sgn}\left(\nabla_x L(\theta, x, y)\right) .$$
 The authors interpret this attack as a simple one-step scheme for maximizing the inner part of the saddle point formulation. A more powerful adversary is the multi-step variant, which is essentially projected gradient descent (PGD) on the negative loss function:
-$$
-x^{t+1}=\Pi_{x+\mathcal{S}}\left(x^t+\alpha \operatorname{sgn}\left(\nabla_x L(\theta, x, y)\right)\right) .
-$$
+$$x^{t+1}=\Pi_{x+\mathcal{S}}\left(x^t+\alpha \operatorname{sgn}\left(\nabla_x L(\theta, x, y)\right)\right) .$$
 
 ### DeepFool
 
