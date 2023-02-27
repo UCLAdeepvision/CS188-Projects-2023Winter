@@ -44,13 +44,52 @@ Video grounding is the task of grounding natural language descriptions to the vi
 
 We started by looking into existing video grounding research. We found the paper [https://arxiv.org/abs/1912.03590] particularly interesting because it proposed a unique way to tackle the task of answering queries with segments of video, also known as moment localization. Long videos may demonstrate many different scenes, and it is very helpful to query and narrow down specific segments within these videos.
 
-So, we decided to take a deeper look into the 2D-TAN code base.
+So, we decided to take a deeper look into the 2D-TAN code base. Here is an overview of the TAN model:
+![2DTANModel.png](../assets/images/team08/2DTANModel.png)
+```
+class TAN(nn.Module):
+    def __init__(self):
+        super(TAN, self).__init__()
+
+        self.frame_layer = getattr(frame_modules, config.TAN.FRAME_MODULE.NAME)(config.TAN.FRAME_MODULE.PARAMS)
+        self.prop_layer = getattr(prop_modules, config.TAN.PROP_MODULE.NAME)(config.TAN.PROP_MODULE.PARAMS)
+        self.fusion_layer = getattr(fusion_modules, config.TAN.FUSION_MODULE.NAME)(config.TAN.FUSION_MODULE.PARAMS)
+        self.map_layer = getattr(map_modules, config.TAN.MAP_MODULE.NAME)(config.TAN.MAP_MODULE.PARAMS)
+        self.pred_layer = nn.Conv2d(config.TAN.PRED_INPUT_SIZE, 1, 1, 1)
+
+    def forward(self, textual_input, textual_mask, visual_input):
+
+        vis_h = self.frame_layer(visual_input.transpose(1, 2))
+        map_h, map_mask = self.prop_layer(vis_h)
+        fused_h = self.fusion_layer(textual_input, textual_mask, map_h, map_mask)
+        fused_h = self.map_layer(fused_h, map_mask)
+        prediction = self.pred_layer(fused_h) * map_mask
+
+        return prediction, map_mask
+
+    def extract_features(self, textual_input, textual_mask, visual_input):
+        vis_h = self.frame_layer(visual_input.transpose(1, 2))
+        map_h, map_mask = self.prop_layer(vis_h)
+
+        fused_h = self.fusion_layer(textual_input, textual_mask, map_h, map_mask)
+        fused_h = self.map_layer(fused_h, map_mask)
+        prediction = self.pred_layer(fused_h) * map_mask
+
+        return fused_h, prediction, map_mask
+```
+The frame layer takes each frame of the video sequence and uses CNNs to extract spatial features. This is then passed to the prop layer which helps propogate information accross video frames in order to capture temporal dynamics. This is necessary since frames do not live independently. For example, if we ask when the person jumps for the second time, a clip of a person jumping would be judged based on the context of previous frames. This outputs a map and mask.
+
+Next, the fusion layer computes the textual representation using LSTM. Then, this hidden state tensor is multiplied with the visual features with a element-wise multiplication to fuse together the visual and textual features. After this, the map layer applies a final series of convolutions before the pred_layer runs a final convolution to produce the final predictions in the form of a num_clips * num_clips temporal feature map.
 
 ## Current Steps:
 
 We began by setting up and initializing the 2D-TAN baseline model with ActivityNet videos/captions as our data for evaluation. We chose ActivityNet because it was a common data source across papers and was a helpful benchmark for evaluation. Downloading ActivityNet took a lot of work, because of the space requirements we had to add an additional disk.
 
-Setting up and initializing the 2D-TAN model was painful. Our single NVIDIA-K80 google cloud instance struggled to allocate enough resources to the model and we noticed that training a single epoch would require large amounts of time. We realized that given the complexity of models like 2D-TAN, video grounding is an extremely computationally demanding task (add some screenshots). Not only did we run into issues with GPU restraints, but also pytorch requires substantial amounts of RAM when initializing and causes our processes to crash frequently.
+![trainingfrustration.png](../assets/images/team08/trainingfrustration.png)
+
+Setting up and initializing the 2D-TAN model was painful. Our single NVIDIA-K80 google cloud instance struggled to allocate enough resources to the model and we noticed that training a single epoch would require large amounts of time. We realized that given the complexity of models like 2D-TAN, video grounding is an extremely computationally demanding task.
+
+Not only did we run into issues with GPU restraints, but also pytorch requires substantial amounts of RAM when initializing and causes our processes to crash frequently.
 
 ## Experiments we plan to do and why:
 
