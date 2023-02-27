@@ -37,7 +37,12 @@ While works such as TrafficGen and LaneGCN are both also popular in the communit
 
 ## Data Preparation
 
-We leverage the Waymo Open Motion Dataset v1.1 to replicate and improve our model. In this dataset release in 2021, individual driving scenarios in bird-eye view is stored in TFRecord file. Each file contains physicl properties(position, velocity, etc.) of the background(roadmap, etc.) and agents(participants in the background traffic). For one such TFRecord, the original Multipath++ project prerenders it into sets of npz files, each redescribing the same scene from one agent's perspective. These npz files are the raw forms of the input embeddings. 
+We leverage the Waymo Open Motion Dataset v1.1 to replicate and improve our model. In this dataset release in 2021, individual driving scenarios in bird-eye view is stored in TFRecord file. Each file contains physicl properties(position, velocity, etc.) of the background(roadmap, etc.) and agents(participants in the background traffic). For one such TFRecord, the original Multipath++ project prerenders it into sets of npz files, each redescribing the same scene from one agent's perspective. These npz files are the raw forms of the input embeddings.
+
+Our data is stored at [this Goodle Drive folder](https://drive.google.com/drive/folders/1E78qI8VkxP0iVsE60CVNw9psnTgpjJGf?usp=sharing).
+
+## Demo
+Please follow this [Google Colab link](https://colab.research.google.com/drive/1nj2i8GVPRmxU6w2UsgWABigca4twuh1l?usp=sharing).
 
 ## Multipath++
 ### Data Representation
@@ -85,7 +90,7 @@ In this work, we will replace the LSTM blocks used in **Agent History Encoder** 
 ### Predictors
 A decoder unit is primarily MCG Blocks. To make final prediction, the embeddings are passed through multiple decoders units sequentially. In the last decoder unit, an additional MLP is applied to output the soft prediction of future trajectories distribution.
 
-Finally, a Expectation Maximization (EM) algorithm with Gaussian Mixure Model (GMM) prior is trained on the distribution parameters including mean, covariance matrix, and probability.
+Finally, a Expectation Maximization (EM) algorithm with Gaussian Mixure Model (GMM) prior is trained on the distribution parameters including mean, covariance matrix, and probability. Alternatively, the final layer may employ Multi-Head Attention for the same predictions.
 
 ![image info](../assets/images/team03/gmm.png)
 
@@ -107,7 +112,13 @@ We will compare the aforementioned training objectives between the original Mult
 
 ### Bootstrap Aggregation
 
+### Base Model
+Since Multipath++ doesn't have an official repository, we refer to [this community implementation](https://github.com/stepankonev/waymo-motion-prediction-challenge-2022-multipath-plus-plus). We here discuss the few differences between [this version](https://arxiv.org/abs/2206.10041) and the original Multipath++.
+First, the author leverages MCG + MHA blocks to provide predictions that are numerically stabler. In specific, the author uses 6 decoder outputs as attention input followed by Max Pooling and MCG Blocks as shown in the following image.
 
+![image info](../assets/images/team03/new_predictor.png)
+
+On the other hand, the authors used the same encoder for the UAV and other agents.
 
 ## Reference
 
