@@ -8,12 +8,9 @@ date: 2023-02-26
 
 > Self-driving is a hot topic among deep vision learning. One way of training driving models is using imitation learning. In this work, we focus on reproducing the findings from “End-to-end Driving via Conditional Imitation Learning.” To do so, we utilize CARLA, a driving simulator, and emulate the models created in said paper using their provided dataset.
 
-<!-- more -->
+<!--more-->
 {: class="table-of-content"}
-* Introduction
-* Technical Details
-* Issues Encountered
-* References
+* TOC
 {:toc} 
 
 # Introduction
