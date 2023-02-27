@@ -72,7 +72,7 @@ self.node_emb = nn.Linear(args['node_feat_size'], args['node_emb_size'])
 self.node_encoder = nn.GRU(args['node_emb_size'], args['node_enc_size'], batch_first=True)
 ```
 
-Since agents respond to other nearby agents in traffic, node encodings are updated using information from agent encodings within a certain distance, utilizing multi-head attention to do so [5]; this is implemented in lines 51-56 of ```pgp_encoder.py``` in the source as: [6]
+Since agents respond to other nearby agents in traffic, node encodings are updated using information from agent encodings within a certain distance, utilizing multi-head attention to do so [5]; the layers are implemented in lines 51-56 of ```pgp_encoder.py``` in the source as: [6]
 
 ```
 # Agent-node attention
@@ -118,7 +118,7 @@ class GAT(nn.Module):
         return att_op.permute(1, 0, 2)
 ```
 
-With the node encoding completed, the data will then pass through the policy header, which utilizes an MLP to output probabilities for each node's edges [5]; this is implemented in lines 37-45 of ```pgp.py``` in the source as: [6]
+With the node encoding completed, the data will then pass through the policy header, which utilizes an MLP to output probabilities for each node's edges [5]; the layers are implemented in lines 37-45 of ```pgp.py``` in the source as: [6]
 
 ```
 # Policy header
@@ -134,7 +134,7 @@ self.log_softmax = nn.LogSoftmax(dim=2)
 
 Loss for the policy header is calculated using negative log likelihood [5], implemented in ```pi_bc.py``` in the source [6].
 
-Once possible future routes are determined, multi-head attention is utilized again for selective aggregation of context to form possible trajectories and the motion that will be undertaken (which may vary for a given trajectory) [5]. The aggregator is implemented in lines 51-56 of ```pgp.py``` in the source as: [6]
+Once possible future routes are determined, multi-head attention is utilized again for selective aggregation of context to form possible trajectories and the motion that will be undertaken (which may vary for a given trajectory) [5]. The aggregator layers are implemented in lines 51-56 of ```pgp.py``` in the source as: [6]
 
 ```
 # Attention based aggregator
@@ -145,7 +145,7 @@ self.val_emb = nn.Linear(args['node_enc_size'], args['emb_size'])
 self.mha = nn.MultiheadAttention(args['emb_size'], args['num_heads'])
 ```
 
-Finally, the decoder utilizes an MLP and K-means clustering to output predicted trajectories [5], with the implementation of the MLP in lines 33-35 of ```lvm.py``` in the source as: [6]
+Finally, the decoder utilizes an MLP and K-means clustering to output predicted trajectories [5], with the implementation of the MLP layers in lines 33-35 of ```lvm.py``` in the source as: [6]
 
 ```
 self.hidden = nn.Linear(args['encoding_size'] + args['lv_dim'], args['hidden_size'])
@@ -156,6 +156,8 @@ self.leaky_relu = nn.LeakyReLU()
 Loss for the decoder is calculated using average displacement error [5], implemented in ```min_ade.py``` in the source [6]. The total loss is the sum of the losses of the policy header and the decoder [5].
 
 ## Studies to Conduct
+
+The PGP environment has been set up as per repository instructions [6], the code has been tested, and the NuScenes dataset [7] (or at least the parts of the dataset needed by the model) has been obtained. Some testing has also been done on the SGNet model [1].
 
 Other encoder, aggregator, and decoder models appear to exist in the PGP repository [6], meaning after running the standard PGP model on the NuScenes dataset [7] (using the provided pretrained model), these other models should also be tested for a comparison (training from scratch). There is a config file ```pgp_gatx2_lvm_traversal.yml``` in the repository that allows for the models to be altered [6].
 
