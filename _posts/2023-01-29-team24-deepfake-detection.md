@@ -73,13 +73,17 @@ Francois Chollet, Xception: Deep Learning with Depthwise Separable Convolutions
 -   Video Face Manipulation Detection Through Ensemble of CNNs
     -   [Paper](https://arxiv.org/abs/2004.07676v1)
     -   [Github](https://github.com/polimi-ispl/icpr2020dfdc)
--   Other Resources
-    -   Link: https://github.com/CatoGit/Comparing-the-Performance-of-Deepfake-Detection-Methods-on-Benchmark-Datasets/blob/master/deepfake_detector/pretrained_mods/efficientnetb1lstm.py
-    -   Paper: https://arxiv.org/abs/1909.12962
-    -   Link: https://github.com/yuezunli/celeb-deepfakeforensics
-    -   Link: https://ai.facebook.com/datasets/dfdc/
-    -   Link: https://arxiv.org/pdf/1610.02357.pdf
-    -   Paper: (https://arxiv.org/abs/1809.00888)
+-   DeepFake Detector Performance Model 
+    -   [Github] https://github.com/CatoGit/Comparing-the-Performance-of-Deepfake-Detection-Methods-on-Benchmark-Datasets/blob/master/deepfake_detector/pretrained_mods/efficientnetb1lstm.py
+-   Celeb-DF: A Large-scale Challenging Dataset for DeepFake Forensics
+    -   [Paper] https://arxiv.org/abs/1909.12962
+    -   [Github] https://github.com/yuezunli/celeb-deepfakeforensics
+-   DFDC Dataset
+    -   [Link] https://ai.facebook.com/datasets/dfdc/
+-   Xception: Deep Learning with Depthwise Separable Convolutions
+    -   [Paper] https://arxiv.org/pdf/1610.02357.pdf
+-   MesoNet: a Compact Facial Video Forgery Detection Network
+    -   [Paper] (https://arxiv.org/abs/1809.00888)
 
 ## References
 
