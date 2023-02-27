@@ -96,7 +96,7 @@ The discriminator uses a 70x70 PatchGAN architecture, which are used to classify
 
 The complete model consists of two Generators and two Discriminators. Each Generator/Discriminator pair tries to map an image from one domain to another while the other pair tries to map the reverse of the image.
 ![CycleGAN Complete Model](/assets/images/team14/CycleGAN-complete.jpg)
-*  Fig X. CycleGAN architecture with all generators and discriminators.
+*  Fig X. CycleGAN architecture with all generators and discriminators. (Image source: https://cvnote.ddlee.cc/2019/08/21/image-to-image-translation-pix2pix-cyclegan-unit-bicyclegan-stargan)
  
  
 #### Loss Functions
