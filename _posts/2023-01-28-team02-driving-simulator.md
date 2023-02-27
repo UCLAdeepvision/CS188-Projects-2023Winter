@@ -65,7 +65,9 @@ config = dict(
             "exit_length": 50,
     })
 ```
-
+The resulting generated evironment is shown below:
+![fig1]({{ '/assets/images/Team02/env.png' | relative_url }})
+*Fig 1. Generated Environment*
 
 ## Extracting RGB Image  With Ground Truth Actions From Metadrive
 In order to train a model that outputs an action space prediction based on the input RGB image, we first need to collect enough images with ground-truth action labeling. All the data required at this step can be obtained from the *obervation* and *info* returned by *env.step()*. The action space, as defined in the IDM Policy, consists of two numbers, representing the steering and acceleration respectively. The numbers are used to directly name the image file, which is placed in validation set or training set as configured.
@@ -82,13 +84,13 @@ if PRINT_IMG and i%SAMPLING_INTERVAL == 0:
 ```
 The image obtained, as shown below, contains all the information about the lane that the agent vehicle requires to make a good prediction. 
 <!-- !!!!! ADD IMAGE HERE !!!!! -->
-![fig1]({{ '/assets/images/Team02/fig1.png' | relative_url }})
+![fig2]({{ '/assets/images/Team02/fig1.png' | relative_url }})
 <!-- {: style="width: 128; max-width: 100%;"} -->
-*Fig 1. RGB image example*
+*Fig 2. RGB Image Example*
 
 
 ## Training
-We defined a dataloader to handle the dataset we collected, which simply reads in the image file and processes its filename to store as the label. Some code implemented are omitted for readability.
+We defined a dataloader to handle the dataset we collected, which simply reads in the image file and processes its filename to store as the label. Some code implemented are omitted for readability. 
 ```python
 class Metadrive(Dataset):
     def __init__(self, root_dir, split, transform=None):
@@ -101,23 +103,54 @@ class Metadrive(Dataset):
         image = Image.open(image_path)
         label = self.filenames[idx][1:-5]
         label = label.split(', ')
-        steering = float(label[0])*100
-        acceleration = float(label[1])*10
+        steering = (float(label[0])-steering_mean)/steering_std
+        acceleration = (float(label[1])-accel_mean)/accel_std
         return image, torch.Tensor([steering, acceleration])
 ```
-In order to validate that our implementation for the data loader is correct, we used a pretrained ResNet18 from PyTorch and added a fully connected linear layer at the end, transforming the 512-dim tensor to the 2-dim tensor, which represents the action space we intend to obtain from the model prediction. A naive training method was adopted, and the model was trained for 20 epochs.
+In order to validate that our implementation for the data loader is correct, we used a pretrained ResNet18 from PyTorch and added a fully connected linear layer at the end, transforming the 512-dim tensor to the 2-dim tensor, which represents the action space we intend to obtain from the model prediction. We set different learning rates for different layers, and we used MSE loss as the criterion since we are dealing with a continuous value prediction model.
+```python 
+optimizer = torch.optim.SGD(model.resnet.fc.parameters(), lr=0.01, momentum=0.9)
+for name, param in model.named_parameters():
+    if param.requires_grad and 'fc' not in name:
+        optimizer.add_param_group({'params': param, 'lr':0.005})
+
+criterion = nn.MSELoss()
 ```
-Epoch 1/20: 100%|██████████| 15/15 [00:02<00:00,  7.49it/s, loss=13.9]
-Validation set: Average loss = 18.0364
-Epoch 2/20: 100%|██████████| 15/15 [00:01<00:00, 11.60it/s, loss=10.6]
-Validation set: Average loss = 16.7325
-Epoch 3/20: 100%|██████████| 15/15 [00:01<00:00,  9.50it/s, loss=10.8]
-Validation set: Average loss = 15.1718
+```
+Epoch 1/10: 100%|██████████| 15/15 [00:01<00:00, 10.91it/s, loss=5.09e+3]
+Validation set: Average loss = 12432554169393362758105300992.0000
+Epoch 2/10: 100%|██████████| 15/15 [00:01<00:00, 11.38it/s, loss=1.8e+3]
+Validation set: Average loss = 5299107328.0000
+Epoch 3/10: 100%|██████████| 15/15 [00:01<00:00, 10.88it/s, loss=11]
+Validation set: Average loss = 206780.1484
+Epoch 4/10: 100%|██████████| 15/15 [00:01<00:00, 10.42it/s, loss=1.43]
+Validation set: Average loss = 6.6199
+Epoch 5/10: 100%|██████████| 15/15 [00:02<00:00,  6.32it/s, loss=0.873]
+Validation set: Average loss = 1.2147
+Epoch 6/10: 100%|██████████| 15/15 [00:02<00:00,  7.08it/s, loss=1.16]
+Validation set: Average loss = 1.0740
 ......
-Epoch 20/20: 100%|██████████| 15/15 [00:01<00:00, 11.27it/s, loss=15.7]
-Validation set: Average loss = 14.9256
+Epoch 10/10: 100%|██████████| 15/15 [00:01<00:00, 10.67it/s, loss=0.769]
+Validation set: Average loss = 0.9185
 ```
-It is worth noticing that before training, we scale up the steering value by 100 and acceleration by 10 so that the values don't appear too small. However, as shown from the above output, the loss didn't decrease noticeably, and the prediction accuracy was not promising. The analysis of this result and possible improvements to be done in the future will be discussed in later sections.
+It is worth noticing that before training, we standardize the values of steering angle and acceleration (code shown below). As shown from the above output, the loss decreased noticeably, but the best loss we could obtain stayed at around 0.9 without further improving. The analysis of this result and possible improvements to be done in the future will be discussed in later sections.
+```python
+def get_mean_std(root_dir):
+    steering = []
+    accel = []
+
+    for path in os.listdir(os.path.join(root_dir, 'dataset', 'train')):
+        if os.path.isfile(os.path.join(root_dir, 'dataset', 'train', path)):
+            label = path[1:-5]
+            label = label.split(', ')
+            steering.append(float(label[0]))
+            accel.append(float(label[1]))
+
+    steering = np.array(steering)
+    accel = np.array(accel)
+
+    return np.mean(steering), np.std(steering), np.mean(accel), np.std(accel)
+```
 
 
 
@@ -129,9 +162,9 @@ class RGBPolicy(BasePolicy):
     
     def __init__(self, control_object, random_seed):
         super(RGBPolicy, self).__init__(control_object=control_object, random_seed=random_seed)
-        self.model = Resnet(mode='linear',pretrained=True)
-        checkpoint = torch.load(self.PATH)
-        self.model.load_state_dict(checkpoint['model_state_dict'])
+        self.model = Resnet()
+        self.model.load_state_dict(torch.load(RGBPolicy.PATH, map_location=torch.device('cpu')))
+        self.model.eval()
 
     def act(self, *args, **kwargs):
         # get a PNMImage
@@ -144,9 +177,10 @@ class RGBPolicy(BasePolicy):
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))])
         img = data_transform(img)
 
-        action = self.model(img)[0].detach().numpy()         
-        action[0] = action[0]/100
-        action[1] = action[1]/10
+        action = self.model(img)[0].detach().numpy()
+        action[0] = action[0]*0.06545050570131895 + 0.005975310273351187
+        action[0] *= 2.3
+        action[1] = action[1]*0.37149717438120655 + 0.3121460530513671
         return action
 
     def __convert_img_to_tensor(self, img):
@@ -163,11 +197,18 @@ class RGBPolicy(BasePolicy):
         
         return img_tensor
 ```
+It is worth noticing that in the above code, we have to unnormalize the values of steering angle and acceleration returned by the model. And we applied a scaling factor to the steering, which is a value determined by emperical trials.
+
+
 ## Visualization and Evaluation
-We visualized our `RGBPolicy` in the MetaDrive environment to see how it performs.
+We visualized our `RGBPolicy` in the MetaDrive environment to see how it performs. The two gifs are from different trials.
 
-![fig1]({{ '/assets/images/Team02/demo.gif' | relative_url }})
+![fig3]({{ '/assets/images/Team02/demo.gif' | relative_url }})
+*Fig 3. Vehicle's FPV View*
+![fig4]({{ '/assets/images/Team02/demo2.gif' | relative_url }})
+*Fig 4. Topdown View*
 
+As the gifs show, the vehicle is able to follow the track in general, but it fails to perfectly avoid driving on the center yellow line.
 
 ## Future Plan and Possible Areas to Improve
 1. Dicrete classification  
@@ -181,65 +222,16 @@ The current dataset we constructed only contains ~1000 images for training and ~
 5. Integrating image segmentation
 Image segmentation models can be applied in this task. Before predicting the action space, we can first feed the image to the segmentation model, which may be able to extract focused and useful information specifically about the road or lane.
 6. Extend to more complicated scenarios
-If driving in a one-lane no traffic scenario is successfully solved, we will extend the project to more realistic scenarios. 
-
-
-## Possible project topics
-1. Integration of an existing algorithm/model with another driving simulator.
-2. Evaluation of the effect of sensory inputs removal/addition on an implemented model.
-3. Evaluate a trained & tested model under new scenes with certain events.
-
-<!-- Your survey starts here. You can refer to the [source code](https://github.com/lilianweng/lil-log/tree/master/_posts) of [lil's blogs](https://lilianweng.github.io/lil-log/) for article structure ideas or Markdown syntax. We've provided a [sample post](https://ucladeepvision.github.io/CS188-Projects-2022Winter/2017/06/21/an-overview-of-deep-learning.html) from Lilian Weng and you can find the source code [here](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2022Winter/main/_posts/2017-06-21-an-overview-of-deep-learning.md) -->
-
-<!-- ## Basic Syntax
-### Image
-Please create a folder with the name of your team id under /assets/images/, put all your images into the folder and reference the images in your main content.
-You can add an image to your survey like this:
-![YOLO]({{ '/assets/images/UCLAdeepvision/object_detection.png' | relative_url }})
-{: style="width: 400px; max-width: 100%;"}
-*Fig 1. YOLO: An object detection method in computer vision* [1].
-Please cite the image if it is taken from other people's work. -->
-
-<!-- 
-### Table
-Here is an example for creating tables, including alignment syntax.
-|             | column 1    |  column 2     |
-| :---        |    :----:   |          ---: |
-| row1        | Text        | Text          |
-| row2        | Text        | Text          | -->
-
-
-
-<!-- ### Code Block
-```
-# This is a sample code block
-import torch
-print (torch.__version__)
-``` -->
-
-
-<!-- ### Formula
-Please use latex to generate formulas, such as:
-$$
-\tilde{\mathbf{z}}^{(t)}_i = \frac{\alpha \tilde{\mathbf{z}}^{(t-1)}_i + (1-\alpha) \mathbf{z}_i}{1-\alpha^t}
-$$
-or you can write in-text formula $$y = wx + b$$.
-### More Markdown Syntax
-You can find more Markdown syntax at [this page](https://www.markdownguide.org/basic-syntax/). -->
+If driving in a one-lane no traffic scenario is successfully solved, we will extend the project to more realistic scenarios. Starting from the introduction of traffic into the scene, we will gradually move towards incoporating double lanes and even traffic blocks.
 
 ## Reference
 
-[1] A. Dosovitskiy, G. Ros, F. Codevilla, A. Lopez, and V. Koltun, “CARLA: An Open Urban Driving Simulator,” in Proceedings of the 1st Annual Conference on Robot Learning, 2017, pp. 1–16.  
-[2] S. Shah, D. Dey, C. Lovett, and A. Kapoor, “AirSim: High-Fidelity Visual and Physical Simulation for Autonomous Vehicles,” 2017. [Online]. Available: https://arxiv.org/abs/1705.05065  
-[3] Q. Li, Z. Peng, L. Feng, Q. Zhang, Z. Xue, and B. Zhou, "MetaDrive: Composing Diverse Driving Scenarios for Generalizable Reinforcement Learning," arXiv, 2021. doi: 10.48550/ARXIV.2109.12674.  
+ 
+[1] Q. Li, Z. Peng, L. Feng, Q. Zhang, Z. Xue, and B. Zhou, "MetaDrive: Composing Diverse Driving Scenarios for Generalizable Reinforcement Learning," arXiv, 2021. doi: 10.48550/ARXIV.2109.12674.  
 ---
 
 
 
 ## Code Repository
-
-[CARLA](https://github.com/carla-simulator/carla)
-
-[AirSim](https://github.com/microsoft/AirSim)
 
 [MetaDrive](https://github.com/metadriverse/metadrive)
