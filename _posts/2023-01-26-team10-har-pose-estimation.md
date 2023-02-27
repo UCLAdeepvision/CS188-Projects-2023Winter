@@ -19,7 +19,7 @@ date: 2023-02-26
 
 Human Action Recognition(HAR) is a computer vision problem that involves classifying human actions based on some visual inputs like RBG images or human poses in terms of joint key points/frame orientations. This problem exists in real world scenarios such as autonomous driving where vehicles not only need to detect static objects on the street, but also need to detect dynamic objects like humans and recognize their current action, whether they are moving across the street or remaining still. A human action sample is usually expressed as a sequence of images or poses across time domain. HAR models can use samples in terms of sequence of images directly, or they can take a two-stage approach by first converting the sequence of images into sequence of poses in time domain and classify its corresponding action from there. 
 
-In our project, we attempt to explore some of the recent works that take the second approach by utilizing existing pose estimation classifiers like OpenPose and PoseNet, and combine them with a human action recognizer like Action Transformer. In practice, both OpenPose and Posenet generate human poses at real time, and their output can both be fed into an human action recognizer, and we want to compare 
+In our project, we attempt to explore some of the recent works that take the second approach by utilizing existing pose estimation classifiers like OpenPose and PoseNet, and combine them with a human action recognizer like Action Transformer.
 
 ## Pose Estimation
 
