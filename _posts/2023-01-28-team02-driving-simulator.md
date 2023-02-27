@@ -208,10 +208,10 @@ We visualized our `RGBPolicy` in the MetaDrive environment to see how it perform
 
 ![fig3]({{ '/assets/images/Team02/demo.gif' | relative_url }})
 *Fig 3. Vehicle's FPV View*
-![fig4]({{ '/assets/images/Team02/demo2.gif' | relative_url }})
-*Fig 4. Topdown View*
+![fig4]({{ '/assets/images/Team02/demo3.gif' | relative_url }})
+*Fig 4. Vehicle In The Env*
 
-As the gifs show, the vehicle is able to follow the track in general, but it fails to perfectly avoid driving on the center yellow line.
+As the gifs show, the vehicle is able to follow the track in general, but it fails to perfectly avoid the white lane and the center yellow lane. This can be due to the model failing to properly predict a larger steering value when the vehicle approaches lane edges on curved tracks. Since the backbone model used is a pretrained ResNet which is good at doing categorization tasks, it is possible that it outputs values according to the type of situation, while not taking the trivial position difference of the vehicle into consideration.
 
 ## Future Plan and Possible Areas to Improve
 1. Dicrete classification  
