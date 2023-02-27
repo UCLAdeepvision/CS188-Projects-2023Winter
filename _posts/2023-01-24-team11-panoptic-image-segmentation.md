@@ -53,17 +53,31 @@ The paper sets the groundwork for the panoptic image segmenation problem to reco
 ![Panoptic Cat]({{'/assets\images\team-11\pan_cat.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
 *Fig \#. Panoptic Segmentation on the cat image* [[3](#ref3)].
 
-Kirillov et al. defines a $$PS$$ *(Panoptic Score)* and the requirements for a model to be considered a "panoptic segmentation model."
+Kirillov et al. defines a $$PS$$ *(Panoptic Score)* and the requirements for a model to be considered a "panoptic segmentation model." This task metric was designed because the standard metrics used for instance segmentation and semantic segmentation are best suited for stuff *or* things,
+respectively, but not both [[1](#ref1)].
 
 $$
 PS= \frac{ \sum_{ (p,g) \in TP} IoU(p,g) }{ |TP| + \frac{1}{2}|FP| + \frac{1}{2}|FN| }
 $$
 
-.**describe what each term means in the equation**
+$$PS$$ is composed of the count of three sets: true positives ($$TP$$), false positives ($$FP$$), and false negatives ($$FP$$), representing matched pairs of segments, unmatched predicted segments, and unmatched ground truth segments, respectively [[1](#ref1)].
+
+Intuitively, $$PS$$ is the average intersection over union ($$IoU$$) of matched segments divided by a penalty for segments without matches:
+
+$$\frac{1}{2}|FP| + \frac{1}{2}|FN|$$
+
+[[1](#ref1)].
 
 Kirillov et al. defines the panoptic segmentation format algorithm to map each pixel to an semantic class and an optional instance class. **Continue explanation**
 
-We will be evaluating multiple panoptic segmentation models **continue with what we are going to do** (COCO-2017 dataset)
+$$
+IoU(p_i,g)=\frac{|p_i\cap g|}{|p_i\cup g|}
+$$
+
+
+
+
+We will be evaluating and comparing multiple panoptic segmentation models on the COCO2017 dataset using MMDetection and attempt to use the results to build a new model with equal or greater Panoptic Quality.  **continue with what we are going to do** (COCO-2017 dataset)
 
 ## MMDetection Setup
 
@@ -156,7 +170,7 @@ The Panoptic FPN was designed as a single-network baseline for the panoptic segm
 
 #### Feature Pyramid Network
 
-The FPN consists of a botton up pathway and a top-down pathway. The bottom-up pathway consists of feature maps of several scales with a scaling step of 2. Each step corresponds to a residual block stage from Resnet and the output of each step is the output of the activation function of the residual block (except for the first stage since it is so large). The stages have strides {4, 8, 16, 32} in order to downsample the feature map.
+The FPN consists of a botton up pathway and a top-down pathway. The bottom-up pathway consists of feature maps of several scales with a scaling step of 2. Each step corresponds to a residual block stage from Resnet $$\{C2, C3, C4, C5\}$$. The output of each step is the output of the activation function of the residual block (except for $$C1$$ since it is so large). The stages have strides $$\{4, 8, 16, 32\}$$ in order to downsample the feature map.
 
 ![Top_Down]({{'/assets\images\team-11\top_down_fpn.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
 *Fig \#. Instance Segmentation on the cat image* [[4](#ref4)].
@@ -194,14 +208,26 @@ drive.mount('/content/drive', force_remount=True)
 !pip install -e .
 ```
 
-Panoptic Evaluation Results:
+### Run Test Script
+
+MMDetection pretrained PanopticFPN Evaluation Results:
 [Implementation Link](https://colab.research.google.com/drive/11MitSydv7qZ_xQkcLO4X2azTuGORjrQf#scrollTo=L-9pCPGHIkdo&uniqifier=2)
 
-| Panoptic 1x ResNet Coco | PQ     | SQ     | RQ     | categories |
+| Panoptic 1x ResNet50 Coco | PQ     | SQ     | RQ     | categories |
 | :--------------- | :---: | :---: | :---: | :---: |
 | All    | 40.248 | 77.785 | 49.312 | 133        |
 | Things | 47.752 | 80.925 | 57.475 | 80         |
 | Stuff  | 28.922 | 73.046 | 36.991 | 53         |
+
+| Panoptic 3x ResNet50 Coco | PQ     | SQ     | RQ     | categories |
+| :--------------- | :---: | :---: | :---: | :---: |
+| All    | 42.457 | 78.118 | 51.705 | 133        |
+| Things | 50.283 | 81.478 | 60.285 | 80         |
+| Stuff  | 30.645 | 73.046 | 38.755 | 53         |
+
+| ![Demo_Image]({{'assets\images\team-11\demo.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Panopticfpn_1x_demo_image]({{'assets\images\team-11\panfpn_1_demo.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} |  ![Panopticfpn_3x_demo_image]({{'assets\images\team-11\panfpn_3_demo.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} |
+
+*Fig \#. Instance Segmentation on the cat image* [[1](#ref1)].
 
 ## Maskformer with MMDetection
 
@@ -224,7 +250,7 @@ drive.mount('/content/drive', force_remount=True)
 !pip install -e .
 ```
 
-## Evaluation 
+## Evaluation
 
 ## Summary
 
