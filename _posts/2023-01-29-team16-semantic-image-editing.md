@@ -15,13 +15,13 @@ One option for semantic image editing is semantic guidance. This method bases it
 
 ## Guided Diffusion
 SEGA is built upon diffusion for image generation. In diffusion for text-to-image generation, the model is conditioned on a text prompt, and iteratively denoises a Gaussian distribution towards an image that accurately reflects the prompt. Under guided diffusion, this process is influenced in order to "guide" the diffusion in specific directions. This method comes with several advantages over other semantic editors, in that it requires no additional training, no architecture extensions, and no external guidance. In particular, the training objective of a diffusion model $\hat{x}$ is:
-$$\mathbb{E}_{x,c_p,\epsilon,t}[\omega_t || \hat{x}_\theta(\alpha_t x + \omega_t \epsilon, c_p) - x ||^2_2]$$
+$$\mathbb{E}\_{x,c\_p,\epsilon,t}[\omega\_t || \hat{x}\_\theta(\alpha\_t\ x + \omega\_t \epsilon, c\_p) - x ||^2\_2]$$
 
 Where $(x, c_p)$ is conditioned on text prompt $p$, $t$ is sampled from uniform distribution $t \sim \mathcal{U}([0,1])$, $\epsilon$ is sampled from Gaussian distribution $\epsilon \sim \mathcal{N}(0,I)$, and $\omega_t,\alpha_t$ influence image fidelity based on $t$. The model is trained to denoise $z_t := x + \epsilon$, yielding $x$ with squared error loss. 
 
 
 Additionally, classifier-free guidance is used for conditioning, resulting in score estimates for the predicted $x$ such that:
-$$\tilde{\epsilon}_\theta := \epsilon_\theta(z_t) + s_g(\epsilon_\theta(z_t, c_p) - \epsilon_\theta(z_t))$$
+$$\tilde{\epsilon}\_\theta := \epsilon\_\theta(z\_t) + s\_g(\epsilon\_\theta(z\_t, c\_p) - \epsilon\_\theta(z\_t))$$
 
 where $s_g$ scales the extent of adjustment, and $\epsilon_\theta$ defines the noise estimates with parameters $\theta$. 
 
@@ -48,19 +48,19 @@ Here, three $\epsilon$-predictions are used to move the unconditioned score esti
 $$\epsilon_\theta(z_t) + s_g(\epsilon_\theta(z_t, c_p) - \epsilon_\theta(z_t)) + \gamma(z_t, c_e)$$
 Here, the semantic guidance term ($\gamma$) is defined as $$\gamma(z_t, c_e) = \mu(\psi;s_e, \lambda)\psi(z_t,c_e)$$
 where $\psi$ is defined by the editing direction:
-$$\psi(z_t, c_p, c_e) = 
+$$\psi(z\_t, c\_p, c\_e) = 
     \begin{cases}
-        \epsilon_\theta(z_t, c_e) - \epsilon_\theta(z_t) & \text{if positive guidance} \\
-        -(\epsilon_\theta(z_t, c_e) - \epsilon_\theta(z_t)) & \text{if negative guidance}
+        \epsilon\_\theta(z\_t, c\_e) - \epsilon\_\theta(z\_t) & \text{if positive guidance} \\
+        -(\epsilon\_\theta(z\_t, c\_e) - \epsilon\_\theta(z\_t)) & \text{if negative guidance}
     \end{cases}$$
 
 and $\mu$ applies the editing guidance scale $s_e$ element-wise, and setting values outside of a percentile threshold $\lambda$ to 0:
-$$\mu(\psi;s_e, \lambda) = 
+$$\mu(\psi;s\_e, \lambda) = 
 \begin{cases}
-  s_e & \text{where} |\psi| \geq \eta_\lambda (|\psi|)\\
+  s\_e & \text{where} |\psi| \geq \eta\_\lambda (|\psi|)\\
   0 & \text{otherwise} 
 \end{cases}$$
-(Here, $\eta_\lambda(\psi)$ is the $\lambda$-th percentile of $\psi$)
+(Here, $\eta\_\lambda(\psi)$ is the $\lambda$-th percentile of $\psi$)
 
 Additionally, SEGA uses two additional adjustments:
  - a warm-up parameter $\delta$ to only apply guidance after a warm-up period ($\gamma(z_t, c_p, c_s) := 0$ if $t < \delta$)
@@ -75,6 +75,33 @@ $$
 \hat{\gamma_t}(z_t,c_p;e) = \sum_{i\in I}g_i \gamma^i_t(z_t, c_p, c_{e_i})
 $$
 Each $\gamma^i_t$ may have its own warmup period. Henc, $g_i$ is defined as $g_i = 0$ if $t < \delta_i$. Unlike warmup period, momentum is calculated using all concepts, and applied once all warm-up periods are completed. 
+
+# Contrastive Language-Image Pre-training (CLIP)
+Another option for semantic image editing is contrastive language-image pre-training (CLIP). This method combines the natural language processing approach of CLIP with the semantic image editing of StyleGAN to develop a text-based interface for editing images. This implementation also has the advantage of being able to run on a single commidity GPU instead of research-grade GPU's.
+
+
+## Latent Optimization
+The first approach presented by StyleCLIP is latent code optimization. Given a source latent code $w_{s} \in \mathcal{W}+$, and a directive in natural language, or a text prompt $t$, StyleCLIP solves the following optimization problem:
+$$\underset{w\_{s}\in \mathcal{W}+}{\text{arg min }} D\_{\text{CLIP}}(G(w),t) + \lambda\_{\text{L2}} \lVert w-w\_{s} \rVert\_{2} + \lambda\_{\text{ID}}\mathcal{L}\_{\text{ID}}(w)$$
+where $G$ is a pretrained StyleGAN generator and $D\_{\text{CLIP}}$ is the cosine distance between the CLIP embeddings of its two arguments. Similarity to the input image is controlled by the $L\_{2}$ distance in latent space, and by the identity loss:
+$$\mathcal{L}\_{\text{ID}}(w)=1-\langle R(G(w\_{s})),R(G(w))\rangle$$
+where R is a pretrained ArcFace network for face recognition, and $\langle.,.\rangle$ computes the cosine similarity between its arguments. StyleCLIP solves this optimization problem through gradient descent, by back-propagating the gradient objective through the pretrained and fixed StyleGAN generator G and the CLIP image encoder.
+
+## Latent Mapper
+Although latent optimization is effective, it takes several minutes to edit a single image. The second approach presented by StyleCLIP is the use of a mapping network that is trained, for a specific text prompt $t$, to infer a manipulation step $M\_{t}(w)$ in the $\mathcal{W}+$ space, for any given latent image embedding $w \in \mathcal{W}+$.
+
+This latent mapper makes use of three fully-connected networks that feed into 3 groups of StyleGAN layers (coarse, medium, and fine). Denoting the latent code of the input image as $w=(w\_{c},w\_{m},w\_{f})$, the mapper is defined by
+$$M\_{t}(w) = (M\_{t}^c(w\_{c}), M\_{t}^m(w\_{m}), M\_{f}^c(w\_{f}))$$
+
+The CLIP loss, $\mathcal{L}\_{\text{CLIP}}(w)$, guides the mapper to minimize the cosine distance in the CLIP latent space:
+$$\mathcal{L}\_{\text{CLIP}}(w) = \mathcal{D}\_{\text{CLIP}}(G(w + M\_{t}(w), t))$$
+where $G$ denotes the pretrained StyleGAN generator. To preserve the visual attributes of the original input image, StyleCLIP minimizes the $L_{2}$ norm of the manipulation step in the latent space. Finally, for edits that require identity preservation, StyleCLIP uses the identity loss $\mathcal{L}\_{ID}(w)$ defined earlier. The total loss function is a weighted combination of these losses:
+$$\mathcal{L}(w) = \mathcal{L}\_{\text{CLIP}}(w) + \lambda\_{L2} \lVert M\_{t}(w) \rVert\_{2} + \lambda\_{\text{ID}}\mathcal{L}\_{\text{ID}}(w)$$
+
+## Global Directions
+While the latent mapper allows for a fast inference time, the authors found that it sometimes fell short when a fine-grained disentangled manipulation was desired. In addition, the directions of different manipulation steps for a given text prompt tended to be similar. Because of these observations, the third approach presented by StyleCLIP is a method for mapping a text prompt into a single, global direction in StyleGAN's style space $\mathcal{S}$, which has been shown to be more disentangled than other latent spaces.
+
+The high-level idea of this approach is to first use the CLIP text encoder to obtain a vector $\Delta t$ in CLIP's joint language-image embedding and then map this vector into a manipulation direction $\Delta s$ in $\mathcal{S}$. A stable $\Delta t$ is obtained from natural language using prompt engineering. The corresponding direction $\Delta s$ is then determined by assessing the relevance of each style channel to the target attribute.
 
 ## Demonstration
 
