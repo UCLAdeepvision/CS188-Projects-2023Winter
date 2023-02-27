@@ -343,7 +343,7 @@ The discriminator uses a single convolutional layer for the input layer, then 5 
 The discriminator produces probability distributions over source and domain labels as follows:
 
 $$
-\mathbf{D} : \mathbf{x}\rightarrow\{{D_{src}(x), D_{cls}(x)}\}
+\mathbf{D} : \mathbf{x}\rightarrow\{D_{src}(x), D_{cls}(x)\}
 $$
 
 To ensure the generated images are indistinguishable from the real images, adversarial loss is used:
