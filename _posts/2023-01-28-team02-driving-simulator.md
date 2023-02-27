@@ -3,7 +3,7 @@ layout: post
 comments: true
 title: Driving Simulator
 author: Siwei Yuan, Yunqiu Han
-date: 2023-01-28
+date: 2023-02-26
 ---
 
 >Driving simulators provide the fundamental platform for autonomous driving researches. In this blog, we explores Metadrive, explains the technical details of implementing a purely visual based policy, and evalutes its performance.
