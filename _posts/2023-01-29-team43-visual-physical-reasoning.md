@@ -7,7 +7,7 @@ date: 2023-01-29
 ---
 
 > Our project will be based around the topic of **visual physical reasoning**. Essentially, visual physical reasoning deals with whether computers can answer "common sense" queries about an image, such as "how many chairs are at the table?", or "where is the red cube in relation to the purple ball?"
-
+<!--more-->
 ## Three Relevant Research Papers
 1. ##### A simple neural network module for relational reasoning
   - [Paper] https://arxiv.org/abs/1706.01427v1
