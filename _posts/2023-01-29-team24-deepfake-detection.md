@@ -6,7 +6,7 @@ author: Justin Kyle Chang, Oliver De Visser
 date: 2022-01-29
 ---
 
-> Detecting syntethic media has been an ongoing concern over the recent years due to the increasing amount of deepfakes on the internet. These artificially generated content can be used to spread misinformation, manipulate public opinion, and even harm individuals. Therefore, the ability to detect deepfakes is crucial to ensure the integrity of information and protect people from potential harm. In this project, we will explore the different algorithms that are used in deepfake detection.
+> Detecting synthetic media has been an ongoing concern over the recent years due to the increasing amount of deepfakes on the internet. In this project, we will explore the different methods and algorithms that are used in deepfake detection.
 
 <!--more-->
 
@@ -14,6 +14,53 @@ date: 2022-01-29
 
 -   TOC
     {:toc}
+    
+## Introduction: 
+Deepfakes, or artificial intelligence-generated videos that depict real people doing and saying things they never did, have become a growing concern in recent years. These artificially generated content can be used to spread misinformation, manipulate public opinion, and even harm individuals. Therefore, the ability to detect deepfakes is crucial to ensure the integrity of information and protect people from potential harm.
+
+## Proposal:
+The main objective of this project is to develop and evaluate advanced machine learning techniques for deepfake detection. Specifically, the project aims to investigate and analyze the current state-of-the-art deepfake detection methods, and evaluate the performance of the developed models using a dataset of deepfake videos. 
+
+## Datasets:
+### Deepfake Detection Challenge (DFDC) 
+The DFDC (Deepfake Detection Challenge) is a Facebook developed dataset for deepface detection consisting of more than 100,000 videos. It is currently the largest publicly available dataset and was created for a competition aimed towards creating new and better models to detect manipulated media. The dataset consists of a preview dataset with 5k videos featuring two facial modification algorithms and a full dataset with 124k videos featuring 8 facial modification algorithms. 
+
+
+### Celeb-DF
+Celeb-DF is a dataset used for deepfake forensics. It includes 590 original videos collected from YouTube with subjects of different ages, ethnic groups and genders, and 5639 correspondingDeepFake videos. Unlike most other DeepFake datasets, Celeb-DF contains high visual quality videos that better resemble DeepFake videos circulated on the Internet. 
+
+
+## Potential Architectures :
+### ResNet LTSM
+This is the architecture we will be using for our model.
+Implementation of a Resnet50 + LSTM with 512 hidden units as it was described in the paper
+DeeperForensics-1.0: A Large-Scale Dataset for Real-World Face Forgery Detection 
+### EfficientNet B1 LTSM
+This is an implementation Efficient Net that was implemented for the DeepFake Detection Model
+“To make it comparable with ResNet50 + LSTM it uses the same fully connected layers and also uses 512 hidden units as it was described in the paper”
+DeeperForensics-1.0: A Large-Scale Dataset for Real-World Face Forgery Detection
+
+### MesoNet 
+The MesoInception4 deepfake detection architecture as introduced in MesoNet: a Compact Facial Video Forgery Detection Network  from Darius Afchar, Vincent Nozick, Junichi Yamagishi, Isao Echizen
+
+### XCeption
+Creates an Xception Model as defined in:
+Francois Chollet, Xception: Deep Learning with Depthwise Separable Convolutions
+
+
+## ResNet LSTM Implementation:
+### data augmentation methods
+### optimal hyperparameters
+### code examples
+
+## Results:
+
+## Conclusion:
+
+## Demo:
+- https://github.com/jchangz01/CS188-Project-Deepfake-Detection
+- Currently based off implementations from research papers, not complete and not ready for training yet
+
 
 ## Related Works
 
@@ -26,14 +73,29 @@ date: 2022-01-29
 -   Video Face Manipulation Detection Through Ensemble of CNNs
     -   [Paper](https://arxiv.org/abs/2004.07676v1)
     -   [Github](https://github.com/polimi-ispl/icpr2020dfdc)
+-   Other Resources
+    -   Link: https://github.com/CatoGit/Comparing-the-Performance-of-Deepfake-Detection-Methods-on-Benchmark-Datasets/blob/master/deepfake_detector/pretrained_mods/efficientnetb1lstm.py
+    -   Paper: https://arxiv.org/abs/1909.12962
+    -   Link: https://github.com/yuezunli/celeb-deepfakeforensics
+    -   Link: https://ai.facebook.com/datasets/dfdc/
+    -   Link: https://arxiv.org/pdf/1610.02357.pdf
+    -   Paper: (https://arxiv.org/abs/1809.00888)
 
-## Reference
+## References
 
 [1] Coccomini, Davide, et al. “Combining EfficientNet and Vision Transformers for Video Deepfake Detection.” ISTI-CNR, via G. Moruzzi 1, 56124, Pisa, Italy, 2022.
 
 [2] Cai, Zhixi, et al. “Do You Really Mean That? Content Driven Audio-Visual Deepfake Dataset and Multimodal Method for Temporal Forgery Localization.” Monash University, 2022.
 
 [3] Bonettini, Nicolo, et al. “Video Face Manipulation Detection Through Ensemble of CNNs.” Polytechnic University of Milan, 2020.
+
+
+
+
+##
+##
+##
+## previous blog resources
 
 ## Main Content
 
