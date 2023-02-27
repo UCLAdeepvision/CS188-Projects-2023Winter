@@ -97,21 +97,16 @@ The discriminator uses a 70x70 PatchGAN architecture, which are used to classify
  
 #### Loss Function
 
-There are two kinds of loss in the CycleGAN architecture. There is the normal Adversarial loss that we typically associate with GANs and there is the Cyclic loss that is used in the CycleGAN implementation.
+There are two kinds of loss in the CycleGAN architecture. There is the normal adversarial loss that we typically associate with GANs and there is the cyclic loss that is used in the CycleGAN implementation.
 
+The loss function for the adversarial loss is as follows:
+L_{GAN}(G, D_Y, X, Y)=\mathbb{E}_{y\sim p_{data}(y)}[log\hspace{0.1cm}D_Y(y)]+\mathbb{E}_{x\sim p_{data}(x)}[log(1-D_Y(G(x)))]
 $$
-L_{Generator}=log\hspace{0.1cm}D_Y
-\\
-L_{Discriminator}log(1-D_Y(G(x)))
-\\
-L_{GAN}=log\hspace{0.1cm}D_Y(y)+log(1-D_Y(G(x)))
-$$
+This loss function is for only one GAN network. So the total loss would need to include two sets of adversarial loss.
 
-Then there is also the cyclic-consistency loss which ensures that F(G(x)) ~ x and G(F(y)) ~ y
-
+Then there is also the cyclic-consistency loss which ensures that $$F(G(x)) \approx x$$ and $$G(F(y)) \approx y$$
 $$
-\tilde{\mathbf{z}}^{(t)}_i = \frac{\alpha \tilde{\mathbf{z}}^{(t-1)}_i + (1-\alpha) \mathbf{z}_i}{1-\alpha^t}
-\mathbf{Loss}_cyc = 
+L_{cyc}(G, F)=\mathbb{E}_{x\sim p_{data}(x)}[||F(G(x))-x||_1] + \mathbb{E}_{y\sim p_{data}(y)}[||G(F(y))-y||_1]
 $$
  
 ### Architecture Blocks and Code Implementation <a name="archblocks1"></a>
