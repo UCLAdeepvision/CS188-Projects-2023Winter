@@ -1,7 +1,7 @@
 ---
 layout: post
 comments: true
-title: Driving Simulators: Technical Details
+title: Driving Simulators
 author: Victoria Lam, Austin Law
 date: 2023-02-26
 ---
