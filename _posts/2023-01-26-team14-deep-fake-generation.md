@@ -385,7 +385,7 @@ $$
 Lastly, we improve our loss function to generate higher quality images and to stabilize the trianing process. The new loss formula uses Wasserstein's GAN objective with gradient penalty:
 
 $$
-\mathbf{L}_{adv} = \mathbb{E}_{x}[D_{src}(x)] - \mathbb{E}_{x,c}[D_{src}(G(x,c))] - {\lambda}_{gp}\mathbb{E}_{\hat{x}}[(||{\triangledown}_\hat{x}\mathit{D}_{src}(\hat{x})||_{2}-1)^{2}]
+\mathbf{L}_{adv} = \mathbb{E}_{x}[D_{src}(x)] - \mathbb{E}_{x,c}[D_{src}(G(x,c))] - {\lambda}_{gp}\mathbb{E}_{\hat{x}}[(||{\triangledown}_{\hat{x}}\mathit{D}_{src}(\hat{x})||_{2}-1)^{2}]
 $$
 
 ### Architecture Blocks and Code Implementation <a name="archblocks2"></a>
