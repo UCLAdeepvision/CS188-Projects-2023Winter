@@ -174,6 +174,7 @@ The authors attack an  TensorFlow Camera Demo app, they took a image of washer a
 Fig. 4.  The real-world experiment that the authors conduct [4].
 
 Now I introduce the content of BIM. It is a extension version of FGSM, which is re-presented in the following form:
+
 $$
 \boldsymbol{X}^{a d v}=\boldsymbol{X}+\epsilon \operatorname{sign}\left(\nabla_X J\left(\boldsymbol{X}, y_{t r u e}\right)\right)
 $$
