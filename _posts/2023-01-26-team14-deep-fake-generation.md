@@ -101,11 +101,9 @@ There are two kinds of loss in the CycleGAN architecture. There is the normal Ad
 
 $$
 L_{Generator}=log\hspace{0.1cm}D_Y
-$$
-$$
+\\
 L_{Discriminator}log(1-D_Y(G(x)))
-$$
-$$
+\\
 L_{GAN}=log\hspace{0.1cm}D_Y(y)+log(1-D_Y(G(x)))
 $$
 
