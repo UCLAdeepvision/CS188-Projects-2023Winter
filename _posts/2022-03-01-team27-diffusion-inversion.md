@@ -647,7 +647,7 @@ def gradient_inversion(z=None, target=None, diffusion=None, lr=0.01, num_i=100, 
     </div>
 </div>
 
-*Figure 2: Sample generated images with DDIM, with the final generated results (left) and evolution of some fixed latent over the training process with EMA parameters (right). We generate the samples with `num_t_step=50`. The datasets used, from the top to bottom, are CelebA, LSUN Churches, Flower102, and Miniplaces.*
+*Figure 2: Sample generated images with DDIM, with the final generated results (left) and evolution of some fixed latent over the training process with EMA parameters (right). We generate the samples with `num_t_step=50`. The datasets used, from the top to bottom, are CelebA, LSUN Churches, Flowers102, and Miniplaces.*
 
 We train DDIMs on the datasets CelebA, LSUN Churches, Flowers102, and Miniplaces with identical architectures as the output images are all $$64 \times 64$$. Particularly, we set filters of $$[128, 256, 256, 256, 512]$$ with self-attention at the $$16 \times 16$$ resolution (so right after the second $$256$$ layer), with each filter layer consisting of two residual blocks and then a down/upsampling module. We select $$128$$ as the time embedding dimensions. We set a dropout of $$0.1$$. We use $$3 \times 3$$ convolutions for mismatching channel residual skips, and we also use $$3 \times 3$$ convolutions (after interpolation) for down/upsampling. The model is about $$75.3$$ million parameters. We did find significant generation quality improvements of the $$75$$-million model compared to much smaller $$5$$- to $$10$$-million parameter models, especially for LSUN Churches and Miniplaces.
 
