@@ -42,7 +42,7 @@ Instance segmentation plays an important role in pose estimation. Instance segme
     * Pose estimation algorithim estimates 3D position and orientation of the object directly in 3D space instead of a 2D space
     * Photogrammetry or laser scanning can be used to create a 3D model which is used to generate the volumetric representation of the object
     * Can be computationally expensive to compute and manimpulate and may require special hardware/software for processing 3D volumetric data
-    
+
 ### Challenges
 There are several different factors that can make pose estimation difficult. Some of these include:
 * **Occlusion:** Some objects or body parts may be fully or partially occluded making it difficult to estimate their position and orientation
@@ -110,7 +110,6 @@ Intermediate supervision at each stage replenishes the gradient periodically in 
 The eventual goal is
 ![Goal](../assets/images/team-25/overall_goal.png)
 
-
 ## Application
 In traditional object detection, people are only perceived as a square bounding box. However, using pose estimation allows computers to develop an understanding of human body language.
 
@@ -128,6 +127,8 @@ Some applications of pose estimation include:
 * Gaming
     * Human subjects can auto-generate and inject poses into the game environment for an interactive gaming experience (ex: Microsft Kinect uses 3D pose estimation to track players' motion and uses it to render the actions of the characters in game)
 
+## Google Colab Demo
+[Pose Estimation Demo](https://colab.research.google.com/drive/1kCRVcCr9IRukDuI0K6OTRjjH1Afkuy4A#scrollTo=oNASdyyiO65I)
 
 ## Relevant Research Papers
 OpenPose: Realtime Multi-Person 2D Pose Estimation using Part Affinity Fields
