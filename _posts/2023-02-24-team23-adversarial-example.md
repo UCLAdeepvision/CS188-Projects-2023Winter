@@ -24,7 +24,7 @@ However, the DNN is easily attacked by targeted attack. Images could be modified
 
 > Their success is undeniable, nevertheless a flaw has been spotted in their performance. They are not stable under adversarial perturbations. Adversarial perturbations are intentionally worst case designed noises that aim at changing the output of a DNN to an incorrect one. The perturbations are most of the time so small that an ordinary observer may not even notice it, and even the state-of-theart DNNs are highly confident in their, wrong, classification of these adversarial examples.
 
-![1677072572062](..\assets\images\team23\1677072572062.png)
+![1677072572062](../assets/images/team23/1677072572062.png)
 
 <center>Fig. 1.  A demonstration of adversarial examples generated using the FGSM (introduced later). By adding an imperceptibly small vector, GoogLeNet’s classification of the image can be changed [1].
 
