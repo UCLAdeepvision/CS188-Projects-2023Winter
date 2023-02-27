@@ -142,7 +142,7 @@ class Net(nn.Module):
 
 The attack results are shown as follows:
 
-$\begin{array}{ll}
+$$\begin{aligned}
 \text { Epsilon: } 0 & \text { Test Accuracy }=0.981 \\
 \text { Epsilon: 0.05 } & \text { Test Accuracy }=0.943 \\
 \text { Epsilon: 0.1 } & \text { Test Accuracy }=0.851 \\
@@ -150,7 +150,7 @@ $\begin{array}{ll}
 \text { Epsilon: } 0.2 & \text { Test Accuracy }=0.430 \\
 \text { Epsilon: } 0.25 & \text { Test Accuracy }=0.208 \\
 \text { Epsilon: } 0.3 & \text { Test Accuracy }=0.087
-\end{array}$
+\end{aligned}$$
 
 Some AEs are shown as follows:
 
@@ -176,7 +176,7 @@ $$\boldsymbol{X}^{a d v}=\boldsymbol{X}+\epsilon \operatorname{sign}\left(\nabla
 
 The authors apply FGSM multiple times with small step size, and clip pixel values of intermediate results after each step to ensure that they are in an $\epsilon$-neighbourhood of the original image:
 
-$$\boldsymbol{X}_0^{a d v}=\boldsymbol{X}, \quad \boldsymbol{X}_{N+1}^{a d v}=C l i p_{X, \epsilon}\begin{cases}\boldsymbol{X}_N^{a d v}+\alpha \operatorname{sign}\left(\nabla_X J\left(\boldsymbol{X}_N^{a d v}, y_{t r u e}\right)\right)\end{cases}$$
+$$\boldsymbol{X}_0^{a d v}=\boldsymbol{X}, \quad \boldsymbol{X}_{N+1}^{a d v}=C l i p_{X, \epsilon}\left\{\boldsymbol{X}_N^{a d v}+\alpha \operatorname{sign}\left(\nabla_X J\left(\boldsymbol{X}_N^{a d v}, y_{t r u e}\right)\right)\right\}$$
 
 ### Projected gradient descent (PGD)
 
@@ -193,7 +193,7 @@ $$x^{t+1}=\Pi_{x+\mathcal{S}}\left(x^t+\alpha \operatorname{sgn}\left(\nabla_x L
 
 DeepFool algorithm is proposed in the work *DeepFool: a simple and accurate method to fool deep neural networks*.
 
-To overcome the non-linearity in high dimension, the authors performed an iterative attack with a linear approximation. Starting from an affine classifier, the authors found that the minimal perturbation of an affine classifier is the distance to the separating affine hyperplane $\mathcal{F}=\{x$ : $\left.w^T x+b=0\right\}$. The perturbation of an affine classifier $f$ can be $\eta^*(x)=-\frac{f(x)}{\|w\|^2} w$.
+To overcome the non-linearity in high dimension, the authors performed an iterative attack with a linear approximation. Starting from an affine classifier, the authors found that the minimal perturbation of an affine classifier is the distance to the separating affine hyperplane. The perturbation of an affine classifier $f$ can be $\eta^*(x)=-\frac{f(x)}{\|w\|^2} w$.
 
 If $f$ is a binary differentiable classifier, an iterative method is used to approximate the perturbation by considering $f$ is linearized around $x_i$ at each iteration. The minimal perturbation is computed as:
 
@@ -299,7 +299,7 @@ I base on the work *Towards deep learning models resistant to adversarial attack
 First I introduce some symbols they use. For each data point $x$, the authors specify a set of allowed perturbations $\mathcal{S} \subseteq \mathbb{R}^d$ that formalizes the manipulative power of the adversary. In image classification, the authors choose $\mathcal{S}$ so that it captures perceptual similarity between images. For instance, the $\ell_{\infty}$-ball around $x$ has recently been studied as a natural notion for adversarial perturbations.
 Next, the authors modify the definition of population risk $\mathbb{E}_{\mathcal{D}}[L]$ by incorporating the above adversary. Instead of feeding samples from the distribution $\mathcal{D}$ directly into the loss $L$, the authors allow the adversary to perturb the input first. This gives rise to the following saddle point problem:
 
-$$\min_\theta \rho(\theta), \quad \text { where } \quad \rho(\theta)= \mathbb{E}_{(x, y) \sim \mathcal{D}}(max_{\delta \in \mathcal{S}} L(\theta, x+\delta, y)) .$$
+$$\min_\theta \rho(\theta), \quad \text { where } \quad \rho(\theta)=\mathbb{E}_{(x, y) \sim \mathcal{D}}\left[\max_{\delta \in \mathcal{S}} L(\theta, x+\delta, y)\right]$$
 By optimize this loss function, the interface of the classifier tends to become more robustness to AEs. The authors gives a good diagram to show us the classifier interface using ordinary training and adversarial training, shown as follows:
 
 ![1677248425490](../assets/images/team23/1677248425490.png)
