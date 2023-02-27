@@ -52,9 +52,11 @@ Before introducing AE generation techniques, we first present some preliminaries
 #### Definition 1 (Score functions and classifier functions)
 
 A classifier is defined by the mapping $k: \mathbb{R}^M \rightarrow[K]$ that maps an input $\mathrm{x} \in \mathbb{R}^M$ to its estimated class $k(\mathbf{x}) \in[K]$. The mapping $k(\cdot)$ is itself defined by
+
 $$
 k(\mathbf{x})=\underset{l \in[K]}{\operatorname{argmax}}\left\{f_l(\mathbf{x})\right\},
 $$
+
 $f(\mathbf{x})$ given by the vector $\left(f_1(\mathbf{x}), \ldots, f_K(\mathbf{x})\right)^{\top}$ is known as score function and can be assumed to be differentiable almost everywhere for many classifiers.
 
 To impose undetectability of adversarial examples, a common way is to add perturbation to input to preserve the outcome of the ground truth classifier, also known as oracle classifier. Usually, the oracle classifier refers to the human brain. Similar to Definition 1. denote the score function of the oracle classifier as $g: \mathbb{R}^M \rightarrow \mathbb{R}^K$, which outputs a vector with entries $g_l: \mathbb{R}^M \rightarrow \mathbb{R}$ for $l=1, \ldots, K$. The adversarial perturbation $\eta$ is said to be undetectable if
@@ -179,6 +181,7 @@ $$
 \boldsymbol{X}^{a d v}=\boldsymbol{X}+\epsilon \operatorname{sign}\left(\nabla_X J\left(\boldsymbol{X}, y_{t r u e}\right)\right)
 $$
 The authors apply FGSM multiple times with small step size, and clip pixel values of intermediate results after each step to ensure that they are in an $\epsilon$-neighbourhood of the original image:
+
 $$
 \boldsymbol{X}_0^{a d v}=\boldsymbol{X}, \quad \boldsymbol{X}_{N+1}^{a d v}=C l i p_{X, \epsilon}\left\{\boldsymbol{X}_N^{a d v}+\alpha \operatorname{sign}\left(\nabla_X J\left(\boldsymbol{X}_N^{a d v}, y_{t r u e}\right)\right)\right\}
 $$
