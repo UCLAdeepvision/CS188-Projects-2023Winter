@@ -6,10 +6,9 @@ author: Sarah Mauricio and Andres Cruz
 date: 2023-01-26
 ---
 
-## Abstract
-
 > The use of deep learning methods in deep fake generation has contributed to the rise of fake of fake images which has some very serious ethical dilemmas. We will look at two different ways to generate deepfake pictures and videos, and will then focus in on Image-to-Image Translation. __ and __ are two different models we will by studying to create deep fake images using Image-to-Image Translation.
 <!--more-->
+
 ## Table of Contents
 
 * [Introduction](#intro)
@@ -42,24 +41,24 @@ Deepfake is a term used to describe artificially constructed media that portrays
 
 Image to image translation is the process of extracting features from a source image and emulating those features in another image. An example would be Neural Style Transfer, where a source image is used to create an art style to transfer to another image.
 
-![Style Transfer](/assets/images/team14/style_transfer.png)
+![Style Transfer](/CS188-Projects-2023Winter/assets/images/team14/style_transfer.png)
 * Fig X. Example of Neural Style Transfer (Image source: https://www.v7labs.com/blog/neural-style-transfer)
 
 Below are some common architectures seen for image to image translation.
 
-![image to image](/assets/images/team14/image-to-image.png)
+![image to image](/CS188-Projects-2023Winter/assets/images/team14/image-to-image.png)
 * Fig X. Example of image to image translation architectures (Image source: https://www.researchgate.net/publication/366191121_Enhancing_cancer_differentiation_with_synthetic_MRI_examinations_via_generative_models_a_systematic_review)
 
 ### Example: Image Animation <a name="ia"></a>
 
 Image Animation is the action of generating a video where the object from an image is animated using the action from a driving video. For example, if we had an image of a water bottle and a driving video of a ball flying across the screen, the output video would be a water bottle flying across the screen. Thus, it will create an animation based on a single image.
 
-![GAN Flow](/assets/images/team14/pipeline.png)
+![GAN Flow](/CS188-Projects-2023Winter/assets/images/team14/pipeline.png)
 * Fig X. Example flow of Image Animation
 
 Once applying the model, we would see results similar to the following:
 
-![Image Animation Output](/assets/images/team14/vox-teaser.gif)
+![Image Animation Output](/CS188-Projects-2023Winter/assets/images/team14/vox-teaser.gif)
 * Figure X. Example output from Image Animation
 
 
@@ -67,7 +66,7 @@ Once applying the model, we would see results similar to the following:
 
 Generative Adversarial Network, or GAN, is the core frameworkd behind a lot of the DeepFake algorithms you may come across. It is an approach to generate a model for a dataset using deep learning priciples. Generative modeling automatically discovers and learns the patterns in the data so that the model can be used to generate new images that could have been a part of the original dataset. GANs train a generative model that consists of two sub-components: the generator models which is trained to generate new images and the discriminator model which tries to classify an image as real or fake. The generative models and the discriminator model are trained together in an adversarial way, meaning until the discrimnator model classifies images incorrectly about half of the time. This would mean that the generator model generates DeepFake images that could pass as being real.
 
-![GAN Flow](/assets/images/team14/gan1.JPG)
+![GAN Flow](/CS188-Projects-2023Winter/assets/images/team14/gan1.JPG)
 * Fig X. Example of GAN Flow
 
 Below we look into two different models using ideas from GAN.
@@ -76,7 +75,7 @@ Below we look into two different models using ideas from GAN.
 
 ### Motivation <a name="mot1"></a>
 
-![unpaired images](/assets/images/team14/unpaired-images.webp)
+![unpaired images](/CS188-Projects-2023Winter/assets/images/team14/unpaired-images.webp)
 * Fig X. Example of paired and unpaired images, (Image source: https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d)
 
 CycleGAN was used in order to use unpaired image to image translations rather than paired image to image translations. This would allow for more training data and more robust outputs for translations. This model seems to work well on tasks that involve color or texture changes, like day-to-night photo translations, or photo-to-painting tasks like collection style transfer. However, tasks that require substantial geometric changes to the image, such as cat-to-dog translations, usually fail [insert citation].
@@ -86,12 +85,12 @@ CycleGAN was used in order to use unpaired image to image translations rather th
 
 The architecture of CycleGAN consists of a generator taken from Johnson et al [citation here], which consists of 3 convolutional layers, 6 residual block layers, 2 transpose convolutional layers and a final convolution output layer. Should also be noted that all layers similar to Johnson et al are followed by instance normalization.
 
-![CycleGAN Generator](/assets/images/team14/cycleGAN-generator.png)
+![CycleGAN Generator](/CS188-Projects-2023Winter/assets/images/team14/cycleGAN-generator.png)
 * Fig X. Example of CycleGAN Generator architecture (Image source: https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d)
 
 The discriminator uses a 70x70 PatchGAN architecture, which are used to classify 70x70 overlapped images to see if they are real or fake. The PatchGAN architecture consists of 5 convolutional layers with instance normalization [insert citation].
 
-![CycleGAN Discriminator](/assets/images/team14/cycleGAN-discriminator.webp)
+![CycleGAN Discriminator](/CS188-Projects-2023Winter/assets/images/team14/cycleGAN-discriminator.webp)
 * Fig X. Example of CycleGAN Discriminator architecture (Image source: https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d)
  
  
@@ -125,12 +124,12 @@ $$
 ### Motivation <a name="mot2"></a>
 StarGAN is a generative adversarial network that learns the mappings among multiple domains using only a single generator and a discriminator, training effectively from images of all domains (Choi 2). The topology could be represented as a star where multi-domains are connected, thus receiveing the name StarGAN. 
 
-![StarGAN Results](/assets/images/team14/star1.JPG)
+![StarGAN Results](/CS188-Projects-2023Winter/assets/images/team14/star1.JPG)
 * Fig X. Example of multi-domain image-to-image translation on CelebA dataset using StarGAN
 
 StarGAN consists of two modules, a discriminator and a generator. The discriminator learns to differentiate between real and fake images and begins to clssify the real images with its proper domain. The generator takes an image and a target domain label as input and generates a fake image with them. The target domain label is then spatially replicated and concatenated with the image given as input. The generator attempts to reconstruct the orginal image via the fake image when given the original domain label. Lastly, the generator tries to generate images that are almost identical to the real images and will be classified as being from the target domain by the discriminator.
 
-![StarGAN Flow](/assets/images/team14/star2.JPG)
+![StarGAN Flow](/CS188-Projects-2023Winter/assets/images/team14/star2.JPG)
 * Fig X. Example flow of StarGAN where D represents the discriminator and G represents the generator
 
 The overarching goal of StarGAN is to translate images from one domain to the other domain. For example, translating an image with a red leaves to an image with yellow leaves.
@@ -141,12 +140,12 @@ The architecture of StarGAN consists of a generator, which consists of two convo
 
 In both this image and the next, N is the number of output channgels, K is the kernel size, S is the stride sie, P is the padding size, IN is the instance normalization, n_d is the number of the domain, and n_x is the dimension of the domain labels.
 
-![StarGAN Generator](/assets/images/team14/star4.JPG)
+![StarGAN Generator](/CS188-Projects-2023Winter/assets/images/team14/star4.JPG)
 * Fig X. Example of StarGAN Generator Architecture (Image source: https://arxiv.org/pdf/1711.09020v3.pdf)
 
 The discriminator uses a single conolutional layer for the input layer, then 5 hidden convolutional layers, then 2 convolutional output layers. It uses Leaky ReLU with a negative slope of 0.01. This stride size is 2 for the input and hidden layers, and the stride is 1 in the output layers.
 
-![StarGAN Discriminator](/assets/images/team14/star5.JPG)
+![StarGAN Discriminator](/CS188-Projects-2023Winter/assets/images/team14/star5.JPG)
 * Fig X. Example of StarGAN Discriminator architecture (Image source: https://arxiv.org/pdf/1711.09020v3.pdf)
 
 #### Loss Functions
