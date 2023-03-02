@@ -3,7 +3,7 @@ layout: post
 comments: true
 title: Analysis of Panoptic Image Segmentation Performance   
 author: Andrew Fantino and Nicholas Oosthuizen
-date: 2023-01-24
+date: 2023-02-26
 ---
 
 
@@ -19,7 +19,7 @@ date: 2023-01-24
 
 In 2019, a team from Facebook AI Research ([FAIR](https://ai.facebook.com/)) published a paper that defined a new field of computer vision called **Panoptic Image Segmentation** that combines detections of *stuff* and *things* [[1](#ref1)]. However, before we can understand what panoptic segmentation is, we must understand some background.
 
-![Cat]({{'/assets\images\team-11\cat.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
+![Cat]({{ '/assets/images/team-11/cat.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
 *Fig \#. Example cat image* [[2](#ref2)].
 
 ### Stuff & Things
@@ -36,21 +36,21 @@ Although identifying stuff and things sound like similar problems, the deep lear
 
 Semantic segmentation is a task that indentifies stuff. **Description of how it works**
 
-![Semantic Cat]({{'/assets\images\team-11\sem_cat.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
+![Semantic Cat]({{ '/assets/images/team-11/sem_cat.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
 *Fig \#. Semantic Segmentation on the cat image* [[3](#ref3)].
 
 ### Instance Segmentation
 
 Description of how it works
 
-![Instance Cat]({{'/assets\images\team-11\inst_cat.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
+![Instance Cat]({{ '/assets/images/team-11/inst_cat.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
 *Fig \#. Instance Segmentation on the cat image* [[3](#ref3)].
 
 ### Panoptic Segmentation
 
 The paper sets the groundwork for the panoptic image segmenation problem to reconcile the dichotomy between *stuff* and *things* by combining semantic and instance segmentation
 
-![Panoptic Cat]({{'/assets\images\team-11\pan_cat.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
+![Panoptic Cat]({{ '/assets/images/team-11/pan_cat.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
 *Fig \#. Panoptic Segmentation on the cat image* [[3](#ref3)].
 
 Kirillov et al. defines a $$PS$$ *(Panoptic Score)* and the requirements for a model to be considered a "panoptic segmentation model." This task metric was designed because the standard metrics used for instance segmentation and semantic segmentation are best suited for stuff *or* things,
@@ -73,9 +73,6 @@ Kirillov et al. defines the panoptic segmentation format algorithm to map each p
 $$
 IoU(p_i,g)=\frac{|p_i\cap g|}{|p_i\cup g|}
 $$
-
-
-
 
 We will be evaluating and comparing multiple panoptic segmentation models on the COCO2017 dataset using MMDetection and attempt to use the results to build a new model with equal or greater Panoptic Quality.  **continue with what we are going to do** (COCO-2017 dataset)
 
@@ -165,14 +162,14 @@ You are now ready to get started with working with MMDetection in Colab. Please 
 
 The Panoptic FPN was designed as a single-network baseline for the panoptic segmentation task. They do this by starting from Mask R-CNN, a popular isntance segmentation model, with a Feature Pyramid Network (FPN) backbone based on ResNet. In parallel, they create a minimal semantic segmentation branch using the same features of the FPN to generate a dense-pixel output [[3](#ref3)]. The author's goal is to maintain top of the line performance for segementation quality ($$SQ$$) and recognition quality ($$RQ$$) [[3](#ref3)].
 
-![FPN]({{'/assets\images\team-11\fpn.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
+![FPN]({{ '/assets/images/team-11/fpn.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
 *Fig \#. Instance Segmentation on the cat image* [[1](#ref1)].
 
 #### Feature Pyramid Network
 
 The FPN consists of a botton up pathway and a top-down pathway. The bottom-up pathway consists of feature maps of several scales with a scaling step of 2. Each step corresponds to a residual block stage from Resnet $$\{C2, C3, C4, C5\}$$. The output of each step is the output of the activation function of the residual block (except for $$C1$$ since it is so large). The stages have strides $$\{4, 8, 16, 32\}$$ in order to downsample the feature map.
 
-![Top_Down]({{'/assets\images\team-11\top_down_fpn.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
+![Top_Down]({{ '/assets/images/team-11/top_down_fpn.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
 *Fig \#. Instance Segmentation on the cat image* [[4](#ref4)].
 
 The top-down pathway starts from the deepest layer of the network and progressively upsamples it while adding in transformed versions of higher-resolution features from the bottom-up pathway. The higher stages of the top-down pathway are at a smaller resolution, but semantically stronger. The purpose of the top-down pathway is to use this information to make a spatially fine and semantically stronger feature map of the input. Finally, the output of each stage of the top-down pathway is the final output of the FPN (labeled predict in Fig. #).
@@ -185,7 +182,7 @@ Mask R-CNN is an extension on Faster R-CNN that adds an masking head branch to p
 
 The semantic segmentation branch also builds on the FPN in parallel with the instance segmentation branch. This semantic segmentation branch was designed to be as simple as possible and so it only upsamples each output of the FPN layers to 1/4th total size, add each together, and perform a 1x1 conv with a 4x bilinear upsampling. Each upsampling layer consists of a 3x3 convolution, group norm, ReLU, and 2x bilinear upsampling. It is important to note that in addition to each of the stuff class of the dataset, the branch can also output a 'other' class for pixels that do not belong to any classes. This avoids the branch predicting the pixels belong to no class as a incorrect class [[1](#ref1)].
 
-![Semantic_Diagram]({{'/assets\images\team-11\semantic_diagram.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
+![Semantic_Diagram]({{ '/assets/images/team-11/semantic_diagram.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
 *Fig \#. Instance Segmentation on the cat image* [[1](#ref1)].
 
 ### Setup
@@ -225,7 +222,7 @@ MMDetection pretrained PanopticFPN Evaluation Results:
 | Things | 50.283 | 81.478 | 60.285 | 80         |
 | Stuff  | 30.645 | 73.046 | 38.755 | 53         |
 
-| ![Demo_Image]({{'assets\images\team-11\demo.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Panopticfpn_1x_demo_image]({{'assets\images\team-11\panfpn_1_demo.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} |  ![Panopticfpn_3x_demo_image]({{'assets\images\team-11\panfpn_3_demo.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} |
+| ![Demo_Image]({{ '/assets/images/team-11/demo.png' | relative_url }}){: style="width: 400px; max-width: 100%;"} | ![Panopticfpn_1x_demo_image]({{ '/assets/images/team-11/panfpn_1_demo.png' | relative_url }}){: style="width: 400px; max-width: 100%;"} |  ![Panopticfpn_3x_demo_image]({{ '/assets/images/team-11/panfpn_3_demo.png' | relative_url }}){: style="width: 400px; max-width: 100%;"} |
 
 *Fig \#. Instance Segmentation on the cat image* [[1](#ref1)].
 
@@ -237,19 +234,18 @@ Semantic segmentation is often approached as per pixel classification, while ins
 
 MaskFormer is a mask classification model which predicts a set of binary masks, each associated with one global class prediction [5]. MaskFormer converts a per-pixel classification model into a mask classification model [5]. 
 
-
 #### Maskformer Architecture
 
-![Maskformer Architecture](../assets/images/team-11/maskformer_architecture.png)
-*Maskformer Architecture* [5]
+![Maskformer Architecture]({{ '/assets/images/team-11/maskformer_architecture.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
+*Fig \#. Maskformer Architecture* [5]
 
-Maskformer breaks down into three modules: a pixel level module, a transformer module, and a segementation module. The pixel level module extracts per-pixel embeddings to generate the binary mask predictions, the transformer module computes per-segment embeddings, and the segmentation module generate the prediction pairs [5]. 
+Maskformer breaks down into three modules: a pixel level module, a transformer module, and a segementation module. The pixel level module extracts per-pixel embeddings to generate the binary mask predictions, the transformer module computes per-segment embeddings, and the segmentation module generate the prediction pairs [5].
 
 The pixel-level module begins with a backbone to extract features from the input image. The features are then upsampled by a pixel decoder into per-pixel embeddings. This module can be changed for any per-pixel classification-based segmentation model [5].
 
 The transfomer module uses a a Transformer decoder to compute the per-segment embeddings from the extracted image features and learnable positional embeddings [5].
 
-The segmentation module uses a linear classifier followed by softmax on the per-segment embeddings to get the class probabilities of each segment. A 2 hidden layer Multi-Layer Perceptron gets the mask embeddings from the per-segment embeddings. To get the final binary mask predictions, the model takes a dot product between the ith mask embeddings and the per-pixel embeddings from the pixel-level module. This dot product is followed by a sigmoid activation to produce the output [5]. 
+The segmentation module uses a linear classifier followed by softmax on the per-segment embeddings to get the class probabilities of each segment. A 2 hidden layer Multi-Layer Perceptron gets the mask embeddings from the per-segment embeddings. To get the final binary mask predictions, the model takes a dot product between the ith mask embeddings and the per-pixel embeddings from the pixel-level module. This dot product is followed by a sigmoid activation to produce the output [5].
 
 ### Setup
 
@@ -260,15 +256,14 @@ MaskFormer follows the same setup steps as Panoptic FPN to set up MMDetection.
 MMDetection pretrained MaskFormer Evaluation Results:
 [Implementation Link](https://colab.research.google.com/drive/1UEj1DHPcbcxhIFO2ukt9QWSG-S1zVm5z?usp=sharing)
 
-
 | MaskFormer Resnet | PQ     | SQ     | RQ     | categories |
 | :--------------- | :---: | :---: | :---: | :---: |
 | All    | 46.854 | 80.617 | 57.085 | 133        |
 | Things | 51.089 | 81.511 | 61.853 | 80         |
 | Stuff  | 40.463 | 79.269 | 49.888 | 53         |
 
-![MaskFormer Demo Image](../assets/images/team-11/maskformer_demo.png)
-*MaskFormer Sample Output*
+![MaskFormer Demo Image]({{ '/assets/images/team-11/maskformer_demo.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
+*Fig \#. MaskFormer Sample Output*
 
 ## Mask2Former with MMDetection
 
@@ -278,29 +273,29 @@ While MaskFormer is a universal architecture for semantic, instance, and panopti
 
 #### Mask2Former Architecture
 
-![Mask2Former Architecture](../assets/images/team-11/mask2former_architecture.png)
-*Mask2Former Architecture* [6]
+![Mask2Former Architecture]({{ '/assets/images/team-11/mask2former_architecture.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
+*Fig \#. Mask2Former Architecture* [6]
 
-Mask2Former follows the overall meta architecture from MaskFormer: a backbone to extract image features, a pixel decoder to upsample features into per-pixel embeddings, and a Transformer decoder to compute segments from the image features, but with the changes mentioned above [6]. 
+Mask2Former follows the overall meta architecture from MaskFormer: a backbone to extract image features, a pixel decoder to upsample features into per-pixel embeddings, and a Transformer decoder to compute segments from the image features, but with the changes mentioned above [6].
 
 ##### Masked Attention
 
-The first of these changes is using masked attention rather than cross attention in the Transformer decoder [6]. Masked attention is "a variant of cross-attention that only attends within the foreground region of the predicted mask for each query." [6] This is achieved by adding an "attention mask" to standard cross attention. [6] Cross attention computes: 
+The first of these changes is using masked attention rather than cross attention in the Transformer decoder [6]. Masked attention is "a variant of cross-attention that only attends within the foreground region of the predicted mask for each query." [6] This is achieved by adding an "attention mask" to standard cross attention. [6] Cross attention computes:
 
-![Cross Attention](../assets/images/team-11/cross_attention.png)
-*Cross Attention Formula* [6]
+![Cross Attention]({{ '/assets/images/team-11/cross_attention.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
+*Fig \#. Cross Attention Formula* [6]
 
 l is the layer index, **X**~l~ denotes N C dimensional query features in the lth layer [6]. **X**~0~ are the input query features to the Transformer decoder [6]. **Q**~l~ is *f~Q~*(**X**~l~), where *f~Q~* is a linear transformation and **K**~l~ and **V**~l~ are the image features under transformations *f~K~* and *f~V~*. [6]
 
-Masked attention alters this slightly by adding a modulation factor to the softmax. 
+Masked attention alters this slightly by adding a modulation factor to the softmax.
 
-![Mask Attention](../assets/images/team-11/masked_attention.png)
-*Mask Attention Formula* [6]
+![Mask Attention]({{ '/assets/images/team-11/masked_attention.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
+*Fig \#. Mask Attention Formula* [6]
 
-![Mask Attention Modulator](../assets/images/team-11/masked_attention_modulator.png)
-*Attention Mask at Feature (x,y)* [6]
+![Mask Attention Modulator]({{ '/assets/images/team-11/masked_attention_modulator.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
+*Fig \#. Attention Mask at Feature (x,y)* [6]
 
-**M**~l-1~ is the mask prediction of the previous layer, converted to binary data with threshold 0.5. This is also resized to the same dimension as **K**~l~. 
+**M**~l-1~ is the mask prediction of the previous layer, converted to binary data with threshold 0.5. This is also resized to the same dimension as **K**~l~.
 
 ##### High-resolution Features
 
@@ -327,8 +322,8 @@ MMDetection pretrained Mask2Former Evaluation Results:
 | Things | 57.737 | 84.043 | 68.129 | 80         |
 | Stuff  | 43.003 | 81.604 | 51.722 | 53         |
 
-![Mask2Former Demo Image](../assets/images/team-11/mask2former_demo.png)
-*Mask2Former Sample Output*
+![Mask2Former Demo Image]({{ '/assets/images/team-11/mask2former_demo.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
+*Fig \#. Mask2Former Sample Output*
 
 ## Evaluation
 
