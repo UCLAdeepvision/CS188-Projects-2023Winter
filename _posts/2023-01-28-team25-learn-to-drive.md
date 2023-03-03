@@ -29,16 +29,17 @@ All approaches for pose estimation are either bottom-up or top-down methods
 Instance segmentation plays an important role in pose estimation. Instance segmentation is a technique that  uses bounding boxes to seperate different objects in an image or a video. After seperating out objects, instance segementation assigns each box a unique label which can be helpful because different objects may have different poses which needs seperate algorithims.
 
 ### Human Body Model
-![Types of Models](../assets/images/team-25/human_models.png)
-* Skeleton-based model (Kinematic model)
+
+![Types of Models]({{'/assets/images/team-25/human_models.png'|relative_url}})
+* **Skeleton-based model** (Kinematic model)
     * Used for 2D and 3D representations
     * Most flexible reprentation
     * Consists of a set of joints (ankles, knees, shoulders, elbows, wrists and limb orientations)
-* Contour-based model (Planar model)
+* **Contour-based model** (Planar model)
     * Used for 2D applications
     * Contour is detected in an image/video using image processing techniques like edge detection or region based segmentatoin
     * Contour can be represented as a set of coordinates. Polygonal approximations can be used applied to these coordinates to create the contour
-* Volume-based model (Volumetric model)
+* **Volume-based model** (Volumetric model)
     * Pose estimation algorithim estimates 3D position and orientation of the object directly in 3D space instead of a 2D space
     * Photogrammetry or laser scanning can be used to create a 3D model which is used to generate the volumetric representation of the object
     * Can be computationally expensive to compute and manimpulate and may require special hardware/software for processing 3D volumetric data
@@ -66,7 +67,7 @@ Although OpenPose is no longer the cutting edge model of pose estimation, it's s
 
 #### Method
 OpenPose is a bottom up model. The below figure, illustrates the overall pipeline of the OpenPose method. 
-![OpenPose Pipeline](../assets/images/team-25/overall_pipeline.png)
+![OpenPose Pipeline]({{'/assets/images/team-25/overall_pipeline.png'|relative_url}})
 * (a) system takes an input which is a color image of size *w x h*.
 * (b) feedforward network predicts a set of 2D confidence maps of body part locations
 * (c) degress of association between parts is encoded into part affinity fields (PAFs) (c)
@@ -76,7 +77,7 @@ OpenPose is a bottom up model. The below figure, illustrates the overall pipelin
 #### Network Architecture
 Now that we have a general idea of the pipeline of OpenPose, we can now delve into the technical details of the architecture.
 
-![OpenPose Architecture](../assets/images/team-25/architecture.png)
+![OpenPose Architecture]({{'/assets/images/team-25/architecture.png'|relative_url}})
 
 The architecture is shown above. Affinity fields are iteratively predicted with intermediate supervision at each stage. The affinity fields encode part-to-part association (shown in blue) and detection confidence maps (shown in begie) such that the PAFs are a set of 2D vectors that show the orinetation and location of limbs over the image domain.  
 
@@ -97,18 +98,18 @@ Where Φ <sup>t</sup> refers to the CNNs for inference at Stage t and T<sub>p</s
 
 where ρ<sup>t</sup> refers to the CNNs for inference at Stage t and T<sub>C</sub> refers to the total number of confidence map stages
 
-![PAF refinement](../assets/images/team-25/PAF_refinement.png)
+![PAF refinement]({{'/assets/images/team-25/PAF_refinement.png'|relative_url}})
 
 The refinement of the affinity fields across stages is shown above. Initially, there is confusion between the left and right body parts and limbs in the early stages However, the estimates become increasingly refined through global inference in later stages.
 
 Now, we can take a look at the loss function. To guide the network to iteratively predict  PAFs of body parts and confidence maps, we apply a loss function at the end of each stage. An L2 loss is used between the estimated predictions and the groundtruth maps and fields. The loss function of the PAF branch at stage t<sub>i</sub> and loss function of the confidence map branch at stage t<sub>k</sub> are
 
-![Loss Formulas](../assets/images/team-25/loss.png)
+![Loss Formulas]({{'/assets/images/team-25/loss.png'|relative_url}})
 
 Intermediate supervision at each stage replenishes the gradient periodically in order to prevent vanishing gradients.
 
 The eventual goal is
-![Goal](../assets/images/team-25/overall_goal.png)
+![Goal]({{'/assets/images/team-25/overall_goal.png'|relative_url}})
 
 ## Application
 In traditional object detection, people are only perceived as a square bounding box. However, using pose estimation allows computers to develop an understanding of human body language.
@@ -161,3 +162,4 @@ CLIFF: Carrying Location Information in Full Frames into Human Pose and Shape Es
 
 
 ---
+Describe the difference between novices and experts 
