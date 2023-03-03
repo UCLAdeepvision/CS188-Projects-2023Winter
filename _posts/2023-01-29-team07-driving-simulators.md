@@ -10,10 +10,10 @@ date: 2023-01-29
 > A study and reproduction of driving simulators.
 
 
-<!-- more
-{: class="table-of-content"}
+<!--more-->
+<!-- {: class="table-of-content"}
 * TOC
-{:toc} -->
+{:toc}  -->
 
 ## Our Project
 Our project is concerned with driving simulators, and the learning of self driving vehicles within these simulators.

@@ -18,6 +18,7 @@ date: 2023-01-29
 
 The goal of this project is to understand and test training methods that could increase the effectiveness of models to identify the similarity between pairs of images.
 
+
 ## Methods of Training
 
 ### Unsupervised Methods
@@ -137,6 +138,7 @@ class SingleModel(nn.Module):
 ```
 In this experiment we will be able to compare the performance of the supervised method with the unsupervised method in finding perfect matches.
 
+
 ## Relevant Research Papers
 
 **A Simple Framework for Contrastive Learning of Visual Representations** 
@@ -153,4 +155,3 @@ In this experiment we will be able to compare the performance of the supervised 
 
 **Image Similarity using Deep CNN and Curriculum Learning** 
 - [Paper](https://arxiv.org/ftp/arxiv/papers/1709/1709.08761.pdf)
-
