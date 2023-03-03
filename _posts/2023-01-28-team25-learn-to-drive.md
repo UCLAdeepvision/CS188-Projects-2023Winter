@@ -111,6 +111,8 @@ Intermediate supervision at each stage replenishes the gradient periodically in 
 The eventual goal is
 ![Goal]({{'/assets/images/team-25/overall_goal.png'|relative_url}})
 
+### Mask R-CNN
+
 ## Application
 In traditional object detection, people are only perceived as a square bounding box. However, using pose estimation allows computers to develop an understanding of human body language.
 
@@ -149,13 +151,14 @@ CLIFF: Carrying Location Information in Full Frames into Human Pose and Shape Es
 - [Code] https://paperswithcode.com/paper/cliff-carrying-location-information-in-full#code
 
 ## Reference
-[1] Dosovitskiy, A., Ros, G., Codevilla, F., Lopez, A. &amp; Koltun, V.. (2017). CARLA: An Open Urban Driving Simulator. <i>Proceedings of the 1st Annual Conference on Robot Learning</i>, in <i>Proceedings of Machine Learning Research</i> 78:1-16 Available from https://proceedings.mlr.press/v78/dosovitskiy17a.html.
+[1] DCao, Zhe, et al. “OpenPose: Realtime Multi-Person 2D Pose Estimation using Part Affinity Fields” arXiv preprint arXiv:1812.08008 (2019).
 
-[2]Li, Q., Peng, Z., Feng, L., Zhang, Q., Xue, Z., &amp; Zhou, B. (2022). MetaDrive: Composing diverse driving scenarios for generalizable reinforcement learning. IEEE Transactions on Pattern Analysis and Machine Intelligence, 1–14. https://doi.org/10.1109/tpami.2022.3190471 
+[2]Cai, Yuanhao, et al. “Learning Delicate Local Representations for Multi-Person Pose Estimation” arXiv preprint arXiv:2003.04030 (2020).
 
-[3] https://opendilab.github.io/DI-drive/
+[3]Luo, Zhengyi, et al. “Dynamics-Regulated Kinematic Policy for Egocentric Pose Estimation” arXiv preprint arXiv:2106.05969 (2021)
 
-[4] Amin-Tgz. (n.d.). Amin-TGZ/awesome-carla: 👉 Carla Resources such as tutorial, blog, code and ETC https://github.com/carla-simulator/carla. GitHub. Retrieved January 29, 2023, from https://github.com/Amin-Tgz/awesome-CARLA 
+[4] Li, Zhihao, et al. "CLIFF: Carrying Location Information in Full Frames into Human Pose and Shape Estimation" arXiv preprint arXiv:2208.00571 (2022)
+
 
 
 
