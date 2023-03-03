@@ -111,7 +111,25 @@ Intermediate supervision at each stage replenishes the gradient periodically in 
 The eventual goal is
 ![Goal]({{'/assets/images/team-25/overall_goal.png'|relative_url}})
 
-### Mask R-CNN
+### Mask R-CNN [5]
+Mask R-CNN is an extension of Faster R-CNN and is used to to perform image segmentation on images. Mask R-CNN extends Faster
+R-CNN by adding an additional branch that aims to predict object masks which are pixel-level binary masks that indicate which
+pixels belong to particular object instances. Object masks are used in addition with bounding boxes and class labels in order to 
+accurately segment an image.
+
+## Modern Architectures
+## Overview
+Although these are not my innovations, I wanted to briefly talk about some of the more modern architectures:
+* **HigherHRNet** [6] is a bottom up model of pose estimation. HigherHRNet uses high-resolution feature pyramids to learn
+scale-aware representations. It uses multi-resolution supervision for training and multi-resolution aggregation for inference.
+* **KP3D** [7] is a 3D pose estimation that uses a 2D image to predict the coordinates of a 3D object. 
+1. **Image Acquisition** - acquire a set of images of the 2D image taken from different viewpoints
+2. **Key-point detection** - Using feature detection techniques, detect distinct key points in a 2D image. These points should
+be easily detectable and matched across different images
+3. **Key-point Matching** - Match the key points between images.
+4. **3D reconstruction** - Once key point matching has been done, trinagulation is done to compute the 3D position of each key-point in the view. This is done by using correspondence between key-points and the known camera coordinates
+5. **Refinement** - Refine the 3D model by optimizing camera parameters and 3D point positions in order to minimize loss.
+
 
 ## Application
 In traditional object detection, people are only perceived as a square bounding box. However, using pose estimation allows computers to develop an understanding of human body language.
@@ -150,6 +168,12 @@ CLIFF: Carrying Location Information in Full Frames into Human Pose and Shape Es
 - [Paper] https://arxiv.org/pdf/2208.00571v2.pdf
 - [Code] https://paperswithcode.com/paper/cliff-carrying-location-information-in-full#code
 
+Mask R-CNN
+- [Paper] https://arxiv.org/abs/1703.06870
+
+HigherHRNet: Scale-Aware Representation Learning for Bottom-Up Human Pose Estimation
+- [Paper] https://arxiv.org/pdf/1908.10357.pdf
+
 ## Reference
 [1] DCao, Zhe, et al. “OpenPose: Realtime Multi-Person 2D Pose Estimation using Part Affinity Fields” arXiv preprint arXiv:1812.08008 (2019).
 
@@ -157,7 +181,11 @@ CLIFF: Carrying Location Information in Full Frames into Human Pose and Shape Es
 
 [3]Luo, Zhengyi, et al. “Dynamics-Regulated Kinematic Policy for Egocentric Pose Estimation” arXiv preprint arXiv:2106.05969 (2021)
 
-[4] Li, Zhihao, et al. "CLIFF: Carrying Location Information in Full Frames into Human Pose and Shape Estimation" arXiv preprint arXiv:2208.00571 (2022)
+[4] Li, Zhihao, et al. "CLIFF: Carrying Location Information in Full Frames into Human Pose and Shape Estimation" arXiv preprint arXiv:1703.06870 (2018)
+
+[5] He, Kaiming, et al. "Mask R-CNN" arXiv preprint arXiv:2208.00571 (2022)
+
+[6] Cheng, Bowen, et al. "" arXiv prepreint arXiv:1908.10357 (2020)
 
 
 
