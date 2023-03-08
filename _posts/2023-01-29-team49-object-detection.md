@@ -11,26 +11,43 @@ date: 2023-01-29
 # Study of Object Detection Techniques using MMDetection Toolkit
 
 ## Introduction
-Object detection is a crucial task in computer vision, with applications ranging from autonomous vehicles to security and surveillance systems. Deep learning has emerged as a powerful tool for object detection, with numerous techniques developed over the years. In this project, we aim to implement and compare multiple recent object detection techniques using the MMDetection library, including two-stage detectors (e.g., R-CNN), one-stage detectors (e.g., YOLO, SSD), and anchor-free detectors (e.g., FCOS, CenterNet).
+Object detection is a crucial task in computer vision, which is particularly relevant to the field of autonomous driving. With that goal in mind as inspiration, this project focuses primarily on object detection for vehicles. We begin by implementing and comparing multiple recent object detection techniques using the MMDetection library, including two-stage detectors (e.g., R-CNN, Fast R-CNN, Faster R-CNN), one-stage detectors (e.g., YOLO, SSD), and anchor-free detectors (e.g., FCOS, CenterNet). We then apply the top performing models to vehicle datasets. Finally, we finetune/train a new model that performs object detection as well as classification on vehicles by make and model.
 
-## Objectives
+## Overview
 
-* To implement and evaluate the performance of different object detection techniques using MMDetection.
-* To compare the performance of two-stage detectors, one-stage detectors, and anchor-free detectors on various benchmark datasets.
-* To gain insights into the strengths and limitations of different object detection methods and identify the methods that work best for specialized datasets.
+In this project, we evaluate the performance of different object detection techniques using MMDetection on several general datasets, and then focus on evaluating and training the best models for vehicle related datasets. In particularly, we  start by exploring and comparing the effectiveness of of YOLO, SSD, Faster R-CNN and FCOS on the COCO and PASCAL-VOC datasets.
 
-## Data
+Then, we apply these models to the problem of vehicle detection, using the KITTI Benchmark Dataset and the Tsinghua-Tencent Traffic-Sign Dataset.
 
-We will evaluate the performance of the implemented methods on popular benchmark datasets such as PASCAL VOC, COCO. We also intend to apply the best performing algorithms to a specialized dataset, to be determined.
+Finally, we plan to finetune one of the pretrained models to perform the new task of object detection combined with classficiation of the vehicles by make and model. For this purpose we will use the Stanford Car Dataset. We will also look at the datasets: CompCars, BoxCars and  MIO-TCD. We will experiment with multiple ways of building this model. Each specific pretrained object detection model will require different augmentation methods, so we will evaluate which model is best suited to this additional task. We intend to complete a model that will both identify vehicles in an image as well as label them with the correct make and model.
+
+If we have time, we will also test our model on video using the Car Object Detection dataset on Kaggle.
+
+## Datasets
+
+* COCO
+* PASCAL VOC
+* KITTI Benchmark Dataset
+* Tsinghua-Tencent Traffic-Sign Dataset
+* Stanford Car Dataset 
+* CompCars
+* BoxCars
+* MIO-TCD
+* Car Object Detection https://www.kaggle.com/datasets/sshikamaru/car-object-detection
 
 ## Outcomes
 
 * A comprehensive comparison of different object detection techniques.
-* Recommendations for the use of specific object detection methods for various applications and datasets.
-* Insights into the strengths and limitations of different object detection methods and the future directions of research in this area.
-* An end-to-end object detection system for the specialized dataset we find to be most promising.
+* Insights into the strengths and limitations of different object detection methods and their application to vehicle recognition.
+* An end-to-end object detection system for identifying and labeling vehicles by make and model.
 
 ## References
+
+Vehicle Attribute Recognition by Appearance: Computer Vision Methods for Vehicle Type, Make and Model Classification
+https://link.springer.com/article/10.1007/s11265-020-01567-6
+
+Real-Time Vehicle Make and Model Recognition with the Residual SqueezeNet Architecture
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6427723/
 
 Object Detection With Deep Learning: A Review
 https://ieeexplore.ieee.org/abstract/document/8627998?casa_token=O2bJ9bs8fF8AAAAA:UitiBGhZBSdgAheBAPj9ZnGgW64oKa-bXSNibIaTk1oZAtDMGboHxcPq32fdaQTgN02tz0iZKA

@@ -22,4 +22,13 @@ This paper covers incorporating linguistic structures to manipulate a model's im
 
 [Compositional Visual Generation with Composable Diffusion Models]("https://arxiv.org/abs/2206.01714") | [Code]("https://github.com/energy-based-model/Compositional-Visual-Generation-with-Composable-Diffusion-Models-PyTorch")
 
+
 This paper covers image generation through a composite of several diffusion models that each model a portion of the image.
+
+2/26 Midterm Update
+
+Our plan is to train the Stable Diffusion model on Star Wars images to make the model generate images in that style.
+
+Base Source Code: [Github](https://github.com/CompVis/stable-diffusion)
+
+Method: roughly based on [this video](https://www.youtube.com/watch?v=tgRiZzwSdXg)
