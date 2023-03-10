@@ -81,7 +81,7 @@ Object detection models in general can be classified into two main classes: two-
 Why do we sometimes use one-stage models then? To put it simply, they can be much faster, and in the object-detection world that is an enormous priority right now. One-stage models reject the region proposal step and proceed to run detection directly over a dense sampling of locations. A buzzword driving this push is “real-time” object detection, in which there is virtual no lag between images or video being observed and bounding boxes with classifications being returned. One such model is the one we are discussing here: YOLO.
 Only saying YOLO is perhaps a little too broad. Since its inception in 2016, the YOLO approach has been expanded upon by several different research groups into more than 7 different variations. Following the original YOLO paper, subsequent versions have added improvements to the head, neck, or backbone, and sometimes to multiple of these at a time. Below, we can see a summary of some of the architectural changes that took place during these evolutions.
 
-[comment]: <> (<img src="/CS188-Projects-2023Winter/assets/images/team31/yolo_version_layers.png" width="640" height="640" />)
+<img src="/CS188-Projects-2023Winter/assets/images/team31/yolo_version_layers.png" width="640" height="640" />
 
 As we can see, these different YOLOs all use an FCNN, but their individual structures differ notably. To add to the confusion, not all advances in YOLO are sequential; in fact, YOLOv7 is based upon a version of YOLOv4 called Scaled YOLOv4 rather than YOLOv6 as we might expect. Despite this interrupted continuity, each version has improved in speed and accuracy.
 
