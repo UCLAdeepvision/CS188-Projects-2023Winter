@@ -497,6 +497,17 @@ class Discriminator(nn.Module):
 
 
 ### Results <a name="res2"></a>
+![Results 1](/assets/images/team14/download.mp4)
+* lr=1e-4, fLr=1e-6, b1=0, b2=0.99, weightDecay=1e-4
+
+![Results 2](/assets/images/team14/download(1).mp4)
+* lr=1e-4, fLr=1e-6, b1=.5, b2=0.5, weightDecay=1e-4
+
+![Results 3](/assets/images/team14/download(2).mp4)
+* lr=1e-4, fLr=1e-6, b1=.5, b2=0.5, weightDecay=1e-5
+
+![Results 4](/assets/images/team14/download(3).mp4)
+* lr=1e-4, fLr=1e-6, b1=.5, b2=0.5, weightDecay=1e-3
 
 ## Demo <a name="demo"></a>
 
