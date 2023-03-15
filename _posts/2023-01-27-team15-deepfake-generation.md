@@ -7,7 +7,7 @@ date: 2023-01-24
 ---
 
 
-> This blog details Shrea Chari and Dhakshin Suriakannu's project for the course CS 188: Computer Vision. This project discusses the topic of Deepfake Generation.
+> This blog details Shrea Chari and Dhakshin Suriakannu's project for the course CS 188: Computer Vision. This project discusses the topic of Deepfake Generation and takes a deep dive into three of the most popular models: Cycle-GAN, StarGAN and StyleGAN.
 
 
 <!--more-->
@@ -124,7 +124,7 @@ Each DCGAN has two losses.
 - Total cycle consistency loss  
   - $$ \mathcal{L}_{\text {cyc }}=\mathbb{E}_{x \sim p_{\text {data }}(x)}\left[\|F(G(x))-x\|_1\right] +\mathbb{E}_{y \sim p_{\text {data }}(y)}\left[\|G(F(y))-y\|_1\right] $$  
 - The corresponding example code where $$A$$ is $$X$$ and $$B$$ is $$Y$$ is as follows:
-```
+```python
 # GAN loss D_A(G_A(A))
 self.loss_G_A = self.criterionGAN(self.netD_A(self.fake_B), True)
 # GAN loss D_B(G_B(B))
@@ -142,7 +142,7 @@ self.loss_G.backward()
 We can also introduce the **$$L_{identity}$$ loss**. This preserves color composition between inputs and output.  
 - $$ \mathcal{L}_{\text {identity }}=\mathbb{E}_{y \sim p_{\text {data }}(y)}\left[\|G(y)-y\|_1\right] +\mathbb{E}_{x \sim p_{\text {data }}(x)}\left[\|F(x)-x\|_1\right] $$  
 - The corresponding example code where $$A$$ is $$X$$ and $$B$$ is $$Y$$ is as follows:
-```
+```python
 # Identity loss
     if lambda_idt > 0:
         # G_A should be identity if real_B is fed: ||G_A(B) - B||
@@ -168,7 +168,7 @@ We can also split the **discriminator loss** as well:
 - $$ \mathcal{L}_{D_Y}=\mathbb{E}_{y \sim p_{\text {data }}(y)}\left[\left(1-D_Y(y)\right)^2\right] +\mathbb{E}_{x \sim p_{\text {data }}(x)}\left[D_Y(G(x))^2\right] $$  
 - The corresponding example code where $$A$$ is $$X$$ and $$B$$ is $$Y$$ is as follows:
 
-```
+```python
 def backward_D_A(self):
     """Calculate GAN loss for discriminator D_A"""
     fake_B = self.fake_B_pool.query(self.fake_B)
@@ -183,6 +183,187 @@ def backward_D_B(self):
 
 In each epoch $$ \mathcal{L}_G$$ is calculated and backpropogated. Next, $$ \mathcal{L}_{D_X} $$ is calculated and backpropogated. Lastly, $$\mathcal{L}_{D_Y}$$ is calculated and backpropogated.
 
+### StarGAN
+An enhanced GAN variation, StarGAN, was proposed in 2018. StarGAN performs image-to-image translations for multiple domains with only a single model; this allows a single network to simultaneously train multiple datasets with different domains. There is some important terminology to keep in mind when discussing the StarGAN: *attribute* refers to an inherent meaningful feature such as hair color or gender, *attribute value* is the value of an attribute, for example, male/female for gender, and a *domain* is a set of images with the same attribute value.
+
+The availability of datasets such as CelebA, which contain facial attribute labels, allow us to change images according to attributes from multiple domains, a task called **multi-domain-image-to-image translation*. An example showing the CelebA dataset translated according to the domains blond hair, gender, age, and pale skin is as follows:
+
+![stargan faces]({{ '/assets/images/team-15/11.png' | relative_url }})
+{: style="width: 800px; max-width: 120%; padding-top: 5px;"}
+*Multi-domain image-to-image translation results on the CelebA dataset via transferring knowledge learned from the RaFD dataset. (Image source: <https://arxiv.org/pdf/1711.09020.pdf>)*  
+&nbsp;
+
+An issue with existing models is the inefficiency when performing such multi-domain image tasks. This is where StarGAN outperformed existing models of the time. StarGAN uses a single generator to learn mappings between $$k$$ domains, as opposed to the previous $$k(k-1)$$ generators needed. 
+
+![stargan diagram]({{ '/assets/images/team-15/12.png' | relative_url }})
+{: style="width: 600px; max-width: 100%; padding-top: 5px;"}
+*Comparison between cross-domain models and StarGAN. (Image source: <https://arxiv.org/pdf/1711.09020.pdf>)*  
+&nbsp;
+
+StarGAN works as follows. The generator $$G$$ takes the image $$x$$ and domain information as inputs and learns to translate the image into the specified domain $$c$$, which is randomly generated during training. The domain information is represented as a binary or one-hot vector label. By adding a mask vector to the domain label, we can also enable join training between domains of different datasets. The discriminator $$D$$ creates probability distributions over both sources and domain labels: $$D: x \rightarrow\left\{D_{s r c}(x), D_{c l s}(x)\right\}$$. An overview of the StarGAN model is shown below.
+
+![stargan model]({{ '/assets/images/team-15/13.png' | relative_url }})
+{: style="width: 600px; max-width: 100%; padding-top: 5px;"}
+*“(a) D learns to distinguish between real and fake images and classify the real images to its corresponding domain. (b) G takes in as input both the image and target domain label and generates an fake image. The target domain label is spatially replicated and concatenated with the input image. (c) G tries to reconstruct the original image from the fake image given the original domain label. (d) G tries to generate images indistinguishable from real images and classifiable as target domain by D.” (Image source: <https://arxiv.org/pdf/1711.09020.pdf>)*  
+&nbsp;
+
+#### Loss
+There are several losses involved in StarGAN.
+
+**Adversarial Loss** is used to make the generated images indistinguishable from real images. In the equation below, $$G(x, c)$$ is the image generated by $$G$$. Furthermore, $$G$$ tries to minimize $$D_{s r c}$$ while $$D$$ tries to maximize this.
+
+$$\mathcal{L}_{a d v}= \mathbb{E}_x\left[\log D_{s r c}(x)\right]+ \mathbb{E}_{x, c}\left[\log \left(1-D_{s r c}(G(x, c))\right)\right]$$  
+&nbsp;
+
+The **domain classification loss** is introduced to ensure good classification performance. It is used when optimizing both $$G$$ and $$D$$ and can be separated into two terms.
+- Domain classification loss of fake images used to optimize G: $$\mathcal{L}_{c l s}^f=\mathbb{E}_{x, c}\left[-\log D_{c l s}(c \mid G(x, c))\right]$$  
+
+- Domain classification loss of real images used to optimize D: $$\mathcal{L}_{c l s}^r=\mathbb{E}_{x, c^{\prime}}\left[-\log D_{c l s}\left(c^{\prime} \mid x\right)\right]$$
+  - $$D_{c l s}\left(c^{\prime} \mid x\right)$$ represents a probability distribution over domain labels computed by D  
+&nbsp;
+
+Lastly, the **reconstruction loss** is a cycle consistency loss applied to ensure that translated images only change the domain-related parts of the input while preserving the remaining content of their input images. 
+$$\mathcal{L}_{r e c}=\mathbb{E}_{x, c, c^{\prime}}\left[\left\|x-G\left(G(x, c), c^{\prime}\right)\right\|_1\right]$$  
+&nbsp;
+
+The combined loss functions for StarGAN are as follows:
+- $$\mathcal{L}_D= -\mathcal{L}_{adv} + \lambda_{cls} \mathcal{L}_{cls}^r$$
+- $$\mathcal{L}_G= \mathcal{L}_{adv} + \lambda_{cls} \mathcal{L}_{cls}^r + \lambda_{rec} \mathcal{L}_{rec} $$
+
+Where $$\lambda_{cls}$$ and $$\lambda_{rec}$$ are hyperparameters (in this experiment they are set to 1 and 10 respectively).
+
+The code snippet defining $$\mathcal{L}_D$$:
+```python
+# Compute loss with real images.
+out_src, out_cls = self.D(x_real)
+d_loss_real = - torch.mean(out_src)
+d_loss_cls = self.classification_loss(out_cls, label_org, self.dataset)
+
+# Compute loss with fake images.
+x_fake = self.G(x_real, c_trg)
+out_src, out_cls = self.D(x_fake.detach())
+d_loss_fake = torch.mean(out_src)
+
+# Compute loss for gradient penalty.
+alpha = torch.rand(x_real.size(0), 1, 1, 1).to(self.device)
+x_hat = (alpha * x_real.data + (1 - alpha) * x_fake.data).requires_grad_(True)
+out_src, _ = self.D(x_hat)
+d_loss_gp = self.gradient_penalty(out_src, x_hat)
+
+# Backward and optimize.
+d_loss = d_loss_real + d_loss_fake + self.lambda_cls * d_loss_cls + self.lambda_gp * d_loss_gp
+self.reset_grad()
+d_loss.backward()
+self.d_optimizer.step()
+```  
+
+The code snippet defining $$\mathcal{L}_G$$:
+```python
+if (i+1) % self.n_critic == 0:
+  # Original-to-target domain.
+  x_fake = self.G(x_real, c_trg)
+  out_src, out_cls = self.D(x_fake)
+  g_loss_fake = - torch.mean(out_src)
+  g_loss_cls = self.classification_loss(out_cls, label_trg, self.dataset)
+
+  # Target-to-original domain.
+  x_reconst = self.G(x_fake, c_org)
+  g_loss_rec = torch.mean(torch.abs(x_real - x_reconst))
+
+  # Backward and optimize.
+  g_loss = g_loss_fake + self.lambda_rec * g_loss_rec + self.lambda_cls * g_loss_cls
+  self.reset_grad()
+  g_loss.backward()
+  self.g_optimizer.step()
+```
+
+### StarGAN v2
+![stargan2 ex1]({{ '/assets/images/team-15/15.png' | relative_url }})
+{: style="width: 800px; max-width: 100%; padding-top: 5px;"}
+![stargan2 ex1]({{ '/assets/images/team-15/16.png' | relative_url }})
+{: style="width: 800px; max-width: 100%; padding-top: 0px;"}
+![stargan2 ex1]({{ '/assets/images/team-15/17.png' | relative_url }})
+{: style="width: 800px; max-width: 100%; padding-top: 0px;"}
+*“StarGAN v2: Diverse Image Synthesis for Multiple Domains.” (Image source: <https://arxiv.org/pdf/1912.01865.pdf>*  
+&nbsp;
+
+StarGAN v2 expands upon the work done with StarGAN to allow for the model to learn a mapping which captures the multi-modal nature of the data distribution. This allows for the generation of diverse images across multiple domains. A key change from StarGAN is the switch form the domain label to domain specific style code which represents diverse *styles* of a specific *domain*. This is done by introducing a mapping network, which learns to transform random Gaussian noise into a style code, and a style encoder, which learns to extract the style code from a given image. The generator $$G$$ translates input image $$x$$ into output $$G(x,s)$$ where $$s$$ is the domain specific style code. The discriminator $$D$$ is multi-task and has several output branches.
+
+![stargan2 model]({{ '/assets/images/team-15/14.png' | relative_url }})
+{: style="width: 800px; max-width: 100%; padding-top: 5px;"}
+*“Overview of StarGAN v2, consisting of four modules. (a) The generator translates an input image into an output image reflecting the domain-specific style code. (b) The mapping network transforms a latent code into style codes for multiple domains, one of which is randomly selected during training. (c) The style encoder extracts the style code of an image, allowing the generator to perform referenceguided image synthesis. (d) The discriminator distinguishes between real and fake images from multiple domains. Note that all modules except the generator contain multiple output branches, one of which is selected when training the corresponding domain.” (Image source: <https://arxiv.org/pdf/1912.01865.pdf>)*  
+&nbsp;
+
+#### Loss
+Similar to the original StyleGAN, version 2 comines several specific loss functions.
+
+The **adversarial loss** again is used to ensure that the generated images are indistinguishable from the real images.  
+
+$$\mathcal{L}_{a d v}= \mathbb{E}_{\mathbf{x}, y}\left[\log D_y(\mathbf{x})\right]+ \mathbb{E}_{\mathbf{x}, \widetilde{y}, \mathbf{z}}\left[\log \left(1-D_{\tilde{y}}(G(\mathbf{x}, \widetilde{\mathbf{s}}))\right)\right]$$  
+
+The appropriate code is as follows:
+```python
+def adv_loss(logits, target):
+  assert target in [1, 0]
+  targets = torch.full_like(logits, fill_value=target)
+  loss = F.binary_cross_entropy_with_logits(logits, targets)
+  return loss
+```
+&nbsp;
+
+**Style reconstruction** loss is needed to enforce generator $$G$$ to utilize the style code $$\widetilde{s}$$. The major difference with this method is that a single encoder $$E$$ is trained to encourage diverse outputs for multiple domains. $$E$$ then permits $$G$$ to reflect the style of a reference image at test time.
+
+$$\mathcal{L}_{s t y}= \mathbb{E}_{\mathbf{x}, \widetilde{y}, \mathbf{z}}\left[\left\|\widetilde{\mathbf{s}}-E_{\widetilde{y}}(G(\mathbf{x}, \widetilde{\mathbf{s}}))\right\|_1\right]$$  
+
+The appropriate code is as follows:
+```python
+# style reconstruction loss
+s_pred = nets.style_encoder(x_fake, y_trg)
+loss_sty = torch.mean(torch.abs(s_pred - s_trg))
+```
+&nbsp;
+
+**Style diversification** includes regularizing $$G$$ with diversity sensitive loss to allow the generator to produce diverse images.
+
+$$\mathcal{L}_{d s}= \mathbb{E}_{\mathbf{x}, \widetilde{y}, \mathbf{z}_1, \mathbf{z}_2}\left[\left\|G\left(\mathbf{x}, \widetilde{\mathbf{s}}_1\right)-G\left(\mathbf{x}, \widetilde{\mathbf{s}}_2\right)\right\|_1\right]$$  
+
+The appropriate code is as follows:
+```python
+# diversity sensitive loss
+if z_trgs is not None:
+    s_trg2 = nets.mapping_network(z_trg2, y_trg)
+else:
+    s_trg2 = nets.style_encoder(x_ref2, y_trg)
+x_fake2 = nets.generator(x_real, s_trg2, masks=masks)
+x_fake2 = x_fake2.detach()
+loss_ds = torch.mean(torch.abs(x_fake - x_fake2))
+```
+&nbsp;
+
+We then introduce a **cycle consistency loss** to ensure that the generated image $$G(\mathbf{x}, \widetilde{\mathbf{s}})$$ preserves the original properties (non related to style) of its input image.
+
+$$\mathcal{L}_{c y c}= \mathbb{E}_{\mathbf{x}, y, \widetilde{y}, \mathbf{z}}\left[\|\mathbf{x}-G(G(\mathbf{x}, \widetilde{\mathbf{s}}), \hat{\mathbf{s}})\|_1\right]$$  
+
+The appropriate code is as follows:
+```python
+# cycle-consistency loss
+masks = nets.fan.get_heatmap(x_fake) if args.w_hpf > 0 else None
+s_org = nets.style_encoder(x_real, y_org)
+x_rec = nets.generator(x_fake, s_org, masks=masks)
+loss_cyc = torch.mean(torch.abs(x_rec - x_real))
+```
+&nbsp;
+
+The **overall loss** can be represented as follows:
+
+$$\min _{G, F, E} \max _D \mathcal{L}_{a d v}+\lambda_{s t y} \mathcal{L}_{s t y} -\lambda_{d s} \mathcal{L}_{d s}+\lambda_{c y c} \mathcal{L}_{c y c}$$ 
+
+where $$\lambda_{s t y}$$, $$\lambda_{d s}$$, and $$\lambda_{c y c}$$ are hyperparameters.  
+
+The appropriate code is as follows:
+```python
+loss = loss_adv + args.lambda_sty * loss_sty - args.lambda_ds * loss_ds + args.lambda_cyc * loss_cyc
+```
 
 
 ## References
