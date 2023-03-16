@@ -344,55 +344,55 @@ The Discriminator Architecture consists of six pre-activation residual blocks wi
 
 #### Loss Functions
 
-The StarGAN v2 netwrok is trained using adversarial objective, style diversification, and preserving source characteristics.
+The StarGAN v2 netwrok is trained using adversarial objective, style reconstruction, style diversification, and preserving source characteristics.
 
-Adversarial Objective:
+* Adversarial Objective:
 
-The generator G takes an image x and $\tilde{s}$ as input and learns to generate an output image G(x, $\tilde{s}$ ) via adversarial loss which is defined as
-
-$$
-\mathbf{L}_{adv} = \mathbb{E}_{x,y}[log D_{y}(x)] + \mathbb{E}_{x,\tilde{y},z}[log (1-D_{\tilde{y}}(G(x,\tilde{s})))]
-$$
-
-where x represents the latent code, $\tilde{y}$ represents the target domain, $\tilde{s}$ represents the target style code
-
-Style Reconstruction:
-
-To ensure the generator utillzes the style code, $\tilde{s}$, when generating G(x, $\tilde{s}$), we need to use style reconstruction loss which is defined as 
+  The generator G takes an image x and $\tilde{s}$ as input and learns to generate an output image G(x, $\tilde{s}$ ) via adversarial loss which is defined as
 
 $$
-\mathbf{L}_{sty} = \mathbb{E}_{x, \tilde{y}, z}[||\tilde{s}- \mathit{E}_{\tilde{y}}(G(x, \tilde{s}))||_{1}]
+\mathcal{L}_{adv} = \mathbb{E}_{x,y}[log D_{y}(x)] + \mathbb{E}_{x,\tilde{y},z}[log (1-D_{\tilde{y}}(G(x,\tilde{s})))]
 $$
 
-Style Diversification:
+  where x represents the latent code, $\tilde{y}$ represents the target domain, $\tilde{s}$ represents the target style code
 
-To enable the generator to produce diverse images, the generator is regularized with diversity sensitive loss which is defined as
+* Style Reconstruction:
 
-$$
-\mathbf{L}_{ds} = \mathbb{E}_{x, \tilde{y}, z_{1}, z_{2}}[||G(x, \tilde{s}_{1}) - G(x, \tilde{s}_{2})||_{1}]
-$$
-
-where $\tilde{s}_{1}$ and $\tilde{s}_{2}$ are produced by F conditioned on two random latent codes $z_{1}$ and $z_{2}$
-
-Preserving Source Characteristics:
-
-To ensure the generated image G(x, $\tilde{s}$) preserves the domain invariant characteristics, we need to use cycle consitency loss which is defined as
+  To ensure the generator utillzes the style code, $\tilde{s}$, when generating G(x, $\tilde{s}$), we need to use style reconstruction loss which is defined as 
 
 $$
-\mathbf{L}_{cyc} = \mathbb{E}_{x, y, \tilde{y}, z}[|| x - G(G(x, \tilde{s}), \hat{s})||_{1}]
+\mathcal{L}_{sty} = \mathbb{E}_{x, \tilde{y}, z}[||\tilde{s}- \mathit{E}_{\tilde{y}}(G(x, \tilde{s}))||_{1}]
 $$
 
-where $\hat{s}$ = $E_{y}(x)$ is the estimated style code of the input image x
+* Style Diversification:
+
+  To enable the generator to produce diverse images, the generator is regularized with diversity sensitive loss which is defined as
+
+$$
+\mathcal{L}_{ds} = \mathbb{E}_{x, \tilde{y}, z_{1}, z_{2}}[||G(x, \tilde{s}_{1}) - G(x, \tilde{s}_{2})||_{1}]
+$$
+
+  where $\tilde{s_1}$ and $\tilde{s_2}$ are produced by F conditioned on two random latent codes $z_{1}$ and $z_{2}$
+
+* Preserving Source Characteristics:
+
+  To ensure the generated image G(x, $\tilde{s}$) preserves the domain invariant characteristics, we need to use cycle consitency loss which is defined as
+
+$$
+\mathcal{L}_{cyc} = \mathbb{E}_{x, y, \tilde{y}, z}[|| x - G(G(x, \tilde{s}), \hat{s})||_{1}]
+$$
+
+  where $\hat{s}$ = $E_{y}(x)$ is the estimated style code of the input image x
 
 Full Objective:
 
 The full object is defined as 
 
 $$
-min max \mathcal{L}_{adv} + {\lambda}_{sty}\mathcal{L}_{sty} - {\lambda}_{ds}\mathcal{L}_{ds} + {\lambda}_{cyc}\mathcal{L}_{cyc}
+\min\limits_{G, F, E} \max\limits_{D} \mathcal{L}_{adv} + {\lambda}_{sty}\mathcal{L}_{sty} - {\lambda}_{ds}\mathcal{L}_{ds} + {\lambda}_{cyc}\mathcal{L}_{cyc}
 $$
 
-where ${\lambda}_{sty}$, ${\lambda}_{ds}$, and ${\lambda}_{cyc}$ are hyperparameters for each term
+where $\lambda_{sty}$, $\lambda_{ds}$, and $\lambda_{cyc}$ are hyperparameters for each term
 
 ### Architecture Blocks and Code Implementation <a name="archblocks2"></a>
 
