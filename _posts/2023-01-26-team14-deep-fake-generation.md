@@ -308,38 +308,56 @@ class NLayerDiscriminator(nn.Module):
 
 ### Results <a name="res1"></a>
 
-## Star GAN <a name="stargan"></a>
+## Star GAN v2 <a name="stargan"></a>
 
 ### Motivation <a name="mot2"></a>
-StarGAN is a generative adversarial network that learns the mappings among multiple domains using only a single generator and a discriminator, training effectively from images of all domains (Choi 2). The topology could be represented as a star where multi-domains are connected, thus receiveing the name StarGAN. 
+StarGAN is a generative adversarial network that learns the mappings among multiple domains using only a single generator and a discriminator, training effectively from images of all domains (Choi 2). The topology could be represented as a star where multi-domains are connected, thus receiveing the name StarGAN. In this article, we will be looking at StarGAN v2. The main differentiation between versions is that v2 is "a scalable approach that can generate diverse images across multiple domains" (Choi v2 pg2). The domain label is replaced with the domain specific style code. The goal is that v2 will yield better results in terms of visual qulaity and diveristy than the original StarGAN.
 
-![StarGAN Results](/CS188-Projects-2023Winter/assets/images/team14/star1.JPG)
-* Fig 10. Example of multi-domain image-to-image translation on CelebA dataset using StarGAN
+![StarGAN v2 Results](/CS188-Projects-2023Winter/assets/images/team14/style1.JPG)
+* Fig 10. Example of image synthesis results on CelebA dataset using StarGAN v2. The source and reference images are in the first rown and column, and they are real images, while the rest of the images are generated.
 
 StarGAN consists of two modules, a discriminator and a generator. The discriminator learns to differentiate between real and fake images and begins to clssify the real images with its proper domain. The generator takes an image and a target domain label as input and generates a fake image with them. The target domain label is then spatially replicated and concatenated with the image given as input. The generator attempts to reconstruct the orginal image via the fake image when given the original domain label. Lastly, the generator tries to generate images that are almost identical to the real images and will be classified as being from the target domain by the discriminator.
 
-![StarGAN Flow](/CS188-Projects-2023Winter/assets/images/team14/star2.JPG)
-* Fig 11. Example flow of StarGAN where D represents the discriminator and G represents the generator
+![StarGAN v2 Flow](/CS188-Projects-2023Winter/assets/images/team14/style1.JPG)
+* Fig 11. Example flow of StarGAN v2 where D represents the discriminator, G represents the generator, F represents the mapping network, and E represents the style encoder
 
-The overarching goal of StarGAN is to translate images from one domain to the other domain. For example, translating an image with a red leaves to an image with yellow leaves.
+The overarching goal of StarGAN v2 is to train a generator that can generate diverse images of each of the domains that correspond to an image. A domain specific style vectors in the learned style space of each of the trains and then train the generator to reflect the style vectors.
 
 ### Architecture <a name="arch2"></a>
 
-The architecture of StarGAN consists of a generator, which consists of two convolutional layers with a stride size of two for downsampling, six residual blocks, and two tranposed convolutional layers with a stride size of two for upsampling. Instance normalization is also used in all layers except the last. The architecture we use for this is an adaptation of the CycleGAN generator.
+The Generator Architecture consists of 4 downsampling blocks that use instance normalization (IN), four intermediate blocks, and four upsampling blocks that use adaptive instance normalization (AdaIN). These blocks all have pre-activation residual units. Style code is injected into all the AdaIN layers. 
 
-In both this image and the next, N is the number of output channels, K is the kernel size, S is the stride sie, P is the padding size, IN is the instance normalization, n_d is the number of the domain, and n_x is the dimension of the domain labels.
+![StarGAN v2 Generator Architecture](/CS188-Projects-2023Winter/assets/images/team14/style3.JPG)
+* Fig 12. Example of StarGAN v2 Generator Architecture (Image source: https://arxiv.org/pdf/1912.01865.pdf)
 
-![StarGAN Generator](/CS188-Projects-2023Winter/assets/images/team14/star4.JPG)
-* Fig 12. Example of StarGAN Generator Architecture (Image source: https://arxiv.org/pdf/1711.09020v3.pdf)
+The Mapping Network Architecture consists of an MLP with k (number of domains) output branches. Four fully connected layers are shared among domains, and they are followed by four fully conected layers for each individual domain.
 
-The discriminator uses a single convolutional layer for the input layer, then 5 hidden convolutional layers, then 2 convolutional output layers. It uses Leaky ReLU with a negative slope of 0.01. This stride size is 2 for the input and hidden layers, and the stride is 1 in the output layers.
+![StarGAN v2 Mappning Network Architecture](/CS188-Projects-2023Winter/assets/images/team14/style4.JPG)
+* Fig 13. Example of StarGAN v2 mapping netwrok architecture (Image source: https://arxiv.org/pdf/1912.01865.pdf)
 
-![StarGAN Discriminator](/CS188-Projects-2023Winter/assets/images/team14/star5.JPG)
-* Fig 13. Example of StarGAN Discriminator architecture (Image source: https://arxiv.org/pdf/1711.09020v3.pdf)
+The Style Encoder Architecture consists of CNN with k (number of domains) output branches. Six pre-activation residual blocks are shared among domains, and they are followed by one fully connected layer for each individual domain.
+
+The Discriminator Architecture consists of six pre-activation residual blocks with leaky ReLY. k (number of domains) fully connected layers are used for real/fake classification among each domain.
+
+![StarGAN v2 Style Encoder and Discriminator Architecture](/CS188-Projects-2023Winter/assets/images/team14/style5.JPG)
+* Fig 14. Example of StarGAN v2 style encoder and discriminator architecture, where D and K are the output dimensions (Image Source: https://arxiv.org/pdf/1912.01865.pdf)
 
 #### Loss Functions
 
-The discriminator produces probability distributions over source and domain labels as follows:
+The StarGAN v2 netwrok is trained using adversarial objective, style diversification, preserving source characteristics, and full objective.
+
+Adversarial Objective:
+
+The generator G takes an image x and $$\tilde{s} $$ as input and learns to generate an output image G(x, $$ \tilde{s} $$) via adversarial loss
+
+$$
+\mathbf{L}_{adv} = \mathbb{E}_{x,y}[log D_{y}(x)] + \mathbb{E}_{x,\tilde{y},z}[log (1-D_{\tilde{y}}(G(x,\tilde{s})))]
+$$
+
+where x represents the latent code, $$ \tilde{y} $$ represents the target domain, $$ \tilde{s} represents the target style code
+
+
+#####
 
 $$
 \mathbf{D} : \mathbf{x}\rightarrow\{{D_{src}(x), D_{cls}(x)}\}
@@ -389,109 +407,104 @@ $$
 
 ### Architecture Blocks and Code Implementation <a name="archblocks2"></a>
 
-This is the ResidualBlock module. It consists of the Conv2D, instance norm, and ReLu, which are all modules in PyTorch. The goal of this module is to ensure the neural network is able to expand in depth without errors occuring during backpropgation.
+The code for the part of the init() and the follow() functions for the Generator is as follows. 
 
 ```
-class ResidualBlock(nn.Module):
-    def __init__(self, in_features):
-        super(ResidualBlock, self).__init__()
+class Generator(nn.Module):
+    def __init__(self, img_size=256, style_dim=64, max_conv_dim=512, w_hpf=1):
+        super().__init__()
+        dim_in = 2**14 // img_size
+        self.img_size = img_size
+        self.from_rgb = nn.Conv2d(3, dim_in, 3, 1, 1)
+        self.encode = nn.ModuleList()
+        self.decode = nn.ModuleList()
+        self.to_rgb = nn.Sequential(
+            nn.InstanceNorm2d(dim_in, affine=True),
+            nn.LeakyReLU(0.2),
+            nn.Conv2d(dim_in, 3, 1, 1, 0))
 
-        conv_block = [
-            nn.Conv2d(in_features, in_features, 3, stride=1, padding=1, bias=False),
-            nn.InstanceNorm2d(in_features, affine=True, track_running_stats=True),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(in_features, in_features, 3, stride=1, padding=1, bias=False),
-            nn.InstanceNorm2d(in_features, affine=True, track_running_stats=True),
-        ]
+        ...
 
-        self.conv_block = nn.Sequential(*conv_block)
-
-    def forward(self, x):
-        return x + self.conv_block(x)
-```
-
-The code for the Generator is as follows. It uses the ResidualBlock module that is defined above. 
-
-```
-class GeneratorResNet(nn.Module):
-    def __init__(self, img_shape=(3, 128, 128), res_blocks=9, c_dim=5):
-        super(GeneratorResNet, self).__init__()
-        channels, img_size, _ = img_shape
-
-        # Initial convolution block
-        model = [
-            nn.Conv2d(channels + c_dim, 64, 7, stride=1, padding=3, bias=False),
-            nn.InstanceNorm2d(64, affine=True, track_running_stats=True),
-            nn.ReLU(inplace=True),
-        ]
-
-        # Downsampling
-        curr_dim = 64
-        for _ in range(2):
-            model += [
-                nn.Conv2d(curr_dim, curr_dim * 2, 4, stride=2, padding=1, bias=False),
-                nn.InstanceNorm2d(curr_dim * 2, affine=True, track_running_stats=True),
-                nn.ReLU(inplace=True),
-            ]
-            curr_dim *= 2
-
-        # Residual blocks
-        for _ in range(res_blocks):
-            model += [ResidualBlock(curr_dim)]
-
-        # Upsampling
-        for _ in range(2):
-            model += [
-                nn.ConvTranspose2d(curr_dim, curr_dim // 2, 4, stride=2, padding=1, bias=False),
-                nn.InstanceNorm2d(curr_dim // 2, affine=True, track_running_stats=True),
-                nn.ReLU(inplace=True),
-            ]
-            curr_dim = curr_dim // 2
-
-        # Output layer
-        model += [nn.Conv2d(curr_dim, channels, 7, stride=1, padding=3), nn.Tanh()]
-
-        self.model = nn.Sequential(*model)
-
-    def forward(self, x, c):
-        c = c.view(c.size(0), c.size(1), 1, 1)
-        c = c.repeat(1, 1, x.size(2), x.size(3))
-        x = torch.cat((x, c), 1)
-        return self.model(x)
+    def forward(self, x, s, masks=None):
+        x = self.from_rgb(x)
+        cache = {}
+        for block in self.encode:
+            if (masks is not None) and (x.size(2) in [32, 64, 128]):
+                cache[x.size(2)] = x
+            x = block(x)
+        for block in self.decode:
+            x = block(x, s)
+            if (masks is not None) and (x.size(2) in [32, 64, 128]):
+                mask = masks[0] if x.size(2) in [32] else masks[1]
+                mask = F.interpolate(mask, size=x.size(2), mode='bilinear')
+                x = x + self.hpf(mask * cache[x.size(2)])
+        return self.to_rgb(x)
 ```
 
 The code for the Discriminator is as follows.
 
 ```
 class Discriminator(nn.Module):
-    def __init__(self, img_shape=(3, 128, 128), c_dim=5, n_strided=6):
-        super(Discriminator, self).__init__()
-        channels, img_size, _ = img_shape
+    def __init__(self, img_size=256, num_domains=2, max_conv_dim=512):
+        super().__init__()
+        dim_in = 2**14 // img_size
+        blocks = []
+        blocks += [nn.Conv2d(3, dim_in, 3, 1, 1)]
 
-        def discriminator_block(in_filters, out_filters):
-            """Returns downsampling layers of each discriminator block"""
-            layers = [nn.Conv2d(in_filters, out_filters, 4, stride=2, padding=1), nn.LeakyReLU(0.01)]
-            return layers
+        repeat_num = int(np.log2(img_size)) - 2
+        for _ in range(repeat_num):
+            dim_out = min(dim_in*2, max_conv_dim)
+            blocks += [ResBlk(dim_in, dim_out, downsample=True)]
+            dim_in = dim_out
 
-        layers = discriminator_block(channels, 64)
-        curr_dim = 64
-        for _ in range(n_strided - 1):
-            layers.extend(discriminator_block(curr_dim, curr_dim * 2))
-            curr_dim *= 2
+        blocks += [nn.LeakyReLU(0.2)]
+        blocks += [nn.Conv2d(dim_out, dim_out, 4, 1, 0)]
+        blocks += [nn.LeakyReLU(0.2)]
+        blocks += [nn.Conv2d(dim_out, num_domains, 1, 1, 0)]
+        self.main = nn.Sequential(*blocks)
 
-        self.model = nn.Sequential(*layers)
+    def forward(self, x, y):
+        out = self.main(x)
+        out = out.view(out.size(0), -1)  # (batch, num_domains)
+        idx = torch.LongTensor(range(y.size(0))).to(y.device)
+        out = out[idx, y]  # (batch)
+        return out
+```
 
-        # Output 1: PatchGAN
-        self.out1 = nn.Conv2d(curr_dim, 1, 3, padding=1, bias=False)
-        # Output 2: Class prediction
-        kernel_size = img_size // 2 ** n_strided
-        self.out2 = nn.Conv2d(curr_dim, c_dim, kernel_size, bias=False)
+The code for the style encoder is as follows.
+```
+class StyleEncoder(nn.Module):
+    def __init__(self, img_size=256, style_dim=64, num_domains=2, max_conv_dim=512):
+        super().__init__()
+        dim_in = 2**14 // img_size
+        blocks = []
+        blocks += [nn.Conv2d(3, dim_in, 3, 1, 1)]
 
-    def forward(self, img):
-        feature_repr = self.model(img)
-        out_adv = self.out1(feature_repr)
-        out_cls = self.out2(feature_repr)
-        return out_adv, out_cls.view(out_cls.size(0), -1)
+        repeat_num = int(np.log2(img_size)) - 2
+        for _ in range(repeat_num):
+            dim_out = min(dim_in*2, max_conv_dim)
+            blocks += [ResBlk(dim_in, dim_out, downsample=True)]
+            dim_in = dim_out
+
+        blocks += [nn.LeakyReLU(0.2)]
+        blocks += [nn.Conv2d(dim_out, dim_out, 4, 1, 0)]
+        blocks += [nn.LeakyReLU(0.2)]
+        self.shared = nn.Sequential(*blocks)
+
+        self.unshared = nn.ModuleList()
+        for _ in range(num_domains):
+            self.unshared += [nn.Linear(dim_out, style_dim)]
+
+    def forward(self, x, y):
+        h = self.shared(x)
+        h = h.view(h.size(0), -1)
+        out = []
+        for layer in self.unshared:
+            out += [layer(h)]
+        out = torch.stack(out, dim=1)  # (batch, num_domains, style_dim)
+        idx = torch.LongTensor(range(y.size(0))).to(y.device)
+        s = out[idx, y]  # (batch, style_dim)
+        return s
 ```
 
 
