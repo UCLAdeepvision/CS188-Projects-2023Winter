@@ -344,7 +344,7 @@ The Discriminator Architecture consists of six pre-activation residual blocks wi
 
 #### Loss Functions
 
-The StarGAN v2 netwrok is trained using adversarial objective, style diversification, preserving source characteristics, and full objective.
+The StarGAN v2 netwrok is trained using adversarial objective, style diversification, and preserving source characteristics.
 
 Adversarial Objective:
 
@@ -369,56 +369,30 @@ Style Diversification:
 To enable the generator to produce diverse images, the generator is regularized with diversity sensitive loss which is defined as
 
 $$
-\mathbf{L}_{ds} = \mathbb{E}_{x, \tilde{y}, z_{1}, z_{2}}[||G(x, \tilde{s}_{2}) - G(x, \tilde{s}_{2})||_{1}]
+\mathbf{L}_{ds} = \mathbb{E}_{x, \tilde{y}, z_{1}, z_{2}}[||G(x, \tilde{s}_{1}) - G(x, \tilde{s}_{2})||_{1}]
 $$
 
-#####
+where $\tilde{s}_{1}$ and $\tilde{s}_{2}$ are produced by F conditioned on two random latent codes $z_{1}$ and $z_{2}$
+
+Preserving Source Characteristics:
+
+To ensure the generated image G(x, $\tilde{s}$) preserves the domain invariant characteristics, we need to use cycle consitency loss which is defined as
 
 $$
-\mathbf{D} : \mathbf{x}\rightarrow\{{D_{src}(x), D_{cls}(x)}\}
+\mathbf{L}_{cyc} = \mathbb{E}_{x, y, \tilde{y}, z}[|| x - G(G(x, \tilde{s}), \hat{s})||_{1}]
 $$
 
-To ensure the generated images are indistinguishable from the real images, adversarial loss is used:
+where $\hat{s}$ = $E_{y}(x)$ is the estimated style code of the input image x
+
+Full Objective:
+
+The full object is defined as 
 
 $$
-\mathbf{L}_{adv} = \mathbb{E}_{x}[log D_{src}(x)] + \mathbb{E}_{x,c}[log (1-D_{src}(G(x,c)))]
+min max \mathcal{L}_{adv} + {\lambda}_{sty}\mathcal{L}_{sty} - {\lambda}_{ds}\mathcal{L}_{ds} + {\lambda}_{cyc}\mathcal{L}_{cyc}
 $$
 
-Here, G generates an image G(x,c) that is conditioned on the input image, x, and the target domain label, c. D then tries to determine if it is a real or fake image. 
-
-We need to add an auxiliary classifier on top of our D and impose the domain classification loss when optimizing D and G in order to classify the output image y that was generated from our input image dx.
-
-$$
-\mathbf{L}^{r}_{cls} = \mathbb{E}_{x, c'}[-log D_{cls}(c'|x)]
-$$
-
-Then, our loss function for domain classification is:
-
-$$
-\mathbf{L}^{f}_{cls} = \mathbb{E}_{x, c}[-log D_{cls}(c|G(x,c))]
-$$
-
-Now, out adversarial and classification losses are minimized, but this does not guarantee that the translated images preserve the content of its imput images. To reduce this issue, we aneed to apply a cycle consistency loss to G:
-
-$$
-\mathbf{L}_{rec} = \mathbb{E}_{x, c, c'}[||x-G(G(x, c), c')||]
-$$
-
-Thus, the to optimize G and D we have the following formulas:
-
-$$
-\mathbf{L}_{D} = -\mathit{L}_{adv} + {\lambda}_{cls}\mathit{L}^{r}_{cls}
-$$
-
-$$
-\mathbf{L}_{G} = \mathit{L}_{adv} + {\lambda}_{cls}\mathit{L}^{f}_{cls} + {\lambda}_{rec}\mathit{L}_{rec}
-$$
-
-Lastly, we improve our loss function to generate higher quality images and to stabilize the trianing process. The new loss formula uses Wasserstein's GAN objective with gradient penalty:
-
-$$
-\mathbf{L}_{adv} = \mathbb{E}_{x}[D_{src}(x)] - \mathbb{E}_{x,c}[D_{src}(G(x,c))] - {\lambda}_{gp}\mathbb{E}_{\hat{x}}[(||{\triangledown}_\hat{x}\mathit{D}_{src}(\hat{x})||_{2}-1)^{2}]
-$$
+where ${\lambda}_{sty}$, ${\lambda}_{ds}$, and ${\lambda}_{cyc}$ are hyperparameters for each term
 
 ### Architecture Blocks and Code Implementation <a name="archblocks2"></a>
 
