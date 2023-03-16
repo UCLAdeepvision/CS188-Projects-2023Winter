@@ -384,15 +384,15 @@ $$
 
   where $\hat{s}$ = $E_{y}(x)$ is the estimated style code of the input image x
 
-Full Objective:
+* Full Objective:
 
-The full object is defined as 
+  The full object is defined as 
 
 $$
 \min\limits_{G, F, E} \max\limits_{D} \mathcal{L}_{adv} + {\lambda}_{sty}\mathcal{L}_{sty} - {\lambda}_{ds}\mathcal{L}_{ds} + {\lambda}_{cyc}\mathcal{L}_{cyc}
 $$
 
-where $\lambda_{sty}$, $\lambda_{ds}$, and $\lambda_{cyc}$ are hyperparameters for each term
+  where $\lambda_{sty}$, $\lambda_{ds}$, and $\lambda_{cyc}$ are hyperparameters for each term
 
 ### Architecture Blocks and Code Implementation <a name="archblocks2"></a>
 
