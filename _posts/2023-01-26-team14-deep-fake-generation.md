@@ -348,13 +348,13 @@ The StarGAN v2 netwrok is trained using adversarial objective, style diversifica
 
 Adversarial Objective:
 
-The generator G takes an image x and $$\tilde{s} $$ as input and learns to generate an output image G(x, $$ \tilde{s} $$) via adversarial loss
+The generator G takes an image x and $\tilde{s}$ as input and learns to generate an output image G(x, $\tilde{s}$ ) via adversarial loss
 
 $$
 \mathbf{L}_{adv} = \mathbb{E}_{x,y}[log D_{y}(x)] + \mathbb{E}_{x,\tilde{y},z}[log (1-D_{\tilde{y}}(G(x,\tilde{s})))]
 $$
 
-where x represents the latent code, $$ \tilde{y} $$ represents the target domain, $$ \tilde{s} represents the target style code
+where x represents the latent code, $\tilde{y}$ represents the target domain, $\tilde{s}$ represents the target style code
 
 
 #####
