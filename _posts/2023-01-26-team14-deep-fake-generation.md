@@ -348,7 +348,7 @@ The StarGAN v2 netwrok is trained using adversarial objective, style diversifica
 
 Adversarial Objective:
 
-The generator G takes an image x and $\tilde{s}$ as input and learns to generate an output image G(x, $\tilde{s}$ ) via adversarial loss
+The generator G takes an image x and $\tilde{s}$ as input and learns to generate an output image G(x, $\tilde{s}$ ) via adversarial loss which is defined as
 
 $$
 \mathbf{L}_{adv} = \mathbb{E}_{x,y}[log D_{y}(x)] + \mathbb{E}_{x,\tilde{y},z}[log (1-D_{\tilde{y}}(G(x,\tilde{s})))]
@@ -356,6 +356,21 @@ $$
 
 where x represents the latent code, $\tilde{y}$ represents the target domain, $\tilde{s}$ represents the target style code
 
+Style Reconstruction:
+
+To ensure the generator utillzes the style code, $\tilde{s}$, when generating G(x, $\tilde{s}$), we need to use style reconstruction loss which is defined as 
+
+$$
+\mathbf{L}_{sty} = \mathbb{E}_{x, \tilde{y}, z}[||\tilde{s}- \mathit{E}_{\tilde{y}}(G(x, \tilde{s}))||_{1}]
+$$
+
+Style Diversification:
+
+To enable the generator to produce diverse images, the generator is regularized with diversity sensitive loss which is defined as
+
+$$
+\mathbf{L}_{ds} = \mathbb{E}_{x, \tilde{y}, z_{1}, z_{2}}[||G(x, \tilde{s}_{2}) - G(x, \tilde{s}_{2})||_{1}]
+$$
 
 #####
 
