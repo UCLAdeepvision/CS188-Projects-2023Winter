@@ -26,10 +26,12 @@ The YOLO v7 model itself consists of three main parts, whith anatomical names to
 TODO: Algos used in backbone, neck, and head
 
 TODO: Key concepts like bag of freebies, EMA model, etc.
-## 2. Setting Up YOLO v7
+## 2. Using and Training YOLOv7
 
 ### 2.1 Loading Pre-Trained Model
-Code based off: [Colab Notebook](https://colab.research.google.com/gist/AlexeyAB/b769f5795e65fdab80086f6cb7940dae/yolov7detection.ipynb)
+Code Found In: [Our Colab Notebook](https://colab.research.google.com/drive/14idwrKbN1uB5DYERq8hFrPA-oazhBek_?usp=sharing)
+<br>
+Code Based Off: [Official YOLOv7 Colab Notebook](https://colab.research.google.com/gist/AlexeyAB/b769f5795e65fdab80086f6cb7940dae/yolov7detection.ipynb)
 <br>
 Within the Official YOLOv7 repository, there are a few pre-trained YOLOv7 models that have been trained solely through the MS COCO Dataset. Some of these models are designed to work better on edge devices, such as YOLOv7-tiny, while others are designed to work better on stronger cloud devices, such as YOLOv7-W6. For the purposes of this demo, I will use the standard YOLOv7 pre-trained model.
 
@@ -74,14 +76,66 @@ imShow("runs/detect/exp5/yolo-test1.jpg")
 ![detected image of friends on a hike](/CS188-Projects-2023Winter/assets/images/team31/yolo-test1.jpg)
 
 [comment]: <> (<img src="/CS188-Projects-2023Winter/assets/images/team31/yolo-test1.jpg" width="640" height="640" />)
-<br>
+
+
+The pre-trained standard YOLOv7 model seems to work pretty well on a random image from my camera roll. It detects every person in the image as well as some objects with decent to good accuracy. Also, it completed object detection on this image on a T4 GPU in less than 5 seconds!
+
+### 2.2 Training YOLOv7 On a Custom Dataset
+
+The YOLOv7 models available online have all been trained exclusively with the MS COCO dataset. So although the pre-trained YOLOv7 model works well on regular object detection, we wanted to see if we could train our own dataset using YOLOv7 and test its efficacy. 
+
+#### 2.2.1 Creating The Custom Dataset
+
+The first step in training YOLOv7 on a custom dataset is creating the dataset. Since we aren't curators of images, we decided to use images from Google Images. After installing the **simple_image_download** Python package, we wrote a simple script to download images from Google. 
+
+```
+from simple_image_download import simple_image_download as simp
+
+response = simp.simple_image_download
+
+searches = ["bruin bear", "royce hall"]
+
+for search in searches:
+    response().download(search, 300)
+```
+
+We downloaded 300 images of the bruin bear and 300 images of royce hall. Many of these images are not usable because they aren't accurate visual representations of the desired objects, so we manually cut the images to around 70 of each category. After that, we used the **labelImg** Python library to create labels of each image. Using this package, we drew bounding boxes for each object within each image and the labels generated contain the coordinates for the bounding boxes, corresponding to each image.
+
+![labelImg bounding box drawing](/CS188-Projects-2023Winter/assets/images/team31/labelImg.png)
+
+We then created separate **train** and **val** folders with around 12 images and labels from each category in the validation folder and the remaining images and labels in the train folder. After that, we duplicated the standard YOLOv7.yaml cfg file and edited it to contain our custom class labels ('bruin bear' and 'royce hall') and train and val directory locations.
+
+#### 2.2.2 Training And Testing Custom Dataset
+
+To train YOLOv7 on our custom dataset, we just had to run the following line of code:
+
+```
+!python train.py --device 0 --batch-size 16 --epochs 100 --img 640 640 --data data/custom_data.yaml --hyp data/hyp.scratch.custom.yaml --cfg cfg/training/yolov7-custom.yaml --weights yolov7.pt --name yolov7-custom
+```
+
+We decided to give ample time for training with 100 epochs and it took around 37 minutes to train. After training, all we had to do was use the best checkpoint from the model to detect our own images and videos. We took our own photos and videos of Royce Hall and the Bruin Bear to test this out. The line of code for running custom object detection is very similar to the one above which used the pre-trained model.
+
+```
+!python detect.py --weights runs/train/yolov7-custom/weights/best.pt --conf 0.5 --img-size 640 --source tests/royce_1.jpg --no-trace
+```
+
+#### 2.2.3 Results
+
+Here is an image of Royce Hall and a video of the Bruin Bear that we ran object detection on.
+
+![Royce Object Detection](/CS188-Projects-2023Winter/assets/images/team31/royce1.png)
+
+[![Watch the video](/CS188-Projects-2023Winter/assets/images/team31/bruin_bear.png)](https://youtu.be/3NIDrDl10hw)
+*click on the bruin bear image to watch the full video demo*
+
+YOLOv7 did pretty well on identifying Royce Hall, however, it did a little worse on identifying the Bruin Bear. In the full video of the bruin bear, it becomes more apparent that the model we trained does worse on the Bruin Bear. There are several factors which could have caused lower accuracy scores than we wanted such as the dataset being used was small, our bounding boxes weren't drawn perfectly, our training hyperparameters weren't ideal, and we didn't use the other YOLOv7 models (such as YOLOv7x). But YOLOv7 is a one stage object detector, meant to detect objects fast, trading some accuracy along the way. And to that extent, it did a great job, taking only 0.8 seconds to run object detection on the Royce image and 14.8 seconds to run object detection on the 10 second long Bruin Bear video.  
 
 ## Background of YOLO Models
 Object detection models in general can be classified into two main classes: two-stage (proposal) models, and one-stage (proposal-free) models. The two-stage models are mostly based on R-CNN (Region-based Convolutional Neural Network) structures. In this approach, the first step is to propose possible object regions. The second step is to compute features from these regions and formulate a conventional CNN to classify them. This approach is known to usually be very accurate; in fact, it generally is more accurate than one-stage models.
 Why do we sometimes use one-stage models then? To put it simply, they can be much faster, and in the object-detection world that is an enormous priority right now. One-stage models reject the region proposal step and proceed to run detection directly over a dense sampling of locations. A buzzword driving this push is “real-time” object detection, in which there is virtual no lag between images or video being observed and bounding boxes with classifications being returned. One such model is the one we are discussing here: YOLO.
 Only saying YOLO is perhaps a little too broad. Since its inception in 2016, the YOLO approach has been expanded upon by several different research groups into more than 7 different variations. Following the original YOLO paper, subsequent versions have added improvements to the head, neck, or backbone, and sometimes to multiple of these at a time. Below, we can see a summary of some of the architectural changes that took place during these evolutions.
 
-<img src="/CS188-Projects-2023Winter/assets/images/team31/yolo_version_layers.png" width="640" height="640" />
+<img src="/CS188-Projects-2023Winter/assets/images/team31/yolo_version_layers.png"/>
 
 As we can see, these different YOLOs all use an FCNN, but their individual structures differ notably. To add to the confusion, not all advances in YOLO are sequential; in fact, YOLOv7 is based upon a version of YOLOv4 called Scaled YOLOv4 rather than YOLOv6 as we might expect. Despite this interrupted continuity, each version has improved in speed and accuracy.
 
