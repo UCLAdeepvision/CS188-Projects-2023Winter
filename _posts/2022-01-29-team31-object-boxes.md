@@ -137,11 +137,35 @@ Only saying YOLO is perhaps a little too broad. Since its inception in 2016, the
 As we can see, these different YOLOs all use an FCNN, but their individual structures differ notably. To add to the confusion, not all advances in YOLO are sequential; in fact, YOLOv7 is based upon a version of YOLOv4 called Scaled YOLOv4 rather than YOLOv6 as we might expect. Despite this interrupted continuity, each version has improved in speed and accuracy.
 
 ## YOLO v7
-The YOLOv7 paper was written by Chien-Yao Wang, Alexey Bochkovskiy, and Hong-Yuan Mark Liao, the same group of researchers who developed scaled YOLOv4. One of the important distinguishing characteristics of this series of models is that they do not use pretrained ImageNet backbones, but are trained exclusively on the COCO (Common Objects in Context) dataset. As opposed to other large object detection datasets, COCO contains object segmentation information in addition to bounding box information, and each object is also annotated with textual captions (although they aren’t used in YOLO).
+Hong-Yuan Mark Liao, the same group of researchers who developed scaled YOLOv4. One of the important distinguishing characteristics of this series of models is that they do not use pretrained ImageNet backbones, but are trained exclusively on the COCO (Common Objects in Context) dataset. As opposed to other large object detection datasets, COCO contains object segmentation information in addition to bounding box information, and each object is also annotated with textual captions (although they aren’t used in YOLO). But what does YOLO look like? Below is an excellent diagram showing the stages the make it up, and some details about what its CNN looks like:
+
+<img src="/CS188-Projects-2023Winter/assets/images/team31/yolo_diagram.png"/>
+
+Though we will get into more detail below, we can define a useful summary of YOLO from the above: images are featurized in the backbone, these features are combined in the neck, and finally objects within the images are bounded and classified in the head. Our biggest focus here will be covering the advances made in YOLOv7 to improve on and differentiate from previous versions. Among these are the use of E-ELAN, Model Scaling techniques, and Planned Re-Parametrization.
 
 ## Backbone
+The first section of YOLOv7 is the backbone. As this model is one-stage rather than two-stage, it must immediately obtain features from its input without first running any predictions on the input data. The convolutional block that the authors settled on to make this happen is called E-ELAN (Exended Efficient Layer Aggregation). This is an improved version of regular ELAN. The ELAN architecture attempts to optimize network efficiency by controlling both shortest and longest gradient paths. The architecture itself looks relatively simple:
+
+<img src="/CS188-Projects-2023Winter/assets/images/team31/backbone_1.png"/>
+
+The bottom block is fed three different inputs. The first is just the original input, the second is passed through two blocks of 3 by 3 convolution, and the last is fed through to more of those blocks. In the bottom block, these 3 inputs are concatenated and put through a 1 by 1 convolution.
+E-ELAN is slightly more complex. It uses something called expand, shuffle, and merge cardinality to increase model learning while preserving the original path and allowing for continuous network learning improvement:
+
+<img src="/CS188-Projects-2023Winter/assets/images/team31/backbone_2.png"/>
+
+We can see that the pattern from the first illustration is maintained (direct input, input through two blocks, and input through four blocks), but the channels and cardinality of these blocks are expanded. Each computational block produces a feature map, which is shuffled and concatenated with the feature maps from the other blocks. At the end, this shuffled feature map from all the groups is added to get our final output.
+When this is done, our backbone has performed its requisite task, extracting features from out input. We now have our features and can proceed onto the neck.
 
 ## Neck
+YOLOv7 uses a kind of bounding box called anchor boxes. This approach is important for our model because, unlike in two-stage model, we have not already made predictions for where objects must be, and are thus going into the bounding step blindly. In anchor boxing, a grid is drawn over the image and anchor points are generated at each grid intersection where a set of boxes of various sizes will be created. While this allows objects of almost any size in almost any image location to be bounded, it would be prohibitively expensive to cover every possible anchor box size. Thus, before anchor boxing occurs in the head, our neck must find a way to reduce the possible feature space of objects and thereby reduce the necessary number of anchor box sizes. To do this, YOLOv7 uses FPN (Feature Pyramid Networks).
+The goal of FPN is to quickly generate multiple layers of feature maps. To do this it uses a structure with two convolutional network pathways: bottom-up and top-down:
+
+<img src="/CS188-Projects-2023Winter/assets/images/team31/neck_1.png"/>
+
+The bottom-up pathway is constructed using ResNet. It has five convolution modules, each with many layers. The stride is reduced by half at each sequential module, giving the output its pyramidal shape. The output of each convolutional module (C in the diagram) is also saved to be used in the second path (M in the diagram). After convolution module C5 is complete, the output is reduced in dimensionality by being passed through a 1x1 convolution and becomes M5, the first feature map layer. To get the next M layers, the output from the previous layer is upsampled by a factor of two and added with a 1x1 convolution of the corresponding C layer. Finally, that merged sum is put through a 3x3 convolution, yielding pyramid output feature map P. It is worth noting that only three or four such layers are used, with the bottom one or two being ignored due to the large dimensionality of C1 and C2. Were the last layers to be used, the process would become too slow for YOLOv7’s desired functionality.
+
+<img src="/CS188-Projects-2023Winter/assets/images/team31/neck_2.png"/>
+
 
 ## Head
 
