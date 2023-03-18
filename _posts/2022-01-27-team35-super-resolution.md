@@ -1,12 +1,12 @@
 ---
 layout: post
 comments: true
-title: Evolution of Image Super-Resolution Techniques
+title: Deep Learning-Based Single Image Super-Resolution Techniques
 author: Ethan Truong, Archisha Datta
 date: 2022-01-28
 ---
 
-> Image super-resolution is a process used to upscale low-resolution images to higher resolution images while preserving texture and semantic data. We will outline how state-of-the art techniques have evolved over the last decade and compare each model to its predecessor. We will also implement the CNN-based approach to super-resolution and test it on our own images.
+> Image super-resolution is a process used to upscale low-resolution images to higher resolution images while preserving texture and semantic data. We will outline how state-of-the art techniques have evolved over the last decade and compare each model to its predecessor. We will also show PyTorch implementations of some detailed models.
 
 <!--more-->
 
