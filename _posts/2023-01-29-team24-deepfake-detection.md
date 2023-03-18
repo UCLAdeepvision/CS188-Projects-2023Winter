@@ -18,48 +18,81 @@ date: 2022-01-29
 ## Introduction: 
 Deepfakes, or artificial intelligence-generated videos that depict real people doing and saying things they never did, have become a growing concern in recent years. These artificially generated content can be used to spread misinformation, manipulate public opinion, and even harm individuals. Therefore, the ability to detect deepfakes is crucial to ensure the integrity of information and protect people from potential harm.
 
+
+[Deepfake Example]({{ '/assets/images/team24/0_PkkopzfY1cFCuK0u.gif' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
+_Fig 1. Deepfake Example - Can be used for nefarious intent _ [1].
+
+
 ## Proposal:
 The main objective of this project is to develop and evaluate advanced machine learning techniques for deepfake detection. Specifically, the project aims to investigate and analyze the current state-of-the-art deepfake detection methods, and evaluate the performance of the developed models using a dataset of deepfake videos. 
 
-## Datasets:
-### Deepfake Detection Challenge (DFDC) 
-The DFDC (Deepfake Detection Challenge) is a Facebook developed dataset for deepface detection consisting of more than 100,000 videos. It is currently the largest publicly available dataset and was created for a competition aimed towards creating new and better models to detect manipulated media. The dataset consists of a preview dataset with 5k videos featuring two facial modification algorithms and a full dataset with 124k videos featuring 8 facial modification algorithms. 
-
+## Dataset Used:
 
 ### Celeb-DF
+
 Celeb-DF is a dataset used for deepfake forensics. It includes 590 original videos collected from YouTube with subjects of different ages, ethnic groups and genders, and 5639 correspondingDeepFake videos. Unlike most other DeepFake datasets, Celeb-DF contains high visual quality videos that better resemble DeepFake videos circulated on the Internet. 
 
+[Deepfake Example]({{ '/assets/images/team24/Celeb-DF-0000004265-9ebb7ff0.jpg' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
+_Fig 1. Celeb-DF example input images from deepfake videos _ [1].
 
-## Potential Architectures :
-### ResNet LTSM
+
+
+### Other notes
+We also considered Facebook's Deepfake Detection Challenge (DFDC) dataset, which consists of more than 100,000 videos. It is the largest publicly available datset, but we stuck with Celeb-DF as the time for testing is faster due to the dataset being more than 470 GBs, 
+
+
+## Architectures :
+
+### ResNet LSTM
+
 This is the architecture we will be using for our model.
 Implementation of a Resnet50 + LSTM with 512 hidden units as it was described in the paper
 DeeperForensics-1.0: A Large-Scale Dataset for Real-World Face Forgery Detection 
-### EfficientNet B1 LTSM
-This is an implementation Efficient Net that was implemented for the DeepFake Detection Model
-“To make it comparable with ResNet50 + LSTM it uses the same fully connected layers and also uses 512 hidden units as it was described in the paper”
-DeeperForensics-1.0: A Large-Scale Dataset for Real-World Face Forgery Detection
+
+[ResNet LSTM]({{ '/assets/images/team24/ResNet-LSTM-model-The-signal-is-first-fed-into-ResNet-as-a-three-channel-input-phasic.jpg' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
+_Fig 1. Uses LSTM blocks after applying ResNet architectures _ [1].
+
 
 ### MesoNet 
 The MesoInception4 deepfake detection architecture as introduced in MesoNet: a Compact Facial Video Forgery Detection Network  from Darius Afchar, Vincent Nozick, Junichi Yamagishi, Isao Echizen
 
-### XCeption
-Creates an Xception Model as defined in:
-Francois Chollet, Xception: Deep Learning with Depthwise Separable Convolutions
+[ResNet LSTM]({{ '/assets/images/team24/Screen Shot 2023-03-17 at 4.44.26 PM.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
+_Fig 1. MesoNet architecture _ [1].
+
+### Other Notes
+We also considered using and testing the EfficientNet B1 LTSM and Xception architectures
 
 
-## ResNet LSTM Implementation:
-### data augmentation methods
-### optimal hyperparameters
-### code examples
+## Training
+ - didn't actual train as too computationally expensive, evaluated pretrained weights
+ - would do this by ...
 
-## Results:
+### Hyperparameters
+- hyperparameters used
 
-## Conclusion:
+### Fine-tuning
+- models are trained and then fine-tuned on our datasets
 
-## Demo:
+## Testing
+
+### Procedure
+- example image from code
+- code segments
+
+
+### Results
+- tables with our accuracies
+
+## Conclusion
+- observations
+
+## Demo
 - https://github.com/jchangz01/CS188-Project-Deepfake-Detection
-- Currently based off implementations from research papers, not complete and not ready for training yet
+
 
 
 ## Related Works
@@ -76,14 +109,11 @@ Francois Chollet, Xception: Deep Learning with Depthwise Separable Convolutions
 -   Celeb-DF: A Large-scale Challenging Dataset for DeepFake Forensics
     -   [Paper](https://arxiv.org/abs/1909.12962)
     -   [Github](https://github.com/yuezunli/celeb-deepfakeforensics)
--   Xception: Deep Learning with Depthwise Separable Convolutions
-    -   [Paper](https://arxiv.org/pdf/1610.02357.pdf)
 -   MesoNet: a Compact Facial Video Forgery Detection Network
     -   [Paper](https://arxiv.org/abs/1809.00888)
 -   DeepFake Detector Performance Model 
-    -   [Github](https://github.com/CatoGit/Comparing-the-Performance-of-Deepfake-Detection-Methods-on-Benchmark-Datasets/blob/master/deepfake_detector/pretrained_mods/efficientnetb1lstm.py)
--   DFDC Dataset
-    -   [Link](https://ai.facebook.com/datasets/dfdc/)
+    -   [Github](https://github.com/CatoGit/Comparing-the-Performance-of-Deepfake-Detection-Methods-on-Benchmark-Datasets/blob/master/deepfake_detector)
+
 
 ## References
 
@@ -95,9 +125,7 @@ Francois Chollet, Xception: Deep Learning with Depthwise Separable Convolutions
 
 [4] Li, Yuezun, et al. “Celeb-DF: A Large-Scale Challenging Dataset for Deepfake Forensics.” ArXiv.org, 16 Mar. 2020, 
 
-[5] Chollet, Francois, et al. “Xception: Deep Learning with Depthwise Separable Convolutions” ArXiv.org, 12 Feb. 2019, 
 
-[6] Afchar, Darius, et al. “Mesonet: A Compact Facial Video Forgery Detection Network.” ArXiv.org, 4 Sept. 2018, 
 
 
 
