@@ -6,16 +6,15 @@ author: Ethan Truong, Archisha Datta
 date: 2022-01-28
 ---
 
-> Image super-resolution is a process used to upscale low-resolution images to higher resolution images while preserving texture and semantic data. We will outline how state-of-the art techniques have evolved over the last decade and compare each model to its predecessor. We will also show PyTorch implementations of some detailed models.
+> Image super-resolution is a process used to upscale low-resolution images to higher resolution images while preserving texture and semantic data. We will outline how state-of-the art techniques have evolved over the last decade and compare each model to its predecessor. We will also show PyTorch implementations for some of the described models.
 
 <!--more-->
 
 ### Table of Contents
 
 <!--more-->
+
 {: class="table-of-content"}
-* TOC
-{:toc}
 
 ---
 
