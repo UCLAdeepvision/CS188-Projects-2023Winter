@@ -180,36 +180,6 @@ Up until now, we have not discussed how to deal with multi-channel images in our
 ![]({{ '/assets/images/team35/color.png' | relative_url }})
 _fig 9. An image of a mountain separated into its YCbCr channels._
 
-### Our SRCNN Implementation
-
-```
-class SRCNN(nn.Module):
-    def __init__(self):
-        super(SRCNN, self).__init__()
-        self.features = nn.Sequential(
-            nn.Conv2d(3,  64, kernel_size=9, stride=1, padding=9 // 2),
-            nn.Conv2d(64, 32, kernel_size=5, stride=1, padding=5 // 2),
-            nn.Conv2d(32, 3,  kernel_size=5, stride=1, padding=5 // 2),
-            nn.ReLU(True),
-        )
-
-    def forward(self, x):
-        x = self.features(x)
-        return x
-```
-
-_fig 10. Our PyTorch-based implementation of SRCNN._
-
-#### Deviations From the Paper
-
-Unlike in the paper, we padded each layer such that the output resolution remained the same. This is done as we found that the edge artifacts weren't very noticable after a small number of training epochs.
-
-Additionally, we used the Adam optimizer to optimize the loss with standard values for _β<sub>1</sub>_ and _β<sub>2</sub>_.
-
-For our dataset, instead of training on Set14 or ImageNet as done in the paper, we used a dataset designed for super resolution training from Kaggle.
-
-#### Results
-
 ## Generative Adversarial Network-based Super-Resolution
 
 ### SRGAN
@@ -261,12 +231,292 @@ Real-ESRGAN uses a high-order degradation model which means that image degradati
 ![]({{ '/assets/images/team35/degradation.png' | relative_url }})
 _fig 14. Overview of the pure synthetic data generation adopted in Real-ESRGAN. It utilizes a second-order degradation process to model more practical degradations, where each degradation process adopts the classical degradation model._
 
+## Our Implementation
+
+For our implementation, we chose to recreate and compare SRCNN and SRGAN.
+
+### Dataset Preparation
+
+As described by the paper, instead of the traditional train-test-val sets, we used a single dataset for the training and testing. The training was performed on randomly selected patches of of the images and the testing was performed on the full images.
+
+![]({{ '/assets/images/team35/data.png' | relative_url }})
+_fig 15. Examples of images in the training set._
+
+### SRCNN
+
+After preparing the datasets, we define the model architecture for the SRCNN. As you can see, the model is an extremely simple convolutional network, with only three layers. Each layer corresponds to a different step of the sparse coding pipeline as described above.
+
+```
+class SRCNN(nn.Module):
+    def __init__(self):
+        super(SRCNN, self).__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(3,  64, kernel_size=9, stride=1, padding=9 // 2),
+            nn.Conv2d(64, 32, kernel_size=5, stride=1, padding=5 // 2),
+            nn.Conv2d(32, 3,  kernel_size=5, stride=1, padding=5 // 2),
+            nn.ReLU(True),
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        return x
+```
+
+#### Deviations From the Paper
+
+Unlike in the paper, we padded each layer such that the output resolution remained the same. This is done as we found that the edge artifacts weren't very noticable after a small number of training epochs.
+
+Additionally, we used the Adam optimizer to optimize the loss with standard values for _β<sub>1</sub>_ and _β<sub>2</sub>_.
+
+For our dataset, instead of training on Set14 or ImageNet as done in the paper, we used a dataset designed specifically for super resolution training from Kaggle.
+
+#### Evaluation Metrics
+
+Before training the model, we must define our evaluation metrics as shown below.
+
+```
+def mse(pred, label):
+    mse_val = torch.mean((pred - label)**2)
+    return mse_val
+
+def psnr(pred, label):
+    mse_val = mse(pred, label)
+    return 10 * torch.log10(1 / mse_val)
+
+def ssim(pred, label):
+    return structural_similarity_index_measure(pred, label)
+```
+
+#### Training
+
+As described in the paper, we train by minimizing MSE loss, but we also record PSNR and SSIM losses during the training process. Note that the learning rate is different for each layer and that we save the weights after training so that we can run the test phase without retraining each time.
+
+```
+srcnn = SRCNN()
+
+# SRCNN Paper uses 1e-4 for the first two conv layers and 1e-5 for the last conv layer.
+adam = torch.optim.Adam([
+    {'params': srcnn.features[0].parameters()},
+    {'params': srcnn.features[1].parameters()},
+    {'params': srcnn.features[2].parameters(), 'lr': 1e-5}
+], lr=1e-4)
+mse_loss = nn.MSELoss()
+
+# Train the model
+train(srcnn, srcnn_train_loader, srcnn_val_loader, adam, mse_loss, device, num_epochs=1)
+torch.save(srcnn.state_dict(), 'srcnn_weights.pth')
+```
+
+Below you see the loss for each evaluation metric. Something we observed is that the loss plateaus earlier than 200 epochs so it may not have been necessary to train this long.
+
+![]({{ '/assets/images/team35/srcnnloss.png' | relative_url }})
+_fig 16. MSE/PSNR/SSIM loss from SRCNN training._
+
+#### Results
+
+![]({{ '/assets/images/team35/srcnnresults.png' | relative_url }})
+_fig 17. Super-resolution results from SRCNN._
+
+![]({{ '/assets/images/team35/srcnnzoomed.png' | relative_url }})
+_fig 18. Zooming into a particular image._
+
+As you can see, such a simple CNN delivers powerful results on the above images.
+
+### SRGAN
+
+Implementing the SRGAN architecture was a much more challenging feat than SRCNN. SRGAN, like other GAN-based models, has two major parts: the generator and discriminator.
+
+#### Generator Architecture
+
+![]({{ '/assets/images/team35/generator.png' | relative_url }})
+_fig 19. SRGAN generator architecture._
+
+ETHAN
+
+```
+class SRResNet(nn.Module):
+    def __init__(self, res_depth=16, upsample_scale=4):
+        super(SRResNet, self).__init__()
+        self.conv = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=9, stride=1, padding=9 // 2),
+            nn.PReLU(),
+        )
+        self.encoder = nn.Sequential(
+            ResidualBlock(64, res_depth),
+            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(64),
+        )
+        self.decoder = nn.Sequential(
+            UpsampleBlock(64, upsample_scale),
+            nn.Conv2d(64, 3, kernel_size=9, stride=1, padding=9 // 2)
+        )
+
+    def forward(self, x):
+        x = self.conv(x)
+        x = self.encoder(x) + x
+        x = self.decoder(x)
+        return x
+```
+
+Let's take a closer look at some of the blocks used in the encoder and decoder part of the generator.
+
+##### Residual Block
+
+```
+class ResidualBlock(nn.Module):
+    def __init__(self, channels, depth):
+      super(ResidualBlock, self).__init__()
+      self.residual_blocks = nn.ModuleList([nn.Sequential(
+          nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=1, bias=False),
+          nn.BatchNorm2d(channels),
+          nn.PReLU(),
+          nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=1, bias=False),
+          nn.BatchNorm2d(channels),
+      ) for _ in range(depth)])
+
+    def forward(self, x):
+        for residual_block in self.residual_blocks:
+            x = residual_block(x) + x
+        return x
+```
+
+ETHAN
+
+##### Upsample Block
+
+```
+class UpsampleBlock(nn.Module):
+    def __init__(self, in_channels, upsample_scale):
+        super(UpsampleBlock, self).__init__()
+        factor = 2 if upsample_scale % 2 == 0 else upsample_scale
+        self.upsample_blocks = nn.ModuleList([nn.Sequential(
+            nn.Conv2d(in_channels, in_channels * factor**2, kernel_size=3, stride=1, padding=1),
+            nn.PixelShuffle(factor),
+            nn.PReLU(),
+        ) for _ in range(upsample_scale // 2)])
+
+    def forward(self, x):
+        for upsample_block in self.upsample_blocks:
+            x = upsample_block(x)
+        return x
+```
+
+ETHAN
+
+#### Discriminator Architecture
+
+![]({{ '/assets/images/team35/discriminator.png' | relative_url }})
+_fig 19. SRGAN generator architecture._
+
+ETHAN
+
+```
+class Discriminator(nn.Module):
+    def __init__(self):
+        super(Discriminator, self).__init__()
+        self.conv = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1)
+        self.features = nn.Sequential(
+            DiscriminatorBlock(64,  64),
+            DiscriminatorBlock(64,  128),
+            DiscriminatorBlock(128, 128),
+            DiscriminatorBlock(128, 256),
+            DiscriminatorBlock(256, 256),
+            DiscriminatorBlock(256, 512),
+            DiscriminatorBlock(512, 512),
+        )
+        self.classifier = nn.Sequential(
+            nn.Linear(18432, 1024),
+            nn.LeakyReLU(0.2, inplace=True),
+            nn.Linear(1024, 1),
+        )
+
+        self.lrelu = nn.LeakyReLU(0.2, inplace=True)
+
+    def forward(self, x):
+        batch_size = x.shape[0]
+
+        x = self.lrelu(self.conv(x))
+        x = self.features(x)
+        x = x.flatten(1)
+        x = self.classifier(x)
+        return torch.sigmoid(x.view(batch_size))
+
+```
+
+##### Discriminator Block
+
+Let's zoom into the discriminator block.
+
+```
+class DiscriminatorBlock(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(DiscriminatorBlock, self).__init__()
+        stride = 2 if in_channels == out_channels else 1
+        self.features = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1),
+            nn.BatchNorm2d(out_channels),
+            nn.LeakyReLU(0.2, inplace=True),
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        return x
+```
+
+ETHAN
+
+#### Loss Functions
+
+To define our loss functions for the generator and discriminator, we first need three building blocks.
+
+1. Pixel Loss (MSE)
+2. Content Loss (VGG)
+3. Adversarial Loss (BCE)
+
+The definition of MSE loss is trivial, but let us define VGG loss and BCE loss. ETHAN
+
+From those building blocks, we can now define our loss functions for training.
+
+```
+discriminator_loss =\
+     adversarial_criterion(real_prob, labels_real) +\
+     adversarial_criterion(fake_prob, labels_fake)
+
+generator_loss =\
+     1e-0 * pixel_criterion(inputs_fake, inputs_real) +\
+     6e-3 * content_criterion(inputs_fake, inputs_real) +\
+     1e-3 * adversarial_criterion(fake_prob.detach(), labels_real)
+
+```
+
+#### Training
+
+There are two steps to train SRGAN.
+
+ETHAN
+
+Below, we see the training losses from the pre-training process.
+
+![]({{ '/assets/images/team35/srgantrain.png' | relative_url }})
+_fig 20. MSE/PSNR/SSIM loss from SRGAN training._
+
+#### Deviation From Paper
+
+ETHAN
+
+#### Results
+
+![]({{ '/assets/images/team35/srganresults.png' | relative_url }})
+_fig 21. Super-resolution results from SRGAN._
+
+ETHAN (maybe include setbacks, etc.)
+
 ## Conclusion
 
 ![]({{ '/assets/images/team35/timeline.png' | relative_url }})
 _fig 15. Timeline of SR methods._
 
-So far in our discussion of the evolution of methods for single image super-resolution, we have covered four key models: sparse coding, SRCNN, SRGAN, and Real-ESRGAN (the current state-of-the-art). Of course, there are other models in the field that we have not been able to cover in detail today. One notable mention is the transformer based model, Efficient Super-Resolution Transformer (ESRT) released last year. Although there has been rapid improvement in the field of super-resolution, there are still many challenges to overcome. Current research is focused on expanding single image super-resolution to video resolution, reducing the amount of data needed to simulate real-world degradation processes, and fine-tuning models for specific SR tasks such as face reconstruction.
+So far in our discussion of the evolution of methods for single image super-resolution, we have covered four key models: sparse coding, SRCNN, SRGAN, and Real-ESRGAN (the current state-of-the-art). We have gone on to recreate the SRCNN and SRGAN models. Of course, there are other models in the field that we have not been able to cover in detail today. One notable mention is the transformer based model, Efficient Super-Resolution Transformer (ESRT) released last year. Although there has been rapid improvement in the field of super-resolution, there are still many challenges to overcome. Current research is focused on expanding single image super-resolution to video resolution, reducing the amount of data needed to simulate real-world degradation processes, and fine-tuning models for specific SR tasks such as face reconstruction.
 
 ## References
 
