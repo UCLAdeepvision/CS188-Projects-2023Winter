@@ -3,7 +3,7 @@ layout: post
 comments: true
 title: Deep Learning-Based Single Image Super-Resolution Techniques
 author: Ethan Truong, Archisha Datta
-date: 2022-01-28
+date: 2022-03-18
 ---
 
 > Image super-resolution is a process used to upscale low-resolution images to higher resolution images while preserving texture and semantic data. We will outline how state-of-the art techniques have evolved over the last decade and compare each model to its predecessor. We will also show PyTorch implementations for some of the described models.
@@ -13,10 +13,15 @@ date: 2022-01-28
 ### Table of Contents
 
 <!--more-->
-
 {: class="table-of-content"}
+* TOC
+{:toc}
 
 ---
+
+## Demo
+<iframe width="560" height="315" src="https://www.youtube.com/embed/gbeYgz-mAAA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+**Our final models can be found in the form of interactive Jupyter Notebooks on our [related project GitHub repository](https://github.com/2Retr0/CS188-Final-Project)**
 
 ## Introduction
 
@@ -28,7 +33,7 @@ Single-Image Super-Resolution (SISR) refers to the process of recovering a high-
 
 In this blog post, we will compare and constrast four super-resolution techniques via: *classical methods*, *sparse coding*, *deep convolutional neural networks*, and *generative adversarial models*.
 
-## Evaluation Metrics
+### Evaluation Metrics
 
 Before diving into the methods of super-resolution, let us first define how we measure the effectiveness of a model.
 
@@ -202,7 +207,7 @@ Generative adversarial models work by simultaneously training two networks: a ge
 One of the most important improvements with SRGAN is the addition of a "perceptural loss" for the generator. Recall our earlier discussion of loss functions, where we noted the difference between perceptual similarity and pixel similarity. SRGAN allows for better recovery of textural detail by defining a loss function which prioritizes perceptual similarity over pixel similarity.
 
 The pereptual loss function is defined as weighted sum of a *content loss* and the *adversarial loss*.
-* **Content Loss (VGG Loss):** Instead of using a pixel-based MSE loss, we calculate the loss based on the Euclidian distance between feature maps produced by a VGG network of the ground truth image and the super-resolved image. Thus, for the feature map after the $$j$$th convolution and before the $$i$$th max-pooling layer in VGGNet ($$\phi_{i,j}$$),  the content loss is defined as:
+* **Content Loss (VGG Loss):** Instead of using a pixel-based MSE loss, we calculate the loss based on the Euclidian distance between feature maps produced by VGG-19 of the ground truth image and the super-resolved image. Thus, for the feature map after the $$j$$th convolution and before the $$i$$th max-pooling layer in VGGNet ($$\phi_{i,j}$$),  the content loss is defined as:
 
 $$
     l^{SR}_{VGG/i,j} = MSE[\phi_{i,j}(I^{HR}(x,y)), \phi_{i,j}(G_\theta(I^{LR}(x,y)))]
@@ -220,7 +225,7 @@ Ledig et al. speculate that this method of evaluation improves recovery of textu
 
 The generator network is a residual neural network that uses two convolutional layers with small $$3 \times 3$$ kernels and 64 feature maps followed by batch-normalization layers and PReLU as the activation function.
 
-The discriminator network is a feed-forward network that contains eight convolutional layers with an increasing number of $$3 \times 3$$ filter kernels, increasing by a factor of 2 from 64 to 512 kernels similar to the VGG network. Strided convolutions are used to reduce the image resolution each time the number of features is doubled. The resulting 512 feature maps are followed by two fully-connected layers and a final sigmoid activation. We use LeakyReLU as the activation ($$ \alpha = 0.2$$) and avoid max-pooling.
+The discriminator network is a feed-forward network that contains eight convolutional layers with an increasing number of $$3 \times 3$$ filter kernels, increasing by a factor of 2 from 64 to 512 kernels similar to the VGG-19. Strided convolutions are used to reduce the image resolution each time the number of features is doubled. The resulting 512 feature maps are followed by two fully-connected layers and a final sigmoid activation. We use LeakyReLU as the activation ($$ \alpha = 0.2$$) and avoid max-pooling.
 
 | ![]({{ '/assets/images/team35/srganmodel.png' | relative_url }}) |
 |:--:|
@@ -514,9 +519,9 @@ Below, we see the training losses from the pre-training process.
 
 #### Deviations From the Paper
 
-Unlike in the paper, our discriminator implementation has a Sigmoid operation at the end of the forward pass to output the un-normalized probabilities of the discriminator. This allowed us to use the `nn.BCELoss()` from the PyTorch library. 
+Our discriminator implementation has slightly different Sigmoid operation at the end of the forward pass to output the un-normalized probabilities of the discriminator. This allowed us to use the `nn.BCELoss()` from the PyTorch library. 
 
-Additionally, the paper describes the addition of a very-lightly weighted Total Variation (TV) loss when using smaller VGG networks (e.g. VGG-22) which we omitted from our training process. Additionally, no learning rate scheduling was used during our training process ($$\eta = 10^{-5}$$).
+Additionally, the paper describes the addition of a very-lightly weighted Total Variation (TV) loss when earlier feature maps of VGG-19 which we omitted from our training process. Additionally, no learning rate scheduling was used during our training process ($$\eta = 10^{-5}$$).
 
 #### SRGAN Results
 
@@ -525,6 +530,12 @@ Additionally, the paper describes the addition of a very-lightly weighted Total 
 | _fig 21. Super-resolution results from SRGAN._ |
 
 Due to time constraints, SRGAN model debugging was limited and as a result, we could not achieve the metrics described in the original paper. Still, the general improvements in the paper can be seen when comparing outputs between our SRCNN and SRGAN implementations.
+
+### Comparison with SRCNN
+Ultimately, SRCNN achieved a PSNR of 24.7 dB on the test set while SRGAN achieved 22.1 dB. The PSNR before any super-resolution was performed is approximately 23.9.
+
+These results seem counterintuitive initially because it seems like SRGAN showed no improvement. A partial reason for this is likely that we did not have the time or credits to train the model for longer. It took about 5 hours hours to train the GAN for 20 epochs (not including the pre-training process), which was much slower than SRCNN because of the increased complexity.
+However, as we discussed above, we must note that PSNR and other MSE-based evaluation metrics do not capture perceptual similarity which was prioritized in the implementation of SRGAN. In the source paper, SRGAN showed a very minimal increase in PSNR compared to the bicubic baseline after training. Furthermore, both PSNR and SSIM decreased while training the GAN after the pre-training process. However, the images themselves seemed more realistic to the human eye. Our model shows similar results and preserves textural details better than our implementation of SRCNN.
 
 ## Conclusion
 
