@@ -35,7 +35,9 @@ In this paper, we study Metadrive, a lightweight driving simulator supporting co
 
 
 ## Research Direction
-Our goal is to study the effectiveness of supervised learning using RGB images as input, by comparing its accuracy with the RL agent in MetaDrive. We took the following steps to achieve this goal:
+Our goal in this project is to explore the maximum potential of supervised learning, by training a supervised learning model and comparing how its performance matches a particular reinforcement learning (RL) model. We are applying this approach to the application of driving simulator, when we control a vehicle to drive on a road with different scenarios. Specifically, we want to train a model such that with the RGB image of the vehicle’s front view as its input, it can output the correct steering and acceleration values. Our baseline for comparing our performance is the pretrained RL agent in MetaDrive.
+
+We took the following steps to achieve this goal:
 1. Obtain RGB images and ground-truth actions from the driving simulation process of MetaDrive using the IDM policy.
 2. Choose a pretrained DL model and use it to train a supervised learning model using the RGB images as inputs and the ground-truth actions as labels.
 3. Define a policy which uses the trained model to decide the action based on the observation.
@@ -72,8 +74,22 @@ The resulting generated evironment is shown below:
 ![fig1]({{ '/assets/images/Team02/env.png' | relative_url }})
 *Fig 1. Generated Environment*
 
-## Extracting RGB Image  With Ground Truth Actions From Metadrive
-In order to train a model that outputs an action space prediction based on the input RGB image, we first need to collect enough images with ground-truth action labeling. All the data required at this step can be obtained from the *obervation* and *info* returned by *env.step()*. The action space, as defined in the IDM Policy, consists of two numbers, representing the steering and acceleration respectively. The numbers are used to directly name the image file, which is placed in validation set or training set as configured.
+Our environment configuration also depends on the tasks we want to train the agent to perform. We next list the scenarios that we targeted.
+
+### Single lane, no traffic
+The baseline case is the simplest scenario of one traffic lane and no other vehicles on the road. The controlled vehicle only needs to learn to steer when the road ahead curves to the left or to the right.
+
+### Single lane, with traffic
+The case with one single lane and a certain density of traffic on the road is more complicated. Because the car ahead might be travelling at a slower speed than the controlled vehicle, it must learn to keep a safe distance with the car in the front, which means it has to predict the correct acceleration.
+
+### Multilane, no traffic
+We then added more lanes to the environment by changing the lane_num parameter. The difficulty for multi-lane scenarios is that the controlled vehicle has to stay on one lane and not drive across two lanes. This requires higher accuracy with steering.
+
+### Multilane, with traffic
+The final, most complicated case is a road with multiple lanes and also other vehicles driving on it. This means higher accuracy requirements to both steering and acceleration, and less tolerance to errors.
+
+## Extracting RGB Image With Ground Truth Actions From Metadrive
+In order to train a model that outputs an action space prediction based on the input RGB image, we first need to collect enough images with ground-truth action labeling. To collect these data, we take advantage of the original MetaDrive’s driving policies. During their driving simulation, MetaDrive outputs first-person point of view images. All the data required at this step can be obtained from the *obervation* and *info* returned by *env.step()*. We save these images at an interval of a set number of frames. The action space, as defined in the IDM Policy, consists of two numbers, representing the steering and acceleration respectively. The numbers are used to directly name the image file, which is placed in validation set or training set as configured.
 ```python
 o, r, d, info = env.step([0, 0])
 action_space = (info['steering'], info['acceleration'])
@@ -90,8 +106,10 @@ The image obtained, as shown below, contains all the information about the lane 
 <!-- {: style="width: 128; max-width: 100%;"} -->
 *Fig 2. RGB Image Example*
 
+## Model Design
+We created several designs for our supervised learning model. For each design, we take a pretrained model, train it using the images we generated, and save the checkpoint model. We next summarize the setup of the training, as well as each of the models we used.
 
-## Training
+### Training Setup
 We defined a dataloader to handle the dataset we collected, which simply reads in the image file and processes its filename to store as the label. Some code implemented are omitted for readability. 
 ```python
 class Metadrive(Dataset):
@@ -154,7 +172,14 @@ def get_mean_std(root_dir):
     return np.mean(steering), np.std(steering), np.mean(accel), np.std(accel)
 ```
 
+### ResNet-18
+We used a ResNet-18 model which takes in one image as input and generates three values as output, namely, the speed, the acceleration, and the steering. We trained the model for 20 epochs and saved the checkpoint. The validation loss of the checkpoint is 0.9185.
 
+### ViT
+Our next design uses the Vision Transformer (ViT) model.
+
+### SlowFast
+The problem of the previous models used is that both models assume that the input is i.i.d. However, our application is special in that each image is closely related to its previous and next ones, just like in a video. As suggested by our TA, we researched on the SlowFast model, which is specifically designed to predict on sequences of images. We train a predictor based on the pretrained SlowFast model, which takes in a sequence of images and produces the steering and acceleration predictions.
 
 ## Defining Our Own Policy
 We defined a policy class named `RGBPolicy` which inherits from `BasePolicy` in MetaDrive. Upon initialization, we set `self.model` to be the trained supervised learning model which we load from a previouly saved checkpoint. We overrode the `act()` function, so that it obtains an RGB image from the controlled object, converts the image to tensor, and calls the `self.model` on the tensor to obtain an action (including steering and acceleration). The code is as follows:
