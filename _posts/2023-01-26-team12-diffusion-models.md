@@ -85,7 +85,7 @@ This is an example of adding noise to an image in the dataset.
 
 ## 2. The Reverse Diffusion Process
 
-Now that we’ve generated samples of images with gaussian noise added according to a beta scheduler, we have to design our Neural Network to recover the original image given a noisy image. To do this, we must generate the probability distribution of noise pixels across the image. The goal of this is to learn the mean of the Gaussian distributions that were used to generate the noise at each timestep during the forward-diffusion process. Below is the math from the literature which describes this behavior. We want to predict the t - 1 timestep from the t timeste
+Now that we’ve generated samples of images with gaussian noise added according to a beta scheduler, we have to design our Neural Network to recover the original image given a noisy image. To do this, we must generate the probability distribution of noise pixels across the image. The goal of this is to learn the mean of the Gaussian distributions that were used to generate the noise at each timestep during the forward-diffusion process. Below is the math from the literature which describes this behavior. We want to predict the t - 1 timestep from the t timestep
 
 $$
 p_\theta\left(\mathbf{x}_{0: T}\right)=p\left(\mathbf{x}_T\right) \prod_{t=1}^T p_\theta\left(\mathbf{x}_{t-1} \mid \mathbf{x}_t\right)
@@ -171,7 +171,7 @@ DALLE-2 specifically uses the CLIP model, which was developed by OpenAI in the p
 
 The above diagram demonstrates how DALLE-2 is trained with the diffusion and CLIP concepts we’ve described in this article. Above the dotted line is where the training of the CLIP model is done. That is we are learning the joint representation between image and text. Below the dotted line, there are two parts of DALLE-2, the prior and the decoder. The decoder is the reverse diffusion process we’ve described in the previous parts. As we’ve learned from the reverse diffusion process, generating an image requires starting from a noisy image and denoising the image to obtain the generated image. The goal of the prior is to identify parts of the noise distribution and condition the noise on the textual embedding. For example, given the caption “a corgi playing a flame throwing trumpet”, we aim to identify the distribution of noisy images that when passed through the decoder, will generate the corresponding image. The entire network is then jointly trained to allow for conditional generation on the caption.
 
-### COLAB Notebook
+## COLAB Notebook
 
 Feel free to explore the implementation or play around with the modules discussed in this article via our [COLAB Notebook](https://colab.research.google.com/drive/1wucc_7N7T_aV7K9PZGwYvP0vtUW7mmxm?usp=sharing).
 
