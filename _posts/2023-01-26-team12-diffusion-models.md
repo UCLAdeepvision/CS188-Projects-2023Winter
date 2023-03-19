@@ -15,6 +15,10 @@ date: 2023-01-26
 * TOC
 {:toc}
 
+## 10 Minute Spotlight Presentation
+[Youtube Link](https://youtu.be/HFepqTpr4cs)
+Link to Notebook at bottom.
+
 ## What are diffusion models?
 Diffusion models are a popular way to generate new images that are of a similar type to the training data. The diffusion technique is found in Dall-E, Lensa, and more! The strategy behind diffusion models is to gradually destroy the training images by adding noise, and then recovering the image by learning how to remove noise. By learning this recovery process using a neural network, we can generate new images by applying the recovery process to random noise.
 
