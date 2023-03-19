@@ -139,7 +139,7 @@ As we can see, these different YOLOs all use an FCNN, but their individual struc
 ## YOLO v7
 Hong-Yuan Mark Liao, the same group of researchers who developed scaled YOLOv4. One of the important distinguishing characteristics of this series of models is that they do not use pretrained ImageNet backbones, but are trained exclusively on the COCO (Common Objects in Context) dataset. As opposed to other large object detection datasets, COCO contains object segmentation information in addition to bounding box information, and each object is also annotated with textual captions (although they aren’t used in YOLO). But what does YOLO look like? Below is an excellent diagram showing the stages the make it up, and some details about what its CNN looks like:
 
-<img src="/CS188-Projects-2023Winter/assets/images/team31/yolo_diagram.png"/>
+<img src="/CS188-Projects-2023Winter/assets/images/team31/yolo_diagram.jpg"/>
 
 Though we will get into more detail below, we can define a useful summary of YOLO from the above: images are featurized in the backbone, these features are combined in the neck, and finally objects within the images are bounded and classified in the head. Our biggest focus here will be covering the advances made in YOLOv7 to improve on and differentiate from previous versions. Among these are the use of E-ELAN, Model Scaling techniques, and Planned Re-Parametrization.
 
