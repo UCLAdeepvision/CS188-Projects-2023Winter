@@ -61,6 +61,51 @@ ResNet18 uses 18 layers residual blocks compared to other neural networks to avo
 The first convolution layer is the raw input data represented by a 3D vector which is then output with another 3D vector but with a different number of channels. Subsequent layers continue this procedure using the last layer's output as the next layer's input followed by the batch normalization and ReLu activation function. The avgpool layer reduces the height and width of our image classification without changing the number of channels. This helps reduce the spatial dimensions of a feature map while keeping the most important features of our MRI images. The FC layer or fully connected layer, connects every neuron in the previous layer to every neuron in the current layer. For our use case, we use it to map the output of the previous layer to our class labels. 
 
 ### Code Implementation
+## DenseNet
+### Motivation
+In comparison to the models we previously worked with, we did some research on other image classification models that can be compared to Logistic Regression and Resnet18 that may provide improved accuracy. DenseNet was one of these model we decided to implement. Through our research of the model and its capabilities, we can expect:
+<ol>
+    <li>DenseNet's dense connectivity pattern allows the model to reuse features and improves gradient flow between layers for better feature learning and classification.</li>
+    <li>DenseNet's connectivity pattern to also reduce overfitting compared to that of Logistic Regression and ResNet18. 
+    </li>
+    <li>A reduced vanishing gradient with DenseNet compared to the previous two models because DenseNet allows gradients to flow directly from one layer to another without having to pass through multiple non-linear transformations.
+    </li>
+</ol>
+### Architecture
+![densenet]({{ '/assets/images/team37/densenet-arch.png' | relative_url }})
+{: style="width: 800px; max-width: 100%;"}
+<div align=center>Fig 4. DenseNet Architecture [3].</div> 
+The DenseNet architecture can be summarized as follows, input, initial convolutional layer, dense blocks, transition layers, global average pooling, and finally the output.
+
+![denseblock]({{ '/assets/images/team37/dense-block.png' | relative_url }})
+{: style="width: 800px; max-width: 100%;"}
+<div align=center>Fig 5. DenseNet Dense Block Example.</div> 
+A Dense Block is a group of layers that are 'densely' connected to each other. This dense connectivity pattern connects each layer to all previous layers in the block. In other words, we can expect that all output feature maps from each layer of a Dense Block are combined with the feature maps from all previous layers in the same block. These layers are then passed to the next block. This is what allows DenseNet to enable feature reuse and improves gradient flow. Lastly, this also reduces the number of parameters required to achieve high accuracies. 
+
+Transition layers are also another unique feature of the DenseNet model. Transition layers are used between a pair of dense blocks to reduce the number of feature maps and spatial resolutions. The transition layers are responsible for keeping computational costs low as well as keeping the number of parameters controlled. Typically, a transitional layer is a 1x1 convolutional layer that is followed by a average pooling layer to reduce both the number of feature maps and spatial resolution. Transition layers are one of the key components that allows DenseNet to keep its unique feature of keeping parameters low. 
+
+Lastly, after the final dense block has been passed, the output feature maps pass through a global average pooling layer to reduce its spatial dimensions to a single value per map. This output is then passed through a fully connected layer and a activation function. 
+### Code Implementation
+## EffecientNet
+### Motivation
+EffecientNet tries to achieve state-of-the-art performance by minimizing parameters and maintaining low performance cost. The way EffecientNet achieves this is by utilizing an approach called "compound scaling". Compound Scaling involves scaling the network in a balanced way. Depth, width, and resolution is increased respectively by adding more layers or adding more filters. The resolution is increases as well to improve the quality of features learned. EffecientNet was the last of our models to use for comparison because of the performance and accuracy it boasts during our research. 
+### Architecture
+![effecientnet]({{ '/assets/images/team37/efficientnet-arch.png' | relative_url }})
+{: style="width: 800px; max-width: 100%;"}
+<div align=center>Fig 6. EffecientNet Architecture [4].</div> 
+EffecientNet's architecture comprises of the input image going through a series of convolutional layers to reduce its spatial dimension and increase its depth. The first block contains multiple MBConv blocks with each block consisting of a depthwise convolution, a pointwise convolution, and a squeeze-and-excitation module (SE module). After the input image goes through the sequence of MBConv blocks, it is passed to a Average Pooling layer which then computes the average feature map over its spatial dimensions. This produces a feature vector that is passed to a fully connected layer to produce the final classification results.
+
+![mbconv]({{ '/assets/images/team37/mbconv.png' | relative_url }})
+{: style="width: 800px; max-width: 100%;"}
+<div align=center>Fig 7. MBConv Block.</div> 
+The MBConv block is what makes EffecientNet do what it can and it works by running through some different types of convolutions. The three main operations that take place are, 
+<ol>
+    <li>Depthwise convolution where the input has a separate convolutional filter appleid to each channel of the input. This process helps the model reduce computing costs since it applies fewer filters than a regular convolution.</li>
+    <li>Pointwise convolution then takes the output of the depthwise convolution where it applies a 1x1 convolutional filter. This increases the channels of the output which allows the network to learn more complex features.</li>
+    <li>Squeeze-and-Excitation Module then takes the output of the pointwise convolution to find any interdependencies between channels. It does this by using weights to help represent the importance of each channel. This module is very important because it helps the network focus on the most important channels.</li>
+    <li>Residual Connection finally takes the output of the SE Module and is then added to the input of the next MBConv block, creating a residual connection. This is also a very important connection that helps ensure the network learn and identify the most important features. This allows the connection to avoid issues like the vanishing gradient.</li>
+</ol>
+### Code Implementation
 ## Result
 ### Chart Comparison
 ### Issues
@@ -74,6 +119,10 @@ Code Base: [Here](https://github.com/jbaik1/CS-188-CV-Final-Project/blob/main/Br
 <li>Torres, Renato, et al. ‘A Machine-Learning Approach to Distinguish Passengers and Drivers Reading While Driving’. Sensors, vol. 19, 07 2019, p. 3174, https://doi.org10.3390/s19143174.</li>
     
 <li>Ramzan, Farheen, et al. ‘A Deep Learning Approach for Automated Diagnosis and Multi-Class Classification of Alzheimer’s Disease Stages Using Resting-State FMRI and Residual Neural Networks’. Journal of Medical Systems, vol. 44, 12 2019, https://doi.org10.1007/s10916-019-1475-2.</li>
+
+<li>Sanagala, Siva Skandha, et al. ‘Ten Fast Transfer Learning Models for Carotid Ultrasound Plaque Tissue Characterization in Augmentation Framework Embedded with Heatmaps for Stroke Risk Stratification’. Diagnostics, vol. 11, Nov. 2021, p. 2109, https://doi.org10.3390/diagnostics11112109.</li>
+
+<li>https://iq.opengenus.org/efficientnet/</li>
 </ol>
 [A collection of recent image segmentation methods, categorized by regions of the human body](https://github.com/JunMa11/SOTA-MedSeg)
 
