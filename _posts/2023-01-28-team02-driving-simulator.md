@@ -175,8 +175,11 @@ def get_mean_std(root_dir):
 ### ResNet-18
 We used a ResNet-18 model which takes in one image as input and generates three values as output, namely, the speed, the acceleration, and the steering. We trained the model for 20 epochs and saved the checkpoint. The validation loss of the checkpoint is 0.9185.
 
-### ViT
+### ViT - Continuous
 Our next design uses the Vision Transformer (ViT) model.
+
+### ViT - Discrete
+After seeing the results of ViT, we hypothesized that we can improve the performance of the ViT model if, instead of predicting continuous values of steering and acceleration, it predicts one of the fixed set of options for its next action.
 
 ### SlowFast
 The problem of the previous models used is that both models assume that the input is i.i.d. However, our application is special in that each image is closely related to its previous and next ones, just like in a video. As suggested by our TA, we researched on the SlowFast model, which is specifically designed to predict on sequences of images. We train a predictor based on the pretrained SlowFast model, which takes in a sequence of images and produces the steering and acceleration predictions.
