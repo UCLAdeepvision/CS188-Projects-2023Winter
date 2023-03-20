@@ -140,12 +140,10 @@ DenseNet performed neither too poorly or too exceptionally. With a testing accur
 EffecientNet
 ![effecient-res]({{ '/assets/images/team37/effecientnet-result.png' | relative_url }})
 Lastly, with EffecientNet, we had very high expectations in this model. However, the interesting observation is that it had a lower testing accuracy than DenseNet. However, the model had a testing accuracy of 87% and the PREDICTED CLASS seemed just as confident as DenseNet. The model predicted the class correctly and this falls under our expectations.
-
 ## Demo
-Video: [Here](link)
+Video: [Here](https://www.youtube.com/watch?v=BGukU4oGd8Q)
 
 Code Base: [Here](https://github.com/jbaik1/CS-188-CV-Final-Project/blob/main/Brain_Tumor_Classifier.ipynb)
-
 ## Reference
 <ol>
 <li>Torres, Renato, et al. ‘A Machine-Learning Approach to Distinguish Passengers and Drivers Reading While Driving’. Sensors, vol. 19, 07 2019, p. 3174, https://doi.org10.3390/s19143174.</li>
