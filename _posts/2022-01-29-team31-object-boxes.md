@@ -169,6 +169,11 @@ The bottom-up pathway is constructed using ResNet. It has five convolution modul
 
 ## Head
 
+The head is where the actual predictions are made and the output labels and bounding boxes are returned. YOLOv7 improves upon previous versions by not only having one head. It uses something called auxiliary heads in addition to the lead head to make its classification. These auxiliary heads are updated as an intermediate layer to assist learning. During training, loss is calculated by assigning “soft labels” while training and comparing them to ground truth. The part that gives these labels is called the Label Assigner. A diagram of YOLOv7’s Coarse-to-fine lead guided assigner is below:
+
+<img src="/CS188-Projects-2023Winter/assets/images/team31/coarse_to_fine.png"/>
+
+The final results on which soft labels are generated are predicted by the lead head, but both the lead head and auxiliary heads train on those predictions. In the YOLOv7 architecture there are actually two kinds of soft labels: course and fine, in which the coarse labels have higher sensitivity and therefore more possible error. The fine labels are used to train the lead head, while a set of coarse labels are used to train the auxiliary head. To boil the concept down a bit more, the main idea behind having these many heads is that the lead head can focus on learning the most important features while the auxiliary heads deal with the residual information.
 
 ## References and Code Bases
 
