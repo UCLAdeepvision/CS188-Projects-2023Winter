@@ -45,34 +45,35 @@ Our data is stored at [this Goodle Drive folder](https://drive.google.com/drive/
 Please follow this [Google Colab link](https://colab.research.google.com/drive/1nj2i8GVPRmxU6w2UsgWABigca4twuh1l?usp=sharing).
 
 ## Multipath++
-### Data Representation
+
+### 1. Data Representation
 Unlike previous models such as [Multipath](https://arxiv.org/abs/1910.05449) that use pixel inputs, recent models including Multipath++ start to favor **vectorized inputs**(prerendered into numpy arrays). The vectorized inputs are denser. Furthermore, it carries richer information by allowing **heterogenous features** such as object speed and accelration.
 
-Consider moving cars as agents, the multimodal data are as listed with description:
+Consider moving cars as agents, the multimodal data are:
 1. Agent State History: represented by a sequence of inputs for a fixed time frame. Each timestep includes position, velocity, 3D bounding box, heading angle, and object type information.
-a. Autonomous Vehicles (AV) are represented separately.
 2. Roads: represented as a set of piecewise linear segments or polylines.
 3. Agent Interactions: are represented as relative orientation, distance, speed, and historical track.
 
-### Architecture Glimpse
+### 2. Architecture Glimpse
 
 ![image info](../assets/images/team03/multipath++_overall.png)
+![image info](/CS188-Projects-2023Winter/assets/images/team03/multipath++_overall.png)
 Here is the architecture for Multipath++. Here, we want to explain the work flow and terms and the important designs will be introduced later. In the *Encoder* part, we can see that it uses multiple encoders to transformer and allows interactions in-between. For the *Predictor* part, we can see it uses Multi-Context Gating (MCG) predictor and regression and classification heads that work similar to a transformer.
 
 Finally, the learned anchor embeddings represents a target point or check point in the middle-way in the *latent* space. This inherently helps with long-frame prediction.
 
 
-### Context Gating (CG)
+### 3. Context Gating (CG)
 CG is one of the key innovation of Multipath++. It works like an attention block and empirically enables communication between different road objects. First, let's look at a CG block:
 ![image info](../assets/images/team03/single_cg.png)
 The inputs of a CG block include **both** n states and m contexts. A CG block passes input states and context information respectively through MLP. Eventually, it aggregates the element-wise multiplication through mean or max pooling.
 In comparison to Cross-Attention on the left, CG is computationally cheaper by summarizing the two kinds of inputs first, then aggregating the summarized value.
 
-### Multi-Context Gating (MCG)
+### 4. Multi-Context Gating (MCG)
 ![image info](../assets/images/team03/multi_cg.png)
 As a single CG Block is comparable to attention, the MCG blocks are comparable to transformer, which simply involves *many* stacked CG Blocks. However, MCG keeps the **running mean** or residual network information.
 
-### Encoders
+### 5. Encoders
 We introduce the encoders network architectures:
 1. Agent History Encoder includes two LSTM networks and one MCG Block.
     * One LSTM encodes position data while the other encodes position difference data.
@@ -84,10 +85,8 @@ We introduce the encoders network architectures:
 <img src="../assets/images/team03/lstm.png"  width="300" height="200">
 </p>
 
-### Substitution for Encoders
-In this work, we will replace the LSTM blocks used in **Agent History Encoder** and **Agent Interaction Encoder** with transformers. Specifically, we want to leverage self-attention mechanism to capture the dependencies among agents from the same thing. We also hypothesize performance gain from the original architecture due to the sequential bottleneck that's inevitable in any RNN block. 
 
-### Predictors
+### 6. Predictors
 A decoder unit is primarily MCG Blocks. To make final prediction, the embeddings are passed through multiple decoders units sequentially. In the last decoder unit, an additional MLP is applied to output the soft prediction of future trajectories distribution.
 
 Finally, a Expectation Maximization (EM) algorithm with Gaussian Mixure Model (GMM) prior is trained on the distribution parameters including mean, covariance matrix, and probability. Alternatively, the final layer may employ Multi-Head Attention for the same predictions.
@@ -101,24 +100,56 @@ transparency indicates predicted probability.
 
 ![image info](../assets/images/team03/ablation_on_waymo.png)
 
-### Training Objective
-During training, first few seconds contexts are given to Multipath++ to find the GMM. Then, the future path predictions are compared with the groud-truth. Essentially, the training objective is to **maximize the likehood of groud-truth**. Numerical metrics include **Minimum Distance Error**, **Minimum Average Distance Error**, etc.
+### 7. Anchor Training
 
-### Our Evaluation
-We will compare the aforementioned training objectives between the original Multipath++ model and our Transformer-Multipath++. Specifically, we will compare the convergence rate and training cost(times, and monetary cost since we are using paid computation platform) between the two versions.
+### 8. Bootstrap Aggregation
 
+### 9. Community Implementation of Multipath++
+Since Multipath++ doesn't have an official repository, we refer to [this community implementation](https://github.com/stepankonev/waymo-motion-prediction-challenge-2022-multipath-plus-plus). We here discuss the two differences between the [community version](https://arxiv.org/abs/2206.10041) and the [original Multipath++](https://arxiv.org/abs/2111.14973).
 
-### Anchor Training
+First, the community version chooses to use Multi-Head Attention (MHA) instead of GMM to make predictions numerically stabler. In specific, the author uses 6 decoder outputs as attention input followed by Max Pooling and MCG Blocks as shown in the following image.
 
-### Bootstrap Aggregation
-
-### Base Model
-Since Multipath++ doesn't have an official repository, we refer to [this community implementation](https://github.com/stepankonev/waymo-motion-prediction-challenge-2022-multipath-plus-plus). We here discuss the few differences between [this version](https://arxiv.org/abs/2206.10041) and the original Multipath++.
-First, the author leverages MCG + MHA blocks to provide predictions that are numerically stabler. In specific, the author uses 6 decoder outputs as attention input followed by Max Pooling and MCG Blocks as shown in the following image.
+Second, unlike the original version that encode autonomous vehicles separately, the community version uses the same encoder all vehicles.
 
 ![image info](../assets/images/team03/new_predictor.png)
 
-On the other hand, the authors used the same encoder for the UAV and other agents.
+## Training Objective and Metrics
+
+### 1. Loss Function
+During training, model is conditioned on 1 second of moving history to predict the location in the next 8 seconds. We compare the future path predictions with groud-truth to update the model with NLL-loss. The community implementation also involves Covariance as part of the loss function. Essentially, the training objective is to **maximize the likehood of groud-truth**. 
+
+### 2. Evaluation Metrics
+
+Numerical metrics include Minimum Average Displacement Error **(minADE)**, Minimum Final Displacement Error **(minFDE)**, and **Miss Rate**. Due to the [community version of Multipath++](https://github.com/stepankonev/waymo-motion-prediction-challenge-2022-multipath-plus-plus/tree/main/code) doesn't include metric calculation, please refer to our [Colab Demo](https://colab.research.google.com/drive/1nj2i8GVPRmxU6w2UsgWABigca4twuh1l?usp=sharing) in metric implementation. Alternatively, you can check our source code [here](https://github.com/WeizhenWang-1210/MPT/blob/main/code/load_and_eval.py).
+
+#### 2a. minADE & minFDE
+
+There can be many ways to evaluate motion prediction models. However, it is always important to let the predicted trajectory to stay as close to the ground truth. Note that motion-prediction tasks often come with multiple ground-truth and staying close to *any* one of them is sufficient.
+
+Consider time steps from *1* to *T*, *s-hat* being the predicted location, and *s* being the ground-truth. 
+
+In minADE, we calculate the averaged l2-norm displacement for each trajectory, and pick the smallest value.
+![image info](../assets/images/team03/minADE.png)
+
+The minFDE metric, on the other hand, only considers the final step displacement.
+![image info](../assets/images/team03/minFDE.png)
+
+#### 2b. Miss Rate
+
+Often times, vechicles don't have to stay *that* close to the ground-truth trajectory. Miss rate is such a metric that is more tolerant to errors within a threshold. Empirically, as long as the prediction stays within a threshold, it is "not missed". Otherwise, the prediction is "missed". Finally, we report the ratio of **missed / (missed + not missed)**.
+
+On Waymo official website, this metric considers both orientational and positional predictions, while the threshold depends on both time and initial speed of vehicle, as shown below.
+
+![image info](../assets/images/team03/miss_rate.png)
+
+## MPT: Our Innovation
+
+### 1. Substitution for Encoders
+In this work, we will replace the LSTM blocks used in **Agent History Encoder** and **Agent Interaction Encoder** with transformers. Specifically, we want to leverage self-attention mechanism to capture the dependencies among agents from the same thing. We also hypothesize performance gain from the original architecture due to the sequential bottleneck that's inevitable in any RNN block. 
+
+We will compare the aforementioned training objectives between the original Multipath++ model and our Transformer-Multipath++. Specifically, we will compare the convergence rate and training cost(times, and monetary cost since we are using paid computation platform) between the two versions.
+
+### 2. Result and Visualization Comparison
 
 ## Reference
 
@@ -132,7 +163,9 @@ On the other hand, the authors used the same encoder for the UAV and other agent
 
 ## Code Bases
 [1] TrafficGen: https://github.com/metadriverse/trafficgen
+
 [2] MultiPath++: https://github.com/stepankonev/waymo-motion-prediction-challenge-2022-multipath-plus-plus
+
 [3] LaneGCN: https://github.com/uber-research/LaneGCN
 
 ---
