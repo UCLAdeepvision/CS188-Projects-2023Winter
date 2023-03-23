@@ -231,24 +231,6 @@ Jimmy Ba, Volodymyr Mnih, Koray Kavukcuoglu
 - [Paper](https://paperswithcode.com/paper/multiple-object-recognition-with-visual)
 - [Code](https://paperswithcode.com/paper/multiple-object-recognition-with-visual#code)
 
-**Scalable Object Detection Using Neural Networks**
-
-Dumitru Erhan, Christian Szegedy, Alexander Toshev, Dragomir Anguelov
-- [Paper](https://paperswithcode.com/paper/scalable-object-detection-using-deep-neural)
-- [Code](https://paperswithcode.com/paper/scalable-object-detection-using-deep-neural#code)
-
-**Objects as Points**
-
-Xingyi Zhou, Dequan Wang, Philipp Krähenbühl
-- [Paper](https://www.semanticscholar.org/paper/Objects-as-Points-Zhou-Wang/6a2e2fd1b5bb11224daef98b3fb6d029f68a73f2)
-- [Code](https://github.com/xingyizhou/CenterNet)
-
-**Pointly-Supervised Instance Segmentation**
-
-Bowen Cheng, Omkar Parkhi, Alexander Kirillov: Pointly-Supervised Instance Segmentation
-- [Paper](https://arxiv.org/pdf/2104.06404.pdf)
-- [Code](https://github.com/facebookresearch/detectron2/tree/main/projects/PointSup)
-
 **End-to-End Object Detection with Transformers**
 
 Nicolas Carion, Francisco Massa, Gabriel Synnaeve, Nicolas Usunier, Alexander Kirillov, Sergey Zagoruyko
