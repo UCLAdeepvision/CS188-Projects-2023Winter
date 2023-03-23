@@ -127,7 +127,7 @@ Here is an image of Royce Hall and a video of the Bruin Bear that we ran object 
 
 YOLOv7 did pretty well on identifying Royce Hall, however, it did a little worse on identifying the Bruin Bear. In the full video of the bruin bear, it becomes more apparent that the model we trained does worse on the Bruin Bear. There are several factors which could have caused lower accuracy scores than we wanted such as the dataset being used was small, our bounding boxes weren't drawn perfectly, our training hyperparameters weren't ideal, and we didn't use the other YOLOv7 models (such as YOLOv7x). But YOLOv7 is a one stage object detector, meant to detect objects fast, trading some accuracy along the way. And to that extent, it did a great job, taking only 0.8 seconds to run object detection on the Royce image and 14.8 seconds to run object detection on the 10 second long Bruin Bear video.  
 
-## Background of YOLO Models
+## 3. Background of YOLO Models
 Object detection models in general can be classified into two main classes: two-stage (proposal) models, and one-stage (proposal-free) models. The two-stage models are mostly based on R-CNN (Region-based Convolutional Neural Network) structures. In this approach, the first step is to propose possible object regions. The second step is to compute features from these regions and formulate a conventional CNN to classify them. This approach is known to usually be very accurate; in fact, it generally is more accurate than one-stage models.
 Why do we sometimes use one-stage models then? To put it simply, they can be much faster, and in the object-detection world that is an enormous priority right now. One-stage models reject the region proposal step and proceed to run detection directly over a dense sampling of locations. A buzzword driving this push is “real-time” object detection, in which there is virtual no lag between images or video being observed and bounding boxes with classifications being returned. One such model is the one we are discussing here: YOLO.
 Only saying YOLO is perhaps a little too broad. Since its inception in 2016, the YOLO approach has been expanded upon by several different research groups into more than 7 different variations. Following the original YOLO paper, subsequent versions have added improvements to the head, neck, or backbone, and sometimes to multiple of these at a time. Below, we can see a summary of some of the architectural changes that took place during these evolutions.
@@ -136,14 +136,14 @@ Only saying YOLO is perhaps a little too broad. Since its inception in 2016, the
 
 As we can see, these different YOLOs all use an FCNN, but their individual structures differ notably. To add to the confusion, not all advances in YOLO are sequential; in fact, YOLOv7 is based upon a version of YOLOv4 called Scaled YOLOv4 rather than YOLOv6 as we might expect. Despite this interrupted continuity, each version has improved in speed and accuracy.
 
-## YOLO v7
+## 4. YOLO v7
 Hong-Yuan Mark Liao, the same group of researchers who developed scaled YOLOv4. One of the important distinguishing characteristics of this series of models is that they do not use pretrained ImageNet backbones, but are trained exclusively on the COCO (Common Objects in Context) dataset. As opposed to other large object detection datasets, COCO contains object segmentation information in addition to bounding box information, and each object is also annotated with textual captions (although they aren’t used in YOLO). But what does YOLO look like? Below is an excellent diagram showing the stages the make it up, and some details about what its CNN looks like:
 
 <img src="/CS188-Projects-2023Winter/assets/images/team31/yolo_diagram.jpg"/>
 
 Though we will get into more detail below, we can define a useful summary of YOLO from the above: images are featurized in the backbone, these features are combined in the neck, and finally objects within the images are bounded and classified in the head. Our biggest focus here will be covering the advances made in YOLOv7 to improve on and differentiate from previous versions. Among these are the use of E-ELAN, Model Scaling techniques, and Planned Re-Parametrization.
 
-## Backbone
+### 4.1 Backbone
 The first section of YOLOv7 is the backbone. As this model is one-stage rather than two-stage, it must immediately obtain features from its input without first running any predictions on the input data. The convolutional block that the authors settled on to make this happen is called E-ELAN (Exended Efficient Layer Aggregation). This is an improved version of regular ELAN. The ELAN architecture attempts to optimize network efficiency by controlling both shortest and longest gradient paths. The architecture itself looks relatively simple:
 
 <img src="/CS188-Projects-2023Winter/assets/images/team31/backbone_1.png"/>
@@ -156,7 +156,7 @@ E-ELAN is slightly more complex. It uses something called expand, shuffle, and m
 We can see that the pattern from the first illustration is maintained (direct input, input through two blocks, and input through four blocks), but the channels and cardinality of these blocks are expanded. Each computational block produces a feature map, which is shuffled and concatenated with the feature maps from the other blocks. At the end, this shuffled feature map from all the groups is added to get our final output.
 When this is done, our backbone has performed its requisite task, extracting features from out input. We now have our features and can proceed onto the neck.
 
-## Neck
+### 4.2 Neck
 YOLOv7 uses a kind of bounding box called anchor boxes. This approach is important for our model because, unlike in two-stage model, we have not already made predictions for where objects must be, and are thus going into the bounding step blindly. In anchor boxing, a grid is drawn over the image and anchor points are generated at each grid intersection where a set of boxes of various sizes will be created. While this allows objects of almost any size in almost any image location to be bounded, it would be prohibitively expensive to cover every possible anchor box size. Thus, before anchor boxing occurs in the head, our neck must find a way to reduce the possible feature space of objects and thereby reduce the necessary number of anchor box sizes. To do this, YOLOv7 uses FPN (Feature Pyramid Networks).
 The goal of FPN is to quickly generate multiple layers of feature maps. To do this it uses a structure with two convolutional network pathways: bottom-up and top-down:
 
@@ -167,13 +167,50 @@ The bottom-up pathway is constructed using ResNet. It has five convolution modul
 <img src="/CS188-Projects-2023Winter/assets/images/team31/neck_2.png"/>
 
 
-## Head
+### 4.3 Head
 
 The head is where the actual predictions are made and the output labels and bounding boxes are returned. YOLOv7 improves upon previous versions by not only having one head. It uses something called auxiliary heads in addition to the lead head to make its classification. These auxiliary heads are updated as an intermediate layer to assist learning. During training, loss is calculated by assigning “soft labels” while training and comparing them to ground truth. The part that gives these labels is called the Label Assigner. A diagram of YOLOv7’s Coarse-to-fine lead guided assigner is below:
 
 <img src="/CS188-Projects-2023Winter/assets/images/team31/coarse_to_fine.png"/>
 
 The final results on which soft labels are generated are predicted by the lead head, but both the lead head and auxiliary heads train on those predictions. In the YOLOv7 architecture there are actually two kinds of soft labels: course and fine, in which the coarse labels have higher sensitivity and therefore more possible error. The fine labels are used to train the lead head, while a set of coarse labels are used to train the auxiliary head. To boil the concept down a bit more, the main idea behind having these many heads is that the lead head can focus on learning the most important features while the auxiliary heads deal with the residual information.
+
+### 4.4 Trainable Bag-Of-Freebies
+
+Although YOLOv7 has solid architecture as described in the previous sections, what sets it apart from other single-stage object detection models is what its researchers call the "trainable bag-of-freebies". This is basically just a set of modules as well as optimization methods which additively boosts the speed and performance of YOLOv7. One of the freebies was described previously, which is the separation between "coarse" and "fine" labels.
+
+#### 4.4.1 Planned Re-Parameterized Convolution
+A popular tool used in modern object detection algorithms is model re-parameterization. This is basically where several computational modules are merged into one during the inference stage.
+<br>
+RepConv is a popular convolutional module used on VGG (consisting of a 3x3 convolution, 1x1 convolution, and identity connection), but when applied directly to ResNet and DenseNet, accuracy can suffer. However, YOLOv7 researchers discovered through thorough experimentation that in certain layers, removal of the identity connection in RepConv can greatly improve accuracy by increasing the diversity of gradients for different feature maps. They found that in layers with residual or concatenation connections, the identity connection in RepConv is detrimental, so they created RepConvN, RepConv without the identity connection, to substitute certain RepConv modules. From the official YOLOv7 paper, the below layouts with green checks are what the YOLOv7 researchers found to be the best to maximize accuracy.
+
+<img src="/CS188-Projects-2023Winter/assets/images/team31/freebies_1.png"/>
+
+#### 4.4.2 Batch Normalization Attachment
+
+YOLOv7 researchers also found that by attaching batch normalization directly to some convolutional layers, it can increase accuracy. They found that through integrating batch normalization's mean and variance into a convolutional layer's bias and weight during the inference stage, accuracy benefitted. 
+
+#### 4.4.3 EMA Model
+
+EMA stands for exponential moving average. YOLOv7 researchers use an EMA model to calculate an exponentially weighted moving average of model parameters which is maintained throughout the entire training run. This EMA is utilized during the inference stage, so instead of using the parameters from the last update, it uses this EMA. This is beneficial because it 'smooths' out the data. For example, if training was very poor during its early stages, the parameters could be drastically updated at the detriment of future batches. But by using EMA, any large updates would be smoothed out and have a less impactful effect on the parameters of the model. 
+
+## 5. Potential Improvements
+
+Although YOLOv7 is a state-of-the-art real-time object detection model, it was released in July 2022. Since then, researchers separate from YOLOv7 developed YOLOv8 which boasts better performance than YOLOv7 in both speed and accuracy. Below is an image from the YOLOv8 repository which shows YOLOv8 performing better than its predecessors on the COCO dataset.
+
+<img src="/CS188-Projects-2023Winter/assets/images/team31/yolov8.png"/>
+
+### 5.1 Anchor-Free Detection
+
+As shown previously, one of the main tools YOLOv7 utilizes is anchor boxes as their primary bounding boxes. However, YOLOv8 uses a completely anchor-free approach which directly predicts the center of an object instead of the offset from a known anchor box. This greatly reduces the number of box predictions that have to be made which speeds up the model. 
+
+### 5.2 Mosaic Augmentation
+
+Another method that YOLOv8 utilizes which is not found in YOLOv7 is mosaic augmentation. Augmentation is where at each epoch, the model sees slightly altered versions of the images provided. Mosaic augmentation, used by YOLOv8, is where four images are stitched together and trained upon together instead of individually. This allows the model to learn objects that are found in new locations, potentially hidden, and against different surrounding pixels. This method has been found to decrease performance when trained through all epochs, so the YOLOv8 team specifically used it for certain training periods.
+
+## 6. Conclusion
+
+YOLOv7 is an incredibly fast and accurate real-time object detector which improves upon its previous iterations. The pre-trained YOLOv7 models are incredibly accessible and anyone could use them. Training YOLOv7 on custom data also proves to be effective, thus making it useful for real-world applications which require fast and accurate object detection. Although complex, YOLOv7's architecture proves to stand strong against its competitors, however there are still many improvements to be made.
 
 ## References and Code Bases
 
@@ -182,6 +219,11 @@ The final results on which soft labels are generated are predicted by the lead h
 Chien-Yao Wang, Alexey Bochkovskiy, and Hong-Yuan Mark Liao
 - [Paper](https://arxiv.org/pdf/2207.02696.pdf)
 - [Code](https://github.com/WongKinYiu/yolov7)
+
+**RepVGG: Making VGG-style ConvNets Great Again**
+
+Xiaohan Ding
+- [Info](https://github.com/DingXiaoH/RepVGG)
 
 **Multiple Object Recognition with Visual Attention**
 
@@ -212,6 +254,12 @@ Bowen Cheng, Omkar Parkhi, Alexander Kirillov: Pointly-Supervised Instance Segme
 Nicolas Carion, Francisco Massa, Gabriel Synnaeve, Nicolas Usunier, Alexander Kirillov, Sergey Zagoruyko
 - [Paper](https://arxiv.org/pdf/2005.12872.pdf)
 - [Code](https://github.com/facebookresearch/detr#detr-end-to-end-object-detection-with-transformers)
+
+**What is YOLOv8? The Ultimate Guide**
+- [Info](https://blog.roboflow.com/whats-new-in-yolov8/#:~:text=YOLOv8%20was%20launched%20on%20January%2010th%2C%202023.)
+
+**Ultralytics YOLOv8**
+- [Repository](https://github.com/ultralytics/ultralytics)
 
 ## Basic Syntax
 ### Image
