@@ -340,6 +340,39 @@ MMDetection pretrained Mask2Former Evaluation Results:
 
 ## Evaluation
 
+|![Plane Raw Image]({{ '/assets/images/team-11/plane.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Bruinwalk Raw Image]({{ '/assets/images/team-11/bruinwalk.png'| relative_url }}){: style="width: 400px; max-width: 100%;"}|
+
+*Fig \#. Plane Image and BruinWalk Image*
+
+|![Plane Panoptic FPN]({{ '/assets/images/team-11/plane_pfpn.png' | relative_url}}){: style="width: 300px; max-width: 100%;"} | ![Plane MaskFormer]({{ '/assets/images/team-11/plane_maskformer.png' | relative_url}}){: style="width: 300px; max-width: 100%;"} | ![Plane Mask2Former]({{ '/assets/images/team-11/m2frmr_plane.png' | relative_url}}){: style="width: 300px; max-width: 100%;"}|
+
+*Fig \#. (Left to Right) Panoptic FPN, MaskFormer, Mask2Former Results on Plane Image*
+
+| ![Bruinwalk Panoptic FPN]({{ '/assets/images/team-11/bruinwalk_pfpn.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Bruinwalk MaskFormer]({{ '/assets/images/team-11/bruinwalk_maskformer.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Bruinwalk MaskFormer]({{ '/assets/images/team-11/bruinwalk_m2frmr.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
+
+*Fig \#. Panoptic FPN, MaskFormer and Mask2Former Result on Bruinwalk Image*
+
+|![Plane Diff Panoptic FPN and MaskFormer]({{ '/assets/images/team-11/plane_diff_p_m.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Bruinwalk Diff Panoptic FPN and MaskFormer]({{ '/assets/images/team-11/bruinwalk_diff_p_m.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
+
+*Fig \#. Panoptic FPN and MaskFormer Output Difference*
+
+|![Plane Diff MaskFormer and Mask2Former]({{ '/assets/images/team-11/plane_diff_m_m2.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Bruinwalk Diff MaskFormer and Mask2Former]({{ '/assets/images/team-11/bruinwalk_diff_pfpn_m2.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
+
+*Fig \#. Panoptic FPN and Mask2Former Output Differnce*
+
+![Plane Diff MaskFormer and Mask2Former]({{ '/assets/images/team-11/plane_diff_m_m2.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
+
+*Fig \#. MaskFormer and Mask2Former Output Difference*
+
+|![Janns MaskFormer Attention]({{ '/assets/images/team-11/janns_attention_maskformer.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Janns Mask2Former Attention]({{ '/assets/images/team-11/janns_attention_mask2former.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
+|![Cat MaskFormer Attention]({{ '/assets/images/team-11/cat_attention_maskformer.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Cat Mask2Former Attention]({{ '/assets/images/team-11/cat_attention_mask2former.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
+|![Plane MaskFormer Attention]({{ '/assets/images/team-11/plane_attention_maskformer.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Plane Mask2Former Attention]({{ '/assets/images/team-11/plane_attention_mask2former.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
+
+*Fig \#. MaskFormer and Mask2Former Attention*
+
+
+
+
 ## Summary
 
 ## Conclusion
