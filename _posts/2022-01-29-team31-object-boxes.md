@@ -16,6 +16,8 @@ date: 2023-02-25
 * TOC
 {:toc}
 
+[![Watch the video](https://img.youtube.com/vi/KeuDYEpoTPI/0.jpg)](https://youtu.be/KeuDYEpoTPI)
+
 ## 1. Introduction
 The main idea behind the YOLO class of object detection algorithms is summarized in its acronym: "you only look once." This means that YOLO models are single-stage, allowing them to immediately and accurately classify images. In fact, the speed is one of the major selling-points of this algorithm, allowing it to be marketed as a real-time object detector. It does this by immediately featurizing images before feeding the features into the model.
 
