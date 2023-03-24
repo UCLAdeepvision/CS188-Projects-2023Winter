@@ -230,22 +230,35 @@ MMDetection pretrained PanopticFPN Evaluation Results:
 
 ### Background
 
-Semantic segmentation is often approached as per pixel classification, while instance segmentation is approached as mask classification. The key insight of Cheng, Schwing, and Kirillov to create the MaskFormer model is that "mask classification is sufficiently general to solve both semantic- and instance-level segmentation tasks in a unified manner using the exact same model, loss, and training procedure." [5] Mask classification can be used to solve semantic, instance, and panoptic segmentation together.
+Semantic segmentation is often approached as per pixel classification, while instance segmentation is approached as mask classification. The key insight of Cheng, Schwing, and Kirillov to create the MaskFormer model is that "mask classification is sufficiently general to solve both semantic- and instance-level segmentation tasks in a unified manner using the exact same model, loss, and training procedure." [[5](#ref5)] Mask classification can be used to solve semantic, instance, and panoptic segmentation together.
 
-MaskFormer is a mask classification model which predicts a set of binary masks, each associated with one global class prediction [5]. MaskFormer converts a per-pixel classification model into a mask classification model [5]. 
+MaskFormer is a mask classification model which predicts a set of binary masks, each associated with one global class prediction [[5](#ref5)]. MaskFormer converts a per-pixel classification model into a mask classification model [[5](#ref5)]. 
 
 #### Maskformer Architecture
 
-![Maskformer Architecture]({{ '/assets/images/team-11/maskformer_architecture.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
-*Fig \#. Maskformer Architecture* [5]
+![Maskformer Architecture]({{'/assets/images/team-11/maskformer_architecture.png'|relative_url}}){: style="width: 400px; max-width: 100%;"}
+*Fig \#. Maskformer Architecture* [[5](#ref5)]
 
 Maskformer breaks down into three modules: a pixel level module, a transformer module, and a segementation module. The pixel level module extracts per-pixel embeddings to generate the binary mask predictions, the transformer module computes per-segment embeddings, and the segmentation module generate the prediction pairs [5].
 
-The pixel-level module begins with a backbone to extract features from the input image. The features are then upsampled by a pixel decoder into per-pixel embeddings. This module can be changed for any per-pixel classification-based segmentation model [5].
+The pixel-level module begins with a backbone to extract features from the input image. The features are then upsampled by a pixel decoder into per-pixel embeddings. This module can be changed for any per-pixel classification-based segmentation model [[5](#ref5)].
 
-The transfomer module uses a a Transformer decoder to compute the per-segment embeddings from the extracted image features and learnable positional embeddings [5].
+The transfomer module uses a a Transformer decoder to compute the per-segment embeddings from the extracted image features and learnable positional embeddings [[5](#ref5)]. MaskFormer uses the standard Transfomer Decoder [[7](#ref7)]
 
-The segmentation module uses a linear classifier followed by softmax on the per-segment embeddings to get the class probabilities of each segment. A 2 hidden layer Multi-Layer Perceptron gets the mask embeddings from the per-segment embeddings. To get the final binary mask predictions, the model takes a dot product between the ith mask embeddings and the per-pixel embeddings from the pixel-level module. This dot product is followed by a sigmoid activation to produce the output [5].
+![Transformer Architecture]({{'/assets/images/team-11/transformer_architecture.png'|relative_url}})
+*Transformer Decoder Architecture*
+
+A Transformer is made up of an encoder (left) and a decoder stack (right). The encoder is made up of a stack of identical layers. The layers each begin with a multihead attention layer, followed by a fully connected feed forward layer. Each sublayer has a residual connection, which is then Layer Normalized. The decoder stack is similar to the encoder stack, but an additional multihead attention layer acts on the output of the encoder stack [[7](#ref7)]. Finally a a linear layer and a softmax activation turn the attentions into output probabilities [[7](#ref7)].
+
+Attention is computed as:
+
+![Attention Formula]({{'/assets/images/team-11/attention_formula.png'|relative_url}})
+
+Q, K, and V are all vectors, where Q is a query, K is made up of keys, and V is made up of keys. The output is a weighted sum of the values, where the weight is computed by a compatability function between the query and the key [[7](#ref7)]. In this case, the compatability function is softmax. This means that the most likely query-key combination's value will have the highest weight, and thus the highest attention value. *d<sub>k</sub>* is the dimension of the keys and queries, and is used to scale the scale the QK product [[5](#ref5)].
+
+Multi-head attention takes the attention function on multiple different linearly projected versions of Q, K, and V in parallel [[5](#ref5)]. These values are then cocatenated and projected again to get the final attention values [[5](#ref5)].
+
+The segmentation module uses a linear classifier followed by softmax on the per-segment embeddings to get the class probabilities of each segment. A 2 hidden layer Multi-Layer Perceptron gets the mask embeddings from the per-segment embeddings. To get the final binary mask predictions, the model takes a dot product between the ith mask embeddings and the per-pixel embeddings from the pixel-level module. This dot product is followed by a sigmoid activation to produce the output [[5](#ref5)]. 
 
 ### Setup
 
@@ -265,11 +278,11 @@ MMDetection pretrained MaskFormer Evaluation Results:
 ![MaskFormer Demo Image]({{ '/assets/images/team-11/maskformer_demo.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
 *Fig \#. MaskFormer Sample Output*
 
-## Mask2Former with MMDetection
+## Mask2Former with MMDetection                                                                                                                                                                                                                                                              
 
 ### Mask2Former Background
 
-While MaskFormer is a universal architecture for semantic, instance, and panoptic segmentation, it is expensive to train and does not outperform specialized segmentation models [6]. Masked-attention Mask Transformer, or Mask2Former, is a universal segmentation method that outperforms specialized architectures, and is simpler to train on each task. Mask2Former is similar to MaskFormer, but with several improvements. The first is using masked attention in the Transformer decoder rather than cross-attention [6]. This restricts the attention on localized features centered around the predicted segments [6]. Second is using "multi-scale high-resolution features", as well as optimization improvements and calculating mask loss on randomly sampled points to save training memory [6].
+While MaskFormer is a universal architecture for semantic, instance, and panoptic segmentation, it is expensive to train and does not outperform specialized segmentation models [[6](#ref6)]. Masked-attention Mask Transformer, or Mask2Former, is a universal segmentation method that outperforms specialized architectures, and is simpler to train on each task. Mask2Former is similar to MaskFormer, but with several improvements. The first is using masked attention in the Transformer decoder rather than cross-attention [[6](#ref6)]. This restricts the attention on localized features centered around the predicted segments [[6](#ref6)]. Second is using "multi-scale high-resolution features", as well as optimization improvements and calculating mask loss on randomly sampled points to save training memory [[6](#ref6)].
 
 #### Mask2Former Architecture
 
@@ -285,27 +298,27 @@ The first of these changes is using masked attention rather than cross attention
 ![Cross Attention]({{ '/assets/images/team-11/cross_attention.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
 *Fig \#. Cross Attention Formula* [6]
 
-l is the layer index, **X**~l~ denotes N C dimensional query features in the lth layer [6]. **X**~0~ are the input query features to the Transformer decoder [6]. **Q**~l~ is *f~Q~*(**X**~l~), where *f~Q~* is a linear transformation and **K**~l~ and **V**~l~ are the image features under transformations *f~K~* and *f~V~*. [6]
+Masked attention modifies regular attention by adding an attention mask to the formula.  
 
-Masked attention alters this slightly by adding a modulation factor to the softmax.
+![Mask Attention]({{'/assets/images/team-11/masked_attention.png'|relative_url}}){: style="width: 400px; max-width: 100%;"}
+*Fig \#. *Mask Attention Formula* [[6](#ref6)]
 
-![Mask Attention]({{ '/assets/images/team-11/masked_attention.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
-*Fig \#. Mask Attention Formula* [6]
+![Mask Attention Modulator]({{'/assets/images/team-11/masked_attention_modulator.png'|relative_url}}): style="width: 400px; max-width: 100%;"}
+*Fig \#. *Attention Mask at Feature (x,y)* [[6](#ref6)]
 
-![Mask Attention Modulator]({{ '/assets/images/team-11/masked_attention_modulator.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
-*Fig \#. Attention Mask at Feature (x,y)* [6]
+**X**<sub>*l-1*</sub> represents a residual connection.
 
-**M**~l-1~ is the mask prediction of the previous layer, converted to binary data with threshold 0.5. This is also resized to the same dimension as **K**~l~.
+**M**<sub>*l-1*</sub> is the mask prediction of the previous layer, converted to binary data with threshold 0.5. This is also resized to the same dimension as **K**<sub>*l*</sub>. 
 
 ##### High-resolution Features
 
-Higher-resolution features boost model performance, especially for small objects, but also increase computation cost [6]. To gain the benefit of higher resolution images while also limiting computation cost increases, Mask2Former uses a feature pyramid of both high and low resolution features produced by the pixel decoder with resolutions 1/32, 1/16, and 1/8 of the original image [6]. Each of these different feature resolutions are fed to one layer of the Transformer decoder, as can be seen in the Mask2Former architecture image. This is repeated L times in the decoder, for a total of 3L layers in the Transformer decoder [6].
+Higher-resolution features boost model performance, especially for small objects, but also increase computation cost [[6](#ref6)]. To gain the benefit of higher resolution images while also limiting computation cost increases, Mask2Former uses a feature pyramid of both high and low resolution features produced by the pixel decoder with resolutions 1/32, 1/16, and 1/8 of the original image [[6](#ref6)]. Each of these different feature resolutions are fed to one layer of the Transformer decoder, as can be seen in the Mask2Former architecture image. This is repeated L times in the decoder, for a total of 3L layers in the Transformer decoder [[6](#ref6)].
 
 ##### Optimization Improvements
 
-Mask2Former makes three changes to the standard Transformer decoder design [6]. The first is that Mask2Former changes the order of the self-attention and cross-attention layers (mask-attention layer), starting with the mask-attention layer rather than the self-attention layer [6]. Next the query features (**X**~0~) are made learnable, which are supervised before being used to compute masks (**M**~0~) [6]. Lastly dropout is removed, as it was not found to help performance [6].
+Mask2Former makes three changes to the standard Transformer decoder design [[6](#ref6)]. The first is that Mask2Former changes the order of the self-attention and cross-attention layers (mask-attention layer), starting with the mask-attention layer rather than the self-attention layer [[6](#ref6)]. Next the query features (**X**<sub>*0*</sub>) are made learnable, which are supervised before being used to compute masks (**M**<sub>*0*</sub>) [[6](#ref6)]. Lastly dropout is removed, as it was not found to help performance [[6](#ref6)].
 
-Finally to improve training efficienty, Mask2Former calculates the mask loss with samples of points rather than the whole image [6]. In matching loss, a set of K points is uniformly sampled for all the ground truth and prediction masks [6]. In the final loss, different sets of K points are sampled with importance sampling for each pair of predictions and ground truth [6]. This sampled loss calculation reduces required memory during training by 3x [6].
+Finally to improve training efficienty, Mask2Former calculates the mask loss with samples of points rather than the whole image [[6](#ref6)]. In matching loss, a set of K points is uniformly sampled for all the ground truth and prediction masks [[6](#ref6)]. In the final loss, different sets of K points are sampled with importance sampling for each pair of predictions and ground truth [[6](#ref6)]. This sampled loss calculation reduces required memory during training by 3x [[6](#ref6)].
 
 ### Setup
 
@@ -376,6 +389,8 @@ Andrew Fantino and Nicholas Oosthuizen will explore the topic of panoptic segmen
 <a name="ref6"></a>
 [6] [Mask2Former Paper](https://arxiv.org/pdf/2112.01527.pdf)
 
+<a name="ref7"></a>
+[7] [Transformer Decoder paper](https://arxiv.org/pdf/1706.03762.pdf)
 
 <!-- ## Main Content
 
