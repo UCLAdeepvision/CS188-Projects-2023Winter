@@ -19,7 +19,7 @@ date: 2022-01-29
 Deepfakes, or artificial intelligence-generated videos that depict real people doing and saying things they never did, have become a growing concern in recent years. These artificially generated content can be used to spread misinformation, manipulate public opinion, and even harm individuals. Therefore, the ability to detect deepfakes is crucial to ensure the integrity of information and protect people from potential harm.
 
 
-[Deepfake Example]({{ '/assets/images/team24/0_PkkopzfY1cFCuK0u.gif' | relative_url }})
+![Deepfake Example]({{ '/assets/images/team24/0_PkkopzfY1cFCuK0u.gif' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 _Fig 1. Deepfake Example - Can be used for nefarious intent _ [1].
 
