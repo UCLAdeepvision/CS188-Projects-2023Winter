@@ -19,6 +19,7 @@ Mushrooms are a specific form of fungus that have had their image rise in popula
 ### The Dataset - Nathan
 Pictures of mushroom
 
+pics of each augmentation would be nice
 ## Data Engineering - Drake
 
 Mushrooms are generally not found completely isolated on a slate rock, posed for the perfect picture with an even background. They are amidst damp soil, rotting leaves, and all kinds of other foliage. Because of this, we will need to work with our data such that our model can detect where the mushroom is by focusing solely on the shape of the mushroom. Then, we can continue with the mushroom's many various colors and orientations to simply generate more data and not overfit to certain viewpoints. Our biggest challenge is the diversity of ourdataset: we have 89760 images split unevenly amongst 1394 categories. In order to overcome our dataset diversity and small sample size per category, we will attempt to increase our dataset with two augmentation transforms that will aim to make the model focus on shape and simply generate more data through various positional changes. Additionally, because our dataset has so few images for some labels, these augmentations will also help regularize some of the learning to not overfit our limited dataset.
