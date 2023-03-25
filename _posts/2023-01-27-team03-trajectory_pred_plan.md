@@ -56,8 +56,9 @@ Consider moving cars as agents, the multimodal data are:
 
 ### 2. Architecture Glimpse
 
-![image info](../assets/images/team03/multipath++_overall.png)
-![image info](/CS188-Projects-2023Winter/assets/images/team03/multipath++_overall.png)
+<!-- ![image info](/assets/images/team03/multipath++_overall.png) -->
+![fig1]({{ '/assets/images/team03/multipath++_overall.png' | relative_url }})
+
 Here is the architecture for Multipath++. Here, we want to explain the work flow and terms and the important designs will be introduced later. In the *Encoder* part, we can see that it uses multiple encoders to transformer and allows interactions in-between. For the *Predictor* part, we can see it uses Multi-Context Gating (MCG) predictor and regression and classification heads that work similar to a transformer.
 
 Finally, the learned anchor embeddings represents a target point or check point in the middle-way in the *latent* space. This inherently helps with long-frame prediction.
@@ -65,13 +66,45 @@ Finally, the learned anchor embeddings represents a target point or check point 
 
 ### 3. Context Gating (CG)
 CG is one of the key innovation of Multipath++. It works like an attention block and empirically enables communication between different road objects. First, let's look at a CG block:
-![image info](../assets/images/team03/single_cg.png)
+
+<!-- ![image info](/assets/images/team03/single_cg.png) -->
+![fig1]({{ '/assets/images/team03/single_cg.png' | relative_url }})
+
 The inputs of a CG block include **both** n states and m contexts. A CG block passes input states and context information respectively through MLP. Eventually, it aggregates the element-wise multiplication through mean or max pooling.
 In comparison to Cross-Attention on the left, CG is computationally cheaper by summarizing the two kinds of inputs first, then aggregating the summarized value.
 
+```python
+class CGBlock(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self._config = config
+        self.s_mlp = MLP(config["mlp"])
+        self.c_mlp = nn.Identity() if config["identity_c_mlp"] else MLP(config["mlp"])
+        self.n_in = self.s_mlp.n_in
+        self.n_out = self.s_mlp.n_out
+```
+
 ### 4. Multi-Context Gating (MCG)
-![image info](../assets/images/team03/multi_cg.png)
+
+<!-- ![image info](/assets/images/team03/multi_cg.png) -->
+![fig1]({{ '/assets/images/team03/multi_cg.png' | relative_url }})
+
 As a single CG Block is comparable to attention, the MCG blocks are comparable to transformer, which simply involves *many* stacked CG Blocks. However, MCG keeps the **running mean** or residual network information.
+
+```python
+class MCGBlock(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self._config = config
+        self._blocks = []
+        for i in range(config["n_blocks"]):
+            current_block_config = config["block"].copy()
+            current_block_config["agg_mode"] = config["agg_mode"]
+            self._blocks.append(CGBlock(current_block_config))
+        self._blocks = nn.ModuleList(self._blocks)
+        self.n_in = self._blocks[0].n_in
+        self.n_out = self._blocks[-1].n_out
+```
 
 ### 5. Encoders
 We introduce the encoders network architectures:
@@ -82,7 +115,7 @@ We introduce the encoders network architectures:
 2. Agent Interaction Encoder uses the exactly same architecture as the History Encoder with different specifications. More importantly, the input data are the interaction embedding instead of single-agent representation.
 3. Roadgraph Encoder consists only of MCG Blocks. The input features are line segments, which has features such as starting point, ending point, and road type (crosswalk, yellowline, etc.)
 <p align="center">
-<img src="../assets/images/team03/lstm.png"  width="300" height="200">
+<img src="/assets/images/team03/lstm.png"  width="300" height="200">
 </p>
 
 
@@ -91,27 +124,41 @@ A decoder unit is primarily MCG Blocks. To make final prediction, the embeddings
 
 Finally, a Expectation Maximization (EM) algorithm with Gaussian Mixure Model (GMM) prior is trained on the distribution parameters including mean, covariance matrix, and probability. Alternatively, the final layer may employ Multi-Head Attention for the same predictions.
 
-![image info](../assets/images/team03/gmm.png)
+<!-- ![image info](/assets/images/team03/gmm.png) -->
+![fig1]({{ '/assets/images/team03/gmm.png' | relative_url }})
 
-Notice the GMM naturally has multiple local nodes. Therefore, it is similar to how there multiple possible future paths in reality.
+Notice the GMM naturally has multiple local nodes. Therefore, it is similar to how a vehicle can follow any one of possible paths in reality.
 
-The picture below illustrate Multipath++'s predictions for different WOMD scenes(ablation study). Note that hue indicates time horizon while
-transparency indicates predicted probability.
+The picture below illustrate Multipath++'s predictions for different WOMD scenes(ablation study). Note that hue indicates time horizon while transparency indicates predicted probability.
 
-![image info](../assets/images/team03/ablation_on_waymo.png)
+<!-- ![image info](/assets/images/team03/ablation_on_waymo.png) -->
+![fig1]({{ '/assets/images/team03/ablation_on_waymo.png' | relative_url }})
 
 ### 7. Anchor Training
 
-### 8. Bootstrap Aggregation
+One improvement of Multipath++ from Multipath is leveraging latent anchor embedding in the predictor. In specific, Multipath++ doesn't follow the 2-phase training procedure and learns the anchor embedding together with the model.
 
-### 9. Community Implementation of Multipath++
+The anchors are initialized following a standard deviation and learned using back-propagation.
+
+```python
+# size is embedding dim
+self._learned_anchor_embeddings = torch.empty(
+            (1, config["n_trajectories"], config["size"]))
+stdv = 1. / math.sqrt(config["size"])
+self._learned_anchor_embeddings.uniform_(-stdv, stdv)
+self._learned_anchor_embeddings.requires_grad_(True)
+self._learned_anchor_embeddings = nn.Parameter(self._learned_anchor_embeddings)
+```
+
+### 8. Community Implementation of Multipath++
 Since Multipath++ doesn't have an official repository, we refer to [this community implementation](https://github.com/stepankonev/waymo-motion-prediction-challenge-2022-multipath-plus-plus). We here discuss the two differences between the [community version](https://arxiv.org/abs/2206.10041) and the [original Multipath++](https://arxiv.org/abs/2111.14973).
 
 First, the community version chooses to use Multi-Head Attention (MHA) instead of GMM to make predictions numerically stabler. In specific, the author uses 6 decoder outputs as attention input followed by Max Pooling and MCG Blocks as shown in the following image.
 
 Second, unlike the original version that encode autonomous vehicles separately, the community version uses the same encoder all vehicles.
 
-![image info](../assets/images/team03/new_predictor.png)
+<!-- ![image info](/assets/images/team03/new_predictor.png) -->
+![fig1]({{ '/assets/images/team03/new_predictor.png' | relative_url }})
 
 ## Training Objective and Metrics
 
@@ -129,10 +176,18 @@ There can be many ways to evaluate motion prediction models. However, it is alwa
 Consider time steps from *1* to *T*, *s-hat* being the predicted location, and *s* being the ground-truth. 
 
 In minADE, we calculate the averaged l2-norm displacement for each trajectory, and pick the smallest value.
-![image info](../assets/images/team03/minADE.png)
+
+<!-- <p align="center">
+<img src="/assets/images/team03/minADE.png"  width="400" height="80">
+</p> -->
+![fig1]({{ '/assets/images/team03/minADE.png' | relative_url }})
 
 The minFDE metric, on the other hand, only considers the final step displacement.
-![image info](../assets/images/team03/minFDE.png)
+
+<!-- <p align="center">
+<img src="/assets/images/team03/minFDE.png"  width="400" height="80">
+</p> -->
+![fig1]({{ '/assets/images/team03/minFDE.png' | relative_url }})
 
 #### 2b. Miss Rate
 
@@ -140,7 +195,8 @@ Often times, vechicles don't have to stay *that* close to the ground-truth traje
 
 On Waymo official website, this metric considers both orientational and positional predictions, while the threshold depends on both time and initial speed of vehicle, as shown below.
 
-![image info](../assets/images/team03/miss_rate.png)
+<!-- ![image info](/assets/images/team03/miss_rate.png) -->
+![fig1]({{ '/assets/images/team03/miss_rate.png' | relative_url }})
 
 ## MPT: Our Innovation
 
@@ -150,6 +206,34 @@ In this work, we will replace the LSTM blocks used in **Agent History Encoder** 
 We will compare the aforementioned training objectives between the original Multipath++ model and our Transformer-Multipath++. Specifically, we will compare the convergence rate and training cost(times, and monetary cost since we are using paid computation platform) between the two versions.
 
 ### 2. Result and Visualization Comparison
+
+In this section, we compare model results on 3 metrics in 3 masking configurations (0.05, 0.15, and 0.5). All metrics are lower the better. We compare between two models. MPT is our model that uses Multi-Head Attention inside Multipath++, while LSTM stands for the original Multipath++ baseline.
+
+We train both models using the same data and configurations for 10 epochs and report result in the last epoch. Due to time and computation resource constraint, we only use 10% of total available data.
+
+#### 2.1 minADE
+
+| Mask | MPT (ours) | LSTM |
+| :--: | :--------: | :--: |
+| 0.05 | 4.030 | |
+| 0.15 | 4.089 | |
+| 0.5  | 4.382 | |
+
+#### 2.2 minFDE
+
+| Mask | MPT (ours) | LSTM |
+| :--: | :--------: | :--: |
+| 0.05 | 10.777 | |
+| 0.15 | 10.559 | |
+| 0.5  | 11.147 | |
+
+#### 2.3 Miss Rate
+
+| Mask | MPT (ours) | LSTM |
+| :--: | :--------: | :--: |
+| 0.05 | 0.309 | |
+| 0.15 | 0.355 | |
+| 0.5  | 0.345 | |
 
 ## Reference
 
