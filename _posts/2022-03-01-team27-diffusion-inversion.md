@@ -146,6 +146,7 @@ We train DDIMs on several datasets, including
 - [CelebA](https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html): *Large-scale CelebFaces Attributes Dataset*,
 - [LSUN Churches](https://www.yf.io/p/lsun): *Construction of a Large-scale Image Dataset using Deep Learning with Humans in the Loop*, `church_outdoor` class,
 - [Flowers102](https://www.robots.ox.ac.uk/~vgg/data/flowers/102/): *102 Category Flower Dataset*,
+- [Anime Faces](https://www.kaggle.com/datasets/splcher/animefacedataset): A *Kaggle* dataset of anime faces,
 - [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html): A labeled subset of the 80 million tiny images dataset, and
 - Miniplaces: Provided by Professor Bolei Zhou for his COM SCI 188 course (Winter 2023), a subset of [Places365](http://places2.csail.mit.edu/).
 
@@ -638,8 +639,24 @@ def gradient_inversion(z=None, target=None, diffusion=None, lr=0.01, num_i=100, 
         <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_sample.webm" /> </video>
     </div>
 </div>
+<div>
+    <div class="column-half">
+        <img src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_sample.png" width="100%" />
+    </div>
+    <div class="column-half">
+        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_sample.webm" /> </video>
+    </div>
+</div>
+<div>
+    <div class="column-half">
+        <img src="/CS188-Projects-2023Winter/assets/images/team27/anime_sample.png" width="100%" />
+    </div>
+    <div class="column-half">
+        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_sample.webm" /> </video>
+    </div>
+</div>
 
-*Figure 2: Sample generated images with DDIM, with the final generated results (left) and evolution of some fixed latent over the training process with EMA parameters (right). The datasets used, from the top to bottom, are CelebA, LSUN Churches, and Flower102.*
+*Figure 2: Sample generated images with DDIM, with the final generated results (left) and evolution of some fixed latent over the training process with EMA parameters (right). We generate the samples with `num_t_step=50`. The datasets used, from the top to bottom, are CelebA, LSUN Churches, Flowers102, Miniplaces, and Anime Faces.*
 
 We train DDIMs on the datasets CelebA, LSUN Churches, Flowers102, and Miniplaces with identical architectures as the output images are all $$64 \times 64$$. Particularly, we set filters of $$[128, 256, 256, 256, 512]$$ with self-attention at the $$16 \times 16$$ resolution (so right after the second $$256$$ layer), with each filter layer consisting of two residual blocks and then a down/upsampling module. We select $$128$$ as the time embedding dimensions. We set a dropout of $$0.1$$. We use $$3 \times 3$$ convolutions for mismatching channel residual skips, and we also use $$3 \times 3$$ convolutions (after interpolation) for down/upsampling. The model is about $$75.3$$ million parameters. We did find significant generation quality improvements of the $$75$$-million model compared to much smaller $$5$$- to $$10$$-million parameter models, especially for LSUN Churches and Miniplaces.
 
@@ -753,6 +770,72 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_inversion_2_2.webm" /> </video>
     </div>
 </div>
+<!--  -->
+<div>
+    <div class="column-twothird">
+        <img src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_1_1.png" width="100%" />
+    </div>
+    <div class="column-third">
+        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_1_1.webm" /> </video>
+    </div>
+</div>
+<div>
+    <div class="column-twothird">
+        <img src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_1_2.png" width="100%" />
+    </div>
+    <div class="column-third">
+        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_1_2.webm" /> </video>
+    </div>
+</div>
+<div>
+    <div class="column-twothird">
+        <img src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_2_1.png" width="100%" />
+    </div>
+    <div class="column-third">
+        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_2_1.webm" /> </video>
+    </div>
+</div>
+<div>
+    <div class="column-twothird">
+        <img src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_2_2.png" width="100%" />
+    </div>
+    <div class="column-third">
+        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_2_2.webm" /> </video>
+    </div>
+</div>
+<!--  -->
+<div>
+    <div class="column-twothird">
+        <img src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_1_1.png" width="100%" />
+    </div>
+    <div class="column-third">
+        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_1_1.webm" /> </video>
+    </div>
+</div>
+<div>
+    <div class="column-twothird">
+        <img src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_1_2.png" width="100%" />
+    </div>
+    <div class="column-third">
+        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_1_2.webm" /> </video>
+    </div>
+</div>
+<div>
+    <div class="column-twothird">
+        <img src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_2_1.png" width="100%" />
+    </div>
+    <div class="column-third">
+        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_2_1.webm" /> </video>
+    </div>
+</div>
+<div>
+    <div class="column-twothird">
+        <img src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_2_2.png" width="100%" />
+    </div>
+    <div class="column-third">
+        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_2_2.webm" /> </video>
+    </div>
+</div>
 
 *Figure 3: Inversion with optimization-based method (using Adam optimizer), with the original image $$\mathbf{x}$$ (left), reconstructed image $$\hat{\mathbf{x}}$$ (middle), and reconstructed image during training. The reconstructed PSNR is generally around $$23 \textrm{dB}$$ to $$29 \textrm{dB}$$*.
 
@@ -783,6 +866,7 @@ Note that the images we test inversion on are all in the validation split of the
         <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/celeba_interpolation_2.webm" /> </video>
     </div>
 </div>
+<!--  -->
 <div>
     <div class="column-twothird">
         <img src="/CS188-Projects-2023Winter/assets/images/team27/church_interpolation_1.png" width="100%" />
@@ -799,6 +883,7 @@ Note that the images we test inversion on are all in the validation split of the
         <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/church_interpolation_2.webm" /> </video>
     </div>
 </div>
+<!--  -->
 <div>
     <div class="column-twothird">
         <img src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_interpolation_1.png" width="100%" />
@@ -815,8 +900,42 @@ Note that the images we test inversion on are all in the validation split of the
         <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_interpolation_2.webm" /> </video>
     </div>
 </div>
+<!--  -->
+<div>
+    <div class="column-twothird">
+        <img src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_interpolation_1.png" width="100%" />
+    </div>
+    <div class="column-third">
+        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_interpolation_1.webm" /> </video>
+    </div>
+</div>
+<div>
+    <div class="column-twothird">
+        <img src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_interpolation_2.png" width="100%" />
+    </div>
+    <div class="column-third">
+        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_interpolation_2.webm" /> </video>
+    </div>
+</div>
+<!--  -->
+<div>
+    <div class="column-twothird">
+        <img src="/CS188-Projects-2023Winter/assets/images/team27/anime_interpolation_1.png" width="100%" />
+    </div>
+    <div class="column-third">
+        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_interpolation_1.webm" /> </video>
+    </div>
+</div>
+<div>
+    <div class="column-twothird">
+        <img src="/CS188-Projects-2023Winter/assets/images/team27/anime_interpolation_2.png" width="100%" />
+    </div>
+    <div class="column-third">
+        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_interpolation_2.webm" /> </video>
+    </div>
+</div>
 
-*Figure 4: Interpolating between two inverted latent vectors and the generated results, with image at $$\alpha = 0$$, image at $$\alpha = 1$$, and the interpolation animation.*
+*Figure 4: Interpolating between two inverted latent vectors and the generated results, with image at $$\alpha = 0$$, image at $$\alpha = 1$$, and the interpolation animation of intermediate $$\alpha$$ values.*
 
 Suppose we have two images $$\mathbf{x}_1$$ and $$\mathbf{x}_2$$ and their respective inverted latent vector $$\mathbf{z}_1$$ and $$\mathbf{z}_2$$, we can interpolate $$\mathbf{x}_1$$ and $$\mathbf{x}_2$$ in image space by interpolating $$\mathbf{z}_1$$ and $$\mathbf{z}_2$$ in latent space. Particularly, we assume $$\mathbf{z} \sim \mathcal{N}(0, \mathbf{I})$$, linear interpolation does not maintain the magnitude of $$\mathbf{z}$$ (e.g., consider $$\mathbf{z}_1 = -\mathbf{z}_2$$ as an extreme example), so we instead use spherical interpolation inspired by [1]. Particularly, given two latent vectors $$\mathbf{z}_1$$ and $$\mathbf{z}_2$$ and some $$\alpha \in [0, 1]$$, where $$\alpha = 0$$ produces $$\mathbf{z}_1$$ and $$\alpha = 1$$ produces $$\mathbf{z}_2$$, we interpolate with
 
