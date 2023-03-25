@@ -383,6 +383,12 @@ MMDetection pretrained Mask2Former Evaluation Results:
 
 ## Visualizing Activations
 
+In addition to evaluting the model in a traditional sense with the $$PQ$$, $$SQ$$, and $$RQ$$, we also did a qualitative analysis of the pixel decoder output's activations. To easily work with the internal logits we decided to install **HUGGINGFACES**.
+
+```python
+!pip install -q git+https://github.com/huggingface/transformers.git
+```
+
 |![Janns MaskFormer Attention]({{ '/assets/images/team-11/janns_attention_maskformer.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Janns Mask2Former Attention]({{ '/assets/images/team-11/janns_attention_mask2former.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
 |![Cat MaskFormer Attention]({{ '/assets/images/team-11/cat_attention_maskformer.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Cat Mask2Former Attention]({{ '/assets/images/team-11/cat_attention_mask2former.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
 |![Plane MaskFormer Attention]({{ '/assets/images/team-11/plane_attention_maskformer.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Plane Mask2Former Attention]({{ '/assets/images/team-11/plane_attention_mask2former.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
