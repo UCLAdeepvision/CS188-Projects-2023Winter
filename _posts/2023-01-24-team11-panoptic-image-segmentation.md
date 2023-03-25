@@ -7,13 +7,16 @@ date: 2023-02-26
 ---
 
 
-> This block is a brief introduction of your project. You can put your abstract here or any headers you want the readers to know.
+> Panoptic segmentation is a type of image segmentations that unifies instance and semantic segmentation. In this project we compare three different panoptic segmentations models: Panoptic FPN, MaskFormer, and Mask2Former. This includes descriptions of their architectures, and assessments of the models. We evaluated them on the COCO validation dataset with mmdetection, and compared differences in model segmentation and visualized the transformer attentions of MaskFormer and Mask2Former with Detectron2.
 
 <!--more-->
 {: class="table-of-content"}
 
 * TOC
 {:toc}
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/3dd0ranvDwg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+*Spotlight Video*
 
 ## Introduction
 
@@ -34,14 +37,14 @@ Although identifying stuff and things sound like similar problems, the deep lear
 
 ### Semantic Segmentation
 
-Semantic segmentation is a task that indentifies stuff. **Description of how it works**
+Semantic segmentation is a task that indentifies stuff. Semantic Segmentation is not concerned with individual objects, it instead identifies overall classes in an image. Each pixel is assigned a category label, creating blobs of each class.
 
 ![Semantic Cat]({{ '/assets/images/team-11/sem_cat.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
 *Fig 2. Semantic Segmentation on the cat image* [[3](#ref3)].
 
 ### Instance Segmentation
 
-**Description of how it works**
+Instance segmentation identifies things. It first identifies the objects, and then the pixels that belong to those things. This is done by first performing object detection and predicting a segmentation mask for the objects.
 
 ![Instance Cat]({{ '/assets/images/team-11/inst_cat.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
 *Fig 3. Instance Segmentation on the cat image* [[3](#ref3)].
@@ -207,28 +210,14 @@ drive.mount('/content/drive', force_remount=True)
 
 ### Run Test Script
 
-MMDetection pretrained PanopticFPN Evaluation Results:
+MMDetection pretrained PanopticFPN:
 [Implementation Link](https://colab.research.google.com/drive/11MitSydv7qZ_xQkcLO4X2azTuGORjrQf#scrollTo=L-9pCPGHIkdo&uniqifier=2)
 
 ```python
 **Put a code block with the test script here**
 ```
 
-| Panoptic 1x ResNet50 Coco | PQ     | SQ     | RQ     | categories |
-| :--------------- | :---: | :---: | :---: | :---: |
-| All    | 40.248 | 77.785 | 49.312 | 133        |
-| Things | 47.752 | 80.925 | 57.475 | 80         |
-| Stuff  | 28.922 | 73.046 | 36.991 | 53         |
-
-| Panoptic 3x ResNet50 Coco | PQ     | SQ     | RQ     | categories |
-| :--------------- | :---: | :---: | :---: | :---: |
-| All    | 42.457 | 78.118 | 51.705 | 133        |
-| Things | 50.283 | 81.478 | 60.285 | 80         |
-| Stuff  | 30.645 | 73.046 | 38.755 | 53         |
-
-| ![Demo_Image]({{ '/assets/images/team-11/demo.png' | relative_url }}){: style="width: 400px; max-width: 100%;"} |
-
-| ![Panopticfpn_1x_demo_image]({{ '/assets/images/team-11/panfpn_1_demo.png' | relative_url }}){: style="width: 400px; max-width: 100%;"} |  ![Panopticfpn_3x_demo_image]({{ '/assets/images/team-11/panfpn_3_demo.png' | relative_url }}){: style="width: 400px; max-width: 100%;"} |
+| ![Demo_Image]({{ '/assets/images/team-11/demo.png' | relative_url }}){: style="width: 400px; max-width: 100%;"} | ![Panopticfpn_1x_demo_image]({{ '/assets/images/team-11/panfpn_1_demo.png' | relative_url }}){: style="width: 400px; max-width: 100%;"} |  ![Panopticfpn_3x_demo_image]({{ '/assets/images/team-11/panfpn_3_demo.png' | relative_url }}){: style="width: 400px; max-width: 100%;"} |
 
 *Fig 8. Example image and output from PanopticFPN. Top: test image, Left: output of PanopticFPN_1x, Right: output of PanopticFPN_3x* [[1](#ref1)].
 
@@ -274,14 +263,8 @@ MaskFormer follows the same setup steps as Panoptic FPN to set up MMDetection.
 
 ### Run Test Script
 
-MMDetection pretrained MaskFormer Evaluation Results:
+MMDetection pretrained MaskFormer:
 [Implementation Link](https://colab.research.google.com/drive/1UEj1DHPcbcxhIFO2ukt9QWSG-S1zVm5z?usp=sharing)
-
-| MaskFormer Resnet | PQ     | SQ     | RQ     | categories |
-| :--------------- | :---: | :---: | :---: | :---: |
-| All    | 46.854 | 80.617 | 57.085 | 133        |
-| Things | 51.089 | 81.511 | 61.853 | 80         |
-| Stuff  | 40.463 | 79.269 | 49.888 | 53         |
 
 ![MaskFormer Demo Image]({{ '/assets/images/team-11/maskformer_demo.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
 *Fig 12. MaskFormer Sample Output*
@@ -349,8 +332,35 @@ Mask2Former follows the same setup steps as Panoptic FPN to set up MMDetection.
 
 ### Run Test Script
 
-MMDetection pretrained Mask2Former Evaluation Results:
+MMDetection pretrained Mask2Former:
 [Implementation Link](https://colab.research.google.com/drive/1P5NI9k6qnYz0G9tsCxZ446dKjvnkWVX4?usp=sharing)
+
+![Mask2Former Demo Image]({{ '/assets/images/team-11/mask2former_demo.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
+*Fig 17. Mask2Former Sample Output*
+
+## Evaluation
+
+Model Evaluation Results
+
+Here are the results from evaluating the models on the Coco validation set with mmdetection.
+
+| Panoptic 1x ResNet50 Coco | PQ     | SQ     | RQ     | categories |
+| :--------------- | :---: | :---: | :---: | :---: |
+| All    | 40.248 | 77.785 | 49.312 | 133        |
+| Things | 47.752 | 80.925 | 57.475 | 80         |
+| Stuff  | 28.922 | 73.046 | 36.991 | 53         |
+
+| Panoptic 3x ResNet50 Coco | PQ     | SQ     | RQ     | categories |
+| :--------------- | :---: | :---: | :---: | :---: |
+| All    | 42.457 | 78.118 | 51.705 | 133        |
+| Things | 50.283 | 81.478 | 60.285 | 80         |
+| Stuff  | 30.645 | 73.046 | 38.755 | 53         |
+
+| MaskFormer Resnet | PQ     | SQ     | RQ     | categories |
+| :--------------- | :---: | :---: | :---: | :---: |
+| All    | 46.854 | 80.617 | 57.085 | 133        |
+| Things | 51.089 | 81.511 | 61.853 | 80         |
+| Stuff  | 40.463 | 79.269 | 49.888 | 53         |
 
 | Mask2Former Resnet50 | PQ     | SQ     | RQ     | categories |
 | :--------------- | :---: | :---: | :---: | :---: |
@@ -358,25 +368,38 @@ MMDetection pretrained Mask2Former Evaluation Results:
 | Things | 57.737 | 84.043 | 68.129 | 80         |
 | Stuff  | 43.003 | 81.604 | 51.722 | 53         |
 
-![Mask2Former Demo Image]({{ '/assets/images/team-11/mask2former_demo.png' | relative_url }}){: style="width: 400px; max-width: 100%;"}
-*Fig 17. Mask2Former Sample Output*
-
-## Evaluation
+Across the evaluations, the Panoptic FPN model had the lowest Panoptic Quality score with a score of 40.248 and 42.457 on the All category. MaskFormer had a score of 46.854, and Mask2Former scored 51.089. This was expected as MaskFormer is a later model than Panoptic FPN, and Mask2Former is an improved version of MaskFormer. However, an increase of 9.408 between the larger Panoptic FPN and Mask2Former still shows significant improvement from Panoptic FPN to Mask2Former. 
 
 |![Plane Raw Image]({{ '/assets/images/team-11/plane.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Bruinwalk Raw Image]({{ '/assets/images/team-11/bruinwalk.png'| relative_url }}){: style="width: 400px; max-width: 100%;"}|
-*Fig 18. Plane Image and BruinWalk Image*
+
+*Fig \18. Plane Image from COCO and Janns Image*
+
+For testing the outputs of the models we used these two images. The plane is from the COCO validation set [[8](#ref8)] while the image of Janns we took ourselves. 
+
+[Model Segmentation Comparisons Impementation Link](https://colab.research.google.com/drive/1xwjR1QjyRr-tPYgLZw536z0bpzhCjOdR?usp=sharing)
 
 |![Plane Panoptic FPN]({{ '/assets/images/team-11/plane_pfpn.png' | relative_url}}){: style="width: 300px; max-width: 100%;"} | ![Plane MaskFormer]({{ '/assets/images/team-11/plane_maskformer.png' | relative_url}}){: style="width: 300px; max-width: 100%;"} | ![Plane Mask2Former]({{ '/assets/images/team-11/m2frmr_plane.png' | relative_url}}){: style="width: 300px; max-width: 100%;"}|
 *Fig 19. (Left to Right) Panoptic FPN, MaskFormer, Mask2Former Results on Plane Image*
 
+Looking at the segmentation outputs, Panoptic FPN does not appear to segment the image as well as MaskFormer and Mask2Former. Especially on the tail of the airplane, Panoptic FPN has a squigly border that MaskFormer and Mask2Former don't have. MaskFormer and Mask2Former are more similar, but Mask2Former does appear to have cleaner lines that better follow the lines of the objects. 
+
 | ![Bruinwalk Panoptic FPN]({{ '/assets/images/team-11/bruinwalk_pfpn.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Bruinwalk MaskFormer]({{ '/assets/images/team-11/bruinwalk_maskformer.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Bruinwalk MaskFormer]({{ '/assets/images/team-11/bruinwalk_m2frmr.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
 *Fig 20. Panoptic FPN, MaskFormer and Mask2Former Result on Bruinwalk Image*
+
+The segmentations by the three models are more different than with the plane. Panoptic FPN has classified a patch of the road in the foreground differently than the other 2, and MaskFormer classified the wall as a bench unlike the other two. This image has more detail in it than the plane image, with more objects and smaller details, which could account for these model differences. This is also not a COCO image, and thus could be a bit more removed from the data that the models were trained on. 
+
+We took the outputs of the different models to compare the differences in their segmentations on the two images. We checked the outputs masks and marked where the models classified pixels in the images differently.
 
 |![Plane Diff Panoptic FPN and MaskFormer]({{ '/assets/images/team-11/plane_diff_p_m.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Bruinwalk Diff Panoptic FPN and MaskFormer]({{ '/assets/images/team-11/bruinwalk_diff_p_m.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
 *Fig 21. Panoptic FPN and MaskFormer Output Difference*
 
-|![Plane Diff MaskFormer and Mask2Former]({{ '/assets/images/team-11/plane_diff_m_m2.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Bruinwalk Diff MaskFormer and Mask2Former]({{ '/assets/images/team-11/bruinwalk_diff_pfpn_m2.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
+As mentioned earlier, the models had different classifications around the border of the airplane, especially the tail, which is highlighted by the red difference overlays. We can also see the greater differences between the segmentations on the Janns image by the larger red areas.
+
+|![Plane Diff MaskFormer and Mask2Former]({{ '/assets/images/team-11/plane_diff_pfpn_m2.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Bruinwalk Diff MaskFormer and Mask2Former]({{ '/assets/images/team-11/bruinwalk_diff_pfpn_m2.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
+
 *Fig 22. Panoptic FPN and Mask2Former Output Differnce*
+
+Panoptic FPN and Mask2Former show similar differences as Panoptic FPN and MaskFormer. MaskFormer and Mask2Former had appeared to make more similar segmentations on the image, so it makes sense that Mask2Former would have similar differences with PanopticFPN.
 
 ![Plane Diff MaskFormer and Mask2Former]({{ '/assets/images/team-11/plane_diff_m_m2.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
 *Fig 23. MaskFormer and Mask2Former Output Difference*
@@ -389,14 +412,23 @@ In addition to evaluting the model in a traditional sense with the $$PQ$$, $$SQ$
 !pip install -q git+https://github.com/huggingface/transformers.git
 ```
 
+MaskFormer and Mask2Former made closer segmentations to each other than they did Panoptic FPN, as can be seen by the smaller difference overlay than the previous plane comparison images.
+
 |![Janns MaskFormer Attention]({{ '/assets/images/team-11/janns_attention_maskformer.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Janns Mask2Former Attention]({{ '/assets/images/team-11/janns_attention_mask2former.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
 |![Cat MaskFormer Attention]({{ '/assets/images/team-11/cat_attention_maskformer.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Cat Mask2Former Attention]({{ '/assets/images/team-11/cat_attention_mask2former.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
 |![Plane MaskFormer Attention]({{ '/assets/images/team-11/plane_attention_maskformer.png' | relative_url}}){: style="width: 400px; max-width: 100%;"} | ![Plane Mask2Former Attention]({{ '/assets/images/team-11/plane_attention_mask2former.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}|
 *Fig 24. MaskFormer and Mask2Former Attention*
 
+*Fig \#. MaskFormer and Mask2Former Attention*
+
+
+
+
 ## Summary & Conclusion
 
-Here is where we will put a conclusion.
+Panoptic segmentation models unify instance and semantic segmentation. MaskFormer uses mask classification to perform panoptic segmentation, instead of just instance segmentation. Mask2Former improves upon MaskFormer by changing the attention of the model's Transformer from ordinary cross attention to their own "masked attention" [[6](#ref6)]. 
+
+Assessing the results of the different models, Mask2Former performs the best, both quantatively by the panoptic quality score, as well as qualitatively by assessing the model segmentations on different images.
 
 ## References
 
@@ -420,3 +452,7 @@ Here is where we will put a conclusion.
 
 <a name="ref7"></a>
 [7] [Transformer Decoder paper](https://arxiv.org/pdf/1706.03762.pdf)
+
+<a name="ref8"></a>
+[8] [COCO Dataset](https://arxiv.org/pdf/1405.0312.pdf)
+
