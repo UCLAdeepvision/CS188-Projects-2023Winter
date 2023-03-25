@@ -6,14 +6,12 @@ author: Aristotle Henderson, John Houser
 date: 2023-01-28
 ---
 
-> This post is an investigation and review of pose estimation research and implementation.
+> Pose estimation research has been growing rapidly and recent advances have allowed us to accurately detect the various joints in the human body from just a photo. Convolutional Neural Networks have been the medium for obtaining high performance models and in this post we explore the novel model HRNet. Applications of pose estimation include identifying classes of actions undertaken by individuals, their poses, and animation. 
 
 <!--more-->
 
-{: class="table-of-content"}
 
-- TOC
-    {:toc}
+
 
 ## 1. Introduction and Objective
 
@@ -21,7 +19,7 @@ date: 2023-01-28
 Pose estimation in humans is the process of locating key points in the human body including shoulders, knees, etc. Our project focused on 2D pose estimation which is concerned with identifying these keypoints in pictures of individuals. Specifically, our project was based on a paper that identifies the poses of individuals and not multi-person pose estimation. It has many applications including recognizing humans, their actions, animation, and more. One commonly cited example application is inferring the current action of the target. For example, by analyzing the pose of a human, we can determine if they are walking, running, or displaying another common action. The emergence of deep learning has greatly improved the capabilities of pose estimation. 
 
 ### 1.2 Objective
-In this project we use High-Resolution Net (HRNet) to be able to estimate poses of subjects. We employ the Max Planck Institut Informatik (MPII) dataset in our implementation. This dataset includes pictures of individuals in various scenarios with annotations including keypoints of their pose. This data is crucial for our model's predictions and will be used to evaluate its performance.
+In this project we use High-Resolution Net (HRNet) to be able to estimate poses of subjects. We employ the Max Planck Institut Informatik (MPII) dataset in our implementation. This dataset includes pictures of individuals in various scenarios with annotations including keypoints of their pose. In total, this dataset contains 25K images with 40k subjects. Of these, 12k subjects are reserved for testing and the remaining are for the training set. This data is crucial for our model's predictions and will be used to evaluate its performance.
 
 The objective of this paper is to accurately predict the key points of a pose. We hope that our model is capable of making predictions about the locations of a subject's ankle, wrist, and other noteworthy points. Model performance is measured by comparing our predictions with the annotations provided by the MPII dataset.
 
@@ -111,8 +109,43 @@ Here's the script, given for one of the HRNet models trained on the MPII dataset
 
 ## 4. Proposed Ablations and Improvements
 
-- We plan to train HRNet using a smaller dataset of lower resolution images to determine the impact of the high-resolution module on images where those pipelines won't carry as much data in the first place.
-- We also plan to modify the HRNet model by adding more stages to the high-resolution pipeline.
+- For our ablations, we performed 2 different experiments.
+- One of these experiments was to remove the batch normalization step from the model.
+- For the other one we removed the batch normalization and replaced the activation functions with the identity function.
+
+## 5. Results and Analysis
+
+We have used the discussed HRNet and observed some results from the model described in the paper and from our 2 proposed ablations. Using the same dataset provided in the paper, we were able to perform pose estimation and have averaged our results across all joints on the validation set. In total, we trained the model for 9 epochs for all three experiments due to limitations on hardware. The results for the default model are summarized in the following chart:
+
+![Validation Mean Accuracy vs. Epoch for the default HRnet model ]({{ '/assets/images/HendersonHouser/default_valid_mean.jpg' | relative_url }})
+{: style="width: 600px; max-width: 100%;"}
+*Fig 2. Validation Mean Accuracy vs. Epoch for the default HRNet model*.
+
+This chart does an excellent job highlighting the average performance of our model while training it for 9 epochs. There are several notable takeaways from the graph. For one, our validation mean never regresses, which is to be expected. Secondly, after the fourth epoch, the model's performance begins to improve at a much slower rate. Lastly, by the final epoch, our model reaches a mean average validation accuracy of around 70%. Now that we know how our model performs normally, we can evaluate how well our modifications perform in comparison. Our first ablation was to explore the performance of the model after removing batch normalization from the model's architecture. The results are in the following chart:
+
+![Validation Mean Accuracy vs. Epoch for the model with batch normalization removed]({{ '/assets/images/HendersonHouser/remove_batchnorms_valid_mean.jpg' | relative_url }})
+{: style="width: 600px; max-width: 100%;"}
+*Fig 3. Validation Mean Accuracy vs. Epoch for the model with batch normalization removed*.
+
+This chart reveals several key observations about this experiment. First, the model seems to consistently improve by the same rate at every epoch. Secondly, the model's performance reaches around 70% by the last epoch. However, it is likely that if we were to train the model for additional epochs, our performance would increase. Next, we can look at the last ablation. Our second and final ablation was to observe performance of the model after removing both batch normalization and the activation functions. The results are:
+
+![Validation Mean Accuracy vs. Epoch for the model with both batch normalization and activations removed]({{ '/assets/images/HendersonHouser/remove_activation_and_batchnorm_valid_mean.jpg' | relative_url }})
+{: style="width: 600px; max-width: 100%;"}
+*Fig 4. Validation Mean Accuracy vs. Epoch for the model with both batch normalization and activations removed*.
+
+This graph allows us to gain a better insight into how the model is performing throughout the various epochs. For one, as the epochs progress, it seems that the model performs better at an increasing rate. Secondly, the model reaches a performance of 70% at epoch 9. For better comparison, we can also directly compare these experiments by plotting them on the same chart. This is best seen here:
+
+![Validation Mean Accuracy vs. Epoch across all three experiments]({{ '/assets/images/HendersonHouser/valid_Mean VS epoch all three.jpg' | relative_url }})
+{: style="width: 600px; max-width: 100%;"}
+*Fig 5. Validation Mean Accuracy vs. Epoch across all three experiments*.
+
+There are some interesting explanations that can be derived from this graph. Firstly, all three models actually reach about the same performance of 70% by the final epoch. Secondly, in all three experiments the validation mean never regresses. Lastly, the performance of the different experiments is never more than about ~8% at any individual epoch.
+
+It seems that the ablations did not affect the performance in a significant way. This suggests that the activation functions and batch normalization do not have a notable impact on the performance of the model HRnet. However, it is likely that we did not the train the model for a long enough amount of time in order for the batch normalization and activation functions to have had a major impact on the performance. If we had instead trained the model for more than 30 epochs, we would have likely seen the model's performance degrade significantly as a result of our modifications. 
+
+## 6. Conclusion
+
+In conclusion, we explored the architecture of HRnet in this post and its use in pose estimation. We have shown this model is capable of predicting the location of joints in humans with an impressive accuracy. The architecture of the model relies on several innovative ideas to maintain these results while dealing with high resolution images. Notably, the model takes advantage of the high to low and low to high stages. In addition, we also explored two ablations that were designed to test the architecture choices of the model. Ultimately, we showed that our model's performance was not impacted by these modifications in a meaningful way.
 
 ## References
 
