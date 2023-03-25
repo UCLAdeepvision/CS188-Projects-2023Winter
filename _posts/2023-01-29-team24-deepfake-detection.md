@@ -7,21 +7,14 @@ date: 2022-01-29
 ---
 
 > Detecting synthetic media has been an ongoing concern over the recent years due to the increasing amount of deepfakes on the internet. In this project, we will explore the different methods and algorithms that are used in deepfake detection.
-
-<!--more-->
-
-{: class="table-of-content"}
-
--   TOC
-    {:toc}
     
 ## Introduction: 
 Deepfakes, or artificial intelligence-generated videos that depict real people doing and saying things they never did, have become a growing concern in recent years. These artificially generated content can be used to spread misinformation, manipulate public opinion, and even harm individuals. Therefore, the ability to detect deepfakes is crucial to ensure the integrity of information and protect people from potential harm.
 
 
-![Deepfake Example]({{ '/assets/images/team24/0_PkkopzfY1cFCuK0u.gif' | relative_url }})
-{: style="width: 400px; max-width: 100%;"}
-_Fig 1. Deepfake Example - Can be used for nefarious intent _ [1].
+![SampleDeepfake]({{ '/assets/images/team01/deepfakeSampleImage.jpg' | relative_url }})
+{: style="width: 600px; max-width: 100%;"}
+*Fig 1. Sample deepfake original (left) and deepfake (right)* [1].
 
 
 ## Proposal:
