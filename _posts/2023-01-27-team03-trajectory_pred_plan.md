@@ -11,17 +11,17 @@ date: 2023-03-25
 > In this article, we investigate modern architectures which tackle the trajectory prediction task in autonomous driving. We perform a close-up analysis of Multipath++, a vectorized neural network that approximates the self-attention mechanism using Multi-Context Gating. We improved upon the community implementation of Multipath++(MPA) and observed significant performance gains with our implementation while training with limited samples and epochs. Empirically, our prediction visualization converges faster within a few epochs, outperforming the baseline MPA. 
 
 
+<center>
 
-<!-- <iframe width="738" height="417" src="https://www.youtube.com/embed/JmYcAVcnSIg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-*Video 1. Spotlight Overview*.
-{: style="text-align: center;"}
+<iframe width="560" height="315" src="https://www.youtube.com/embed/6PdJc6_3SGM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
+</center>
 
 
 
 {: class="table-of-content"}
 * TOC
-{:toc} -->
+{:toc}
 
 
 
@@ -62,6 +62,8 @@ In this project, we used 40 out of 1000 training records and 5 out of 150 valida
 ## Demo
 Please follow this [Google Colab link](https://colab.research.google.com/drive/1nj2i8GVPRmxU6w2UsgWABigca4twuh1l?usp=sharing).
 
+Our full source code is available at this [Github Repo](https://github.com/WeizhenWang-1210/MPT/tree/main/code).
+
 ## Multipath++
 
 ### 1. Data Representation
@@ -74,8 +76,8 @@ Consider moving cars as agents, the multimodal data are:
 
 ### 2. Architecture Glimpse
 
-![image info](/assets/images/team03/multipath++_overall.png)
-<!-- ![fig1]({{ '/assets/images/team03/multipath++_overall.png' | relative_url }}) -->
+<!-- ![image info](/assets/images/team03/multipath++_overall.png) -->
+![fig1]({{ '/assets/images/team03/multipath++_overall.png' | relative_url }})
 
 Here is the architecture for Multipath++. In the *Encoder* part, we can see that it uses multiple encoders to transformer and allows interactions in between. For the *Predictor* part, we can see it uses Multi-Context Gating (MCG) predictor and regression and classification heads that work similarly to a transformer.
 
@@ -85,8 +87,8 @@ Finally, the learned anchor embeddings represent a target point or checkpoint in
 ### 3. Context Gating (CG)
 CG is one of the key innovations of Multipath++. It works like an attention block and empirically enables the communication between different road objects. First, let's look at a CG block:
 
-![image info](/assets/images/team03/single_cg.png)
-<!-- ![fig1]({{ '/assets/images/team03/single_cg.png' | relative_url }}) -->
+<!-- ![image info](/assets/images/team03/single_cg.png) -->
+![fig1]({{ '/assets/images/team03/single_cg.png' | relative_url }})
 
 The inputs of a CG block include **both** n states and m contexts. A CG block passes input states and context information through the respective MLPs.  Eventually, it aggregates the element-wise multiplication through mean or max pooling.
 
@@ -105,8 +107,8 @@ class CGBlock(nn.Module):
 
 ### 4. Multi-Context Gating (MCG)
 
-![image info](/assets/images/team03/multi_cg.png)
-<!-- ![fig1]({{ '/assets/images/team03/multi_cg.png' | relative_url }}) -->
+<!-- ![image info](/assets/images/team03/multi_cg.png) -->
+![fig1]({{ '/assets/images/team03/multi_cg.png' | relative_url }})
 
 As a single CG Block is comparable to attention, the MCG blocks are comparable to transformer, which simply involves *many* stacked CG Blocks. However, MCG keeps the **running mean** or residual network information.
 
@@ -133,10 +135,8 @@ We introduce the encoder network architectures:
     * Empirically, two LSTMs might help to capture velocity and accelration.
 2. Agent Interaction Encoder uses exactly the same architecture as the History Encoder with different specifications. More importantly, the input data are the interaction embedding instead of single-agent representation.
 3. Roadgraph Encoder consists only of MCG Blocks. The input features are line segments, including features such as starting point, ending point, and road type (crosswalk, yellowline, etc.)
-<p align="center">
-<img src="/assets/images/team03/lstm.png"  width="300" height="200">
-</p>
-<!-- ![fig1]({{ '/assets/images/team03/lstm.png' | relative_url }}) -->
+
+![fig1]({{ '/assets/images/team03/lstm.png' | relative_url }})
 
 
 ### 6. Predictors
@@ -144,8 +144,8 @@ A decoder unit is primarily MCG Blocks. To make the final predictions, the embed
 
 Finally, an Expectation Maximization (EM) algorithm with Gaussian Mixture Model (GMM) prior is trained on the distribution parameters, including mean, covariance matrix, and probability. Alternatively, the final layer may employ Multi-Head Attention for the same predictions.
 
-![image info](/assets/images/team03/gmm.png)
-<!-- ![fig1]({{ '/assets/images/team03/gmm.png' | relative_url }}) -->
+<!-- ![image info](/assets/images/team03/gmm.png) -->
+![fig1]({{ '/assets/images/team03/gmm.png' | relative_url }})
 
 Notice the GMM naturally has multiple local nodes. Therefore, it is similar to how a vehicle can follow any one of the possible paths in reality.
 
@@ -177,8 +177,8 @@ First, the community version chooses to use Multi-Head Attention (MHA) instead o
 
 Second, unlike the original version that encodes autonomous vehicles separately, the community version uses the same encoder for all vehicles.
 
-![image info](/assets/images/team03/new_predictor.png)
-<!-- ![fig1]({{ '/assets/images/team03/new_predictor.png' | relative_url }}) -->
+<!-- ![image info](/assets/images/team03/new_predictor.png) -->
+![fig1]({{ '/assets/images/team03/new_predictor.png' | relative_url }})
 
 ## Training Objective and Metrics
 
@@ -197,17 +197,17 @@ Consider time steps from *1* to *T*, *s-hat* being the predicted location and *s
 
 In minADE, we calculate the averaged l2-norm displacement for each trajectory and pick the smallest value.
 
-<p align="center">
+<!-- <p align="center">
 <img src="/assets/images/team03/minADE.png"  width="400" height="80">
-</p>
-<!-- ![fig1]({{ '/assets/images/team03/minADE.png' | relative_url }}) -->
+</p> -->
+![fig1]({{ '/assets/images/team03/minADE.png' | relative_url }})
 
 The minFDE metric, on the other hand, only considers the final step displacement.
 
-<p align="center">
+<!-- <p align="center">
 <img src="/assets/images/team03/minFDE.png"  width="400" height="80">
-</p>
-<!-- ![fig1]({{ '/assets/images/team03/minFDE.png' | relative_url }}) -->
+</p> -->
+![fig1]({{ '/assets/images/team03/minFDE.png' | relative_url }})
 
 #### 2b. Miss Rate
 
@@ -215,8 +215,8 @@ Oftentimes, vehicles don't have to stay that close to the ground-truth trajector
 
 On Waymo's official website, this metric considers both orientational and positional predictions. At the same time, the threshold depends on both the time and initial vehicle speed, as shown below.
 
-![image info](/assets/images/team03/miss_rate.png)
-<!-- ![fig1]({{ '/assets/images/team03/miss_rate.png' | relative_url }}) -->
+<!-- ![image info](/assets/images/team03/miss_rate.png) -->
+![fig1]({{ '/assets/images/team03/miss_rate.png' | relative_url }})
 
 ## MPT: Our Innovation
 
@@ -273,13 +273,13 @@ We visualize one scene to provide an empirical comparison between MPT and LSTM. 
 
 <center> Multipath++ w. LSTM - Baseline </center>
 
-![image info](/assets/images/team03/lstm_visuals/batch=0/lstm_all.png)
-<!-- ![fig1]({{ '/assets/images/team03/lstm_visuals/batch=0/lstm_all.png' | relative_url }}) -->
+<!-- ![image info](/assets/images/team03/lstm_visuals/batch=0/lstm_all.png) -->
+![fig1]({{ '/assets/images/team03/lstm_visuals/batch=0/lstm_all.png' | relative_url }})
 
 <center> Multipath++ w. LSTM - Baseline </center>
 
-![image info](/assets/images/team03/trm_visuals/batch=0/trm_all.png)
-<!-- ![fig1]({{ '/assets/images/team03/trm_visuals/batch=0/trm_all.png' | relative_url }}) -->
+<!-- ![image info](/assets/images/team03/trm_visuals/batch=0/trm_all.png) -->
+![fig1]({{ '/assets/images/team03/trm_visuals/batch=0/trm_all.png' | relative_url }})
 
 
 ### 5. Analysis
