@@ -114,9 +114,10 @@ We introduce the encoders network architectures:
     * Empirically, two LSTM might help to capture velocity *and* accelration.
 2. Agent Interaction Encoder uses the exactly same architecture as the History Encoder with different specifications. More importantly, the input data are the interaction embedding instead of single-agent representation.
 3. Roadgraph Encoder consists only of MCG Blocks. The input features are line segments, which has features such as starting point, ending point, and road type (crosswalk, yellowline, etc.)
-<p align="center">
+<!-- <p align="center">
 <img src="/assets/images/team03/lstm.png"  width="300" height="200">
-</p>
+</p> -->
+![fig1]({{ '/assets/images/team03/lstm.png' | relative_url }})
 
 
 ### 6. Predictors
@@ -213,27 +214,51 @@ We train both models using the same data and configurations for 10 epochs and re
 
 #### 2.1 minADE
 
+MPT does better in all settings than the LSTM baseline in minADE.
+
 | Mask | MPT (ours) | LSTM |
 | :--: | :--------: | :--: |
-| 0.05 | 4.030 | |
-| 0.15 | 4.089 | |
-| 0.5  | 4.382 | |
+| 0.05 | 4.030 | 4.181 |
+| 0.15 | 4.089 | 4.776 |
+| 0.5  | 4.382 | 5.066 |
 
 #### 2.2 minFDE
 
+MPT does better in all settings than the LSTM baseline in minFde.
+
 | Mask | MPT (ours) | LSTM |
 | :--: | :--------: | :--: |
-| 0.05 | 10.777 | |
-| 0.15 | 10.559 | |
-| 0.5  | 11.147 | |
+| 0.05 | 10.777 | 11.343 |
+| 0.15 | 10.559 | 12.994 |
+| 0.5  | 11.147 | 13.656 |
 
 #### 2.3 Miss Rate
 
+MPT does better in settings when mask equals 0.05 while LSTM is better in the other two settings. 
+
 | Mask | MPT (ours) | LSTM |
 | :--: | :--------: | :--: |
-| 0.05 | 0.309 | |
-| 0.15 | 0.355 | |
-| 0.5  | 0.345 | |
+| 0.05 | 0.309 | 0.316 |
+| 0.15 | 0.355 | 0.313 |
+| 0.5  | 0.345 | 0.275 |
+
+#### 2.4 Scene Visualization
+
+We visualize one scene to provide empirical comparison between MPT and LSTM. We fix mask as 0.15 and compare the learning process between two models.
+
+<center> Multipath++ w. LSTM - Baseline </center>
+
+<!-- ![image info](/assets/images/team03/lstm_visuals/batch=0/lstm_all.png) -->
+![fig1]({{ '/assets/images/team03/lstm_visuals/batch=0/lstm_all.png' | relative_url }})
+
+<center> Multipath++ w. LSTM - Baseline </center>
+
+<!-- ![image info](/assets/images/team03/trm_visuals/batch=0/trm_all.png) -->
+![fig1]({{ '/assets/images/team03/trm_visuals/batch=0/trm_all.png' | relative_url }})
+
+
+
+### 3. Conclusion
 
 ## Reference
 
