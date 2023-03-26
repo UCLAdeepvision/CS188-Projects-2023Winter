@@ -49,12 +49,12 @@ Othe notable deepfake detection models include EfficientNet B1 LTSM and Xception
 ## Training
 ResNetLSTM is pretrained on ImageNet, while Mesonet is pretrained on Mesonet. Both models apply transfer learning for deepfake detection. They are finetuned on CelebDF with the following procedure, settings, and results:
 
-#### Setup
+### Setup
 1. Clone our repository into your environment: https://github.com/jchangz01/CS188-Project-Deepfake-Detection
 2. Download `Celeb-DF`(v1) from https://github.com/yuezunli/celeb-deepfakeforensics (NOTE: It is quite large ~2GB)
 3. Place `Celeb-DF` directory into `[yourpath]/CS188-Project-Deepfake-Detection/data`
 
-#### Training
+### Training
 The following code block shows how we train our models to the CelebDF dataset (exammple is ResNetLSTM specific):
 ```
 import train 
@@ -79,7 +79,7 @@ model, average_auc, average_ap, average_acc, average_loss = train.train(dataset=
                                                                         )
 ```
                                                                                 
-#### Hyperparameters and Train Results
+### Hyperparameters and Train Results
 We used the following hyperparameters and settings to train our models:
 - ResNetLSTM: image_size = 224, normalization = 'imagenet', folds = 5 (20 val/80 train split) , epochs = 30, batch_size = 4, lr = 0.0001, optimizer: Adam
 - Mesonet: image_size = 256, normalization = 'xception', folds = 5 (20 val/80 train split) , epochs = 20, batch_size = 32, lr = 0.0001, optimizer: Adam
