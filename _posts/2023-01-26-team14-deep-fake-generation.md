@@ -522,7 +522,7 @@ Here are the results from running the trained model with different learning rate
 
 Running the model on different images with the best model, the one listed in Fig 17 results in the following:
 ![Results 5](/assets/images/team14/vid5.gif)
-* Fig 21 Chosen Model 
+* Fig 21. Chosen Model 
 
 #### Dicsussion
 As we can see from the results, this model heavily relies on images being cropped similarly to the data used to train the model. For example, we can see that the image with the guy in the blue shirt is not generated correctly in some instances. We can specifically see this in the eyebrows and neck area. However, when we look at all three women, who were in the train dataset, their generations look perfect. 
@@ -535,7 +535,11 @@ The model with lr-1e-4, fixed lr = 1e-6, alhpa=0, beta = .99, and weightDecay = 
 
 There are multiple reasons why StyleGAN v2 is superior to other deep fake image generation models. Because the style code is separately generated per domain and style encoder, the generator can only focus on using the style code, whose information from the domain can be found using the mapping network. Additionally, the model is able to render many distinctive styles, such as bangs, beard, makeup, and hairstyle. In other models, only the color distribution of reference images are matched. StyleGAN v2 also produces high quality images across all domains, while other models do not. Because other models are trained for each pair of domains, the output quality will differ across the different domains.
 
-This model is superior to StyleGAN because the style space is produced by learned transformations in v2, providing it more flexibility. 
+Some of the biggest changes to StyleGAN v2 include weight demodulation, lazy regularization, path length regularization, progressive growth, and large networks. These changes resulted in StyleGAN v2 being superior to StyleGAN. For example, the style space is produced by learned transformations in v2, providing it more flexibility. This resulted in better generated images that could be mistaken for real images. StyleGAN also has blob-life artifacts in the generated image, making it harder for a person to beleive it was not generated. This stems from using instance normalization in AdaIN, which was targeted for style transfer to replace the style in one image with one in the other.  This issue is not apparent in StyleGAN v2 and seen in the generated result images. 
+
+I beleive the factor that had the biggest impact on the results being better than StyleGAN was the weight demodulation. It removed how the constant was processed at the beginning of training, made it so that the mean was not needed when normalizing the different features, and moved the noise module outside the style module. Because of these changes, the blob-like features were not apparent in the StyleGAN v2 generated images. And as stated previously, this was the biggest issue with StyleGAN. Because this issue was resolved, we see much better imges in StyleGANv2 that would have a greater likelihood of passing for a real image.
+
+I think having a StyleEncoder also made a big difference compared to other image generation techniques. It allowed the style to be translated pretty well in most of the images. 
 
 
 ## Demo <a name="demo"></a>
@@ -566,6 +570,8 @@ https://github.com/deepfakes/faceswap
 
 [9] Cretin, Nathanael. “[Part 1/2] Using Distributed Learning for Deepfake Detection.” Labelia (Ex Substra Foundation), Labelia (Ex Substra Foundation), 8 Oct. 2021, https://www.labelia.org/en/blog/deepfake1. 
 
-[10] Jing, Jingles (Hong. “Realistic Deepfakes in 5 Minutes on Colab.” Medium, Towards Data Science, 27 Nov. 2020, https://towardsdatascience.com/realistic-deepfakes-colab-e13ef7b2bba7. 
+[10] Jingles (Jing, Hong). “Realistic Deepfakes in 5 Minutes on Colab.” Medium, Towards Data Science, 27 Nov. 2020, https://towardsdatascience.com/realistic-deepfakes-colab-e13ef7b2bba7. 
 
 [11] Mach, Joey. “Deepfakes: The Ugly, and the Good.” Medium, Towards Data Science, 2 Dec. 2019, https://towardsdatascience.com/deepfakes-the-ugly-and-the-good-49115643d8dd. 
+
+[12] Hui, Jonathan. “Gan - Stylegan & stylegan2.” Medium, Medium, 10 Mar. 2020, https://jonathan-hui.medium.com/gan-stylegan-stylegan2-479bdf256299. 
