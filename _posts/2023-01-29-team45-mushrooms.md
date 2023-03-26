@@ -134,8 +134,9 @@ In theory, deeper nets would result in better performance, but deep learning net
 ResNet, when trained on our entire augmented dataset with SGD, a learning rate of 0.01, and a momentum of 0.9, trained far faster than our other models. Consequently, we were able to train it for more epochs given our resources. 
 
 ## Results
-
-
+![Val-Accuracy-per-Epoch]({{ '/assets/images/team45/validation-accuracy-per-epoch.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
+*Fig 9. Validation Accuracy per Epoch for VGG16 and Resnet50*
 ## Conclusion 
 
 ### Code Repositories
