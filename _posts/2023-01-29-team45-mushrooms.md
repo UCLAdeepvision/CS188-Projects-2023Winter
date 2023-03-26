@@ -32,14 +32,14 @@ date: 2023-01-29 01:09:00
 - [Code Repositories](#code-repositories)
 - [References](#references)
 
-## Introduction - Nathan
+## Introduction
 
 Code: https://colab.research.google.com/drive/1Mi0htyUSBqYYqXBgzx5SXVqvke1CHy2z?usp=sharing
-Vide: 
+Vide0: https://youtu.be/Xq15gpnjjNw 
 
 Mushrooms are a specific form of fungus that have had their image rise in popular culture as a hip symbol for peace, health, and for their occasional hallucinogenic properties. This has caused a rise in mushroom foraging, a practice of going out into swampy or recently rained on areas to gather mushrooms, as well as commercial mushroom farming where fungal environments are created to grow certain mushrooms for eating. In both of these cases, it is common for multiple types of mushrooms to appear given how easily dispersable fungal spores can be. This can be dangerous as certain mushrooms can appear similar to the untrained eye but can be very poisonous if misclassified. Our goal as mushroom fans ourselves is to develop a model that can help classify mushrooms so that we can continue foraging safely, without having to learn textbooks worth of knowledge to avoid being poisoned. 
 
-### The Dataset - Nathan
+### The Dataset
 ![Poisonous-Mushroom]({{ '/assets/images/team45/mushroom1.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 *Fig 1. Poisonous-Mushroom: Species Amanita Phalloides* [0].
@@ -103,11 +103,11 @@ The Color Jitter augmentation is the last of this series of transforms. Color Ji
 ## The Models
 Deep learning has become one of the most popular tools for computer vision and machine learning ever since our computation power increased to the level required to take in the massive amounts of data these models require. Deep Learning models are in a sense exactly how they sound. They are neural networks with many many layers to capture different aspects of data features using backpropogation and series of linear and non-linear transformations to update the learning parameters. We are using several baseline pretrained models with altered output layers for comparison. We extracted the best possible accuracy from Resnet18, Resnet50, VGG16, and ViT with our data. Our goal is to use an ensemble of these different models to try and compensate for our limited dataset, but this goal is gated behind training speed.
 
-### Ensemble - Drake
+### Ensemble
 
 Individual deep learning networks can be extremely successful at classifying difficult data. How much more so then can a group of these models predict the data together. This is the idea behind an ensemble of models. Each model makes a classification and takes the majority vote betwwen them as the final classification. However, the accuracy of the models we have trained are very different so the regular majority vote did not out achieve our best model by itself. To make up for this imbalance, we can instead do a weighted ensemble where certain models have a stronger vote. We decided to weigh the models by their accuracy with our best model having the highest weight in the vote for the final classification. 
 
-### ViT - Drake
+### ViT
 
 Vision Transformers (ViT) are another model for image recognition that take in an input image as a series of image tokens. They take in each token combined with a positional encoding. This gives the model some initial notion of where the tokens are in relation with one another since they are not just in sequential order like some NLP data that is used in transformers. From here, attention weights are learned between one token to all of the others for each individual token. These attention weights can extract global relationships from the data that can be difficult to get from simple sequential input because they detail the relation between tokens. i.e. how important is this token in the context of another (such as the word he specifically representing to the name Thomas in the sentence "Thomas met a girl named Lucy and he fell in love."). After the multi-head self attention layer residual connections reinput the original token embeddings onto the learned embeddings to complete the pass through the network without passing through any non-linear activations. This process can outperform CNN's significantly in efficiency as pixel arrays and stacked layers of activation functions and convolution are not needed.
 
@@ -122,7 +122,7 @@ Self attention is what ViT's use as their primary learning method. The process b
 #### Training ViT
 Initial attempts to train ViT with SGD, a learning rate of 0.01, and momentum of 0.9 were dismal; nearly no learning occurred. We learned that this is because Adam imperically far outperforms SGD for training ViT. After switching to Adam with a learning rate of 0.004, we had much better performance.
 
-### VGG - Nathan
+### VGG
 In 2012, AlexNet shocked the world with its eight layer net, which was deeper than any of its competition at the time. Its successor is called VGGNet, produced by the Visual Geometry Group at Oxford (Somonyan 2015). VGG comes in 16 or 19 layers, and it achieved this increase in the number of layers with one innovation: they set the filter size to 3x3 for every convolutional layer. We use Pytorch's vgg16, which has 16 layers and is pretrained on ImageNet1K. The researchers found that deeper versions of vgg suffered from the vanishing gradients problem.
 
 #### Training VGG
@@ -130,7 +130,7 @@ VGG trains very slowly; our initial tests were running at 17 seconds per iterati
 
 We trained VGG using Momentum SGD with a learning rate of 0.01 and momentum of 0.9. These hyperparameters definitely need tuning, as learning stops after the first epoch. We unfortunately did not have the resources to do hyperparameter tuning through Ray Tune, which would have allowed us to select the best learning rate. It might also have been better to use Adam, although the relative benefits could only be found imperically.
 
-### ResNet - Nathan
+### ResNet
 In theory, deeper nets would result in better performance, but deep learning nets encountered one big problem: vanishing gradients. Researchers found that if neural nets were deep, their gradients would fail to propagate through the layers. This changed in 2015 with the introduction of the Residual Net and its innovation of the residual by Kaiming He (He 2015). ResNet uses residuals to allow layer inputs to bypass each layer so that the input to the system directly impacts every single layer. Consequently, the gradient of the output directly affects every layer as well, enabling gradients to propagate all the way through the system. We used two pretrained implementations of Kaiming's original paper through Pytorch's ResNet18 and ResNet50. These models each contain many residual convolutional layers, one MaxPool layer, and one average pool layer. Additionally, the models have a fully connected layer at the end so that they can be used for classification. They have both been pretrained on ImageNet1K.
 
 #### Training Resnet
@@ -145,7 +145,7 @@ In contrast, our attempts at ViT were dismal. It began with 2 percent validation
 When we attempted to use all four models in an ensemble, we were limited by their varied performances, and we were unable to get a higher validation accuracy than 64 percent, which was the accuracy of Resnet. We believe that with 1394 categories to choose from, the four models picked four separate labels on the majority of occasions; our ensemble model's accuracy effectively became the accuracy of whatever model we used for tiebreaking in the case of a four-way tie. Because our ViT model had such poor performance, it nearly never aligned with VGG or Resnet18 to outvote ResNet50 when ResNet50 was incorrect. If Resnet50 was our tiebreaker, then the ensemble model had a slightly lower validation accuracy to Resnet alone. If either of the other models was the tiebreaker, then our performance aligned with that model and fell somewhere between that model's performance and ResNet's performance.
 We then implemented a weighted ensemble and, as expected, encountered a similar problem; our performance was best when Resnet50 had a very high weight so that it could outvote the others. We were not able to achieve an accuracy above Resnet50's accuracy of 64 percent.
 
-![Val-Accuracy-per-Epoch]({{ '/assets/images/team45/validation-accuracy-per-epoch.png' | relative_url }})
+![Val-Accuracy-per-Epoch]({{ '/assets/images/team45/graph2.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 *Fig 9. Validation Accuracy per Epoch for VGG16 and Resnet50*
 
