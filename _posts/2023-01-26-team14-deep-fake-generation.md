@@ -312,7 +312,6 @@ Using the pretrained models monet2photo and style_monet from the cycleGAN reposi
 ![monet2photo results](/CS188-Projects-2023Winter/assets/images/team14/monet-to-real.png)
 * Fig 10. Monet painting being converted to realistic photo. Original image on right and generated image on left.
 
-
 ![style_monet results](/CS188-Projects-2023Winter/assets/images/team14/real-to-monet.png)
 * Fig 11. Realistic photo being converted to monet styled painting. Original image on right and generated image on left.
 
