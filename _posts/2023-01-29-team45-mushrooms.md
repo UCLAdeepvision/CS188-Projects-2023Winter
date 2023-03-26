@@ -24,6 +24,7 @@ date: 2023-01-29 01:09:00
   - [ViT](#vit)
     - [Self-Attention](#self-attention)
   - [Resnet](#resnet)
+    - [Training Resnet](#training-resnet)
   - [VGG](#vgg)
 - [Results](#results)
 - [Conclusion](#conclusion)
@@ -103,23 +104,26 @@ Self attention is what ViT's use as their primary learning method. The process b
 
 ![Self-Attention]({{ '/assets/images/team45/self-attention.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
-### ResNet - Nathan
+
+#### Training ViT
+Initial attempts to train ViT with SGD, a learning rate of 0.01, and momentum of 0.9 were dismal; nearly no learning occurred. We learned that this is because Adam imperically far outperforms SGD for training ViT. After switching to Adam with a learning rate of 0.004, we had much better performance.
 
 ### VGG - Nathan
 In 2012, AlexNet shocked the world with its eight layer net, which was deeper than any of its competition at the time. Its successor is called VGGNet, produced by the Visual Geometry Group at Oxford (Somonyan 2015). VGG comes in 16 or 19 layers, and it achieved this increase in the number of layers with one innovation: they set the filter size to 3x3 for every convolutional layer. We use Pytorch's vgg16, which has 16 layers and is pretrained on ImageNet1K. The researchers found that deeper versions of vgg suffered from the vanishing gradients problem.
 
 #### Training VGG
-ViT trains very slowly; we downsampled the dataset to a third of its original size and then froze all of the convolutional layers. Even then, using a 
+VGG trains very slowly; our initial tests were running at 17 seconds per iteration on a premium colab GPU. In an effort to reduce the training time for each epoch, we downsampled the dataset to a third of its original size and then froze all of the convolutional layers. Our goal was to train only the fully connected layers, thus using the initially pretrained convolutional layers as a feature extractor. Eventually we were able to reach a reasonable training time of 20 minutes per epoch.
+
+We trained VGG using Momentum SGD with a learning rate of 0.01 and momentum of 0.9. These hyperparameters definitely need tuning, as learning stops after the first epoch. We unfortunately did not have the resources to do hyperparameter tuning through Ray Tune, which would have allowed us to select the best learning rate. It might also have been better to use Adam, although the relative benefits could only be found imperically.
 
 ### ResNet - Nathan
 In theory, deeper nets would result in better performance, but deep learning nets encountered one big problem: vanishing gradients. Researchers found that if neural nets were deep, their gradients would fail to propagate through the layers. This changed in 2015 with the introduction of the Residual Net and its innovation of the residual by Kaiming He (He 2015). ResNet uses residuals to allow layer inputs to bypass each layer so that the input to the system directly impacts every single layer. Consequently, the gradient of the output directly affects every layer as well, enabling gradients to propagate all the way through the system. We used a pretrained implementation of Kaiming's original paper through Pytorch's ResNet50. This model contains 48 residual convolutional layers, one MaxPool layer, and one average pool layer. Additionally, the model has a fully connected layer at the end so that it can be used for classification. It has been pretrained on ImageNet1K.
 
 #### Training Resnet
-
-
-
+ResNet, when trained on our entire augmented dataset with SGD, a learning rate of 0.01, and a momentum of 0.9, trained far faster than our other models. Consequently, we were able to train it for more epochs given our resources. 
 
 ## Results
+
 
 ## Conclusion 
 
