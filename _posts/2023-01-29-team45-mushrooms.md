@@ -6,7 +6,9 @@ author: Drake Cote, Nathan Paredes-Kao
 date: 2023-01-29 01:09:00
 ---
 
->
+> Mushrooms can be delicious, symbols in popular culture, and found nearly anywhere, but dealing with them safely can be tricky because while many look the same to the untrained eye, some mushrooms are extremely poisonous. We attempted to classify 1394 types of mushrooms with as little as 3 images for some species using various deep learning methods and this blog outlines our progress and results.
+
+
 - [Introduction](#introduction)
   - [The Dataset](#the-dataset)
 - [Data Engineering](#data-engineering)
