@@ -316,9 +316,11 @@ Using the pretrained models monet2photo and style_monet from the cycleGAN reposi
 * Fig 11. Realistic photo being converted to monet styled painting. Original image on right and generated image on left.
 
 #### Dicsussion
-With this GAN architecture, it is able to perform better than other GAN architectures primarily because the cycle consistency loss keeps the model stable. The model has to be able to return back to the original image when ran through the other network, so with this it keeps the mappings consistent with each other.
+With this GAN architecture, it is able to perform better than other GAN architectures primarily because the cycle consistency loss keeps the model stable. The model has to be able to return back to the original image when ran through the other network, so with this it keeps the mappings consistent with each other. It should also be noted that when the models were trained without GAN + forward cycle loss or GAN + backward cycle loss it resulted in training instability and mode collapse, primarily for the removed direction, ensued.
 
-However, there are also images that do not work well with the models. If the image needs to be changed drastically or the images are far to different from the training data provided then the results aren't as great.
+The pretrained models are trained with $\lambda = 10$ for the cycle-consistency loss. The batch sized used is 1 and the learning rate is 0.0002 for the first 100 epochs and linearly decreases rate to zero over the next 100 epochs.
+
+However, there are also images that do not work well with the models. If the image needs to be changed drastically or the images are far to different from the training data provided then the results aren't as great. For example, on the task of dog→cat transfiguration, the learned translation degenerates into making minimal changes to the input. According to Zhu et al., the failure could be caused by the generator architecture which are designed for more appearance changes rather than geometric transformations. Another factor would be the training data used, for example, using wild horse and zebra images for training so an image containing a human riding a horse would skew the results.
 
 ![fails](/assets/images/team14/fail-images.png)
 * Fig 12. Table of images that failed the image translation. (Image source: [7])
@@ -329,12 +331,12 @@ However, there are also images that do not work well with the models. If the ima
 StarGAN is a generative adversarial network that learns the mappings among multiple domains using only a single generator and a discriminator, training effectively from images of all domains (Choi 2). The topology could be represented as a star where multi-domains are connected, thus receiveing the name StarGAN. In this article, we will be looking at StarGAN v2. The main differentiation between versions is that v2 is "a scalable approach that can generate diverse images across multiple domains" (Choi v2 pg2). The domain label is replaced with the domain specific style code. The goal is that v2 will yield better results in terms of visual qulaity and diveristy than the original StarGAN.
 
 ![StarGAN v2 Results](/assets/images/team14/style1.JPG)
-* Fig 12. Example of image synthesis results on CelebA dataset using StarGAN v2. The source and reference images are in the first rown and column, and they are real images, while the rest of the images are generated. (Image source: [6])
+* Fig 13. Example of image synthesis results on CelebA dataset using StarGAN v2. The source and reference images are in the first rown and column, and they are real images, while the rest of the images are generated. (Image source: [6])
 
 StarGAN consists of two modules, a discriminator and a generator. The discriminator learns to differentiate between real and fake images and begins to clssify the real images with its proper domain. The generator takes an image and a target domain label as input and generates a fake image with them. The target domain label is then spatially replicated and concatenated with the image given as input. The generator attempts to reconstruct the orginal image via the fake image when given the original domain label. Lastly, the generator tries to generate images that are almost identical to the real images and will be classified as being from the target domain by the discriminator.
 
 ![StarGAN v2 Flow](/assets/images/team14/style1.JPG)
-* Fig 13. Example flow of StarGAN v2 where D represents the discriminator, G represents the generator, F represents the mapping network, and E represents the style encoder (Image Source: [6])
+* Fig 14. Example flow of StarGAN v2 where D represents the discriminator, G represents the generator, F represents the mapping network, and E represents the style encoder (Image Source: [6])
 
 The overarching goal of StarGAN v2 is to train a generator that can generate diverse images of each of the domains that correspond to an image. A domain specific style vectors in the learned style space of each of the trains and then train the generator to reflect the style vectors.
 
@@ -343,19 +345,19 @@ The overarching goal of StarGAN v2 is to train a generator that can generate div
 The Generator Architecture consists of 4 downsampling blocks that use instance normalization (IN), four intermediate blocks, and four upsampling blocks that use adaptive instance normalization (AdaIN). These blocks all have pre-activation residual units. Style code is injected into all the AdaIN layers. 
 
 ![StarGAN v2 Generator Architecture](/assets/images/team14/style3.JPG)
-* Fig 14. Example of StarGAN v2 Generator Architecture (Image source: [6])
+* Fig 15. Example of StarGAN v2 Generator Architecture (Image source: [6])
 
 The Mapping Network Architecture consists of an MLP with k (number of domains) output branches. Four fully connected layers are shared among domains, and they are followed by four fully conected layers for each individual domain.
 
 ![StarGAN v2 Mappning Network Architecture](/assets/images/team14/style4.JPG)
-* Fig 15. Example of StarGAN v2 mapping netwrok architecture (Image source: [6])
+* Fig 16. Example of StarGAN v2 mapping netwrok architecture (Image source: [6])
 
 The Style Encoder Architecture consists of CNN with k (number of domains) output branches. Six pre-activation residual blocks are shared among domains, and they are followed by one fully connected layer for each individual domain.
 
 The Discriminator Architecture consists of six pre-activation residual blocks with leaky ReLY. k (number of domains) fully connected layers are used for real/fake classification among each domain.
 
 ![StarGAN v2 Style Encoder and Discriminator Architecture](/assets/images/team14/style5.JPG)
-* Fig 16. Example of StarGAN v2 style encoder and discriminator architecture, where D and K are the output dimensions (Image Source: [6])
+* Fig 17. Example of StarGAN v2 style encoder and discriminator architecture, where D and K are the output dimensions (Image Source: [6])
 
 #### Loss Functions
 
@@ -517,20 +519,20 @@ class StyleEncoder(nn.Module):
 Here are the results from running the trained model with different learning rates, weight decays, alpha, and beta values. 
 
 ![Results 1](/assets/images/team14/vid1.gif)
-* Fig 17. Chosen Model: lr=1e-4, fLr=1e-6, alpha=0, beta=0.99, weightDecay=1e-4
+* Fig 18. Chosen Model: lr=1e-4, fLr=1e-6, alpha=0, beta=0.99, weightDecay=1e-4
 
 ![Results 2](/assets/images/team14/vid2.gif)
-* Fig 18. Alternate Model 1: lr=1e-4, fLr=1e-6, alpha=.5, beta=0.5, weightDecay=1e-4
+* Fig 19. Alternate Model 1: lr=1e-4, fLr=1e-6, alpha=.5, beta=0.5, weightDecay=1e-4
 
 ![Results 3](/assets/images/team14/vid3.gif)
-* Fig 19. Alternate Model 2: lr=1e-4, fLr=1e-6, alpha=.5, beta=0.5, weightDecay=1e-5
+* Fig 20. Alternate Model 2: lr=1e-4, fLr=1e-6, alpha=.5, beta=0.5, weightDecay=1e-5
 
 ![Results 4](/assets/images/team14/vid4.gif)
-* Fig 20. Alternate Model 3: lr=1e-4, fLr=1e-6, alpha=.5, beta=0.5, weightDecay=1e-3
+* Fig 21. Alternate Model 3: lr=1e-4, fLr=1e-6, alpha=.5, beta=0.5, weightDecay=1e-3
 
 Running the model on different images with the best model, the one listed in Fig 17 results in the following:
 ![Results 5](/assets/images/team14/vid5.gif)
-* Fig 21. Chosen Model with cropped images
+* Fig 22. Chosen Model with cropped images
 
 #### Dicsussion
 As we can see from the results, this model heavily relies on images being cropped similarly to the data used to train the model. For example, we can see that the image with the guy in the blue shirt is not generated correctly in some instances. We can specifically see this in the eyebrows and neck area. However, when we look at all three women, who were in the train dataset, their generations look perfect. 
