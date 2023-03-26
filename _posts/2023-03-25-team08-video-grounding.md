@@ -14,7 +14,7 @@ date: 2023-01-29
 * TOC
 {:toc}
 # Abstract
-In this project, we analyze one prominent video grounding model to explore in depth: 2D-TAN [1]. We analyze the performance of this model on ActivityNet, Charades-STA, and TACoS datasets based on provided pre-trained checkpoints. In addition, we introduced a novel dataset, Animal Kingdom, to analyze the extensibility of the 2D-TAN model to a new video domain by evaluating the results of the pre-trained models on this novel dataset. To further improve the results, we used transfer learning on the best-performing model, then evaluated and analyzed the final results. The results showed low extensibility from the untuned pre-trained models, but with transfer learning, the fine-tuned model performed quite well on the novel dataset. We conclude that though the baseline pre-trained 2D-TAN models fail to generalize across domains, small amounts of transfer-learning and fine-tuning can quickly scale 2D-TAN across novel applications.
+In this project, we analyze one prominent video grounding model to explore in depth: 2D-TAN [1]. We analyze the performance of this model on ActivityNet [5], Charades-STA [6], and TACoS [7] datasets based on provided pre-trained checkpoints. In addition, we introduced a novel dataset, Animal Kingdom [8], to analyze the extensibility of the 2D-TAN model to a new video domain by evaluating the results of the pre-trained models on this novel dataset. To further improve the results, we used transfer learning on the best-performing model, then evaluated and analyzed the final results. The results showed low extensibility from the untuned pre-trained models, but with transfer learning, the fine-tuned model performed quite well on the novel dataset. We conclude that though the baseline pre-trained 2D-TAN models fail to generalize across domains, small amounts of transfer-learning and fine-tuning can quickly scale 2D-TAN across novel applications.
 
 # Introduction
 Video grounding is the task of grounding natural language descriptions to the visual and temporal features of a video. The requirement to tie together and reason through the connections between these 3 domains makes this task highly complex. However, it proves very useful in applications such as video search, video captioning, and video summarization.
@@ -324,7 +324,7 @@ class AnimalKingdom(data.Dataset):
 
 ## Charades-STA
 
-Charades-STA is a new dataset built on top of Charades by adding sentence temporal annotations. The Charades dataset is composed of 9,848 videos of daily indoors activities  with an average length of 30 seconds.
+Charades-STA [6] is a new dataset built on top of Charades by adding sentence temporal annotations. The Charades dataset is composed of 9,848 videos of daily indoors activities  with an average length of 30 seconds.
 
 |Method |Rank1@0.5 |Rank1@0.7 |Rank5@0.5 |Rank5@0.7|
 --- | --- | --- | --- | --- |
@@ -333,7 +333,7 @@ Charades-STA is a new dataset built on top of Charades by adding sentence tempor
 
 
 ## ActivityNet Captions
-The ActivityNet Captions dataset is built on ActivityNet v1.3 which includes 20k YouTube untrimmed videos with 100k caption annotations. The videos are 120 seconds long on average.
+The ActivityNet Captions dataset [5] is built on ActivityNet v1.3 which includes 20k YouTube untrimmed videos with 100k caption annotations. The videos are 120 seconds long on average.
 
 |Method |Rank1@0.3 |Rank1@0.5 |Rank1@0.7 |Rank5@0.3 |Rank5@0.5 |Rank5@0.7|
 --- | --- | --- | --- | --- | --- | --- |
@@ -342,7 +342,7 @@ The ActivityNet Captions dataset is built on ActivityNet v1.3 which includes 20k
 
 
 ## TACoS
-The TACoS dataset consists of 127 videos of household tasks and cooking with multi-sentence descriptions.
+The TACoS [7] dataset consists of 127 videos of household tasks and cooking with multi-sentence descriptions.
 
 |Method |Rank1@0.1 |Rank1@0.3 |Rank1@0.5 |Rank5@0.1 |Rank5@0.3 |Rank5@0.5|
 --- | --- | --- | --- | --- | --- | --- |
@@ -352,7 +352,7 @@ The TACoS dataset consists of 127 videos of household tasks and cooking with mul
 
 # Transfer learning for Animal Kingdom:
 
-As discussed above, we decided to apply transfer learning on the Animal Kingdom dataset. This dataset consists of 50 hours of annotated videos to localize relevant animal behavior segments in long videos for the video grounding task, which correspond to a diverse range of animals with 850 species across 6 major animal classes. 
+As discussed above, we decided to apply transfer learning on the Animal Kingdom [8] dataset. This dataset consists of 50 hours of annotated videos to localize relevant animal behavior segments in long videos for the video grounding task, which correspond to a diverse range of animals with 850 species across 6 major animal classes. 
 
 The ActivityNet pretrained model used compressed C3D features that were difficult to generate and work with given the time constraint of the project, so we decided to use the TACoS and Charades-STA models to perform video-grounding. 
 
@@ -420,5 +420,13 @@ In conclusion, we analyzed one prominent video grounding model, 2D-TAN. In addit
 [3] Zhang, Da, et al. “Man: Moment Alignment Network for Natural Language Moment Retrieval via Iterative Graph Adjustment.” ArXiv.org, 17 May 2019, https://arxiv.org/abs/1812.00087. 
 
 [4] Wang, Limin, et al. “Temporal Segment Networks: Towards Good Practices for Deep Action Recognition.” ArXiv.org, 2 Aug. 2016, https://arxiv.org/abs/1608.00859.  
+
+[5] F. C. Heilbron, V. Escorcia, B. Ghanem and J. C. Niebles, "ActivityNet: A large-scale video benchmark for human activity understanding," 2015 IEEE Conference on Computer Vision and Pattern Recognition (CVPR), Boston, MA, USA, 2015, pp. 961-970, doi: 10.1109/CVPR.2015.7298698.
+
+[6] Gao, Jiyang, et al. “Tall: Temporal Activity Localization via Language Query.” ArXiv.org, 3 Aug. 2017, https://arxiv.org/abs/1705.02101. 
+
+[7] Regneri, Michaela, et al. “Grounding Action Descriptions in Videos.” Transactions of the Association for Computational Linguistics, vol. 1, 2013, pp. 25–36., https://doi.org/10.1162/tacl_a_00207. 
+
+[8] Ng, Xun Long, et al. “Animal Kingdom: A Large and Diverse Dataset for Animal Behavior Understanding.” 2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2022, https://doi.org/10.1109/cvpr52688.2022.01844. 
 
 ---
