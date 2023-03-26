@@ -92,15 +92,38 @@ The results received from training are as follows:
 ## Testing
 
 ### Procedure
-- example image from code
-- code segments
+We wanted to observe the difference between 
+We observed that further finetuning for Mesonet and ResNetLSTM on the CelebDF dataset did not increase validation accuracy compared to the model weights that were already finetuned to those datasets. Therefore, we used the given model weights rather than the weights we trained, as this gave us higher validation accuracies and reduced the needed computing units and time. To test the finetuned model, we ran the models through the CelebDF test dataset to see the final testing accuracies. The process for this is shown below:
 
+- code block of training one model
+
+### Data Augmentation
+As we noticed that further finetuning of the models onto the datasets did not increase accuracies past already given finetuned model weights, we wanted to test the robustness of these models on newer data. To do this, we used Python cv2 and vidaug libraries to perform data augmentation on the test videos, and ran the models through the new data to observe the robustness of the models. We tested with different amounts of augmentation as shown below, intially starting with just rotations and flips, before adding such as gaussian noise, grayscale, dropout, and augmentation factors.
+
+- code block of augmentations
+
+This resulted in three levels of data augmentation on the dataset. We have the original test videos, slightly rotated and/or flipped test videos, and heavily augmented videos. Examples of the three are shown below:
+
+- 3 different images from 3 different levels
 
 ### Results
-- tables with our test accuracies
+When testing the finetuned model weights on the CelebDF test dataset, we observed the following metrics. This is on the CelebDf test dataset with no data augmentation:
+
+- table of results for 4 different methods
+
+After applying small rotations and flips to test images in the dataset, we ran the model through the videos again and got the following metrics:
+
+- table of results for 4 different methods 
+
+Finally, we tried applying large amounts of data augmentations and ran the model through the videos once again to get the following metrics:
+
+- table of results for 4 different methods
 
 ## Conclusion
-- observations
+
+- initially, resnetlstm does better than mesonet. a hypothesis for this is that it is able to learn temporal dependecies and can relate frames in a video together.
+- applying data augmentation shows the model is extremely sensitive to new distributions, wasn't able to hold as well as we would've expected.
+- definitely lots more work to be done, deepfakes=bad and we want to change that
 
 ## Demo
 - https://github.com/jchangz01/CS188-Project-Deepfake-Detection
