@@ -131,19 +131,19 @@ When testing the finetuned model weights on the CelebDF test dataset, we observe
 
 |          | Mesonet | Mesonet (finetuned) | ResNetLSTM | ResNetLSTM (finetuned) |
 | :------- | :------: | -----------------: | ---------: | ---------------------: |
-| accuracy |   0   |               0 |       0 |                   0 |
+| Loss |   0   |               0 |       0 |                   0 |
 | AUC      |   0   |               0 |       0 |                   0 |
-| metric   |   0   |               0 |       0 |                   0 |
-| metric   |   0   |               0 |       0 |                   0 |
+| AP   |   0   |               0 |       0 |                   0 |
+| Accuracy   |   0   |               0 |       0 |                   0 |
 
 After applying small rotations and flips to test images in the dataset, we ran the model through the videos again and got the following metrics:
 
 |          | Mesonet | Mesonet (finetuned) | ResNetLSTM | ResNetLSTM (finetuned) |
 | :------- | :------: | -----------------: | ---------: | ---------------------: |
-| accuracy |   0.257   |               0 |       0 |                   0 |
-| AUC      |   0.314   |               0 |       0 |                   0 |
-| metric   |   0.   |               0 |       0 |                   0 |
-| metric   |   0   |               0 |       0 |                   0 |
+| Loss |   0.739  |               0.901 |       0.725 |                   0.605 |
+| AUC      |   0.464   |               0.804 |       0.423 |                   0.829 |
+| AP   |   0.464   |               0.804 |       0.423 |                   0.968 |
+| Accuracy   |   0.268   |               0.622 |       0.268 |                   0.968 |
 
 Finally, we tried applying large amounts of data augmentations and ran the model through the videos once again to get the following metrics:
 
@@ -152,7 +152,7 @@ Finally, we tried applying large amounts of data augmentations and ran the model
 | Loss     |   0.741   |               16.36 |       0.725 |                   0.948 |
 | AUC      |   0.257   |               0.356 |       0.495 |                   0.465 |
 | AP       |   0.314   |               0.356 |       0.495 |                   0.465 |
-| accuracy  |  0.314   |               0.257 |       0.257 |                   0.486 |
+| Accuracy  |  0.314   |               0.257 |       0.257 |                   0.486 |
 
 ## Conclusion
 
