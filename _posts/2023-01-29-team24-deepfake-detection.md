@@ -38,8 +38,9 @@ The first model we will explore is ResNetLSTM. ResNetLSTM is a combination of tw
 <img src="../assets/images/team24/resnetlstmArchitecture.jpg" alt="ResNetLSTM Architecture" width="700" align="middle">
 
 ### MesoNet 
-The MesoInception4 deepfake detection architecture as introduced in MesoNet: a Compact Facial Video Forgery Detection Network  from Darius Afchar, Vincent Nozick, Junichi Yamagishi, Isao Echizen
+MesoNet is a deep learning architecture designed for the detection of manipulated images. MesoNet is based on a combination of convolutional neural networks (CNNs) and long short-term memory (LSTM) networks. However, the specific MesoNet architecture we will be exploring, MesoInception4 (developed by Darius Afchar, Vincent Nozick, Junichi Yamagishi, Isao Echizen) does not implement an LSTM block.  Mesoinception4 is an extension of the Inception architecture, which is a family of deep neural networks that are commonly used for image classification and recognition tasks. It is based on a combination of Inception and Inception-ResNet blocks. These blocks use different types of convolutional layers, including 1x1, 3x3, and 5x5 convolutions, to extract features from the input image. The architecture also includes other notable neural network layers such as max pooling layers, which aggregates the features across the spatial dimensions of the image, and dropout layers to help regularize our model. The model was pretrained on the Mesonet dataset and will be fintuned on the CelebDF deepfake detection dataset.
 
+<img src="../assets/images/team24/mesonetArchitecture.jpg" alt="Mesonet Architecture" width="700" align="middle">
 
 ### Other Notes
 Othe notable deepfake detection models include EfficientNet B1 LTSM and Xception architectures.
