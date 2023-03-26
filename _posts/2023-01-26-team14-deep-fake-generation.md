@@ -522,7 +522,7 @@ Here are the results from running the trained model with different learning rate
 
 Running the model on different images with the best model, the one listed in Fig 17 results in the following:
 ![Results 5](/assets/images/team14/vid5.gif)
-* Fig 21. Chosen Model 
+* Fig 21. Chosen Model with cropped images
 
 #### Dicsussion
 As we can see from the results, this model heavily relies on images being cropped similarly to the data used to train the model. For example, we can see that the image with the guy in the blue shirt is not generated correctly in some instances. We can specifically see this in the eyebrows and neck area. However, when we look at all three women, who were in the train dataset, their generations look perfect. 
