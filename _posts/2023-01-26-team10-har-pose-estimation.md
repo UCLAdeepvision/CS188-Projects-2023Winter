@@ -32,6 +32,8 @@ The first stage involves detecting human poses from RGB images, and generating c
 
 In contrast to the top-down approach, OpenPose by Cao et al, is a real-time human pose estimator that implements a bottom-up approach. OpenPose does not attempt to first use some human detectors to identify each human characters’ bounding box. Instead, it first directly searches for body parts such as heads, feet and limbs across the image in part-confidence maps, and at the same time, unstructured pairwise relationships between body parts are identified in a 2d vector field which the authors call Part Affinity Fields. Finally, with these two sets of information, body parts are pieced together in a greedy inference approach to generate human poses. There are several advantages to OpenPose’s bottom up approach. One is that it does not require fully visible human figures to estimate their poses, and therefore unlike top down approach, pose estimation does not stop short if the human figure is not fully present. Also, by its nature of being bottom-up, it can work on images with multiple human figures at the same time without having to first identify and crop in on them using an object detector.
 
+![image](../assets/images/team10/openpose.png)
+
 
 ### PoseNet
 
@@ -105,6 +107,8 @@ One problem is that the keypoints that are extracted are not nearly as dense as 
 
 We added a single convolutional layer at the start of the AcT model. This convolutional layer uses ReLU activation and consists of 10 filters with parameters (K = 2, S = 1) with bias. The kernel size of 2 essentially learns features across two consecutive frames in the input sequence.
 
+![image](../assets/images/team10/conv_transformer.jpg)
+
 ### Modified AcT construction
 ```
 inputs = tf.keras.layers.Input(shape=(self.config[self.config['DATASET']]['FRAMES'] // self.config['SUBSAMPLE'], 
@@ -143,11 +147,29 @@ With the 4 datasets, we train 4 different AcT models. The models are trained wit
 
 The datasets are split following a train-val-split. The training data is split into 90% training and 10% validation.
 
-### Testing the Convolution AcT
+### Training an Testing the Convolution AcT
 
 After running the baseline AcT model on each of the 4 datasets, we took the dataset that yielded the best model: OpenPose with 13 keypoints. Using this dataset, we trained the modified Convolution AcT model with the same optimizer and hyperparameter.
 
 ### Results
+
+#### Training Accuracy Curves
+
+![image](../assets/images/team10/training_acc.png)
+
+#### Validation Accuracy Curves
+
+![image](../assets/images/team10/val_acc.png)
+
+#### Test Accuracy
+
+| Model | Test Accuracy |
+| - | - |
+| OpenPose 23 Keypoints | 0.8845483064651489 |
+| OpenPose 13 Keypoints | 0.8939658403396606 |
+| PoseNet 17 Keypoints | 0.867806077003479 |
+| PoseNet 13 Keypoints | 0.8235089182853699 |
+| **Convolutional AcT Improvement with OpenPose 13 Keypoints Dataset** | **0.903034508228302** |
 
 ## Code
 
