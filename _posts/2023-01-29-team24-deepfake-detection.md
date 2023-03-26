@@ -11,13 +11,11 @@ date: 2022-01-29
 ## Introduction: 
 Deepfakes, or artificial intelligence-generated videos that depict real people doing and saying things they never did, have become a growing concern in recent years. These artificially generated content can be used to spread misinformation, manipulate public opinion, and even harm individuals. Therefore, the ability to detect deepfakes is crucial to ensure the integrity of information and protect people from potential harm.
 
-<br>
-![SampleDeepfake]({{ '/assets/images/team01/deepfakeSampleImage.jpg' | relative_url }})
-{: style="width: 600px; max-width: 100%;"}
-*Fig 1. Sample deepfake original (left) and deepfake (right)* [1].
+<img src="../assets/images/team24/deepfakeExample.gif" alt="Deepfake Example" width="500">
+
 
 ## Proposal:
-The main objective of this project is to develop and evaluate advanced machine learning techniques for deepfake detection. Specifically, the project aims to investigate and analyze the current state-of-the-art deepfake detection methods, and evaluate the performance of the developed models using a dataset of deepfake videos. 
+The main objective of this project is to experiment with existing advanced machine learning techniques for deepfake detection. Specifically, the project aims to investigate and analyze the current state-of-the-art deepfake detection methods, and evaluate the performance of the developed models using a dataset of deepfake videos. 
 
 ## Dataset Used:
 
@@ -25,38 +23,26 @@ The main objective of this project is to develop and evaluate advanced machine l
 
 Celeb-DF is a dataset used for deepfake forensics. It includes 590 original videos collected from YouTube with subjects of different ages, ethnic groups and genders, and 5639 correspondingDeepFake videos. Unlike most other DeepFake datasets, Celeb-DF contains high visual quality videos that better resemble DeepFake videos circulated on the Internet. 
 
-[Deepfake Example]({{ '/assets/images/team24/Celeb-DF-0000004265-9ebb7ff0.jpg' | relative_url }})
-{: style="width: 400px; max-width: 100%;"}
-_Fig 1. Celeb-DF example input images from deepfake videos _ [1].
-
-
+<img src="../assets/images/team24/celebdfExample.jpg" alt="CelebDF Example" width="600">
 
 ### Other notes
-We also considered Facebook's Deepfake Detection Challenge (DFDC) dataset, which consists of more than 100,000 videos. It is the largest publicly available datset, but we stuck with Celeb-DF as the time for testing is faster due to the dataset being more than 470 GBs, 
+We also considered Facebook's Deepfake Detection Challenge (DFDC) dataset, which consists of more than 100,000 videos. It is the largest publicly available datset, but we stuck with Celeb-DF as the time for testing is faster due to the dataset being more than 470 GBs. 
 
 
-## Architectures :
+## Architectures:
 
 ### ResNet LSTM
 
-This is the architecture we will be using for our model.
-Implementation of a Resnet50 + LSTM with 512 hidden units as it was described in the paper
-DeeperForensics-1.0: A Large-Scale Dataset for Real-World Face Forgery Detection 
+The first model we will explore is ResNetLSTM. ResNetLSTM is a combination of two deep learning architectures: Residual Neural Networks (ResNet) and Long Short-Term Memory (LSTM) networks. ResNet is a type of deep neural network that is specifically designed to address the problem of vanishing gradients that can occur in very deep networks. It does this by using residual connections to skip over certain layers in the network, which can help information flow more easily through the network. LSTM networks, on the other hand, are a type of recurrent neural network that are well-suited for processing sequential data, such as time-series data (in our case, video examples). The implementation of ResNetLSTM we will be evaluating consists of a Resnet50 + LSTM with 512 hidden units. The model was pretrained on the ImageNet dataset and will be fintuned on the CelebDF deepfake detection dataset.
 
-[ResNet LSTM]({{ '/assets/images/team24/ResNet-LSTM-model-The-signal-is-first-fed-into-ResNet-as-a-three-channel-input-phasic.jpg' | relative_url }})
-{: style="width: 400px; max-width: 100%;"}
-_Fig 1. Uses LSTM blocks after applying ResNet architectures _ [1].
-
+<img src="../assets/images/team24/resnetlstmArchitecture.jpg" alt="ResNetLSTM Architecture" width="700" align="middle">
 
 ### MesoNet 
 The MesoInception4 deepfake detection architecture as introduced in MesoNet: a Compact Facial Video Forgery Detection Network  from Darius Afchar, Vincent Nozick, Junichi Yamagishi, Isao Echizen
 
-[ResNet LSTM]({{ '/assets/images/team24/Screen Shot 2023-03-17 at 4.44.26 PM.png' | relative_url }})
-{: style="width: 400px; max-width: 100%;"}
-_Fig 1. MesoNet architecture _ [1].
 
 ### Other Notes
-We also considered using and testing the EfficientNet B1 LTSM and Xception architectures
+Othe notable deepfake detection models include EfficientNet B1 LTSM and Xception architectures.
 
 
 ## Training
