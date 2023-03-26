@@ -28,11 +28,11 @@ GAN is short for generative adversarial network. There are mainly two components
 ![Style-based generator]({{'/assets/images/team09/style-based-generator.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
 *Fig 2. Comparison Between Tranditional Generator and Style-based Generator[3]
 
-StyleGAN model mainly improves upon the generator components. As illustrated in Figure 2, instead of generating image directly from latent code, the latent code $$z$$ is first transformed by the mapping layer consists of fully connected layers into new latent code $$w$$, then through affine matrix transformation $$A$$, $$w$$ is converted into "style": $$y=(y_s, y_b)$$. $$y$$ is then mixed into the synthesis network via $$AdaIN$$ operation:
-$$AdaIN={y_{s,i}}\frac{x_i-\mu(x_i)}{\sigma}+y_{b,i}$$.[3]
+StyleGAN model mainly improves upon the generator components. As illustrated in Figure 2, instead of generating image directly from latent code, the latent code $$z$$ is first transformed by the mapping layer consists of fully connected layers into new latent code $$w$$, then through affine matrix transformation $$A$$, $$w$$ is converted into "style": $$y=(y_s, y_b)$$. $$y$$ is then mixed into the synthesis network via $$AdaIN$$ operation[3]:
+<center>$$AdaIN={y_{s,i}}\frac{x_i-\mu(x_i)}{\sigma}+y_{b,i}$$</center>
 From the equation, the feature map $x$ is first normalized, then the corresponding scale and bias is applied from the style. From the archetecture, each genearted image is based on a collection of style drew from the image samples.[3] This property of the StyleGan is particularly useful for anime character generation, as anime has unique art style and forms a distinct domain. As also described in the paper, "each styles can be expected to affect only certain aspect of the image", the architecture is capable of generating desired styled anime character as well. 
 
-![Style-based generator revised]({{'/assets/images/team09/style-based-generator_revised.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
+![Style-based generator revised]({{'/assets/images/team09/style-based-generator_revised.png' | relative_url}}){: style="width: 600px; max-width: 100%;"}
 *Fig 3. StyleGAN2 Synthesis Network[4]: StyleGAN2 shares those same properties, but further improves the synthesis network and eliminates the droplet arifacts[4].
 
 ### Adaptive Discriminator Augmentation
@@ -47,32 +47,123 @@ From the previous section, the StyleGAN2-ADA already has nice properties suitabl
 
 Through self attention mechnism, ViT achieve a global view of the image even in the few earlier layers instead of relying on local features in ResNet(due to convolution operations). This might be helpful in the animate domain, as the intrinsic consistancy of art style and body orientation from the distanced parts of the images is also important for a descent anime style arts. 
 
-### Alternative Augmentation Method 
-(If there are more time and budget)
-Since the data domain is anime, there might be augmentation techniques that are more suitable for anime styled images. (more if it is actually done...) 
-### Alternative Generative Layers
-(If there are more time and budget)
-Instead of using convolution layers as the building block, replace by ViT layer. It has shown by Han Z., et al., their proposed SAGAN model which utilize the self-attention machinism achieve better results compare to tranditional GAN models.[9] 
+#### Attention 
+The original ViT attention score is computed by:
+<center> $$Attention_h(X) = softmax(\frac{QK^T}{\sqrt(d_h)})V$$ </center>
+However, in GAN, it has been shown that the Lipschitz continuity is crucial for the model to reach Nash equilibrium, while the standard dot product form voilates the Lipschitz continuity and makes the training unstable. According to the paper "ViTGAN: Training GANs with Vision Transformers", it is necessary to use L2 attention score calculcation instead of standard dot product to enforce the Lipschitz continuity: 
+<center> $$Attention_h(X) = softmax(\frac{d(XW_q, XW_k)}{\sqrt{d_h}})XW_v$$ </center>
+Where $$W_q = W_k$$, and $$W_v$$ are projection matrix for $$Q$$, $$K$$, and $$V$$ respectively. The dot product is replaced by L2 distance in the formula.[9]
+#### Spectual Normalization
+The paper "ViTGAN: Training GANs with Vision Transformers" also suggests to further improve the Lipschitz continuety by improving spectual normalization on $$W_q$$, $$W_k$$ and $$W_v$$:
+<center>$$\overline{W}_{ISN}(W):= \frac{\sigma(W_{init})\cdot W}{\sigma(W)} $$</center>
+The matrix is normaized using the maximum item value of the matrix and multiply by the maximum item value during initialization.
+#### Code
+The modfified ViT discriminator is adapted from the original ViTGAN code [repository](https://github.com/wilile26811249/ViTGAN) and integrated to the official pytorch implementation of StyleGAN2. The ViT discriminator version of the StyleGAN2 is implemented and can be found in this code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).
+There are several issues that occured during integration. To better relate each image patch to each other, unlike the tranditional ViT, the patches have overlaps. This step was not implemented corretly in the original repository and had to be changed in order for it to work properly. Below are the changed code for the initial step of getting image patches:
+```
+img_patches = img.unfold(2, self.patch_size, self.stride).unfold(3, self.patch_size, self.stride)
+```
 ## Experiments and Results
 ### Dataset
-![Sample Images From the Dataset]({{'/assets/images/team09/sample_real_images.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
+![Sample Images From the Dataset]({{'/assets/images/team09/sample_real_images.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
 *Fig 5. Sample Images from the Dataset
-All experiment will use a relatively small [dataset](https://www.kaggle.com/datasets/tianbaiyutoby/animegirl-faces) obtained from Kaggle consists of 2434 $$256\times256$$ anime faces of different styles. The dataset is preprocessed by using the `dataset_tool.py` utilities provided in the StyleGAN2-ADA code [repository](https://github.com/NVlabs/stylegan2-ada-pytorch).    
+All experiment will use a relatively small [dataset](https://www.kaggle.com/datasets/tianbaiyutoby/animegirl-faces) obtained from Kaggle consists of 2434 $$256\times256$$ anime faces of different styles. The dataset is preprocessed by using the `dataset_tool.py` utilities provided in the StyleGAN2-ADA code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).    
 ### Training Environment
-All model will be trained on a single Tesla T4 GPU, using docker environment provided in the StyleGAN2-ADA code [repository](https://github.com/NVlabs/stylegan2-ada-pytorch).  
+All model will be trained on a single Tesla T4 GPU, using docker environment provided in the code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).  
 ### Baseline Results
-![Sample Baseline Output Images]({{'/assets/images/team09/sample_baseline_fake_images.png' | relative_url}}){: style="width: 400px; max-width: 100%;"}
-*Fig 6. Sample Output Images From the Baseline Model
+![Sample Baseline Output Images]({{'/assets/images/team09/sample_baseline_fake_images.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
+*Fig 6.0. Sample Output Images From the Baseline Model (Transfer learning)
 
 The above results are obtained by doing transfer learning using the original StyleGAN2 model and the model is trained for ~800K iterations. The base model used is the pretrained [ffhq-256](https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/transfer-learning-source-nets/ffhq-res256-mirror-paper256-noaug.pkl) model from NVIDIA which generate realistic human faces(a completely different domain from anime). 
+
+![Sample Baseline Output Images]({{'/assets/images/team09/sample_baseline_fake_images_2.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
+*Fig 6.1. Sample Output Images From the Baseline Model (Train from Scratch)
+
+The above results are abtained using the default unmodified paper256 config of StyleGAN. The outputs were obtained after ~400k iterations. 
 ### ViT Discriminator Results
-As the model archtecture is changes, need to train partially from seperated pretrained ViT and pretrained Generator.\
-(In-progress)
+There are several attempts to train using the same dataset with the ViT discriminator. However, due to hardware limitation and time constraints, neither of them gave optimal results. Only one configuration of ViT discriminator was tested. The model layers is shown below:
+```
+ViTDiscriminator                      Parameters  Buffers  Output shape   Datatype
+---                                   ---         ---      ---            ---     
+project_patches                       166272      -        [8, 625, 384]  float32 
+emb_dropout                           -           -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.0.norm1    768         -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.0.attn     590208      -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.0.dropout  -           -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.0.norm2    768         -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.0.mlp      1181568     -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.0          -           -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.1.norm1    768         -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.1.attn     590208      -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.1.dropout  -           -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.1.norm2    768         -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.1.mlp      1181568     -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.1          -           -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.2.norm1    768         -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.2.attn     590208      -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.2.dropout  -           -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.2.norm2    768         -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.2.mlp      1181568     -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.2          -           -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.3.norm1    768         -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.3.attn     590208      -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.3.dropout  -           -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.3.norm2    768         -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.3.mlp      1181568     -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.3          -           -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.4.norm1    768         -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.4.attn     590208      -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.4.dropout  -           -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.4.norm2    768         -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.4.mlp      1181568     -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.4          -           -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.5.norm1    768         -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.5.attn     590208      -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.5.dropout  -           -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.5.norm2    768         -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.5.mlp      1181568     -        [8, 626, 384]  float32 
+Transformer_Encoder.blocks.5          -           -        [8, 626, 384]  float32 
+mlp_head.0                            768         -        [8, 384]       float32 
+mlp_head.1                            385         -        [8, 1]         float32 
+<top-level>                           240768      -        [8, 1]         float32 
+---                                   ---         ---      ---            ---     
+Total                                 11048065    0        -              -       
+```
+Due to GPU memory constraints, the ViT is configured to have patch size of 8 with 2 pixel overlap to the patches next to each other, and 6 layers of transformer encoder block, each with 6 attention heads. The patch is projected to a vector of size 384. 
+To train the model adam optimizer is used for both generator and discriminator, initially with a learning rate of 0.0025 which was shown to be too high.
+
+As each 1k iterations takes over 4 mins to train, it is very hard to find optimal hyperparameters for the new model given the time for this project. Below are some attempts over the course of over one week. 
+#### Initial Attempt
+This attempt is before changing the image patch bug, therefore, the no meaningful learning is achieve.\
+
+![Sample Output Images 1st Attempt]({{'/assets/images/team09/attempt_1.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
+*Fig 7. Sample Output Images From the Initial Attempt
+
+The above result show the failed first attempt output after 1403k iterations of training. No meaningful image is produced, as there is an error in the discriminator image patching step. 
+#### Second Attempt
+This attempt fix the image patches generation with learning rate of 0.0025. As the learning rate is set too high for the ViT discriminator, the training failed as well. The ViT discriminator was not optimized.\
+
+![Sample Output Images 2nd Attempt]({{'/assets/images/team09/attempt_2.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
+*Fig 8. Sample Output Images From the Second Attempt
+
+Similar to attempt one, as shown in the above figure, no meaningful image was generated even after 340k iterations, so this attempt was aborted. 
+
+### Third Attempt
+This attempt fix the learning rate issue by changing the learning rate for the discriminator to 0.0002, while keeping the learning rate for generator as 0.0025\
+
+![Sample Output Images 3nd Attempt]({{'/assets/images/team09/attempt_3.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
+*Fig 8. Sample Output Images From the Third Attempt
+
+From figure 8, the generator is able to generate some meaningful output after over 1000k iterations. However, not only the quality of the generated image is not ideal even compared to Fig 6.1, it also suffers from a mode collapse. The generators learns to generate a few sets of the same faces to fool the discriminator, and the discriminator is unable to learn out of this trick from the generator. 
 ### Evaluation and Analysis
-Select images generated from the same seed and compare manually (aethetic appeals etc.) as well as using FID scores etc.\
-(In-progress)
+Since for GAN, there are no training curve to evaluate the model performance, the above generated results are anaylized visually by myself. 
+From the above attempt, we can see that for a relatively small dataset, it is very hard to properly train a GAN model with ViT discriminator even after making necessary modeification of the original ViT. Several requirement of training GAN might not be satisfied by the above experiments:
+1. The ViT model might not have the same model capacity as the generator, therefore, the the model tends to suffer from mode collapse.
+2. The learning rate of the discriminator and the generator need to be carefully chosen to successfully train the model, but the above experiments might be using suboptimal learning rates.
+3. Training ViT typically works better on larger datasets. With a dataset of only ~3000 images, it is very hard to train the ViT properly from scratch as ViT lacks the inductive bias that convolution based model such as ResNet has. 
+
 ## Conclusion
-(In-progress)
+The generated anime faces is significantly worse than the results obtained from the original archetecture. With limited time and computation budget, it is very hard to train a StyleGAN2 model with ViT discriminator from scratch using a small dataset dispite all the augmentation strategies implemented. It is possible to get better results if better hyperparameters for the model and the optimizer is chosen. It is also possible to get better results if a much larger dataset is used. But all the above options require significantly more computing power. Although, the original goal of improving the quality of generating better anime faces given the nature of ViT is not achieved, the oblation study showed and verified some important properties of StyleGAN2 with ViT discriminator, such as the requirement of different learning rate for generator and discriminator due to different achitecture, requirements of large dataset and longer training time to train ViT as ViT lacks inductive bias, and requirments of a similar model capacity for the generator and the discriminator.
 
 ---
 
