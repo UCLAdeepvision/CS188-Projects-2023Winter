@@ -199,13 +199,13 @@ The first thing we would like to note is that TransMVSNet shows good generalizab
 
 Secondly, we have also noticed a difference between our visualization of depth maps and those presented in the paper. Fig. 4 shows five examples of depth maps TransMVSNet generates in one case. One difference between our visualization the ones in the paper is that our depth maps include noise in the background. The objects in the depth maps contain a smooth surface, whereas the background shows more variation in depth values. However, the depth maps presented in the paper contains less noise in the background, as shown in Fig. 2. This is because depth filtering and fusion is applied to reduce noise in depth data. In TransMVSNet, this task is done with a dynamic checking strategy that involves both confidence thresholding and geometric consistency. 
 
-![FMT]({{ '/assets/images/team06/5depths.png' | relative_url }})
+![Depths]({{ '/assets/images/team06/5depths.png' | relative_url }})
 {: style="width: 700px; max-width: 100%;"}
 *Fig 4. 5 depth maps from DTU test set*.
 
 Moreover, TransMVSNet, as one of the start-of-the-art MVS frameworks, reveals a general challenge in MVS task. Fig. 5 shows our visualization of 3D point cloud of case 4 in DTU testing set. From this example, we could see that the point cloud prediction is less dense in occluded regions such us the region between the feet of the toy duck and the underlying surface.
 
-![FMT]({{ '/assets/images/team06/duck.jpg' | relative_url }})
+![Duck]({{ '/assets/images/team06/duck.jpg' | relative_url }})
 {: style="width: 700px; max-width: 100%;"}
 *Fig 5. Visualization of point cloud*.
 
@@ -382,6 +382,42 @@ def  forward(self, x, epipole=None, temperature=0.001):
 
 The CDS-MVSNet adopted the cascade structure of CasMVSNet [5] as the baseline structure. The network is composed of multiple cascade stages to predict the depth maps in a coarse-to-fine manner. 
 Each stage estimates a depth through three steps: feature extraction, cost volume formulation, cost volume regularization & depth regression. CDS-MVSNet formulates a 3D cost volume based on the output features of CDSFNet. The features of CDSFNet effectively reduce the matching ambiguity by considering the proper pixel scales.
+
+#### Discussion
+
+![CDS-MVSnet]({{ '/assets/images/team06/cds_ad.png' | relative_url }}) 
+{: style="width: 700px; max-width: 100%;"} 
+*Fig 7. scale map of CDS-MVSNet* [3].
+
+
+The CDS-MVSNet is good at extracting features of images with different viewpoints and camera pose. In Fig. 7a, the closer viewpoint is, the larger scales are estimated on the scale map. In Fig. 7b, the reference and source scale maps are similar when the difference of camera poses is small. And when it is large, the scale map of reference view is changed to adapt the source view, which is marked in the red circle.
+
+Also, with the stacking of mutiple CDSConvlayers layers, the searching scale-space is expanded profoundly even when only 2-3 candidate kernel scales are chosen at each layer. This helps in reducing the complexity of the model significantly.
+
+## Comparing TransMVSNet and CDS-MVSNet
+
+As shown in figure 8, CDS-MVSNet predictions are clearer on the edges of objects and have fewer noises in the backgroud.
+
+![CDS-MVSnet]({{ '/assets/images/team06/Pred_prediction.png' | relative_url }}) 
+{: style="width: 700px; max-width: 100%;"} 
+*Fig 8. Depth map of CDS-MVSNet Output* [3].
+
+As shown in table 1, when having similar results on the DTU test dataset, CDS-MVSNet has a slightly less complex model and a much faster prediction speed per image than the TransMVSNet.
+
+
+| model       | learnable params | average prediction time/image (sec) | Acc.  | Comp. | Overall |
+|    :---:    |       :---:      |               :---:             | :---:| :---:|  :---:  |
+| TransMVSNet |     1148924      |            2.13                 | 0.321 | 0.289 | 0.305   |
+| CDS-MVSNet  |     981622       |            1.08                 | 0.352 | 0.280 | 0.316   |
+
+*Table 1. Comparison Between two models(Acc., Comp., and Overall are DTU testing results, the lower the better)*
+  
+## Appendix
+
+Code Base: <https://colab.research.google.com/drive/1vdBaPXzHRh5jkdQUMWRb9Jy-cnMCCtdL?usp=sharing>.
+
+Spotlight Video: <https://www.youtube.com/watch?v=Mu6Q2pgj66Q>.
+
 
 ---
 # Reference
