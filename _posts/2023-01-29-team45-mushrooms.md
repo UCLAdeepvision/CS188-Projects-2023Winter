@@ -106,6 +106,18 @@ Self attention is what ViT's use as their primary learning method. The process b
 ### ResNet - Nathan
 
 ### VGG - Nathan
+In 2012, AlexNet shocked the world with its eight layer net, which was deeper than any of its competition at the time. Its successor is called VGGNet, produced by the Visual Geometry Group at Oxford (Somonyan 2015). VGG comes in 16 or 19 layers, and it achieved this increase in the number of layers with one innovation: they set the filter size to 3x3 for every convolutional layer. We use Pytorch's vgg16, which has 16 layers and is pretrained on ImageNet1K. The researchers found that deeper versions of vgg suffered from the vanishing gradients problem.
+
+#### Training VGG
+ViT trains very slowly; we downsampled the dataset to a third of its original size and then froze all of the convolutional layers. Even then, using a 
+
+### ResNet - Nathan
+In theory, deeper nets would result in better performance, but deep learning nets encountered one big problem: vanishing gradients. Researchers found that if neural nets were deep, their gradients would fail to propagate through the layers. This changed in 2015 with the introduction of the Residual Net and its innovation of the residual by Kaiming He (He 2015). ResNet uses residuals to allow layer inputs to bypass each layer so that the input to the system directly impacts every single layer. Consequently, the gradient of the output directly affects every layer as well, enabling gradients to propagate all the way through the system. We used a pretrained implementation of Kaiming's original paper through Pytorch's ResNet50. This model contains 48 residual convolutional layers, one MaxPool layer, and one average pool layer. Additionally, the model has a fully connected layer at the end so that it can be used for classification. It has been pretrained on ImageNet1K.
+
+#### Training Resnet
+
+
+
 
 ## Results
 
@@ -122,3 +134,7 @@ Self attention is what ViT's use as their primary learning method. The process b
 [1] Mohanty, Sharada P., et al. “Using Deep Learning for Image-Based Plant Disease Detection.” Frontiers, Frontiers, 6 Sept. 2016, https://www.frontiersin.org/articles/10.3389/fpls.2016.01419/full. 
 
 [2] N, Skanda H. Plant Identification Methodologies Using Machine Learning ... - IJERT. Https://Www.ijert.org/, 3 Mar. 2019, https://www.ijert.org/research/plant-identification-methodologies-using-machine-learning-algorithms-IJERTV8IS030116.pdf. 
+
+[3] He, Kaiming., et al. "Deep Residual Learning for Image Recognition." CoRR, 10 Dec 2015. https://arxiv.org/abs/1512.03385
+
+[4] Somonyan, Karen and Zisserman, Andrew. "Very Deep Convolutional Networks for Large-Scale Image Recognition." University of Oxford. ICLR 2015. https://arxiv.org/pdf/1409.1556.pdf
