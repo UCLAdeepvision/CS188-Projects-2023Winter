@@ -39,6 +39,8 @@ In contrast to the top-down approach, OpenPose by Cao et al, is a real-time huma
 
 Posenet by Papandreou et al is a model that attempts to solve human pose estimation and human instance segmentation at the same time. Similar to OpenPose, it tackles pose estimation in a bottom up approach. It involves a part-based pose estimation method that first tries to identify the locations of each keypoint in a set of heatmaps which are essentially disks around each found keypoint. Then instead of using the association between body parts like OpenPose, it first finds a set of short offset vectors for each keypoint type that shoot from pixels in a keypoint disk to the nearest person’s keypoint of that type. These short offset vectors are panelized in the loss to help better locate the keypoints. The heatmaps and the short offset vectors are used in a Hough voting to localize the keypoints. To help piece the found keypoints together, posenet then creates another vector field output called Mid-range pairwise offsets, which encode edges between every pair of keypoints. Finally, the keypoint heatmaps and the offset vectors are passed to a person pose decoder to greedily parse together the keypoints and keypoint edges into full human poses.
 
+![image](../assets/images/team10/posenet.png)
+
 ## Action Transformer (AcT)
 
 ### Input
