@@ -37,9 +37,11 @@ Mushrooms are a specific form of fungus that have had their image rise in popula
 ### The Dataset - Nathan
 ![Poisonous-Mushroom]({{ '/assets/images/team45/mushroom1.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
+*Fig 1. Poisonous-Mushroom: Species Amanita Phalloides* [0].
 
 ![Flat-Mushroom]({{ '/assets/images/team45/mushroom2.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
+*Fig 2. Flat-Mushroom: Species Abortiporus Biennis* [0].
 
 pics of each augmentation would be nice
 ## Data Engineering
@@ -56,6 +58,7 @@ Grayscaling an image in a basic sense does exactly what it sounds like and makes
 
 ![Grayscale]({{ '/assets/images/team45/pytorch_grayscale.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
+*Fig 3. Grayscaled example* [4].
 
 #### Random Solarize
 
@@ -63,6 +66,7 @@ On top of grayscaling we will use a tranform called Random Solarization that wil
 
 ![Random_Solarize]({{ '/assets/images/team45/pytorch_random_solarize.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
+*Fig 4. Random Solarize Example* [4].
 
 ### Increasing Dataset through Positional Augmentation
 
@@ -74,18 +78,22 @@ the Random Rotation augmentation rotates an image randomly between a min and max
 
 ![Random_Rotation]({{ '/assets/images/team45/pytorch_random_rotation.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
+*Fig 5. Random Rotation Example* [4].
+
 #### Horizontal Flip
 
 The orizontal Flip augmentation flips the image horizontally with probability p. This augmentation has a very similar purpose to Random Rotation in that it will give us a new perspective and prevent overfitting on certain mushroom orientations common in the dataset.
 
 ![Random_Horizontal_Flip]({{ '/assets/images/team45/pytorch_random_flip.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
+*Fig 6. Random Horizontal Flip Example* [4].
 #### Color Jitter
 
 The Color Jitter augmentation is the last of this series of transforms. Color Jitter randomly changes the brightness, contrast, saturation, and hue of an image. The amount to jitter each factor is chosen uniformly from [max(0,1-factor), 1 + factor]. We chose a brightness factor of .5 because it allowed some of the brighter images to be more similar to other darker images in the dataset and vice versa without making the images too dark or light to see. We set the hue to .3 to jitter the hue similarly in a range that did sometimes drastically change the colors without dramatically warping the image past recognition of shapes from the contrast of shades. We decided not to edit contrast and saturation as in combination with hue and brightness the images were changed too drastically. After these three augmentations we concatenate the transformed data to the previous two datasets, in total tripling our original number of images.
 
 ![Color_Jitter]({{ '/assets/images/team45/pytorch_color_jitter.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
+*Fig 7. Color Jitter Example* [4].
 ## The Models
 Deep learning has become one of the most popular tools for computer vision and machine learning ever since our computation power increased to the level required to take in the massive amounts of data these models require. Deep Learning models are in a sense exactly how they sound. They are neural networks with many many layers to capture different aspects of data features using backpropogation and series of linear and non-linear transformations to update the learning parameters. We are using several baseline pretrained models with altered output layers for comparison. We extracted the best possible accuracy from Resnet18, Resnet50, VGG16, and ViT with our data. Our goal is to use an ensemble of these different models to try and compensate for our limited dataset, but this goal is gated behind training speed.
 
@@ -103,6 +111,7 @@ Self attention is what ViT's use as their primary learning method. The process b
 
 ![Self-Attention]({{ '/assets/images/team45/self-attention.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
+*Fig 8. Self-Attention Mechanism courtesy of Violet Peng*
 ### ResNet - Nathan
 
 ### VGG - Nathan
@@ -117,8 +126,10 @@ Self attention is what ViT's use as their primary learning method. The process b
 
 #### References
 
-[0] [Mushrooms Detection, Localization and 3D Pose Estimation....](https://arxiv.org/pdf/2201.02837.pdf) Baisa, Nathanael L., and Bashir Al-Diri. Mushrooms Detection, Localization and 3D Pose Estimation Using RGB-D Sensor for Robotic-Picking Applications. Arxiv, 8 Jan. 2022, https://arxiv.org/pdf/2201.02837.pdf. 
+[1] [Mushrooms Detection, Localization and 3D Pose Estimation....](https://arxiv.org/pdf/2201.02837.pdf) Baisa, Nathanael L., and Bashir Al-Diri. Mushrooms Detection, Localization and 3D Pose Estimation Using RGB-D Sensor for Robotic-Picking Applications. Arxiv, 8 Jan. 2022, https://arxiv.org/pdf/2201.02837.pdf. 
 
-[1] Mohanty, Sharada P., et al. “Using Deep Learning for Image-Based Plant Disease Detection.” Frontiers, Frontiers, 6 Sept. 2016, https://www.frontiersin.org/articles/10.3389/fpls.2016.01419/full. 
+[2] Mohanty, Sharada P., et al. “Using Deep Learning for Image-Based Plant Disease Detection.” Frontiers, Frontiers, 6 Sept. 2016, https://www.frontiersin.org/articles/10.3389/fpls.2016.01419/full. 
 
-[2] N, Skanda H. Plant Identification Methodologies Using Machine Learning ... - IJERT. Https://Www.ijert.org/, 3 Mar. 2019, https://www.ijert.org/research/plant-identification-methodologies-using-machine-learning-algorithms-IJERTV8IS030116.pdf. 
+[3] N, Skanda H. Plant Identification Methodologies Using Machine Learning ... - IJERT. Https://Www.ijert.org/, 3 Mar. 2019, https://www.ijert.org/research/plant-identification-methodologies-using-machine-learning-algorithms-IJERTV8IS030116.pdf. 
+
+[4] “Transforming and Augmenting Images¶.” Transforming and Augmenting Images - Torchvision Main Documentation, https://pytorch.org/vision/master/transforms.html. 
