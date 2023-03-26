@@ -57,10 +57,13 @@ Deep learning has become one of the most popular tools for computer vision and m
 
 ### Ensemble - Drake
 
-Individual deep learning networks can be extremely successful at classifying difficult data. How much more so then can a group of these models predict the data together. This is the idea behind an ensemble of models. Each model makes a classification and takes the majority vote betwwen them as the final classification. However, the accuracy of the models we have trained are very different so the regular majority vote did not out achieve our best model by itself. To make up for this imbalance, we can instead do a weighted ensemble where certain models have a stronger vote. We decided to weigh the models by their accuracy with out best model having the highest weight in the vote for the calssification. 
+Individual deep learning networks can be extremely successful at classifying difficult data. How much more so then can a group of these models predict the data together. This is the idea behind an ensemble of models. Each model makes a classification and takes the majority vote betwwen them as the final classification. However, the accuracy of the models we have trained are very different so the regular majority vote did not out achieve our best model by itself. To make up for this imbalance, we can instead do a weighted ensemble where certain models have a stronger vote. We decided to weigh the models by their accuracy with our best model having the highest weight in the vote for the final classification. 
 
 ### ViT - Drake
 
+Vision Transformers (ViT) are another model for image recognition that take in an input image as a series of image tokens. They take in each token combined with a positional encoding. This gives the model some initial notion of where the tokens are in relation with one another since they are not just in sequential order like some NLP data that is used in transformers. From here, attention weights are learned between one token to all of the others for each individual token. These attention weights can extract global relationships from the data that can be difficult to get from simple sequential input because they detail the relation between tokens. i.e. how important is this token in the context of another (such as the word he specifically representing to the name Thomas in the sentence "Thomas met a girl named Lucy and he fell in love."). After the multi-head self attention layer residual connections reinput the original token embeddings onto the learned embeddings to complete the pass through the network without passing through any non-linear activations. This process can outperform CNN's significantly in efficiency as pixel arrays and stacked layers of activation functions and convolution are not needed.
+
+add image of self attention
 ### ResNet - Nathan
 
 ### VGG - Nathan
