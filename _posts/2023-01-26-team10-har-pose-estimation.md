@@ -134,11 +134,11 @@ OpenPose and PoseNet can generate varying amounts of keypoints, merging and redu
 With the 4 datasets, we train 4 different AcT models. The models are trained with the following parameters:
 
 - Optimizer: AdamW
-- # Epochs: 350
+- Number Epochs: 350
 - Batch Size: 512
 - Learning Rate
-	- Warm Up Steps: # batches * # epochs * 0.3
-	- Decay Steps: # batches * # epochs * 0.8
+	- Warm Up Steps: number of batches * number of epochs * 0.3
+	- Decay Steps: number of batches * number of epochs * 0.8
 - Weight Decay: 0.0001
 
 The datasets are split following a train-val-split. The training data is split into 90% training and 10% validation.
