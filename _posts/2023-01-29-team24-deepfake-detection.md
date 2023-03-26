@@ -100,24 +100,59 @@ We observed that further finetuning for Mesonet and ResNetLSTM on the CelebDF da
 ### Data Augmentation
 As we noticed that further finetuning of the models onto the datasets did not increase accuracies past already given finetuned model weights, we wanted to test the robustness of these models on newer data. To do this, we used Python cv2 and vidaug libraries to perform data augmentation on the test videos, and ran the models through the new data to observe the robustness of the models. We tested with different amounts of augmentation as shown below, intially starting with just rotations and flips, before adding such as gaussian noise, grayscale, dropout, and augmentation factors.
 
-- code block of augmentations
+```
+from imgaug import augmenters as iaa
+
+seq = iaa.Sequential([
+      iaa.Multiply((0.5, 1.5)),
+      iaa.GaussianBlur(sigma=(0.0, 3.0)),
+      iaa.Dropout((0.0, 0.2)),
+      iaa.AdditiveGaussianNoise(scale=(0, 0.1 * 255)),
+      iaa.ContrastNormalization((0.5, 2.0)),
+      iaa.Grayscale(alpha=(0.0, 1.0)),
+      iaa.Flipud(flip),
+      iaa.Affine(rotate=rotation_angle),
+    ])
+```
 
 This resulted in three levels of data augmentation on the dataset. We have the original test videos, slightly rotated and/or flipped test videos, and heavily augmented videos. Examples of the three are shown below:
 
-- 3 different images from 3 different levels
+No augmentation:
+<img src="../assets/images/team24/mesonetArchitecture.jpg" alt="Mesonet Architecture" width="250" align="middle">
+
+Rotation/flipping:
+<img src="../assets/images/team24/mesonetArchitecture.jpg" alt="Mesonet Architecture" width="250" align="middle">
+
+Heavy augmentation (as in code block above):
+<img src="../assets/images/team24/mesonetArchitecture.jpg" alt="Mesonet Architecture" width="250" align="middle">
 
 ### Results
-When testing the finetuned model weights on the CelebDF test dataset, we observed the following metrics. This is on the CelebDf test dataset with no data augmentation:
+When testing the finetuned model weights on the CelebDF test dataset, we observed the following metrics. This is on the CelebDF test dataset with no data augmentation:
 
-- table of results for 4 different methods
+|          | Mesonet | Mesonet (finetuned) | ResNetLSTM | ResNetLSTM (finetuned) |
+| :------- | :------: | -----------------: | ---------: | ---------------------: |
+| accuracy |   0   |               0 |       0 |                   0 |
+| AUC      |   0   |               0 |       0 |                   0 |
+| metric   |   0   |               0 |       0 |                   0 |
+| metric   |   0   |               0 |       0 |                   0 |
 
 After applying small rotations and flips to test images in the dataset, we ran the model through the videos again and got the following metrics:
 
-- table of results for 4 different methods 
+|          | Mesonet | Mesonet (finetuned) | ResNetLSTM | ResNetLSTM (finetuned) |
+| :------- | :------: | -----------------: | ---------: | ---------------------: |
+| accuracy |   0   |               0 |       0 |                   0 |
+| AUC      |   0   |               0 |       0 |                   0 |
+| metric   |   0   |               0 |       0 |                   0 |
+| metric   |   0   |               0 |       0 |                   0 |
 
 Finally, we tried applying large amounts of data augmentations and ran the model through the videos once again to get the following metrics:
 
-- table of results for 4 different methods
+|          | Mesonet | Mesonet (finetuned) | ResNetLSTM | ResNetLSTM (finetuned) |
+| :------- | :------: | -----------------: | ---------: | ---------------------: |
+| accuracy |   0   |               0 |       0 |                   0 |
+| AUC      |   0   |               0 |       0 |                   0 |
+| metric   |   0   |               0 |       0 |                   0 |
+| metric   |   0   |               0 |       0 |                   0 |
 
 ## Conclusion
 
