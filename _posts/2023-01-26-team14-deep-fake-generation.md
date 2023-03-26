@@ -85,7 +85,7 @@ CycleGAN was used in order to use unpaired image to image translations rather th
 
 The architecture of CycleGAN consists of a generator taken from Johnson et al [3], which consists of 3 convolutional layers, 6 residual block layers, 2 transpose convolutional layers and a final convolution output layer. Should also be noted that all layers similar to Johnson et al are followed by instance normalization.
 
-![CycleGAN Generator](//assets/images/team14/cycleGAN-generator.png)
+![CycleGAN Generator](/assets/images/team14/cycleGAN-generator.png)
 * Fig 7. Example of CycleGAN Generator architecture (Image source: https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d)
 
 The discriminator uses a 70x70 PatchGAN architecture, which are used to classify 70x70 overlapped images to see if they are real or fake. The PatchGAN architecture consists of 5 convolutional layers with instance normalization [5].
