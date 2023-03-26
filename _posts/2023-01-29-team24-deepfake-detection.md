@@ -140,19 +140,19 @@ After applying small rotations and flips to test images in the dataset, we ran t
 
 |          | Mesonet | Mesonet (finetuned) | ResNetLSTM | ResNetLSTM (finetuned) |
 | :------- | :------: | -----------------: | ---------: | ---------------------: |
-| accuracy |   0   |               0 |       0 |                   0 |
-| AUC      |   0   |               0 |       0 |                   0 |
-| metric   |   0   |               0 |       0 |                   0 |
+| accuracy |   0.257   |               0 |       0 |                   0 |
+| AUC      |   0.314   |               0 |       0 |                   0 |
+| metric   |   0.   |               0 |       0 |                   0 |
 | metric   |   0   |               0 |       0 |                   0 |
 
 Finally, we tried applying large amounts of data augmentations and ran the model through the videos once again to get the following metrics:
 
 |          | Mesonet | Mesonet (finetuned) | ResNetLSTM | ResNetLSTM (finetuned) |
 | :------- | :------: | -----------------: | ---------: | ---------------------: |
-| accuracy |   0   |               0 |       0 |                   0 |
-| AUC      |   0   |               0 |       0 |                   0 |
-| metric   |   0   |               0 |       0 |                   0 |
-| metric   |   0   |               0 |       0 |                   0 |
+| Loss     |   0.741   |               16.36 |       0.725 |                   0.948 |
+| AUC      |   0.257   |               0.356 |       0.495 |                   0.465 |
+| AP       |   0.314   |               0.356 |       0.495 |                   0.465 |
+| accuracy  |  0.314   |               0.257 |       0.257 |                   0.486 |
 
 ## Conclusion
 
