@@ -40,21 +40,54 @@ The first model we will explore is ResNetLSTM. ResNetLSTM is a combination of tw
 ### MesoNet 
 MesoNet is a deep learning architecture designed for the detection of manipulated images. MesoNet is based on a combination of convolutional neural networks (CNNs) and long short-term memory (LSTM) networks. However, the specific MesoNet architecture we will be exploring, MesoInception4 (developed by Darius Afchar, Vincent Nozick, Junichi Yamagishi, Isao Echizen) does not implement an LSTM block.  Mesoinception4 is an extension of the Inception architecture, which is a family of deep neural networks that are commonly used for image classification and recognition tasks. It is based on a combination of Inception and Inception-ResNet blocks. These blocks use different types of convolutional layers, including 1x1, 3x3, and 5x5 convolutions, to extract features from the input image. The architecture also includes other notable neural network layers such as max pooling layers, which aggregates the features across the spatial dimensions of the image, and dropout layers to help regularize our model. The model was pretrained on the Mesonet dataset and will be fintuned on the CelebDF deepfake detection dataset.
 
-<img src="../assets/images/team24/mesonetArchitecture.jpg" alt="Mesonet Architecture" width="700" align="middle">
+<img src="../assets/images/team24/mesonetArchitecture.jpg" alt="Mesonet Architecture" width="500" align="middle">
 
 ### Other Notes
 Othe notable deepfake detection models include EfficientNet B1 LTSM and Xception architectures.
 
 
 ## Training
- - didn't actual train as too computationally expensive, evaluated pretrained weights
- - would do this by ...
+ResNetLSTM is pretrained on ImageNet, while Mesonet is pretrained on Mesonet. Both models apply transfer learning for deepfake detection. They are finetuned on CelebDF with the following procedure, settings, and results:
 
-### Hyperparameters
-- hyperparameters used
+#### Setup
+1. Clone our repository into your environment: https://github.com/jchangz01/CS188-Project-Deepfake-Detection
+2. Download `Celeb-DF`(v1) from https://github.com/yuezunli/celeb-deepfakeforensics (NOTE: It is quite large ~2GB)
+3. Place `Celeb-DF` directory into `[yourpath]/CS188-Project-Deepfake-Detection/data`
 
-### Fine-tuning
-- models are trained and then fine-tuned on our datasets
+#### Training
+The following code block shows how we train our models to the CelebDF dataset (exammple is ResNetLSTM specific):
+```
+import train 
+
+dataset = 'celebdf'
+data_path = root + 'CS188-Project-Deepfake-Detection/data/celebdf'
+method = 'resnet_lstm_celebdf'
+img_size = 224
+normalization = 'imagenet'
+data = label_data(dataset_path=data_path,
+                      dataset=dataset, method=method, 
+                      face_crops=True, test_data=False)
+augs = df_augmentations(img_size, strength='weak')
+folds = 5
+epochs = 30
+batch_size = 4
+lr = 0.0001
+
+model, average_auc, average_ap, average_acc, average_loss = train.train(dataset=dataset, data=data,
+                                                                        method=method, img_size=img_size, normalization=normalization, augmentations=augs,
+                                                                        folds=folds, epochs=cls.epochs, batch_size=cls.batch_size, lr=cls.lr
+                                                                        )
+```
+                                                                                
+#### Hyperparameters and Train Results
+We used the following hyperparameters and settings to train our models:
+- ResNetLSTM: image_size = 224, normalization = 'imagenet', folds = 5 (20 val/80 train split) , epochs = 30, batch_size = 4, lr = 0.0001, optimizer: Adam
+- Mesonet: image_size = 256, normalization = 'xception', folds = 5 (20 val/80 train split) , epochs = 20, batch_size = 32, lr = 0.0001, optimizer: Adam
+
+The results received from training are as follows:
+- ResNetLSTM: val_loss = 0.1415, val_acc = 0.9457, epochs until best model = 25
+- Mesonet: val_loss = 0.4458, val_acc = 0.7994, epochs until best model = 20
+
 
 ## Testing
 
