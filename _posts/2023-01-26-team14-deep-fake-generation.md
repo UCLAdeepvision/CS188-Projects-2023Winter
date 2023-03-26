@@ -330,7 +330,7 @@ However, there are also images that do not work well with the models. If the ima
 ### Motivation <a name="mot2"></a>
 StarGAN is a generative adversarial network that learns the mappings among multiple domains using only a single generator and a discriminator, training effectively from images of all domains (Choi 2). The topology could be represented as a star where multi-domains are connected, thus receiveing the name StarGAN. In this article, we will be looking at StarGAN v2. The main differentiation between versions is that v2 is "a scalable approach that can generate diverse images across multiple domains" (Choi v2 pg2). The domain label is replaced with the domain specific style code. The goal is that v2 will yield better results in terms of visual qulaity and diveristy than the original StarGAN.
 
-![StarGAN v2 Results](/assets/images/team14/style1.JPG)
+![StarGAN v2 Results](/assets/images/team14/style2.JPG)
 * Fig 13. Example of image synthesis results on CelebA dataset using StarGAN v2. The source and reference images are in the first rown and column, and they are real images, while the rest of the images are generated. (Image source: [6])
 
 StarGAN consists of two modules, a discriminator and a generator. The discriminator learns to differentiate between real and fake images and begins to clssify the real images with its proper domain. The generator takes an image and a target domain label as input and generates a fake image with them. The target domain label is then spatially replicated and concatenated with the image given as input. The generator attempts to reconstruct the orginal image via the fake image when given the original domain label. Lastly, the generator tries to generate images that are almost identical to the real images and will be classified as being from the target domain by the discriminator.
@@ -553,6 +553,11 @@ I think having a StyleEncoder also made a big difference compared to other image
 
 
 ## Demo <a name="demo"></a>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jHIWuE3G9Aw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+link to Google Folder: https://drive.google.com/drive/folders/1omGMAXLLt7Bc2HivJ6o-6-96DmPh6OPH?usp=sharing
+link to Google Collab: https://colab.research.google.com/drive/1vEm8I2ZddkUOCu0pFBUWhIdxdcnbG_mY?usp=sharing
 
 ## References <a name="ref"></a>
 
