@@ -7,10 +7,25 @@ date: 2023-01-29 01:09:00
 ---
 
 >
-<!--more-->
-{: class="table-of-content"}
-* TOC
-{:toc}
+- [Introduction](#introduction)
+  - [The Dataset](#the-dataset)
+- [Data Engineering](#data-engineering)
+  - [Aiming for Shape](#aiming-for-shape)
+    - [Grayscale](#grayscale)
+    - [Random Solarize](#random-solarize)
+  - [Increasing Dataset through Position](#increasing-dataset-through-position)
+    - [Random Rotation](#random-rotation)
+    - [Horizontal Flip](#horizontal-flip)
+    - [Color Jitter](#color-jitter)
+- [The Models](#the-models)
+  - [Ensemble](#ensemble)
+  - [ViT](#vit)
+  - [Resnet](#resnet)
+  - [VGG](#vgg)
+- [Results](#results)
+- [Conclusion](#conclusion)
+- [Code Repositories](#code-repositories)
+- [References](#references)
 
 ## Introduction - Nathan
 
@@ -20,7 +35,7 @@ Mushrooms are a specific form of fungus that have had their image rise in popula
 Pictures of mushroom
 
 pics of each augmentation would be nice
-## Data Engineering - Drake
+## Data Engineering
 
 Mushrooms are generally not found completely isolated on a slate rock, posed for the perfect picture with an even background. They are amidst damp soil, rotting leaves, and all kinds of other foliage. Because of this, we will need to work with our data such that our model can detect where the mushroom is by focusing solely on the shape of the mushroom. Then, we can continue with the mushroom's many various colors and orientations to simply generate more data and not overfit to certain viewpoints. Our biggest challenge is the diversity of ourdataset: we have 89760 images split unevenly amongst 1394 categories. In order to overcome our dataset diversity and small sample size per category, we will attempt to increase our dataset with two augmentation transforms that will aim to make the model focus on shape and simply generate more data through various positional changes. Additionally, because our dataset has so few images for some labels, these augmentations will also help regularize some of the learning to not overfit our limited dataset.
 
@@ -52,7 +67,7 @@ The orizontal Flip augmentation flips the image horizontally with probability p.
 
 The Color Jitter augmentation is the last of this series of transforms. Color Jitter randomly changes the brightness, contrast, saturation, and hue of an image. The amount to jitter each factor is chosen uniformly from [max(0,1-factor), 1 + factor]. We chose a brightness factor of .5 because it allowed some of the brighter images to be more similar to other darker images in the dataset and vice versa without making the images too dark or light to see. We set the hue to .3 to jitter the hue similarly in a range that did sometimes drastically change the colors without dramatically warping the image past recognition of shapes from the contrast of shades. We decided not to edit contrast and saturation as in combination with hue and brightness the images were changed too drastically. After these three augmentations we concatenate the transformed data to the previous two datasets, in total tripling our original number of images.
 
-## The Models - Drake
+## The Models
 Deep learning has become one of the most popular tools for computer vision and machine learning ever since our computation power increased to the level required to take in the massive amounts of data these models require. Deep Learning models are in a sense exactly how they sound. They are neural networks with many many layers to capture different aspects of data features using backpropogation and series of linear and non-linear transformations to update the learning parameters. We are using several baseline pretrained models with altered output layers for comparison. We extracted the best possible accuracy from Resnet18, Resnet50, VGG16, and ViT with our data. Our goal is to use an ensemble of these different models to try and compensate for our limited dataset, but this goal is gated behind training speed.
 
 ### Ensemble - Drake
@@ -68,15 +83,15 @@ add image of self attention
 
 ### VGG - Nathan
 
-## Results - 
+## Results
 
-## Conclusion - 
+## Conclusion 
 
 ### Code Repositories
 
 [0] [2018 FGVCx Competition Dataset and Repository](https://github.com/visipedia/fgvcx_fungi_comp#data) 
 
-#### Sources
+#### References
 
 [0] [Mushrooms Detection, Localization and 3D Pose Estimation....](https://arxiv.org/pdf/2201.02837.pdf) Baisa, Nathanael L., and Bashir Al-Diri. Mushrooms Detection, Localization and 3D Pose Estimation Using RGB-D Sensor for Robotic-Picking Applications. Arxiv, 8 Jan. 2022, https://arxiv.org/pdf/2201.02837.pdf. 
 
