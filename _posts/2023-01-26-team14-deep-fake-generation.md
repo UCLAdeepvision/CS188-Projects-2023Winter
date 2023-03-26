@@ -315,6 +315,14 @@ Using the pretrained models monet2photo and style_monet from the cycleGAN reposi
 ![style_monet results](/assets/images/team14/real-to-monet.png)
 * Fig 11. Realistic photo being converted to monet styled painting. Original image on right and generated image on left.
 
+#### Dicsussion
+With this GAN architecture, it is able to perform better than other GAN architectures primarily because the cycle consistency loss keeps the model stable. The model has to be able to return back to the original image when ran through the other network, so with this it keeps the mappings consistent with each other.
+
+However, there are also images that do not work well with the models. If the image needs to be changed drastically or the images are far to different from the training data provided then the results aren't as great.
+
+![fails](/assets/images/team14/fail-images.png)
+* Fig 12. Table of images that failed the image translation. (Image source: [7])
+
 ## Star GAN v2 <a name="stargan"></a>
 
 ### Motivation <a name="mot2"></a>
@@ -537,7 +545,7 @@ There are multiple reasons why StyleGAN v2 is superior to other deep fake image 
 
 Some of the biggest changes to StyleGAN v2 include weight demodulation, lazy regularization, path length regularization, progressive growth, and large networks. These changes resulted in StyleGAN v2 being superior to StyleGAN. For example, the style space is produced by learned transformations in v2, providing it more flexibility. This resulted in better generated images that could be mistaken for real images. StyleGAN also has blob-life artifacts in the generated image, making it harder for a person to beleive it was not generated. This stems from using instance normalization in AdaIN, which was targeted for style transfer to replace the style in one image with one in the other.  This issue is not apparent in StyleGAN v2 and seen in the generated result images. 
 
-I beleive the factor that had the biggest impact on the results being better than StyleGAN was the weight demodulation. It removed how the constant was processed at the beginning of training, made it so that the mean was not needed when normalizing the different features, and moved the noise module outside the style module. Because of these changes, the blob-like features were not apparent in the StyleGAN v2 generated images. And as stated previously, this was the biggest issue with StyleGAN. Because this issue was resolved, we see much better imges in StyleGANv2 that would have a greater likelihood of passing for a real image.
+I believe the factor that had the biggest impact on the results being better than StyleGAN was the weight demodulation. It removed how the constant was processed at the beginning of training, made it so that the mean was not needed when normalizing the different features, and moved the noise module outside the style module. Because of these changes, the blob-like features were not apparent in the StyleGAN v2 generated images. And as stated previously, this was the biggest issue with StyleGAN. Because this issue was resolved, we see much better images in StyleGANv2 that would have a greater likelihood of passing for a real image.
 
 I think having a StyleEncoder also made a big difference compared to other image generation techniques. It allowed the style to be translated pretty well in most of the images. 
 
