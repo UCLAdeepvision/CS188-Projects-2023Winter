@@ -4,13 +4,26 @@ layout: post
 comments: true
 title: Trajectory Prediction
 author: Team 32 (Kevin Jiang, Michael Yang)
-date: 2023-02-26
+date: 2023-03-25
 
 ---
 
-> Trajectory prediction in the context of an autonomous vehicle involves predicting how nearby vehicles, pedestrians, and other subjects will move in a real-time environment, which in turn is needed for the autonomous vehicle to maneuver in an optimal and safe manner.
+> Trajectory prediction of pedestrians and vehicles involves utilizing information relating to the previous locations of such subjects to predict where they will be in the future, which is important in contexts such as that of an autonomous vehicle but may be complex as subjects may respond unpredictably in a real-time environment. We examine two approaches to trajectory prediction, a stepwise goal approach with SGNet [1] [2] and a graph approach with PGP [3] [4], while also briefly examining a third model, Trajectron++ [5] [6], as a comparison. We work with the ETH / UCY (obtained through the Trajectron++ repository [6]) and nuScenes [7] datasets during these studies.
 
 <!--more-->
+
+## Environment Setup
+
+The studies were run on a Google Cloud Platform Linux virtual machine with a single GPU. To set up the environment, begin by navigating to or creating the desired project directory and running the commands
+
+```
+mkdir Checkpoints
+mkdir Data
+mkdir Models
+mkdir Outputs
+```
+
+The project directory will be denoted as ```ProjectRoot```, which is to be treated as an absolute filepath and is to be replaced with the actual filepath to the project directory.
 
 ## Models
 
@@ -28,43 +41,29 @@ Unlike previous research which model an agent as having a single, long-term goal
 
 To this end, SGNet estimates and uses goals at multiple time scales to predict agents' trajectories. It comprises an encoder that captures historical information, a stepwise goal estimator that predicts successive goals into the future, and a decoder to predict future trajectory [1].
 
-### GRIP++: Enhanced Graph-based Interaction-aware Trajectory Prediction for Autonomous Driving
-
-Paper: [https://doi.org/10.48550/arXiv.1907.07792](https://doi.org/10.48550/arXiv.1907.07792) [3]
-
-Repository: [https://github.com/xincoder/GRIP](https://github.com/xincoder/GRIP) [4]
-
-#### Overview
-
-This paper introduces an improvement on Graph-based Interaction-aware Trajectory Prediction (GRIP), called GRIP++, to handle both highway and urban scenarios [3].
-
-Specifically, while GRIP performed well for highway traffic, urban traffic is much more complex, involving diverse agents with varying motion patterns and whose behavior affect one another. In addition, GRIP used a fixed graph to represent the relationships between agents, leading to potential performance degradation for urban traffic [3].
-
-GRIP++ addresses these limitations by employing both fixed and dynamic graphs to represent the interactions between many different kinds of agents and predict trajectories for all traffic agents simultaneously [3].
-
 ### Multimodal Trajectory Prediction Conditioned on Lane-Graph Traversals
 
-Paper: [https://doi.org/10.48550/arXiv.2106.15004](https://doi.org/10.48550/arXiv.2106.15004) [5]
+Paper: [https://doi.org/10.48550/arXiv.2106.15004](https://doi.org/10.48550/arXiv.2106.15004) [3]
 
-Repository: [https://github.com/nachiket92/PGP](https://github.com/nachiket92/PGP) [6]
+Repository: [https://github.com/nachiket92/PGP](https://github.com/nachiket92/PGP) [4]
 
 #### Overview
 
-This paper introduces Prediction via Graph-Based Policy (PGP), an improvement on multimodal regression for trajectory prediction [5].
+This paper introduces Prediction via Graph-Based Policy (PGP), an improvement on multimodal regression for trajectory prediction [3].
 
-While standard multimodal regression aggregates the entirety of the graph representation of the map, the new method instead takes a subset of graph data that is more relevant to the vehicle and selectively aggregates this data [5].
+While standard multimodal regression aggregates the entirety of the graph representation of the map, the new method instead takes a subset of graph data that is more relevant to the vehicle and selectively aggregates this data [3].
 
-In addition to lateral motion (acceleration, braking, etc.), the model also examines variations in longitudinal motion such as lane changes, utilizing a latent variable [5].
+In addition to lateral motion (acceleration, braking, etc.), the model also examines variations in longitudinal motion such as lane changes, utilizing a latent variable [3].
 
-The model utilizes a graph encoder to encode node and agent features, a policy header to determine probable routes, and a trajectory decoder to determine a likely trajectory from this data [5].
+The model utilizes a graph encoder to encode node and agent features, a policy header to determine probable routes, and a trajectory decoder to determine a likely trajectory from this data [3].
 
 #### Technical Details
 
-!["PGP Model [5]"](../assets/images/team32/PGPModel.png)
+!["PGP Model [3]"](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2023Winter/main/assets/images/team32/PGPModel.png)
 
-The model consists of a graph encoder, policy header, and trajectory decoder [5].
+The model consists of a graph encoder, policy header, and trajectory decoder [3].
 
-The graph encoder utilizes three GRU encoders to encode the nodes, agents, and motion [5]. An example of such an encoder (lines 43-45 of ```pgp_encoder.py``` in the source) is as follows: [6]
+The graph encoder utilizes three GRU encoders to encode the nodes, agents, and motion [3]. An example of such an encoder (lines 43-45 of ```pgp_encoder.py``` in the source) is as follows: [4]
 
 ```
 # Node encoders
@@ -72,7 +71,7 @@ self.node_emb = nn.Linear(args['node_feat_size'], args['node_emb_size'])
 self.node_encoder = nn.GRU(args['node_emb_size'], args['node_enc_size'], batch_first=True)
 ```
 
-Since agents respond to other nearby agents in traffic, node encodings are updated using information from agent encodings within a certain distance, utilizing multi-head attention to do so [5]; the layers are implemented in lines 51-56 of ```pgp_encoder.py``` in the source as: [6]
+Since agents respond to other nearby agents in traffic, node encodings are updated using information from agent encodings within a certain distance, utilizing multi-head attention to do so [3]; the layers are implemented in lines 51-56 of ```pgp_encoder.py``` in the source as: [4]
 
 ```
 # Agent-node attention
@@ -83,7 +82,7 @@ self.a_n_att = nn.MultiheadAttention(args['node_enc_size'], num_heads=1)
 self.mix = nn.Linear(args['node_enc_size']*2, args['node_enc_size'])
 ```
 
-The attention output is concatenated with the original encoding and a GNN is then used to aggregate node context [5]. The GNN is implemented using GAT in lines 222-251 of ```pgp_encoder.py``` in the source as: [6]
+The attention output is concatenated with the original encoding and a GNN is then used to aggregate node context [3]. The GNN is implemented using graph attention (GAT) in lines 222-251 of ```pgp_encoder.py``` in the source as: [4]
 
 ```
 class GAT(nn.Module):
@@ -118,7 +117,7 @@ class GAT(nn.Module):
         return att_op.permute(1, 0, 2)
 ```
 
-With the node encoding completed, the data will then pass through the policy header, which utilizes an MLP to output probabilities for each node's edges [5]; the layers are implemented in lines 37-45 of ```pgp.py``` in the source as: [6]
+With the node encoding completed, the data will then pass through the policy header, which utilizes an MLP to output probabilities for each node's edges [3]; the layers are implemented in lines 37-45 of ```pgp.py``` in the source as: [4]
 
 ```
 # Policy header
@@ -132,9 +131,9 @@ self.leaky_relu = nn.LeakyReLU()
 self.log_softmax = nn.LogSoftmax(dim=2)
 ```
 
-Loss for the policy header is calculated using negative log likelihood [5], implemented in ```pi_bc.py``` in the source [6].
+Loss for the policy header is calculated using negative log likelihood [3], implemented in ```pi_bc.py``` in the source [4].
 
-Once possible future routes are determined, multi-head attention is utilized again for selective aggregation of context to form possible trajectories and the motion that will be undertaken (which may vary for a given trajectory) [5]. The aggregator layers are implemented in lines 51-56 of ```pgp.py``` in the source as: [6]
+Once possible future routes are determined, multi-head attention is utilized again for selective aggregation of context to form possible trajectories and the motion that will be undertaken (which may vary for a given trajectory) [3]. The aggregator layers are implemented in lines 51-56 of ```pgp.py``` in the source as: [4]
 
 ```
 # Attention based aggregator
@@ -145,7 +144,7 @@ self.val_emb = nn.Linear(args['node_enc_size'], args['emb_size'])
 self.mha = nn.MultiheadAttention(args['emb_size'], args['num_heads'])
 ```
 
-Finally, the decoder utilizes an MLP and K-means clustering to output predicted trajectories [5], with the implementation of the MLP layers in lines 33-35 of ```lvm.py``` in the source as: [6]
+Finally, the decoder utilizes an MLP and K-means clustering to output predicted trajectories [3], with the implementation of the MLP layers in lines 33-35 of ```lvm.py``` in the source as: [4]
 
 ```
 self.hidden = nn.Linear(args['encoding_size'] + args['lv_dim'], args['hidden_size'])
@@ -153,17 +152,208 @@ self.op_traj = nn.Linear(args['hidden_size'], args['op_len'] * 2)
 self.leaky_relu = nn.LeakyReLU()
 ```
 
-Loss for the decoder is calculated using average displacement error [5], implemented in ```min_ade.py``` in the source [6]. The total loss is the sum of the losses of the policy header and the decoder [5].
+Loss for the decoder is calculated using average displacement error [3], implemented in ```min_ade.py``` in the source [4]. The total loss is the sum of the losses of the policy header and the decoder [3].
 
-## Studies to Conduct
+The metrics the model are evaulated on are the minimum average displacement error (minADE) of each point in the predicted trajectory from the ground-truth trajectory [3], and the miss rate, which tracks deviations of more than 2 m from said ground-truth trajectory [3]. Both metrics are evaluated with the top 5 and top 10 predicted trajectories, resuting in four metrics in total; in all cases, a lower value is desired [3].
 
-The PGP environment has been set up as per repository instructions [6], the code has been tested, and the NuScenes dataset [7] (or at least the parts of the dataset needed by the model) has been obtained. Some testing has also been done on the SGNet model [1].
+#### Setup
 
-Other encoder, aggregator, and decoder models appear to exist in the PGP repository [6], meaning after running the standard PGP model on the NuScenes dataset [7] (using the provided pretrained model), these other models should also be tested for a comparison (training from scratch). There is a config file ```pgp_gatx2_lvm_traversal.yml``` in the repository that allows for the models to be altered [6].
+Navigate to the ```ProjectRoot/Models``` directory and run the command
 
-Additionally, the config file allows for hyperparameters to be altered, which should also be done to see if results can be improved. [6]
+```
+git clone https://github.com/nachiket92/PGP.git
+```
 
-Although SGNet [1] and GRIP++ [3] differ significantly in architecture from PGP [5], perhaps some elements could be taken from these models and incorporated into PGP to see if performance can be further improved.
+to clone the repository [4]. Most of the following commands are from the repository's ```README.md``` [4], but tailored to work with the project.
+
+
+Follow the instructions in the repository's ```README.md``` [4] to set up the virtual environment. However, when installing Pytorch, run
+
+```
+conda install pytorch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2 cudatoolkit=10.1 -c pytorch -c nvidia
+```
+
+instead of the command provided by the ```README.md``` [4] to enable proper CUDA support; the model appears to assume CUDA is available and will not work properly otherwise.
+
+Navigate to the ```ProjectRoot/Data``` and run the commands
+
+```
+mkdir nuScenes
+mkdir nuScenesPreprocessed
+```
+
+Follow the instructions in the repository's ```README.md``` [4] to download and set up the nuScenes dataset. Afterwards, run the command
+
+```
+python preprocess.py -c configs/preprocess_nuscenes.yml -r ../../Data/nuScenes -d ../../Data/nuScenesPreprocessed/
+```
+
+to preprocess the data. Note that this will take several hours to run and will require a large amount of storage; the Google Cloud Project VM that was used has 500 GB of disk space allocated, which is sufficient. Should there be insufficient GPU memory, open ```ProjectRoot/Models/PGP/configs/preprocess_nuscenes.yml``` and reduce the value of ```num_workers```. The default value was 4, which we had to reduce to 2 to have sufficient memory.
+
+Download the pre-trained weights, which are available via a link on the repository's ```README.md``` [4], and save it to the ```ProjectRoot/Checkpoints``` directory. Note that while the weights are a ```.tar``` file, the file does not actually appear to be a tarball and thus cannot be extracted; rather, the entire file is to be passed into the model.
+
+For the studies which were run on the model, navigate to ```ProjectRoot/Outputs``` and run the command
+
+```
+mkdir PGP
+```
+
+Navigate to this newly-created directory and run the commands
+
+```
+mkdir Pre-Trained
+mkdir Original
+mkdir Encoder_GAT_4
+mkdir Finetune
+```
+
+#### Studies
+
+All training and evaluation commands are run in the ```ProjectRoot/Models/PGP``` directory.
+
+Studies were conducted on the nuScenes dataset [7], which the model is designed to work with. The first goal was to utilize the pre-trained weights [4] to evaluate the model and visualize output predictions to see if results from the paper could be replicated. The next goal was to train the model from scratch to ensure that results match those of the pre-trained weights. The model was trained from scratch with the command
+
+```
+python train.py -c configs/pgp_gatx2_lvm_traversalOriginal.yml -r ../../Data/nuScenes -d ../../Data/nuScenesPreprocessed/ -o ../../Outputs/PGP/Original/ -n 100
+```
+
+and the pre-trained and trained-from-scratch models were evaluated with the commands.
+
+```
+python evaluate.py -c configs/pgp_gatx2_lvm_traversalOriginal.yml -r ../../Data/nuScenes -d ../../Data/nuScenesPreprocessed/ -o ../../Outputs/PGP/Pre-Trained/ -w ../../Checkpoints/PGP_lr-scheduler.tar
+
+python evaluate.py -c configs/pgp_gatx2_lvm_traversalOriginal.yml -r ../../Data/nuScenes -d ../../Data/nuScenesPreprocessed/ -o ../../Outputs/PGP/Original/ -w ../../Outputs/PGP/Original/checkpoints/best.tar
+```
+
+to evaluate using pre-trained weights or trained-from-scratch weights, respectively.
+
+The model was originally trained using the configuration file ```pgp_gatx2_lvm_traversal.yml``` [4], but due to the setup for the next study, the configuration file needed to replicate this training is instead ```pgp_gatx2_lvm_traversalOriginal.yml```, though the hyperparameters are unchanged.
+
+Afterwards, the first study that was conducted was regarding the number of GAT layers. The model utilizes two of such layers [4], with the article noting that increasing the number of layers has little effect and even "ambiguous results" [3]; the article shows results with one GAT layer and with two, indicating that the additional layer slightly increases minimum ADEs but slightly decreases miss rates. With this in mind, we wanted to see what would happen if the number of GAT layers was increased further. To this effect, the configuration file ```pgp_gatx2_lvm_traversal.yml``` (located in ```ProjectRoot/Models/PGP/configs```) was copied and the original file renamed to ```pgp_gatx2_lvm_traversalOriginal.yml```; the number of GAT layers, expressed in ```pgp_gatx2_lvm_traversal.yml``` as ```num_gat_layers``` under the encoder parameters [4], was doubled from ```2``` to ```4```. The modified model was trained with the command
+
+```
+python train.py -c configs/pgp_gatx2_lvm_traversal.yml -r ../../Data/nuScenes -d ../../Data/nuScenesPreprocessed/ -o ../../Outputs/PGP/Encoder_GAT_4 -n 100
+```
+
+and evaluated with the command
+
+```
+python evaluate.py -c configs/pgp_gatx2_lvm_traversal.yml -r ../../Data/nuScenes -d ../../Data/nuScenesPreprocessed/ -o ../../Outputs/PGP/Encoder_GAT_4/ -w ../../Outputs/PGP/Encoder_GAT_4/checkpoints/best.tar
+```
+
+Additionally, after the model was trained from scratch using the original hyperparameters (i.e. two GAT layers [3]), the model created the directory ```checkpoints``` in ```ProjectRoot/Outputs/PGP/Original``` and saved the training weights for each epoch, in addition to tracking the checkpoint with the best results. Based off of the timestamps as to when the optimal checkpoint ```best.tar``` was last updated, the best checkpoint was determined to be designated as ```42.tar```, so we were then interested in seeing if it was possible to finetune the model and improve performance further. Hence, the configuration file ```pgp_gatx2_lvm_traversalOriginal.yml``` in ```ProjectRoot/Models/PGP/configs``` was copied, with the new version renamed to ```pgp_gatx2_lvm_traversalFinetune.yml```; the learning rate was then decreased by a factor of 40 from the default ```.001``` to ```0.000025``` and the finetuning commenced from the epoch immediately before the best checkpoint, ```41.tar```. The finetuning was conducted with the command
+
+```
+python train.py -c configs/pgp_gatx2_lvm_traversalFinetune.yml -r ../../Data/nuScenes -d ../../Data/nuScenesPreprocessed/ -o ../../Outputs/PGP/Finetune/ -n 100 -w ../../Outputs/PGP/Original/checkpoints/41.tar
+```
+
+and evaluated with the command
+
+```
+python evaluate.py -c configs/pgp_gatx2_lvm_traversalFinetune.yml -r ../../Data/nuScenes -d ../../Data/nuScenesPreprocessed/ -o ../../Outputs/PGP/Finetune/ -w ../../Outputs/PGP/Finetune/checkpoints/best.tar
+```
+
+#### Results
+
+The paper noted that the model has minimum ADEs of ```1.30``` and ```1.00``` for top 5 and top 10 predicted trajectories, as well as miss rates of ```.61``` and ```.37``` for top 5 and top 10 predicted trajectories [3], and we wanted to see if these results were replicable.
+
+For increased precision of output values, the file ```evaluator.py``` located in ```ProjectRoot/Models/PGP/train_eval``` [4] was modified on line 81, replacing ```.02f``` with ```.05f```, thereby increasing precision from two decimal places to five.
+
+Evaluation outputs are stored as text files in the respective output directories as ```ProjectRoot/Outputs/PGP/[TYPE]/results/results.txt```.
+
+The outputs for the pre-trained model are:
+
+```
+min_ade_5: 1.27230
+min_ade_10: 0.94289
+miss_rate_5: 0.52892
+miss_rate_10: 0.34288
+pi_bc: 3.14598
+```
+
+This appears to replicate the results of the paper, achieving outputs with slightly better performance.
+
+The outputs for the trained-from-scratch model are:
+
+```
+min_ade_5: 1.27727
+min_ade_10: 0.94902
+miss_rate_5: 0.52826
+miss_rate_10: 0.34012
+pi_bc: 1.83836
+```
+
+ADEs seem to be slightly higher than the pre-trained model, while miss rates seem to be slightly lower. However, the values are still close to those of the pre-trained weights and are still better than those of the paper.
+
+The outputs for the model with four GAT layers are:
+
+```
+min_ade_5: 1.28691
+min_ade_10: 0.95485
+miss_rate_5: 0.51388
+miss_rate_10: 0.33791
+pi_bc: 1.93244
+```
+
+ADEs seem to be higher than both the pre-trained and trained-from-scratch models, while miss rates seem to be slightly lower than both. Results are still better than those of the paper, and the trends shown here (more layers resulting in higher ADEs and lower miss rates) follow the trends shown in the paper, which compared one GAT layer versus two.
+
+The outputs for the finetuned model are:
+
+```
+min_ade_5: 1.27362
+min_ade_10: 0.94978
+miss_rate_5: 0.51587
+miss_rate_10: 0.33437
+pi_bc: 1.85104
+```
+
+Although the ADE performance of the finetuned model does not quite reach that of the pre-trained model, it does outperform the trained-from-scratch and four-GAT-layer models in terms of the top 5 predictions. However, its performance appears to be the worst of the four models when it comes to the ADE with top 10 predictions. That said, when it comes to miss rate, the finetuned model appears to perform better with top 10 predictions, outperforming all other models; for miss rate with top 5 predictions, the finetuned model does not perform as well as the model with four GAT layers, but outperforms the others.
+
+Additionally, the model allowed for the outputs to be visualized as ```.gif```s, which were generated with the commands
+
+```
+python visualize.py -c configs/pgp_gatx2_lvm_traversalOriginal.yml -r ../../Data/nuScenes -d ../../Data/nuScenesPreprocessed/ -o ../../Outputs/PGP/Pre-Trained/ -w ../../Checkpoints/PGP_lr-scheduler.tar
+
+python visualize.py -c configs/pgp_gatx2_lvm_traversalOriginal.yml -r ../../Data/nuScenes -d ../../Data/nuScenesPreprocessed/ -o ../../Outputs/PGP/Original/ -w ../../Outputs/PGP/Original/checkpoints/best.tar
+
+python visualize.py -c configs/pgp_gatx2_lvm_traversal.yml -r ../../Data/nuScenes -d ../../Data/nuScenesPreprocessed/ -o ../../Outputs/PGP/Encoder_GAT_4/ -w ../../Outputs/PGP/Encoder_GAT_4/checkpoints/best.tar
+
+python visualize.py -c configs/pgp_gatx2_lvm_traversalFinetune.yml -r ../../Data/nuScenes -d ../../Data/nuScenesPreprocessed/ -o ../../Outputs/PGP/Finetune/ -w ../../Outputs/PGP/Finetune/checkpoints/best.tar
+```
+
+In all visualizations, the left view shows the movement of the vehicle itself, the middle view shows the predicted trajectories, and the right view shows the ground-truth. These visualizations are stored in the respective output directories as ```ProjectRoot/Outputs/PGP/[TYPE]/results/gifs/[GIF]```; there appear to be 13 ```.gif```s in each directory, numbered ```example0.gif``` to ```example12.gif```. Shown here are the ```example3.gif``` visualizations of the models, though it is worth noting that the files were manually renamed.
+
+Pre-trained:
+
+!["Pre-Trained"](../assets/images/team32/examplePreTrained.gif)
+
+Trained from scratch:
+
+!["Original"](../assets/images/team32/exampleOriginal.gif)
+
+Four GAT layers:
+
+!["Encoder GAT 4"](../assets/images/team32/exampleEncoderGAT4.gif)
+
+Finetuned:
+
+!["Finetune"](../assets/images/team32/exampleFinetune.gif)
+
+Overall, the pre-trained model performs the best when it comes to ADE, while the model with four GAT layers and the finetuned model perform the best when it comes to miss rate.
+
+### Trajectron++: Dynamically-Feasible Trajectory Forecasting With Heterogeneous Data 
+
+Paper: [https://doi.org/10.48550/arXiv.2001.03093](https://doi.org/10.48550/arXiv.2001.03093) [5]
+
+Repository: [https://github.com/StanfordASL/Trajectron-plus-plus](https://github.com/StanfordASL/Trajectron-plus-plus) [6]
+
+#### Overview
+
+
+
+## Results
+
+[Project Results](https://drive.google.com/drive/folders/11nyN8z7PIid8eK1MmgqYeR7rRLOr_JX5?usp=share_link)
 
 ## References
 
@@ -171,14 +361,14 @@ Although SGNet [1] and GRIP++ [3] differ significantly in architecture from PGP 
 
 [2] Wang, Chuhua and Mingze Xu. "SGNet.pytorch." *GitHub*, GitHub, [www.github.com/ChuhuaW/SGNet.pytorch](https://github.com/ChuhuaW/SGNet.pytorch). *Papers with Code*, Papers with Code, 25 Mar 2021, [www.paperswithcode.com/paper/stepwise-goal-driven-networks-for-trajectory](https://paperswithcode.com/paper/stepwise-goal-driven-networks-for-trajectory), accessed 29 Jan 2023.
 
-[3] Li, Xin, et al. "GRIP++: Enhanced Graph-based Interaction-aware Trajectory Prediction for Autonomous Driving." *ArXiv*, ArXiv, 19 May 2020, [https://doi.org/10.48550/arXiv.1907.07792](https://doi.org/10.48550/arXiv.1907.07792). *Papers with Code*, Papers with Code, [www.paperswithcode.com/paper/grip-graph-based-interaction-aware-trajectory](https://paperswithcode.com/paper/grip-graph-based-interaction-aware-trajectory), accessed 29 Jan 2023.
+[3] Deo, Nachiket, et al. "Multimodal Trajectory Prediction Conditioned on Lane-Graph Traversals." *ArXiv*, ArXiv, 15 Sep 2021, [www.doi.org/10.48550/arXiv.2106.15004](https://doi.org/10.48550/arXiv.2106.15004). *Papers with Code*, Papers with Code, 28 Jun 2021, [www.paperswithcode.com/paper/multimodal-trajectory-prediction-conditioned](https://paperswithcode.com/paper/multimodal-trajectory-prediction-conditioned), accessed 26 Feb 2023.
 
-[4] Li, Xin. "GRIP." *GitHub*, GitHub, [www.github.com/xincoder/GRIP](https://github.com/xincoder/GRIP). *Papers with Code*, Papers with Code, [www.paperswithcode.com/paper/grip-graph-based-interaction-aware-trajectory](https://paperswithcode.com/paper/grip-graph-based-interaction-aware-trajectory), accessed 29 Jan 2023.
+[4] Deo, Nachiket. "PGP." *GitHub*, GitHub, [www.github.com/nachiket92/PGP](https://github.com/nachiket92/PGP). *Papers with Code*, Papers with Code, 28 Jun 2021, [www.paperswithcode.com/paper/multimodal-trajectory-prediction-conditioned](https://paperswithcode.com/paper/multimodal-trajectory-prediction-conditioned), accessed 26 Feb 2023.
 
-[5] Deo, Nachiket, et al. "Multimodal Trajectory Prediction Conditioned on Lane-Graph Traversals." *ArXiv*, ArXiv, 15 Sep 2021, [www.doi.org/10.48550/arXiv.2106.15004](https://doi.org/10.48550/arXiv.2106.15004). *Papers with Code*, Papers with Code, 28 Jun 2021, [www.paperswithcode.com/paper/multimodal-trajectory-prediction-conditioned](https://paperswithcode.com/paper/multimodal-trajectory-prediction-conditioned), accessed 26 Feb 2023.
+[5] Salzmann, Tim, et al. "Trajectron++: Dynamically-Feasible Trajectory Forecasting With Heterogeneous Data" *ArXiv*, ECCV, 13 Jan 2021, [www.doi.org/10.48550/arXiv.2001.03093](https://doi.org/10.48550/arXiv.2001.03093). *Papers with Code*, Papers with Code, 2020, [www.paperswithcode.com/paper/trajectron-multi-agent-generative-trajectory](https://paperswithcode.com/paper/trajectron-multi-agent-generative-trajectory), accessed 25 Mar 2023.
 
-[6] Deo, Nachiket. "PGP." *GitHub*, GitHub, [www.github.com/nachiket92/PGP](https://github.com/nachiket92/PGP). *Papers with Code*, Papers with Code, 28 Jun 2021, [www.paperswithcode.com/paper/multimodal-trajectory-prediction-conditioned](https://paperswithcode.com/paper/multimodal-trajectory-prediction-conditioned), accessed 26 Feb 2023.
+[6] Ivanovic, Boris and Mohamed Zahran. "Trajectron-plus-plus." *GitHub*, GitHub, [www.github.com/StanfordASL/Trajectron-plus-plus](https://github.com/StanfordASL/Trajectron-plus-plus). *Papers with Code*, Papers with Code, 2020, [www.paperswithcode.com/paper/trajectron-multi-agent-generative-trajectory](https://paperswithcode.com/paper/trajectron-multi-agent-generative-trajectory), accessed 25 Mar 2023.
 
-[7] *NuScenes.* Motional, 2020, [www.nuscenes.org](https://www.nuscenes.org/). Accessed 26 Feb 2023.
+[7] *nuScenes.* Motional, 2020, [www.nuscenes.org](https://www.nuscenes.org/). Accessed 26 Feb 2023.
 
 ---
