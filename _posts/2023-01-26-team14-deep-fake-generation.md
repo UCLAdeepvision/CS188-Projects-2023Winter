@@ -509,15 +509,13 @@ class StyleEncoder(nn.Module):
 ![Results 1](/assets/images/team14/vid1.gif)
 * Fig 17. lr=1e-4, fLr=1e-6, b1=0, b2=0.99, weightDecay=1e-4
 
-<img src="/assets/images/team14/vid1.gif"><br>
-
-![Results 2](/assets/images/team14/4.JPG)
+![Results 2](/assets/images/team14/vid2.gif)
 * Fig 18. lr=1e-4, fLr=1e-6, b1=.5, b2=0.5, weightDecay=1e-4
 
-![Results 3](/assets/images/team14/5.JPG)
+![Results 3](/assets/images/team14/vid3.gif)
 * Fig 19. lr=1e-4, fLr=1e-6, b1=.5, b2=0.5, weightDecay=1e-5
 
-![Results 4](/assets/images/team14/6.JPG)
+![Results 4](/assets/images/team14/vid4.gif)
 * Fig 20. lr=1e-4, fLr=1e-6, b1=.5, b2=0.5, weightDecay=1e-3
 
 ## Demo <a name="demo"></a>
