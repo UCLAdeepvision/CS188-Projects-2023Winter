@@ -309,12 +309,12 @@ class NLayerDiscriminator(nn.Module):
 ### Results <a name="res1"></a>
 Using the pretrained models monet2photo and style_monet from the cycleGAN repository, I was able to get the following results:
 
-![Result1](/CS188-Projects-2023Winter/assets/images/team14/monet-to-real.png)
-* Fig 11. Monet painting being converted to realistic photo. Original image on right and generated image on left.
+![monet2photo results](/CS188-Projects-2023Winter/assets/images/team14/monet-to-real.png)
+* Fig 10. Monet painting being converted to realistic photo. Original image on right and generated image on left.
 
 
-![Result2](/CS188-Projects-2023Winter/assets/images/team14/real-to-monet.png)
-* Fig 12. Realistic photo being converted to monet styled painting. Original image on right and generated image on left.
+![style_monet results](/CS188-Projects-2023Winter/assets/images/team14/real-to-monet.png)
+* Fig 11. Realistic photo being converted to monet styled painting. Original image on right and generated image on left.
 
 ## Star GAN v2 <a name="stargan"></a>
 
@@ -322,12 +322,12 @@ Using the pretrained models monet2photo and style_monet from the cycleGAN reposi
 StarGAN is a generative adversarial network that learns the mappings among multiple domains using only a single generator and a discriminator, training effectively from images of all domains (Choi 2). The topology could be represented as a star where multi-domains are connected, thus receiveing the name StarGAN. In this article, we will be looking at StarGAN v2. The main differentiation between versions is that v2 is "a scalable approach that can generate diverse images across multiple domains" (Choi v2 pg2). The domain label is replaced with the domain specific style code. The goal is that v2 will yield better results in terms of visual qulaity and diveristy than the original StarGAN.
 
 ![StarGAN v2 Results](/CS188-Projects-2023Winter/assets/images/team14/style1.JPG)
-* Fig 10. Example of image synthesis results on CelebA dataset using StarGAN v2. The source and reference images are in the first rown and column, and they are real images, while the rest of the images are generated.
+* Fig 12. Example of image synthesis results on CelebA dataset using StarGAN v2. The source and reference images are in the first rown and column, and they are real images, while the rest of the images are generated.
 
 StarGAN consists of two modules, a discriminator and a generator. The discriminator learns to differentiate between real and fake images and begins to clssify the real images with its proper domain. The generator takes an image and a target domain label as input and generates a fake image with them. The target domain label is then spatially replicated and concatenated with the image given as input. The generator attempts to reconstruct the orginal image via the fake image when given the original domain label. Lastly, the generator tries to generate images that are almost identical to the real images and will be classified as being from the target domain by the discriminator.
 
 ![StarGAN v2 Flow](/CS188-Projects-2023Winter/assets/images/team14/style1.JPG)
-* Fig 11. Example flow of StarGAN v2 where D represents the discriminator, G represents the generator, F represents the mapping network, and E represents the style encoder
+* Fig 13. Example flow of StarGAN v2 where D represents the discriminator, G represents the generator, F represents the mapping network, and E represents the style encoder
 
 The overarching goal of StarGAN v2 is to train a generator that can generate diverse images of each of the domains that correspond to an image. A domain specific style vectors in the learned style space of each of the trains and then train the generator to reflect the style vectors.
 
@@ -336,19 +336,19 @@ The overarching goal of StarGAN v2 is to train a generator that can generate div
 The Generator Architecture consists of 4 downsampling blocks that use instance normalization (IN), four intermediate blocks, and four upsampling blocks that use adaptive instance normalization (AdaIN). These blocks all have pre-activation residual units. Style code is injected into all the AdaIN layers. 
 
 ![StarGAN v2 Generator Architecture](/CS188-Projects-2023Winter/assets/images/team14/style3.JPG)
-* Fig 12. Example of StarGAN v2 Generator Architecture (Image source: https://arxiv.org/pdf/1912.01865.pdf)
+* Fig 14. Example of StarGAN v2 Generator Architecture (Image source: https://arxiv.org/pdf/1912.01865.pdf)
 
 The Mapping Network Architecture consists of an MLP with k (number of domains) output branches. Four fully connected layers are shared among domains, and they are followed by four fully conected layers for each individual domain.
 
 ![StarGAN v2 Mappning Network Architecture](/CS188-Projects-2023Winter/assets/images/team14/style4.JPG)
-* Fig 13. Example of StarGAN v2 mapping netwrok architecture (Image source: https://arxiv.org/pdf/1912.01865.pdf)
+* Fig 15. Example of StarGAN v2 mapping netwrok architecture (Image source: https://arxiv.org/pdf/1912.01865.pdf)
 
 The Style Encoder Architecture consists of CNN with k (number of domains) output branches. Six pre-activation residual blocks are shared among domains, and they are followed by one fully connected layer for each individual domain.
 
 The Discriminator Architecture consists of six pre-activation residual blocks with leaky ReLY. k (number of domains) fully connected layers are used for real/fake classification among each domain.
 
 ![StarGAN v2 Style Encoder and Discriminator Architecture](/CS188-Projects-2023Winter/assets/images/team14/style5.JPG)
-* Fig 14. Example of StarGAN v2 style encoder and discriminator architecture, where D and K are the output dimensions (Image Source: https://arxiv.org/pdf/1912.01865.pdf)
+* Fig 16. Example of StarGAN v2 style encoder and discriminator architecture, where D and K are the output dimensions (Image Source: https://arxiv.org/pdf/1912.01865.pdf)
 
 #### Loss Functions
 
@@ -508,16 +508,16 @@ class StyleEncoder(nn.Module):
 
 ### Results <a name="res2"></a>
 ![Results 1](/assets/images/team14/3.JPG)
-* lr=1e-4, fLr=1e-6, b1=0, b2=0.99, weightDecay=1e-4
+* Fig 17. lr=1e-4, fLr=1e-6, b1=0, b2=0.99, weightDecay=1e-4
 
 ![Results 2](/assets/images/team14/4.JPG)
-* lr=1e-4, fLr=1e-6, b1=.5, b2=0.5, weightDecay=1e-4
+* Fig 18. lr=1e-4, fLr=1e-6, b1=.5, b2=0.5, weightDecay=1e-4
 
 ![Results 3](/assets/images/team14/5.JPG)
-* lr=1e-4, fLr=1e-6, b1=.5, b2=0.5, weightDecay=1e-5
+* Fig 19. lr=1e-4, fLr=1e-6, b1=.5, b2=0.5, weightDecay=1e-5
 
 ![Results 4](/assets/images/team14/6.JPG)
-* lr=1e-4, fLr=1e-6, b1=.5, b2=0.5, weightDecay=1e-3
+* Fig 20. lr=1e-4, fLr=1e-6, b1=.5, b2=0.5, weightDecay=1e-3
 
 ## Demo <a name="demo"></a>
 
