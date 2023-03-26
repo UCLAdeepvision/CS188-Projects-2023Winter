@@ -54,12 +54,12 @@ Below are some common architectures seen for image to image translation.
 Image Animation is the action of generating a video where the object from an image is animated using the action from a driving video. For example, if we had an image of a water bottle and a driving video of a ball flying across the screen, the output video would be a water bottle flying across the screen. Thus, it will create an animation based on a single image.
 
 ![GAN Flow](/assets/images/team14/pipeline.png)
-* Fig 3. Example flow of Image Animation
+* Fig 3. Example flow of Image Animation (Image Source: [10])
 
 Once applying the model, we would see results similar to the following:
 
 ![Image Animation Output](/assets/images/team14/vox-teaser.gif)
-* Figure 4. Example output from Image Animation
+* Figure 4. Example output from Image Animation (Image Source: [9])
 
 
 ## What is a Generative Adversarial Network (GAN) <a name="gan"></a>
@@ -67,7 +67,7 @@ Once applying the model, we would see results similar to the following:
 Generative Adversarial Network, or GAN, is the core framework behind a lot of the DeepFake algorithms you may come across. It is an approach to generate a model for a dataset using deep learning priciples. Generative modeling automatically discovers and learns the patterns in the data so that the model can be used to generate new images that could have been a part of the original dataset. GANs train a generative model that consists of two sub-components: the generator models which is trained to generate new images and the discriminator model which tries to classify an image as real or fake. The generative models and the discriminator model are trained together in an adversarial way, meaning until the discrimnator model classifies images incorrectly about half of the time. This would mean that the generator model generates DeepFake images that could pass as being real.
 
 ![GAN Flow](/assets/images/team14/gan1.JPG)
-* Fig 5. Example of GAN Flow
+* Fig 5. Example of GAN Flow (Image Source: [11])
 
 Below we look into two different models using ideas from GAN.
 
@@ -321,12 +321,12 @@ Using the pretrained models monet2photo and style_monet from the cycleGAN reposi
 StarGAN is a generative adversarial network that learns the mappings among multiple domains using only a single generator and a discriminator, training effectively from images of all domains (Choi 2). The topology could be represented as a star where multi-domains are connected, thus receiveing the name StarGAN. In this article, we will be looking at StarGAN v2. The main differentiation between versions is that v2 is "a scalable approach that can generate diverse images across multiple domains" (Choi v2 pg2). The domain label is replaced with the domain specific style code. The goal is that v2 will yield better results in terms of visual qulaity and diveristy than the original StarGAN.
 
 ![StarGAN v2 Results](/assets/images/team14/style1.JPG)
-* Fig 12. Example of image synthesis results on CelebA dataset using StarGAN v2. The source and reference images are in the first rown and column, and they are real images, while the rest of the images are generated.
+* Fig 12. Example of image synthesis results on CelebA dataset using StarGAN v2. The source and reference images are in the first rown and column, and they are real images, while the rest of the images are generated. (Image source: [6])
 
 StarGAN consists of two modules, a discriminator and a generator. The discriminator learns to differentiate between real and fake images and begins to clssify the real images with its proper domain. The generator takes an image and a target domain label as input and generates a fake image with them. The target domain label is then spatially replicated and concatenated with the image given as input. The generator attempts to reconstruct the orginal image via the fake image when given the original domain label. Lastly, the generator tries to generate images that are almost identical to the real images and will be classified as being from the target domain by the discriminator.
 
 ![StarGAN v2 Flow](/assets/images/team14/style1.JPG)
-* Fig 13. Example flow of StarGAN v2 where D represents the discriminator, G represents the generator, F represents the mapping network, and E represents the style encoder
+* Fig 13. Example flow of StarGAN v2 where D represents the discriminator, G represents the generator, F represents the mapping network, and E represents the style encoder (Image Source: [6])
 
 The overarching goal of StarGAN v2 is to train a generator that can generate diverse images of each of the domains that correspond to an image. A domain specific style vectors in the learned style space of each of the trains and then train the generator to reflect the style vectors.
 
@@ -335,23 +335,23 @@ The overarching goal of StarGAN v2 is to train a generator that can generate div
 The Generator Architecture consists of 4 downsampling blocks that use instance normalization (IN), four intermediate blocks, and four upsampling blocks that use adaptive instance normalization (AdaIN). These blocks all have pre-activation residual units. Style code is injected into all the AdaIN layers. 
 
 ![StarGAN v2 Generator Architecture](/assets/images/team14/style3.JPG)
-* Fig 14. Example of StarGAN v2 Generator Architecture (Image source: https://arxiv.org/pdf/1912.01865.pdf)
+* Fig 14. Example of StarGAN v2 Generator Architecture (Image source: [6])
 
 The Mapping Network Architecture consists of an MLP with k (number of domains) output branches. Four fully connected layers are shared among domains, and they are followed by four fully conected layers for each individual domain.
 
 ![StarGAN v2 Mappning Network Architecture](/assets/images/team14/style4.JPG)
-* Fig 15. Example of StarGAN v2 mapping netwrok architecture (Image source: https://arxiv.org/pdf/1912.01865.pdf)
+* Fig 15. Example of StarGAN v2 mapping netwrok architecture (Image source: [6])
 
 The Style Encoder Architecture consists of CNN with k (number of domains) output branches. Six pre-activation residual blocks are shared among domains, and they are followed by one fully connected layer for each individual domain.
 
 The Discriminator Architecture consists of six pre-activation residual blocks with leaky ReLY. k (number of domains) fully connected layers are used for real/fake classification among each domain.
 
 ![StarGAN v2 Style Encoder and Discriminator Architecture](/assets/images/team14/style5.JPG)
-* Fig 16. Example of StarGAN v2 style encoder and discriminator architecture, where D and K are the output dimensions (Image Source: https://arxiv.org/pdf/1912.01865.pdf)
+* Fig 16. Example of StarGAN v2 style encoder and discriminator architecture, where D and K are the output dimensions (Image Source: [6])
 
 #### Loss Functions
 
-The StarGAN v2 netwrok is trained using adversarial objective, style reconstruction, style diversification, and preserving source characteristics.
+The StarGAN v2 netwrok is trained using adversarial objective, style reconstruction, style diversification, and preserving source characteristics. (Equation Source: [6])
 
 * Adversarial Objective:
 
@@ -520,8 +520,18 @@ Here are the results from running the trained model with different learning rate
 ![Results 4](/assets/images/team14/vid4.gif)
 * Fig 20. Alternate Model 3: lr=1e-4, fLr=1e-6, alpha=.5, beta=0.5, weightDecay=1e-3
 
+Running the model on different images with the best model, the one listed in Fig 17 results in the following:
+![Results 5](/assets/images/team14/vid5.gif)
+* Fig 21 Chosen Model 
+
 #### Dicsussion
 As we can see from the results, this model heavily relies on images being cropped similarly to the data used to train the model. For example, we can see that the image with the guy in the blue shirt is not generated correctly in some instances. We can specifically see this in the eyebrows and neck area. However, when we look at all three women, who were in the train dataset, their generations look perfect. 
+
+You can see that the hairstyle, makeup, and more from the reference image is applied to the facial expression of the source image. 
+
+One downside of this method is hair generation. You can see in the first source image that generating some of the women's hairstyles had some small issue. This is also the case when generating the hair on the source images on the right hand side. Facial hair also proves to be an issue in this model. When looking at the guy in the blue shirt, the deepfake generation images still have pieces leftover from the beard. However, it is not the full beard that we can see in the source image. This can be attributed to a training dataset that is lacking in men with beards. I think the model would be better if the source image's facial hair was removed in the final deepfake generation image. 
+
+The model with lr-1e-4, fixed lr = 1e-6, alhpa=0, beta = .99, and weightDecay = 1e-4 is the best because of the generation of featuers. The hairstyles are slightly better in this model (Fig 17). The flyaways and leftover remnants from the source image are not as apparent in the chosen model than the other ones. The final resulting colors are also slighly better in the chosen model. The shape of the lips is also slightly better in the chosen model. We wanted the shape to be the same as the source image, and that is the case in the chosen model. The eye shape is also better. This is apparent in the first source image. You can see that the eye shape in the generated image matches the eye shap ein the source image perfect. It is not affacted by the reference image at all, which is the goal. The color of the eyes and makeup, however, are modified to match the reference image, which is what we want. 
 
 There are multiple reasons why StyleGAN v2 is superior to other deep fake image generation models. Because the style code is separately generated per domain and style encoder, the generator can only focus on using the style code, whose information from the domain can be found using the mapping network. Additionally, the model is able to render many distinctive styles, such as bangs, beard, makeup, and hairstyle. In other models, only the color distribution of reference images are matched. StyleGAN v2 also produces high quality images across all domains, while other models do not. Because other models are trained for each pair of domains, the output quality will differ across the different domains.
 
@@ -548,8 +558,14 @@ https://github.com/deepfakes/faceswap
 
 [5] Wolf, Sarah. “CycleGAN: Learning to Translate Images (Without Paired Training Data).” Medium, 20 Nov. 2018, https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d.
 
-[6] Zhang, Tao. “Deepfake Generation and Detection, a Survey.” Multimedia Tools and Applications, vol. 81, no. 5, Feb. 2022, pp. 6259–76. DOI.org (Crossref), https://doi.org/10.1007/s11042-021-11733-y.
+[6] Choi, Yunjey, et al. “Stargan v2: Diverse Image Synthesis for Multiple Domains.” ArXiv.org, 26 Apr. 2020, https://arxiv.org/abs/1912.01865. 
 
 [7] Zhu, Jun-Yan, et al. Unpaired Image-to-Image Translation Using Cycle-Consistent Adversarial Networks. arXiv, 24 Aug. 2020. arXiv.org, https://doi.org/10.48550/arXiv.1703.10593.
 
 [8] “Pytorch-CycleGAN-and-Pix2pix/Models at Master · Junyanz/Pytorch-CycleGAN-and-Pix2pix.” GitHub, https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix. Accessed 26 Feb. 2023.
+
+[9] Cretin, Nathanael. “[Part 1/2] Using Distributed Learning for Deepfake Detection.” Labelia (Ex Substra Foundation), Labelia (Ex Substra Foundation), 8 Oct. 2021, https://www.labelia.org/en/blog/deepfake1. 
+
+[10] Jing, Jingles (Hong. “Realistic Deepfakes in 5 Minutes on Colab.” Medium, Towards Data Science, 27 Nov. 2020, https://towardsdatascience.com/realistic-deepfakes-colab-e13ef7b2bba7. 
+
+[11] Mach, Joey. “Deepfakes: The Ugly, and the Good.” Medium, Towards Data Science, 2 Dec. 2019, https://towardsdatascience.com/deepfakes-the-ugly-and-the-good-49115643d8dd. 
