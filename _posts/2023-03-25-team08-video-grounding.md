@@ -32,7 +32,7 @@ Our initial hypothesis for the data was that the pre-trained models out of the b
 
 The Moment Context Network (MCN) [2], proposed by Hendricks in 2017 is one of the earliest models for the video grounding task.
 
-First, sampled frames of the video are passed through a vgg model to extract rgb features. It can also be passed through (https://arxiv.org/pdf/1608.00859.pdf) to extract optical flow features. This paper demonstrates a fusion method where both the rgb features and optical flow features are used for an increase in performance, however they can also be used separately. These features are expected to help identify attributes and objects. 
+First, sampled frames of the video are passed through a vgg model to extract rgb features. It can also be passed through [4] to extract optical flow features. This paper demonstrates a fusion method where both the rgb features and optical flow features are used for an increase in performance, however they can also be used separately. These features are expected to help identify attributes and objects. 
 
 ### Adding Global Context
 One of the central challenges of video grounding comes from temporal context within videos. For example, the query: “the girl jumps after falling” is different from “the girl jumps for the first time”. However, the ground truth clips may look similar, both including the girl jumping.
@@ -418,5 +418,7 @@ In conclusion, we analyzed one prominent video grounding model, 2D-TAN. In addit
 [2] Hendricks, Lisa Anne, et al. “Localizing Moments in Video with Natural Language.” ArXiv.org, 4 Aug. 2017, https://arxiv.org/abs/1708.01641. 
 
 [3] Zhang, Da, et al. “Man: Moment Alignment Network for Natural Language Moment Retrieval via Iterative Graph Adjustment.” ArXiv.org, 17 May 2019, https://arxiv.org/abs/1812.00087. 
+
+[4] Wang, Limin, et al. “Temporal Segment Networks: Towards Good Practices for Deep Action Recognition.” ArXiv.org, 2 Aug. 2016, https://arxiv.org/abs/1608.00859.  
 
 ---
