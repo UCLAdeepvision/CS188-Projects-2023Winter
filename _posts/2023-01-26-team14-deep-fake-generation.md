@@ -506,17 +506,27 @@ class StyleEncoder(nn.Module):
 
 
 ### Results <a name="res2"></a>
+Here are the results from running the trained model with different learning rates, weight decays, alpha, and beta values. 
+
 ![Results 1](/assets/images/team14/vid1.gif)
-* Fig 17. lr=1e-4, fLr=1e-6, b1=0, b2=0.99, weightDecay=1e-4
+* Fig 17. Chosen Model: lr=1e-4, fLr=1e-6, alpha=0, beta=0.99, weightDecay=1e-4
 
 ![Results 2](/assets/images/team14/vid2.gif)
-* Fig 18. lr=1e-4, fLr=1e-6, b1=.5, b2=0.5, weightDecay=1e-4
+* Fig 18. Alternate Model 1: lr=1e-4, fLr=1e-6, alpha=.5, beta=0.5, weightDecay=1e-4
 
 ![Results 3](/assets/images/team14/vid3.gif)
-* Fig 19. lr=1e-4, fLr=1e-6, b1=.5, b2=0.5, weightDecay=1e-5
+* Fig 19. Alternate Model 2: lr=1e-4, fLr=1e-6, alpha=.5, beta=0.5, weightDecay=1e-5
 
 ![Results 4](/assets/images/team14/vid4.gif)
-* Fig 20. lr=1e-4, fLr=1e-6, b1=.5, b2=0.5, weightDecay=1e-3
+* Fig 20. Alternate Model 3: lr=1e-4, fLr=1e-6, alpha=.5, beta=0.5, weightDecay=1e-3
+
+#### Dicsussion
+As we can see from the results, this model heavily relies on images being cropped similarly to the data used to train the model. For example, we can see that the image with the guy in the blue shirt is not generated correctly in some instances. We can specifically see this in the eyebrows and neck area. However, when we look at all three women, who were in the train dataset, their generations look perfect. 
+
+There are multiple reasons why StyleGAN v2 is superior to other deep fake image generation models. Because the style code is separately generated per domain and style encoder, the generator can only focus on using the style code, whose information from the domain can be found using the mapping network. Additionally, the model is able to render many distinctive styles, such as bangs, beard, makeup, and hairstyle. In other models, only the color distribution of reference images are matched. StyleGAN v2 also produces high quality images across all domains, while other models do not. Because other models are trained for each pair of domains, the output quality will differ across the different domains.
+
+This model is superior to StyleGAN because the style space is produced by learned transformations in v2, providing it more flexibility. 
+
 
 ## Demo <a name="demo"></a>
 
