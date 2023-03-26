@@ -9,7 +9,7 @@ date: 2022-01-29
 > Detecting synthetic media has been an ongoing concern over the recent years due to the increasing amount of deepfakes on the internet. In this project, we will explore the different methods and algorithms that are used in deepfake detection.
     
 ## Introduction: 
-Deepfakes, or artificial intelligence-generated videos that depict real people doing and saying things they never did, have become a growing concern in recent years. These artificially generated content can be used to spread misinformation, manipulate public opinion, and even harm individuals. Therefore, the ability to detect deepfakes is crucial to ensure the integrity of information and protect people from potential harm.
+Deepfakes, or artificial intelligence-generated videos that depict real people doing and saying things they never did, have become a growing concern in recent years. This artificially generated content can be used to spread misinformation, manipulate public opinion, and even harm individuals. Therefore, the ability to detect deepfakes is crucial to ensure the integrity of information and protect people from potential harm.
 
 <img src="../assets/images/team24/deepfakeExample.gif" alt="Deepfake Example" width="500">
 
@@ -43,7 +43,7 @@ MesoNet is a deep learning architecture designed for the detection of manipulate
 <img src="../assets/images/team24/mesonetArchitecture.jpg" alt="Mesonet Architecture" width="500" align="middle">
 
 ### Other Notes
-Othe notable deepfake detection models include EfficientNet B1 LTSM and Xception architectures.
+Other notable deepfake detection models that were considered include EfficientNet B1 LTSM and Xception architectures.
 
 
 ## Training
@@ -95,10 +95,41 @@ The results received from training are as follows:
 We wanted to observe the difference between 
 We observed that further finetuning for Mesonet and ResNetLSTM on the CelebDF dataset did not increase validation accuracy compared to the model weights that were already finetuned to those datasets. Therefore, we used the given model weights rather than the weights we trained, as this gave us higher validation accuracies and reduced the needed computing units and time. To test the finetuned model, we ran the models through the CelebDF test dataset to see the final testing accuracies. The process for this is shown below:
 
-- code block of training one model
+```
+import pandas as pd
+
+data_path = root + '/data/celebdf' #use /augmented or /augmented2 for data augmented images
+dataset = 'celebdf'
+df = label_test_data(dataset_path=data_path, dataset=dataset)
+print(df.iloc[[0]]['video'])
+img_size = 256
+face_margin = 0.3
+num_frames = 20
+
+print("test for MesoNet model without finetuning")
+normalization = 'xception'
+method = 'mesonet_celebdf'
+auc, ap, loss, acc = test.inference(
+                Mesonet, df, img_size, normalization, dataset=dataset, method=method, face_margin=face_margin, num_frames=num_frames)
+
+print("test for MesoNet model finetuned on CelebDF")
+auc, ap, loss, acc = test.inference(
+                MesonetCelebDF, df, img_size, normalization, dataset=dataset, method=method, face_margin=face_margin, num_frames=num_frames)
+
+print("test for ResNetLSTM model without finetuning")
+img_size = 224
+normalization = 'imagenet'
+method = 'resnet_lstm_celebdf'
+auc, ap, loss, acc = test.inference(
+                Resnetlstm, df, img_size, normalization, dataset=dataset, method=method, sequence_model=True, face_margin=face_margin, num_frames=num_frames)
+
+print("test for ResNetLSTM model with finetuning")
+auc, ap, loss, acc = test.inference(
+                ResnetlstmCelebDF, df, img_size, normalization, dataset=dataset, method=method, sequence_model=True, face_margin=face_margin, num_frames=num_frames)
+```
 
 ### Data Augmentation
-As we noticed that further finetuning of the models onto the datasets did not increase accuracies past already given finetuned model weights, we wanted to test the robustness of these models on newer data. To do this, we used Python cv2 and vidaug libraries to perform data augmentation on the test videos, and ran the models through the new data to observe the robustness of the models. We tested with different amounts of augmentation as shown below, intially starting with just rotations and flips, before adding such as gaussian noise, grayscale, dropout, and augmentation factors.
+As we noticed that further finetuning of the models onto the datasets did not increase accuracies past already given finetuned model weights, we wanted to test the robustness of these models on newer data. To do this, we used Python cv2 and vidaug libraries to perform data augmentation on the test videos, and ran the models through the new data to observe the robustness of the models. We tested with different amounts of augmentation as shown below, initially starting with just rotations and flips, before adding other factors such as gaussian noise, grayscale, dropout, and augmentation factors.
 
 ```
 from imgaug import augmenters as iaa
@@ -127,13 +158,12 @@ Heavy augmentation (as in code block above):
 <img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.40.01 PM.png" alt="Mesonet Architecture" width="250" align="middle">
 
 ### Results
-When testing the finetuned model weights on the CelebDF test dataset, we observed the following metrics. This is on the CelebDF test dataset with no data augmentation:
+When testing the model weights on the CelebDF test dataset, we observed the following metrics. This is on the CelebDF test dataset with no data augmentation:
 
 |          | Mesonet | Mesonet (finetuned) | ResNetLSTM | ResNetLSTM (finetuned) |
 | :------- | :------: | -----------------: | ---------: | ---------------------: |
 | Loss |   0.739   |               0.604 |       0.725 |                   0.145 |
 | AUC      |   0.457   |               0.879 |       0.507 |                   0.997 |
-| AP   |   0.457   |               0.879 |       0.507 |                   0.997 |
 | Accuracy   |   0.265  |               0.723 |       0.265 |                   0.928 |
 
 After applying small rotations and flips to test images in the dataset, we ran the model through the videos again and got the following metrics:
@@ -142,7 +172,6 @@ After applying small rotations and flips to test images in the dataset, we ran t
 | :------- | :------: | -----------------: | ---------: | ---------------------: |
 | Loss |   0.739  |               0.901 |       0.725 |                   0.605 |
 | AUC      |   0.464   |               0.804 |       0.423 |                   0.829 |
-| AP   |   0.464   |               0.804 |       0.423 |                   0.968 |
 | Accuracy   |   0.268   |               0.622 |       0.268 |                   0.968 |
 
 Finally, we tried applying large amounts of data augmentations and ran the model through the videos once again to get the following metrics:
@@ -151,12 +180,11 @@ Finally, we tried applying large amounts of data augmentations and ran the model
 | :------- | :------: | -----------------: | ---------: | ---------------------: |
 | Loss     |   0.741   |               16.36 |       0.725 |                   0.948 |
 | AUC      |   0.257   |               0.356 |       0.495 |                   0.465 |
-| AP       |   0.314   |               0.356 |       0.495 |                   0.465 |
 | Accuracy  |  0.314   |               0.257 |       0.257 |                   0.486 |
 
 ## Conclusion
 
-In conclusion, we experimented with two advanced deep learning models, ResNetLSTM and MesoInception4, for the purpose of deepfake detection using the Celeb-DF dataset. Our evaluation showed that ResNetLSTM outperformed MesoInception4 in terms of having higher overall accuracy. A hypothesis for this is that ResNetLSTM has additional RNN units that allow it to learn temporal dependecies, which could be desired for video inputs. However, it should be noted that MesoInception4 achieved a lower false positive rate, which could be desirable in certain applications.
+In conclusion, we experimented with two advanced deep learning models, ResNetLSTM and MesoInception4, for the purpose of deepfake detection using the Celeb-DF dataset. Our evaluation showed that ResNetLSTM outperformed MesoInception4 in terms of having higher overall accuracy, as well as having higher overall AUC which means less false positives, something that is definitely wanted in such model. A hypothesis for this is that ResNetLSTM has additional RNN units that allow it to learn temporal dependecies, which could be desired for video inputs. 
 
 We also found that transfer learning, by leveraging pretraining on large datasets such as ImageNet and Mesonet, can significantly improve the performance of deepfake detection models on smaller datasets like Celeb-DF. Additionally, we observed that when applying data augmentation to the two models, we got mixed results. For adding simple rotations and flips, the models performed well, which shows they are robust and can be used on new data distributions. However, applying large amounts of augmentation with added noise and coloring made the model struggle to accurately detect deepfakes, which shows there still can be lots of work down to improve these models and ensure they can detect any deepfake.
 
@@ -197,68 +225,10 @@ Overall, our results suggest that ResNetLSTM is the most promising architecture 
 
 [4] Li, Yuezun, et al. “Celeb-DF: A Large-Scale Challenging Dataset for Deepfake Forensics.” ArXiv.org, 16 Mar. 2020, 
 
+[5] “Deepfakes and Video Fraud: Should You Be Worried?” Media272, 16 Aug. 2018, https://media272.com/2018/08/16/deepfakes-and-video-fraud-should-you-be-worried/. 
 
+[6] “Papers with Code - Celeb-DF Dataset.” Dataset | Papers With Code, https://paperswithcode.com/dataset/celeb-df. 
 
+[7] ResNet-LSTM Model. the Signal Is First Fed into ResNet as a ... https://www.researchgate.net/figure/ResNet-LSTM-model-The-signal-is-first-fed-into-ResNet-as-a-three-channel-input-phasic_fig6_340715269. 
 
-
-
-##
-##
-##
-## previous blog resources
-
-## Main Content
-
-Your survey starts here. You can refer to the [source code](https://github.com/lilianweng/lil-log/tree/master/_posts) of [lil's blogs](https://lilianweng.github.io/lil-log/) for article structure ideas or Markdown syntax. We've provided a [sample post](https://ucladeepvision.github.io/CS188-Projects-2022Winter/2017/06/21/an-overview-of-deep-learning.html) from Lilian Weng and you can find the source code [here](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2022Winter/main/_posts/2017-06-21-an-overview-of-deep-learning.md)
-
-## Basic Syntax
-
-### Image
-
-Please create a folder with the name of your team id under /assets/images/, put all your images into the folder and reference the images in your main content.
-
-You can add an image to your survey like this:
-![YOLO]({{ '/assets/images/UCLAdeepvision/object_detection.png' | relative_url }})
-{: style="width: 400px; max-width: 100%;"}
-_Fig 1. YOLO: An object detection method in computer vision_ [1].
-
-Please cite the image if it is taken from other people's work.
-
-### Table
-
-Here is an example for creating tables, including alignment syntax.
-
-|      | column 1 | column 2 |
-| :--- | :------: | -------: |
-| row1 |   Text   |     Text |
-| row2 |   Text   |     Text |
-
-### Code Block
-
-```
-# This is a sample code block
-import torch
-print (torch.__version__)
-```
-
-### Formula
-
-Please use latex to generate formulas, such as:
-
-$$
-\tilde{\mathbf{z}}^{(t)}_i = \frac{\alpha \tilde{\mathbf{z}}^{(t-1)}_i + (1-\alpha) \mathbf{z}_i}{1-\alpha^t}
-$$
-
-or you can write in-text formula $$y = wx + b$$.
-
-### More Markdown Syntax
-
-You can find more Markdown syntax at [this page](https://www.markdownguide.org/basic-syntax/).
-
-## Reference
-
-Please make sure to cite properly in your work, for example:
-
-[1] Redmon, Joseph, et al. "You only look once: Unified, real-time object detection." _Proceedings of the IEEE conference on computer vision and pattern recognition_. 2016.
-
----
+[8] Xia, Zhiming, et al. “Deepfake Video Detection Based on Mesonet with Preprocessing Module.” MDPI, Multidisciplinary Digital Publishing Institute, 5 May 2022, https://www.mdpi.com/2073-8994/14/5/939. 
