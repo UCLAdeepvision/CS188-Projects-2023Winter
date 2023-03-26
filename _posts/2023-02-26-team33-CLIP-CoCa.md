@@ -9,6 +9,11 @@ date: 2022-02-26
 
 > The creation of high quality labeled datasets for the purposes of training Computer Vision models remains one of the most time consuming tasks for Computer Vision research. Consequently, alternative methods of extracting label information from existing images and visual data is one of the areas of focus for recent research. In this blog we explore  these state of the art methods in pre-training Image Classification models, namely CLIP (Contrastive Language–Image Pre-training) and CoCa (Contrastive Captioners). Extracting latent labels from images already associated with text widely available on the internet is a promising method to fast-track the training of Computer Vision models using text *and* image encoders.
 
+<!--more-->
+{: class="table-of-content"}
+
+* TOC
+{:toc}
 
 - [Introduction](#introduction)
 - [Background](#background)
