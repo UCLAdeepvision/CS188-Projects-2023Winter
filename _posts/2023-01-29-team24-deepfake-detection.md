@@ -81,12 +81,12 @@ model, average_auc, average_ap, average_acc, average_loss = train.train(dataset=
                                                                                 
 ### Hyperparameters and Train Results
 We used the following hyperparameters and settings to train our models:
-- ResNetLSTM: image_size = 224, normalization = 'imagenet', folds = 5 (20 val/80 train split) , epochs = 30, batch_size = 4, lr = 0.0001, optimizer: Adam
-- Mesonet: image_size = 256, normalization = 'xception', folds = 5 (20 val/80 train split) , epochs = 20, batch_size = 32, lr = 0.0001, optimizer: Adam
+- **ResNetLSTM**: image_size = 224, normalization = 'imagenet', folds = 5 (20 val/80 train split) , epochs = 30, batch_size = 4, lr = 0.0001, optimizer: Adam
+- **Mesonet**: image_size = 256, normalization = 'xception', folds = 5 (20 val/80 train split) , epochs = 20, batch_size = 32, lr = 0.0001, optimizer: Adam
 
 The results received from training are as follows:
-- ResNetLSTM: val_loss = 0.1415, val_acc = 0.9457, epochs until best model = 25
-- Mesonet: val_loss = 0.4458, val_acc = 0.7994, epochs until best model = 20
+- **ResNetLSTM**: val_loss = 0.1415, val_acc = 0.9457, epochs until best model = 25
+- **Mesonet**: val_loss = 0.4458, val_acc = 0.7994, epochs until best model = 20
 
 
 ## Testing
@@ -97,7 +97,7 @@ The results received from training are as follows:
 
 
 ### Results
-- tables with our accuracies
+- tables with our test accuracies
 
 ## Conclusion
 - observations
