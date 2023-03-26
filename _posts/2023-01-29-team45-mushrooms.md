@@ -6,7 +6,7 @@ author: Drake Cote, Nathan Paredes-Kao
 date: 2023-01-29 01:09:00
 ---
 
-> Mushrooms can be delicious, symbols in popular culture, and found nearly anywhere, but dealing with them safely can be tricky because while many look the same to the untrained eye, some mushrooms are extremely poisonous. We attempted to classify 1394 types of mushrooms with as little as 3 images for some species using various deep learning methods and this blog outlines our progress and results.
+> Mushrooms can be delicious, symbols in popular culture, and found nearly anywhere, but dealing with them safely can be tricky because while many look the same to the untrained eye, some mushrooms are extremely poisonous. Here, we attempted to classify 1394 types of mushrooms with as little as 3 images for some species using various deep learning methods.
 
 
 - [Introduction](#introduction)
@@ -15,13 +15,14 @@ date: 2023-01-29 01:09:00
   - [Aiming for Shape](#aiming-for-shape)
     - [Grayscale](#grayscale)
     - [Random Solarize](#random-solarize)
-  - [Increasing Dataset through Position](#increasing-dataset-through-position)
+  - [Increasing Dataset through Positional Augmentation](#increasing-dataset-through-position)
     - [Random Rotation](#random-rotation)
     - [Horizontal Flip](#horizontal-flip)
     - [Color Jitter](#color-jitter)
 - [The Models](#the-models)
   - [Ensemble](#ensemble)
   - [ViT](#vit)
+    - [Self-Attention](#self-attention)
   - [Resnet](#resnet)
   - [VGG](#vgg)
 - [Results](#results)
@@ -34,7 +35,11 @@ date: 2023-01-29 01:09:00
 Mushrooms are a specific form of fungus that have had their image rise in popular culture as a hip symbol for peace, health, and for their occasional hallucinogenic properties. This has caused a rise in mushroom foraging, a practice of going out into swampy or recently rained on areas to gather mushrooms, as well as commercial mushroom farming where fungal environments are created to grow certain mushrooms for eating. In both of these cases, it is common for multiple types of mushrooms to appear given how easily dispersable fungal spores can be. This can be dangerous as certain mushrooms can appear similar to the untrained eye but can be very poisonous if misclassified. Our goal as mushroom fans ourselves is to develop a model that can help classify mushrooms so that we can continue foraging safely, without having to learn textbooks worth of knowledge to avoid being poisoned. 
 
 ### The Dataset - Nathan
-Pictures of mushroom
+![Poisonous-Mushroom]({{ '/assets/images/team45/mushroom1.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
+
+![Flat-Mushroom]({{ '/assets/images/team45/mushroom2.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
 
 pics of each augmentation would be nice
 ## Data Engineering
@@ -53,7 +58,7 @@ Grayscaling an image in a basic sense does exactly what it sounds like and makes
 
 On top of grayscaling we will use a tranform called Random Solarization that will invert pixel values above a certain threshold with probability p. The idea behind this transformation is that we don't want the model to learn features solely on edge case pixel values that could highlight bright lights or colors over features of the mushrooms themselves. Therefore, with probability p (set to .9 in our model) we will invert the top most pixel values above the threshold 192 (out of 256 for RGB). We chose the hyperparameters .9 and 192 because we want this transformation to happen often since are concatonating these images with the original data and because 192 is the 75th percentile of pixel values (in general, not calculated over image appearance probability). After these two transformations we will append this grayscaled, solarized dataset onto our original, doubling out dataset size.  
 
-### Increasing Dataset through Position
+### Increasing Dataset through Positional Augmentation
 
 This transorm contains the random rotation, horizonatal flip, and color jitter transformations in an attempt to augment our data enough to squeeze more information out of our limited dataset.
 
@@ -65,9 +70,11 @@ the Random Rotation augmentation rotates an image randomly between a min and max
 
 The orizontal Flip augmentation flips the image horizontally with probability p. This augmentation has a very similar purpose to Random Rotation in that it will give us a new perspective and prevent overfitting on certain mushroom orientations common in the dataset.
 
+
 #### Color Jitter
 
 The Color Jitter augmentation is the last of this series of transforms. Color Jitter randomly changes the brightness, contrast, saturation, and hue of an image. The amount to jitter each factor is chosen uniformly from [max(0,1-factor), 1 + factor]. We chose a brightness factor of .5 because it allowed some of the brighter images to be more similar to other darker images in the dataset and vice versa without making the images too dark or light to see. We set the hue to .3 to jitter the hue similarly in a range that did sometimes drastically change the colors without dramatically warping the image past recognition of shapes from the contrast of shades. We decided not to edit contrast and saturation as in combination with hue and brightness the images were changed too drastically. After these three augmentations we concatenate the transformed data to the previous two datasets, in total tripling our original number of images.
+
 
 ## The Models
 Deep learning has become one of the most popular tools for computer vision and machine learning ever since our computation power increased to the level required to take in the massive amounts of data these models require. Deep Learning models are in a sense exactly how they sound. They are neural networks with many many layers to capture different aspects of data features using backpropogation and series of linear and non-linear transformations to update the learning parameters. We are using several baseline pretrained models with altered output layers for comparison. We extracted the best possible accuracy from Resnet18, Resnet50, VGG16, and ViT with our data. Our goal is to use an ensemble of these different models to try and compensate for our limited dataset, but this goal is gated behind training speed.
@@ -80,7 +87,12 @@ Individual deep learning networks can be extremely successful at classifying dif
 
 Vision Transformers (ViT) are another model for image recognition that take in an input image as a series of image tokens. They take in each token combined with a positional encoding. This gives the model some initial notion of where the tokens are in relation with one another since they are not just in sequential order like some NLP data that is used in transformers. From here, attention weights are learned between one token to all of the others for each individual token. These attention weights can extract global relationships from the data that can be difficult to get from simple sequential input because they detail the relation between tokens. i.e. how important is this token in the context of another (such as the word he specifically representing to the name Thomas in the sentence "Thomas met a girl named Lucy and he fell in love."). After the multi-head self attention layer residual connections reinput the original token embeddings onto the learned embeddings to complete the pass through the network without passing through any non-linear activations. This process can outperform CNN's significantly in efficiency as pixel arrays and stacked layers of activation functions and convolution are not needed.
 
-add image of self attention
+#### Self-Attention
+
+Self attention is what ViT's use as their primary learning method. The process begins with an embedding of our token x (token and positional embedding) which is multiplied with three matrices of parameters to produce three vectors called Query, Key, and Value (Q,V,K). The Q vector of the input token we are working on is multiplied with the key of each of the other tokens in te input giving a score for each that represents their weighted importance to the current token. Then they are divided by the square root of the dimension of k for normalization and are put through softmax to become probability values. Then, they are finally multiplied with the value vector and put together in a weighted sum to get the final attention vector.
+
+![Self-Attention]({{ '/assets/images/team45/self-attention.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
 ### ResNet - Nathan
 
 ### VGG - Nathan
