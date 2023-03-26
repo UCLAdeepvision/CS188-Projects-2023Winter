@@ -54,9 +54,15 @@ This transorm contains the grayscale and Random Solarize transformations in an a
 
 Grayscaling an image in a basic sense does exactly what it sounds like and makes a colored image have only shades of gray, removing all color. In reality, it collapses the initial three RGB channels into a single channel to remove any indication of color. For the purposes of our dataset we still want a three channel input for the dimensionality of our different models so te image will still hav threee channels but they will be the same where R=G=B. 
 
+![Grayscale]({{ '/assets/images/team45/pytorch_grayscale.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
+
 #### Random Solarize
 
 On top of grayscaling we will use a tranform called Random Solarization that will invert pixel values above a certain threshold with probability p. The idea behind this transformation is that we don't want the model to learn features solely on edge case pixel values that could highlight bright lights or colors over features of the mushrooms themselves. Therefore, with probability p (set to .9 in our model) we will invert the top most pixel values above the threshold 192 (out of 256 for RGB). We chose the hyperparameters .9 and 192 because we want this transformation to happen often since are concatonating these images with the original data and because 192 is the 75th percentile of pixel values (in general, not calculated over image appearance probability). After these two transformations we will append this grayscaled, solarized dataset onto our original, doubling out dataset size.  
+
+![Random_Solarize]({{ '/assets/images/team45/pytorch_random_solarize.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
 
 ### Increasing Dataset through Positional Augmentation
 
@@ -66,16 +72,20 @@ This transorm contains the random rotation, horizonatal flip, and color jitter t
 
 the Random Rotation augmentation rotates an image randomly between a min and max degree range. We set the range to be 0 to 180. This is an important augmentation particularly because some of the mushroom images in this dataset are always in a certain orientation, i.e. growing straight up vertically versus 45 degrees out from a tree trunk. This is not necessarily because the mushrooms always grow this way, in which case it would be a feature, but are just only photographed from that perepective and therefore we don't want to overfit on just the angle of the stem. Additionally, some of the mushrooms are very flat and turning them a random amount just gives us a new data point from a different orientation the image could've been taken from. 
 
+![Random_Rotation]({{ '/assets/images/team45/pytorch_random_rotation.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
 #### Horizontal Flip
 
 The orizontal Flip augmentation flips the image horizontally with probability p. This augmentation has a very similar purpose to Random Rotation in that it will give us a new perspective and prevent overfitting on certain mushroom orientations common in the dataset.
 
-
+![Random_Horizontal_Flip]({{ '/assets/images/team45/pytorch_random_flip.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
 #### Color Jitter
 
 The Color Jitter augmentation is the last of this series of transforms. Color Jitter randomly changes the brightness, contrast, saturation, and hue of an image. The amount to jitter each factor is chosen uniformly from [max(0,1-factor), 1 + factor]. We chose a brightness factor of .5 because it allowed some of the brighter images to be more similar to other darker images in the dataset and vice versa without making the images too dark or light to see. We set the hue to .3 to jitter the hue similarly in a range that did sometimes drastically change the colors without dramatically warping the image past recognition of shapes from the contrast of shades. We decided not to edit contrast and saturation as in combination with hue and brightness the images were changed too drastically. After these three augmentations we concatenate the transformed data to the previous two datasets, in total tripling our original number of images.
 
-
+![Color_Jitter]({{ '/assets/images/team45/pytorch_color_jitter.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
 ## The Models
 Deep learning has become one of the most popular tools for computer vision and machine learning ever since our computation power increased to the level required to take in the massive amounts of data these models require. Deep Learning models are in a sense exactly how they sound. They are neural networks with many many layers to capture different aspects of data features using backpropogation and series of linear and non-linear transformations to update the learning parameters. We are using several baseline pretrained models with altered output layers for comparison. We extracted the best possible accuracy from Resnet18, Resnet50, VGG16, and ViT with our data. Our goal is to use an ensemble of these different models to try and compensate for our limited dataset, but this goal is gated behind training speed.
 
