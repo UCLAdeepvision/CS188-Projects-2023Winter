@@ -167,6 +167,7 @@ From the above attempt, we can see that for a relatively small dataset, it is ve
 The generated anime faces is generally worse than the results obtained from the original archetecture. With limited time and computation budget, it is very hard to train a StyleGAN2 model with ViT discriminator from scratch using a small dataset dispite all the augmentation strategies implemented. It is possible to get better results if better hyperparameters for the model and the optimizer is chosen. It is also possible to get better results if a much larger dataset is used. But all the above options require significantly more computing power. Although, the original goal of improving the quality of generating better anime faces given the nature of ViT is not achieved, the ablation study showed and verified some important properties of StyleGAN2 with ViT discriminator, such as the requirement of different learning rate for generator and discriminator due to different achitecture, requirements of large dataset and longer training time to train ViT as ViT lacks inductive bias, and requirments of a similar model capacity for the generator and the discriminator.
 
 To further improve the result, a proper hyperparameter search needs to be implemented to find better hyperparameters for the model. Also, a larger dataset is needed to train ViT based model from scratch. ViT based generator is also another good option for improvement as suggested by Han z. et al[9].
+
 ---
 
 ## Reference
