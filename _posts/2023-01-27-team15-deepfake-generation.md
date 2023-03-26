@@ -365,6 +365,66 @@ The appropriate code is as follows:
 loss = loss_adv + args.lambda_sty * loss_sty - args.lambda_ds * loss_ds + args.lambda_cyc * loss_cyc
 ```
 
+## StyleGAN
+Another recently proposed model is StyleGAN, which is based on style transfer principles. StyleGAN proposes changes to the traditional GAN architecture which include the introduction of a mapping network that maps points in latent space to an intermediate latent space, which is used to control style at every point in the generator model. Stylegan also uses noise as a source of variation at every point in the generator model.
+
+![stylegan demo]({{ '/assets/images/team-15/18.png' | relative_url }})
+{: style="width: 800px; max-width: 100%; padding-top: 5px;"}
+*“StyleGAN Demo.” (Image source: <https://arxiv.org/pdf/1812.04948.pdf>)*  
+&nbsp;
+
+### Style Based Generator
+In traditional GANs, the input layer provides the latent code to the generator. In StyleGAN however, we omit the first layer and use a learned constant $$w$$ instead. StyleGAN also uses AdaIN, or adaptive instance normalization, to control the generator at each convolution layer. AdaIN takes in an input $$x$$ and style $$y$$ and aligns the channel wise mean and variance of $$x$$ to match that of $$y$$. AdaIN has to learnable affine parameters and instead adaptively computes the affine parameters from $$y$$. The AdaIN equation is as follows:
+$$\operatorname{AdaIN}\left(\mathbf{x}_i, \mathbf{y}\right)=\mathbf{y}_{s, i} \frac{\mathbf{x}_i-\mu\left(\mathbf{x}_i\right)}{\sigma\left(\mathbf{x}_i\right)}+\mathbf{y}_{b, i}$$
+
+![stylegan demo2]({{ '/assets/images/team-15/19.png' | relative_url }})
+{: style="width: 800px; max-width: 100%; padding-top: 5px;"}
+*“Traditional generator vs StyleGAN. $$W$$ is the intermediate latent space, $$A$$ is a learned affine transform, and $$B$$ applies learned scaling factors to the noise input for each channel. This generator has 26.2M trainable parameters, while a standard generator has 23.1M trainable parameters.” (Image source: <https://arxiv.org/pdf/1812.04948.pdf>)*  
+
+StyleGAN does not modify the traditional loss functions used by GAN. When Frechet inception distance (FID), a metric used to assess the quality of images created by GANs, is analyzed, the benefits are clear to see.
+
+![stylegan performance]({{ '/assets/images/team-15/20.png' | relative_url }})
+{: style="width: 800px; max-width: 100%; padding-top: 5px;"}
+*“FID for various generator designs. The FIDs for this paper were calculated by drawing 50,000 random images from the training set and reporting the lowest distance found during training. Note: lower FID is better.” (Image source: <https://arxiv.org/pdf/1812.04948.pdf>)*  
+
+The quality of generated images using StyleGAN was improved due to several key changes.
+- Introducing bilinear up and downsampling operations, longer training, and tuned hyperparameters
+- Adding the mapping network and AdaIN operations
+- Removing the input layer and starting image synthesis from a learned tensor
+- Noise inputs (see figure below for visualizations of effect)
+- Mixing regularization, which entails using two random latent codes instead of one during training for a subset of images.
+
+![stylegan diagram]({{ '/assets/images/team-15/21.png' | relative_url }})
+{: style="width: 800px; max-width: 100%; padding-top: 5px;"}
+*“Noise input effects. In (a) noise is applied to all layers. In (b) there is no noise. In (c)  there is noise in fine layers only and in (d) there is noise in course layers only.” (Image source: <https://arxiv.org/pdf/1812.04948.pdf>)*  
+
+Overall, we can see that no noise results in a featureless look, coarse noise results in hair curling and bigger background features, and fine noise results in finer detail in the hair, skin, and background.
+
+## StyleGAN v3
+In October 2021, version 3 of StyleGAN, or AliasFreeGAN, was announced. The main benefit of this version was the ability to fix the “texture sticking” issue that occurred when morphing from one face to another face. In the animation below, you can see that the features on the left appear to be sticking to the screen rather than the face.
+
+![stylegan diagram]({{ '/assets/images/team-15/vid1.mp4' | relative_url }})
+{: style="width: 800px; max-width: 100%; padding-top: 5px;"}
+*“Demo of v3 changes.” (Image source: <https://nvlabs.github.io/stylegan3/>)* 
+
+The overall design is as follows:
+![stylegan v3]({{ '/assets/images/team-15/22.png' | relative_url }})
+{: style="width: 800px; max-width: 100%; padding-top: 5px;"}
+*“(a) 1D example of a 2× upsampling filter (b) Alias-free generator, the main datapath consists of Fourier features and normalization, modulated convolutions, and filtered nonlinearities (c) Flexible layer specifications.” (Image source: <https://arxiv.org/pdf/2106.12423.pdf>)*  
+
+## Comparisons
+Now that we have explored the topics of CycleGAN, StarGAN, and StyleGAN, let’s take a look at the similarities and differences between these three classes of generative adversarial networks.
+
+With the purpose of image synthesis and manipulation, all three types of models share a similar GAN architecture with a generator that creates images and a discriminator that evaluates the generated images' quality. The generator and discriminator compete against each other in a minimax game, improving each other's performance during training. 
+
+In addition, all the models use adversarial loss to ensure that the generated images are indistinguishable from real images in the target domain. The discriminator's goal is to correctly classify real and fake images, while the generator's goal is to create images that the discriminator cannot distinguish from real ones.
+
+Despite a shared architectural DNA, each model has its own strengths and weaknesses that distinguish it from the others.
+
+- CycleGAN is composed of 2 GANs, making it a total of 2 generators and 2 discriminators. Given two distinct sets of images from different domains, CycleGAN learns to translate images from one domain to another without requiring paired examples during its training or testing stage. But this ability to map between the input and output domain is deterministic in nature, resulting in the model learning one-to-one mappings. One-to-one mapping leads to a lack of diversity in the translated images which does not represent the fact that “most relationships across domains are more complex and better characterized as many-to-many." When the model is given more complex cross-domain relationships, it fails to capture the true structured conditional distribution and results in an arbitrary one-to-one mapping. For example, CycleGAN struggles to learn that an image of a sunny scene could be translated into a cloudy or rainy scene.
+- StarGAN uses a single generator and a single discriminator to perform image translation between multiple domains and unlike CycleGAN, it learns many-to-many mappings. In addition to adversarial loss, it also utilizes domain classification loss and reconstruction loss. One weakness of StarGAN may come from its single generator and discriminator structure. This limited capacity can prevent it from learning complex mappings among numerous domains. This can sometimes result in unwanted attributes in the generated images as it is difficult to learn to disentangle specific features that may be correlated.
+- StyleGAN generates the most highly realistic and high-resolution images out of all three models. It contains a generator, consisting of a mapping network, an adaptive instance normalization (AdaIN) layer, and a synthesis network, in addition to a discriminator. Producing these high-quality images can require a more complex and resource intensive  training process due to the model’s approach of progressive growing and style mixing. It also suffers from other common GAN weaknesses such as mode collapse.
+
 
 ## References
 [1] Shen, Tianxiang, et al. "“Deep Fakes” using Generative Adversarial Networks (GAN)." *University of California, San Diego*. 2018.
