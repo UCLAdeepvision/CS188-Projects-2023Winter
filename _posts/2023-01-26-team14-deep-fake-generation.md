@@ -554,9 +554,11 @@ I think having a StyleEncoder also made a big difference compared to other image
 
 ## Demo <a name="demo"></a>
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/jHIWuE3G9Aw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+Click the Picture to Watch the Video!
+[![Watch the video](https://img.youtube.com/vi/4ncHV9toDD0/default.jpg)](https://youtu.be/4ncHV9toDD0)
 
 link to Google Folder: https://drive.google.com/drive/folders/1omGMAXLLt7Bc2HivJ6o-6-96DmPh6OPH?usp=sharing
+
 link to Google Collab: https://colab.research.google.com/drive/1vEm8I2ZddkUOCu0pFBUWhIdxdcnbG_mY?usp=sharing
 
 ## References <a name="ref"></a>
