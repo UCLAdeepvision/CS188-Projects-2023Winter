@@ -118,23 +118,23 @@ seq = iaa.Sequential([
 This resulted in three levels of data augmentation on the dataset. We have the original test videos, slightly rotated and/or flipped test videos, and heavily augmented videos. Examples of the three are shown below:
 
 No augmentation:
-<img src="../assets/images/team24/mesonetArchitecture.jpg" alt="Mesonet Architecture" width="250" align="middle">
+<img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.10.14 PM.png" alt="Mesonet Architecture" width="250" align="middle">
 
 Rotation/flipping:
-<img src="../assets/images/team24/mesonetArchitecture.jpg" alt="Mesonet Architecture" width="250" align="middle">
+<img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.41.42 PM.png" alt="Mesonet Architecture" width="250" align="middle">
 
 Heavy augmentation (as in code block above):
-<img src="../assets/images/team24/mesonetArchitecture.jpg" alt="Mesonet Architecture" width="250" align="middle">
+<img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.40.01 PM.png" alt="Mesonet Architecture" width="250" align="middle">
 
 ### Results
 When testing the finetuned model weights on the CelebDF test dataset, we observed the following metrics. This is on the CelebDF test dataset with no data augmentation:
 
 |          | Mesonet | Mesonet (finetuned) | ResNetLSTM | ResNetLSTM (finetuned) |
 | :------- | :------: | -----------------: | ---------: | ---------------------: |
-| Loss |   0   |               0 |       0 |                   0 |
-| AUC      |   0   |               0 |       0 |                   0 |
-| AP   |   0   |               0 |       0 |                   0 |
-| Accuracy   |   0   |               0 |       0 |                   0 |
+| Loss |   0.739   |               0.604 |       0.725 |                   0.145 |
+| AUC      |   0.457   |               0.879 |       0.507 |                   0.997 |
+| AP   |   0.457   |               0.879 |       0.507 |                   0.997 |
+| Accuracy   |   0.265  |               0.723 |       0.265 |                   0.928 |
 
 After applying small rotations and flips to test images in the dataset, we ran the model through the videos again and got the following metrics:
 
@@ -156,9 +156,11 @@ Finally, we tried applying large amounts of data augmentations and ran the model
 
 ## Conclusion
 
-- initially, resnetlstm does better than mesonet. a hypothesis for this is that it is able to learn temporal dependecies and can relate frames in a video together.
-- applying data augmentation shows the model is extremely sensitive to new distributions, wasn't able to hold as well as we would've expected.
-- definitely lots more work to be done, deepfakes=bad and we want to change that
+In conclusion, we experimented with two advanced deep learning models, ResNetLSTM and MesoInception4, for the purpose of deepfake detection using the Celeb-DF dataset. Our evaluation showed that ResNetLSTM outperformed MesoInception4 in terms of having higher overall accuracy. A hypothesis for this is that ResNetLSTM has additional RNN units that allow it to learn temporal dependecies, which could be desired for video inputs. However, it should be noted that MesoInception4 achieved a lower false positive rate, which could be desirable in certain applications.
+
+We also found that transfer learning, by leveraging pretraining on large datasets such as ImageNet and Mesonet, can significantly improve the performance of deepfake detection models on smaller datasets like Celeb-DF. Additionally, we observed that when applying data augmentation to the two models, we got mixed results. For adding simple rotations and flips, the models performed well, which shows they are robust and can be used on new data distributions. However, applying large amounts of augmentation with added noise and coloring made the model struggle to accurately detect deepfakes, which shows there still can be lots of work down to improve these models and ensure they can detect any deepfake.
+
+Overall, our results suggest that ResNetLSTM is the most promising architecture for deepfake detection, but further research is needed to evaluate its performance on a wider range of datasets to further test its robustness. The development of more advanced deepfake techniques also highlights the importance of constantly improving deepfake detection methods to counteract malicious actors.
 
 ## Demo
 - https://github.com/jchangz01/CS188-Project-Deepfake-Detection
