@@ -23,6 +23,7 @@ date: 2023-01-29 01:09:00
   - [Ensemble](#ensemble)
   - [ViT](#vit)
     - [Self-Attention](#self-attention)
+    - [Training ViT](#training-vit)
   - [Resnet](#resnet)
     - [Training Resnet](#training-resnet)
   - [VGG](#vgg)
@@ -44,7 +45,6 @@ Mushrooms are a specific form of fungus that have had their image rise in popula
 {: style="width: 400px; max-width: 100%;"}
 *Fig 2. Flat-Mushroom: Species Abortiporus Biennis* [0].
 
-pics of each augmentation would be nice
 ## Data Engineering
 
 Mushrooms are generally not found completely isolated on a slate rock, posed for the perfect picture with an even background. They are amidst damp soil, rotting leaves, and all kinds of other foliage. Because of this, we will need to work with our data such that our model can detect where the mushroom is by focusing solely on the shape of the mushroom. Then, we can continue with the mushroom's many various colors and orientations to simply generate more data and not overfit to certain viewpoints. Our biggest challenge is the diversity of ourdataset: we have 89760 images split unevenly amongst 1394 categories. In order to overcome our dataset diversity and small sample size per category, we will attempt to increase our dataset with two augmentation transforms that will aim to make the model focus on shape and simply generate more data through various positional changes. Additionally, because our dataset has so few images for some labels, these augmentations will also help regularize some of the learning to not overfit our limited dataset.
@@ -88,6 +88,7 @@ The orizontal Flip augmentation flips the image horizontally with probability p.
 ![Random_Horizontal_Flip]({{ '/assets/images/team45/pytorch_random_flip.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 *Fig 6. Random Horizontal Flip Example* [4].
+
 #### Color Jitter
 
 The Color Jitter augmentation is the last of this series of transforms. Color Jitter randomly changes the brightness, contrast, saturation, and hue of an image. The amount to jitter each factor is chosen uniformly from [max(0,1-factor), 1 + factor]. We chose a brightness factor of .5 because it allowed some of the brighter images to be more similar to other darker images in the dataset and vice versa without making the images too dark or light to see. We set the hue to .3 to jitter the hue similarly in a range that did sometimes drastically change the colors without dramatically warping the image past recognition of shapes from the contrast of shades. We decided not to edit contrast and saturation as in combination with hue and brightness the images were changed too drastically. After these three augmentations we concatenate the transformed data to the previous two datasets, in total tripling our original number of images.
@@ -95,6 +96,7 @@ The Color Jitter augmentation is the last of this series of transforms. Color Ji
 ![Color_Jitter]({{ '/assets/images/team45/pytorch_color_jitter.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 *Fig 7. Color Jitter Example* [4].
+
 ## The Models
 Deep learning has become one of the most popular tools for computer vision and machine learning ever since our computation power increased to the level required to take in the massive amounts of data these models require. Deep Learning models are in a sense exactly how they sound. They are neural networks with many many layers to capture different aspects of data features using backpropogation and series of linear and non-linear transformations to update the learning parameters. We are using several baseline pretrained models with altered output layers for comparison. We extracted the best possible accuracy from Resnet18, Resnet50, VGG16, and ViT with our data. Our goal is to use an ensemble of these different models to try and compensate for our limited dataset, but this goal is gated behind training speed.
 
@@ -112,7 +114,7 @@ Self attention is what ViT's use as their primary learning method. The process b
 
 ![Self-Attention]({{ '/assets/images/team45/self-attention.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
-*Fig 8. Self-Attention Mechanism courtesy of Violet Peng*
+*Fig 8. Self-Attention Mechanism courtesy of Violet Peng CS162*
 
 #### Training ViT
 Initial attempts to train ViT with SGD, a learning rate of 0.01, and momentum of 0.9 were dismal; nearly no learning occurred. We learned that this is because Adam imperically far outperforms SGD for training ViT. After switching to Adam with a learning rate of 0.004, we had much better performance.
@@ -150,6 +152,6 @@ ResNet, when trained on our entire augmented dataset with SGD, a learning rate o
 
 [4] “Transforming and Augmenting Images¶.” Transforming and Augmenting Images - Torchvision Main Documentation, https://pytorch.org/vision/master/transforms.html. 
 
-[3] He, Kaiming., et al. "Deep Residual Learning for Image Recognition." CoRR, 10 Dec 2015. https://arxiv.org/abs/1512.03385
+[5] He, Kaiming., et al. "Deep Residual Learning for Image Recognition." CoRR, 10 Dec 2015. https://arxiv.org/abs/1512.03385
 
-[4] Somonyan, Karen and Zisserman, Andrew. "Very Deep Convolutional Networks for Large-Scale Image Recognition." University of Oxford. ICLR 2015. https://arxiv.org/pdf/1409.1556.pdf
+[6] Somonyan, Karen and Zisserman, Andrew. "Very Deep Convolutional Networks for Large-Scale Image Recognition." University of Oxford. ICLR 2015. https://arxiv.org/pdf/1409.1556.pdf
