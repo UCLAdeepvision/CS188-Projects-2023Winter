@@ -23,6 +23,8 @@ Our project goal was to first replicate and explain the results of the 2D-TAN mo
 
 Our initial hypothesis for the data was that the pre-trained models out of the box would perform worse on the Animal Kingdom dataset due to a couple factors. The first is that word embeddings may have difficulty encoding some of the very specific animal classes in our Animal Kingdom data, which would lead to more difficulty identifying groundings for the novel data. Secondly, as the models were pre-trained on human activities, it would perform worse on these animal activities that it had never seen before. Our second hypothesis was that we could generalize the 2D-TAN model through transfer learning and fine-tune the 2D-TAN model for this downstream task, allowing for substantial performance increases for the downstream task. 
 
+![2DTANModel.png](../assets/images/team08/grounding_captions.png)
+
 # Video grounding models
 
 ## Moment Context Network
