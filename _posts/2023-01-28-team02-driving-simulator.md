@@ -1,12 +1,12 @@
 ---
 layout: post
 comments: true
-title: Driving Simulator
+title: Exploring The Effectiveness Of Classification Models In Autonomous Driving Simulators Through Imitation Learning
 author: Siwei Yuan, Yunqiu Han
 date: 2023-03-26
 ---
 
->In this blog, we explore the effectiveness of supervised learning models that are trained by imitation learning in autonomous driving simulators.
+>In this blog, we explore the effectiveness of supervised learning (classification) models that are trained by imitation learning in autonomous driving simulators.
 
 <iframe width="738" height="417" src="https://youtu.be/MukdkUluzEc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 *Overview*
