@@ -4,7 +4,7 @@ layout: post
 comments: true
 title: Trajectory Prediction
 author: Team 32 (Kevin Jiang, Michael Yang)
-date: 2023-03-25
+date: 2023-03-26
 
 ---
 
@@ -271,15 +271,13 @@ Studies were conducted on the nuScenes dataset [7], which the model is designed 
 python train.py -c configs/pgp_gatx2_lvm_traversalOriginal.yml -r ../../Data/nuScenes -d ../../Data/nuScenesPreprocessed/ -o ../../Outputs/PGP/Original/ -n 100
 ```
 
-and the pre-trained and trained-from-scratch models were evaluated with the commands.
+and the pre-trained and trained-from-scratch models were evaluated with the commands
 
 ```
 python evaluate.py -c configs/pgp_gatx2_lvm_traversalOriginal.yml -r ../../Data/nuScenes -d ../../Data/nuScenesPreprocessed/ -o ../../Outputs/PGP/Pre-Trained/ -w ../../Checkpoints/PGP_lr-scheduler.tar
 
 python evaluate.py -c configs/pgp_gatx2_lvm_traversalOriginal.yml -r ../../Data/nuScenes -d ../../Data/nuScenesPreprocessed/ -o ../../Outputs/PGP/Original/ -w ../../Outputs/PGP/Original/checkpoints/best.tar
 ```
-
-to evaluate using pre-trained weights or trained-from-scratch weights, respectively.
 
 The model was originally trained using the configuration file ```pgp_gatx2_lvm_traversal.yml``` [4], but due to the setup for the next study, the configuration file needed to replicate this training is instead ```pgp_gatx2_lvm_traversalOriginal.yml```, though the hyperparameters are unchanged.
 
@@ -410,9 +408,11 @@ environmental information (e.g. maps) [5].
 
 ## Results
 
-[SGNet Colab](https://colab.research.google.com/drive/16vEoKwFUdcCuMD6FKGhkLS7zPjHe7e7_?usp=share_link)
+[SGNet Colab Demonstration](https://colab.research.google.com/drive/16vEoKwFUdcCuMD6FKGhkLS7zPjHe7e7_?usp=share_link)
 
 [Project Results](https://drive.google.com/drive/folders/11nyN8z7PIid8eK1MmgqYeR7rRLOr_JX5?usp=share_link)
+
+[Project Video](https://www.youtube.com/watch?v=D_KgOlpTgMk)
 
 ## References
 
