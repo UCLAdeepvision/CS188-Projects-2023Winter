@@ -57,8 +57,6 @@ An early technique to perform unpaired image to image translation was a Bayesian
 
 In 2016, a Coupled GAN or CoGAN was proposed to learn a joint distribution of multi-domain images. CoGAN features a tuple of GAN’s for each image domain and uses a weight sharing constraint to learn a joint distribution for multi domain images.
 
-**INCLUDE FORMULAS**
-
 As part of the study, CoGAN was used to generate faces with different attributes. The image below shows 
 
 ![cogan example]({{ '/assets/images/team-15/4.png' | relative_url }})
