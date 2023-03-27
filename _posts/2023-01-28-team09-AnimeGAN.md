@@ -9,7 +9,7 @@ date: 2023-3-25
 
 > Generative adversarial network (GAN) is a type of generative nueral network capable of varies tasks such as image creation, super-resolution, and image classifications[1]. This project will explore the usage of GAN model on the specific domain of **anime character** and try to find improvemnts on current GAN model by using more advanced discriminators.
 
-<iframe width="800" height="600" src="https://www.youtube.com/watch?v=BPO9XJ3Aq6w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="800" height="600" src="https://www.youtube.com/embed/BPO9XJ3Aq6w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <!--more-->
 {: class="table-of-content"}
