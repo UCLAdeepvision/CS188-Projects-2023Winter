@@ -280,7 +280,7 @@ mlp_head.1                            433         -        [32, 1]         float
 Total                                 14309137    0        -               -       
 ```
 
-![Sample Output Images 3nd Attempt]({{'/assets/images/team09/attempt_3.png' | relative_url}}){: style="width: 800px; max-width: 100%;"}
+![Sample Output Images 3nd Attempt]({{'/assets/images/team09/attempt_3_loss.png' | relative_url}}){: style="width: 800px; max-width: 100%;"}
 <center><b>Fig 9.0.</b> Sample Output Images From the Third Attempt</center>
 
 ![Sample Output Images 3nd Attempt]({{'/assets/images/team09/attempt_3.png' | relative_url}}){: style="width: 800px; max-width: 100%;"}
@@ -288,11 +288,10 @@ Total                                 14309137    0        -               -
 
 From figure 9.1, the generator is able to generate some meaningful output after over 1000k iterations. However, not only the quality of the generated image is not ideal even compared to Fig 6.1, it also suffers from a mode collapse. The generators learns to generate a few sets of the same faces to fool the discriminator, and the discriminator is unable to learn out of this trick from the generator. 
 ### Evaluation and Analysis
-Since for GAN, there are no training curve to evaluate the model performance, the above generated results are anaylized visually by myself. 
-From the above attempt, we can see that for a relatively small dataset, it is very hard to properly train a GAN model with ViT discriminator even after making necessary modeification of the original ViT. Several requirement of training GAN might not be satisfied by the above experiments:
+From the above attempt, we can see that for a relatively small dataset, it is very hard to properly train a GAN model with ViT discriminator even after making necessary modeification of the original ViT. But from the training curve, we can see that the training is relatively stable with the modification, but there are still requirements of training GAN that might not be satisfied by the above experiments:
 1. The ViT model might not have the same model capacity as the generator, therefore, the the model tends to suffer from mode collapse.
 2. The learning rate of the discriminator and the generator need to be carefully chosen to successfully train the model, but the above experiments might be using suboptimal learning rates.
-3. Training ViT typically works better on larger datasets. With a dataset of only ~3000 images, it is very hard to train the ViT properly from scratch as ViT lacks the inductive bias that convolution based model such as ResNet has. 
+3. Training ViT typically works better on larger datasets. With a dataset of only ~3000 images, it is very hard to train the ViT properly from scratch as ViT lacks the inductive bias that convolution based model such as ResNet has.
 
 ## Conclusion and Future Improvement
 The generated anime faces is generally worse than the results obtained from the original archetecture. With limited time and computation budget, it is very hard to train a StyleGAN2 model with ViT discriminator from scratch using a small dataset dispite all the augmentation strategies implemented. It is possible to get better results if better hyperparameters for the model and the optimizer is chosen. It is also possible to get better results if a much larger dataset is used. But all the above options require significantly more computing power. Although, the original goal of improving the quality of generating better anime faces given the nature of ViT is not achieved, the ablation study showed and verified some important properties of StyleGAN2 with ViT discriminator, such as the requirement of different learning rate for generator and discriminator due to different achitecture, requirements of large dataset and longer training time to train ViT as ViT lacks inductive bias, and requirments of a similar model capacity for the generator and the discriminator.
