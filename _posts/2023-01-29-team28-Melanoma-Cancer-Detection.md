@@ -97,15 +97,15 @@ Vascular lesion (VASC)
 
 We will be using the three training models defined above (AlexNet, VGG-16, and Resnet-50) to classify the training images into these 7 categories. We will observe both accuracy and training time on all three of these models. Then, we will experiment on various properties of these three training models. 
 
-### Experiment 1
+### Baseline Control Model:
 
 Train baseline models and see what their relative loss, runtime, and accuracies are on 20 epochs.
 
-### Experiment 2
+### Experiment 1
 
 Vary the amount of training data that is given to each model, and see how each model reacts. We measure the accuracy and loss of each model when given the following number of training samples trained on 5 epochs.
 
-### Experiment 3
+### Experiment 2
 
 Import versions of the three models that have been pre-trained on millions of images from ImageNet. Then, modify these models in one of two schemes: 
 
@@ -114,11 +114,11 @@ Finetune: Same as Linear, except that features do not need to be frozen and the 
 
 Performances will be compared between all 3 pretrained models in both Linear and Finetune schemes. All models will be trained on 10015 images, for 5 epochs.
 
-### Experiment 4
+### Experiment 3
 
  So far our experiments have focused largely on measuring the efficacy of the training models, and the emphasis has not been skin-cancer specific. Here, we look at the accuracy by skin category, to see if certain labels are worse performing than others.
 
- ### Experiment 5
+ ### Experiment 4
 
  Apply model visualization techniques to compare feature extraction for 7 categories from three deep learning models.
 
@@ -161,7 +161,6 @@ Performances will be compared between all 3 pretrained models in both Linear and
 ![Resnet]({{ '/assets/images/team28/loss_linear.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 "*Fig 15. Loss of linear pretrained models* 
-
 
 ![Resnet]({{ '/assets/images/team28/accuracy_finetune.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
