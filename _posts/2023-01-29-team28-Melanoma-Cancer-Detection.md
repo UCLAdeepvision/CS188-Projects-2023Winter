@@ -15,13 +15,16 @@ date: 2023-03-26
 * TOC
 {:toc}
 
+![](https://youtu.be/38BDXbkKgbk)
+
+
 ## Introduction
 
 Ranked number one as the most diagnosed cancer in the US and ranked number 17 globally, skin cancer is a prominent medical issue that continues to challenge medical practitioners in the diagnosis process. From the delayed timeline of diagnosis due to skin grafts and the similarity of benign and malignant lesions and tumors for pathologists to distinguish, the current process severely overdiagnoses skin cancers to avoid potential missed cases. 
 
 In recent years, doctors have begun to use AI algorithms to augment their decision making. Although medical faith in AI has yet to reach a threshold to significantly alter current decision pipelines, early studies show marginal improvement by decreasing the number of missed cases. Many of the strongest computer vision models have been spun out from the annual International Skin Imaging Collaboration (ISIC) challenge. Their dataset of over 10,000 benign and malignant skin lesions is an extremely popular dataset to train models on, and great strides have been made in recent years to provide the medical world with potential tools to use. In this project, we take inspiration from two specific projects related to the ISIC challenge. A strong submission to their annual challenge from Milton compared AlexNet, ResNet, and VGG networks and used an ensemble of these classifiers to achieve high marks [1], and a 2022 paper using the ISIC 2020 dataset showed that transfer learning can be efficiently applied to achieve an accuracy of over 95% [4]. Using these two ideas, we implement these three base models and the pretrained models on the ImageNet dataset to explore differences in the models and facets of the 2018 ISIC dataset. 
 
-In our project, we set up the data and collab file in this following [link](https://drive.google.com/drive/folders/1e688RzfSggSscRLffN9iBGkpKcn-brcE?usp=sharing).
+In our project, we set up the data and collab file in this following [link](https://drive.google.com/drive/folders/1e688RzfSggSscRLffN9iBGkpKcn-brcE?usp=share_link).
 
 
 ### Introduction to CV Models used in thie Project:
@@ -80,7 +83,7 @@ The structure of a ResNet simply consists of numerous convolutional layers, resi
 Model Diagram:
 ![Resnet]({{ '/assets/images/team28/Resnet.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
-"*Fig 7. Resnet: Resnet model architecture* [6]
+"*Fig 6a. Resnet: Resnet model architecture* [6]
 
 ## Methods
 
@@ -124,9 +127,17 @@ Performances will be compared between all 3 pretrained models in both Linear and
 
  ## Results
 
- ### Experiment 1
+ ### Baseline models
 
- ### Experiment 2
+![Resnet]({{ '/assets/images/team28/accuracy_base.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
+"*Fig 7. Accuracy of baseline models* 
+
+![Resnet]({{ '/assets/images/team28/loss_base.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
+"*Fig 7a. Loss of baseline models* 
+
+ ### Experiment 1
 
  ![Resnet]({{ '/assets/images/team28/accuracy_400.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
@@ -152,7 +163,7 @@ Performances will be compared between all 3 pretrained models in both Linear and
 {: style="width: 400px; max-width: 100%;"}
 "*Fig 13. Loss of models on 5000 inputs* 
 
-### Experiment 3
+### Experiment 2
 
 ![Resnet]({{ '/assets/images/team28/accuracy_linear.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
@@ -171,19 +182,43 @@ Performances will be compared between all 3 pretrained models in both Linear and
 {: style="width: 400px; max-width: 100%;"}
 "*Fig 17. Loss of finetune pretrained models* 
 
-### Experiment 4
+### Experiment 3
 
 
 ![Resnet]({{ '/assets/images/team28/error_classification.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 "*Fig 18. Error totals of finetune pretrained models* 
 
-### Experiment 5
+### Experiment 4
 
+
+![Resnet]({{ '/assets/images/team28/mean_image.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
+"*Fig 19. Mean of all images* 
+
+
+![Resnet]({{ '/assets/images/team28/mean_mel.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
+"*Fig 20. Mean of melanoma images* 
+
+
+![Resnet]({{ '/assets/images/team28/mean_melpredict.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
+"*Fig 21. Mean of prediction for melanoma* 
+
+
+![Resnet]({{ '/assets/images/team28/mean_mv.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
+"*Fig 22. Mean of MV images* 
+
+
+![Resnet]({{ '/assets/images/team28/mean_mvpredict.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
+"*Fig 23. Mean of prediction for MV* 
 
 ## Discussion 
 
-The results show an interesting trend for the robustness of the three models. While ResNet50 does have the most robust accuracy by most measures, AlexNet is not far behind despite the relative simplicity. Specifically, when finetuning AlexNet, the network approaches the performance of ResNet50, and performs quite well considering the relative number of layers between ResNet and AlexNet. This suggests that, perhaps, the deeper layers in ResNet50 are not providing much value in extracting more information from the general features in the initial layers. This task, however, continues to provide the same challenge for all three models as from experiment 4, when we collapse the errors for all the models, the most commonly misidentified lesions are Melanocytic nevi (NV) and Benign lesions of the keratosis (BKL), which are benign skin lesions visually similar to Melanoma. All three models have similar error rates for these two categories, suggesting that like human performance, the most common misdiagnosis is of these visually benign and malignant lesions. Currently, these lesions are often diagnosed as cancer, and the only way to verify this diagnosis is to track the progression of the lesion rather than using the initial lesions. 
+The results show an interesting trend for the robustness of the three models. While ResNet50 does have the most robust accuracy by most measures, AlexNet is not far behind despite the relative simplicity. Specifically, when finetuning AlexNet, the network approaches the performance of ResNet50, and performs quite well considering the relative number of layers between ResNet and AlexNet. This suggests that, perhaps, the deeper layers in ResNet50 are not providing much value in extracting more information from the general features in the initial layers. This task, however, continues to provide the same challenge for all three models as from experiment 4, when we collapse the errors for all the models, the most commonly misidentified lesions are Melanocytic nevi (NV) and Benign lesions of the keratosis (BKL), which are benign skin lesions visually similar to Melanoma. All three models have similar error rates for these two categories, suggesting that like human performance, the most common misdiagnosis is of these visually benign and malignant lesions. Currently, these lesions are often diagnosed as cancer, and the only way to verify this diagnosis is to track the progression of the lesion rather than using the initial lesions. Furthermore, from experiment 4, it is clear that more data leads to more accurate representations. However, it seems that the model is extracting a feature of MV that may lead to misclassification, as the darker center closely mirrors that of melanoma. The similarity of these two classes likely leads to many shared features, as shown in the mean images of prediction. More images for all classes are linked in our presentation slides and in our video.
 
 Potential future research can image the progression of these three categories — Melanoma, Melanocytic Nevi, and Benign Keratosis Lesions, to provide time-stepped images of these lesions to train a model on. This dataset could potentially provide models more features to extract and generalize from malignant lesions that previously were unavailable. 
 Furthermore, the rather low error count for Dermatofibroma (DF) and Vascular lesion (VL) could be attributed to the low counts of data in the training and validation dataset (around 1 - 2%). This could be attributed to both the similarity with melanoma as the classification of these lesions often falls under Melanoma. However, these rarer lesions can also be both benign and malignant, and the behavior of these lesions is not yet understood compared to other forms of lesions. 
