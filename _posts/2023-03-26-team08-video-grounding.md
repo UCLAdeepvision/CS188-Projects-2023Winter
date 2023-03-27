@@ -52,7 +52,7 @@ The loss between the model proposal and the ground truth is found by considering
 
 This is necessary because comparing moments only within the same video will lead to the learning of distinctions between subtle differences. However, it is important that the model also learns the semantic difference between broad concepts like “girl” vs. “sofa.”
 
-![2DTANModel.png](../assets/images/team08/MCN_loss.png)
+![2DTANModel.png](../assets/images/team08/MCN_loss2.png)
 <!-- ![MCN Loss]({{ '/assets/images/team08/MCN_loss.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"} -->
 
@@ -110,7 +110,7 @@ To make predictions, a Hadamard product (or element wise product) is applied to 
 ### Calculating Loss
 Loss is calculated using a scaled IoU over the time proposal. The IoU scaling can help keep scores more uniform across the different lengths of ground truth labels. Then, cross entropy loss is applied to minimize the loss.
 
-![2DTANModel.png](../assets/images/team08/2dTAN_IoU_scaling.png)
+![2DTANModel.png](../assets/images/team08/2DTAN_IoU_scaling.png)
 <!-- ![2DTAN IoU Scaling]({{ '/assets/images/team08/2DTAN_IoU_scaling.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"} -->
 
