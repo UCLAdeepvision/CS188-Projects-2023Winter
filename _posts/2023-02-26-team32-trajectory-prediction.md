@@ -41,6 +41,60 @@ Unlike previous research which model an agent as having a single, long-term goal
 
 To this end, SGNet estimates and uses goals at multiple time scales to predict agents' trajectories. It comprises an encoder that captures historical information, a stepwise goal estimator that predicts successive goals into the future, and a decoder to predict future trajectory [1].
 
+#### Technical Details
+!["SGNet Architecture"](../assets/images/team32/sgnet_architecture.png)
+
+The model uses a recurrent encoder-decoder architecture and consists of an encoder,
+a stepwise goal estimator (SGE), two goal aggregators, an optional conditional
+variational autoencoder (CVAE) for stochastic results, and a decoder. 
+Both the encoder and the decoder are recurrent and evolve over time.
+
+The encoder encodes an agent's movement behavior into a latent vector by embedding historical
+trajectory information. At each time step, the input feature is concatenated with aggregated goal
+information from the previous time step, then the hidden state is updated via a recurrent cell.
+
+The stepwise goal estimator predicts coarse stepwise goals for use in the encoder and decoder. At each
+time step, the input is concatenated with predicted stepwise goals from the previous step to form
+the input to the encoder. The SGE also uses a goal aggregator that uses an attention mechanism to learn
+the importance of each stepwise goal to reduce the impact of inaccurate goals.
+
+!["SGNet Goal Aggregator"](../assets/images/team32/sgnet_goal_aggregator.png)
+
+The conditional variational autoencoder learns the distribution of the future trajectory given the
+observed trajectory. The CVAE comprises a recognition network, a prior network, and a generation network,
+each of which is implemented using fully-connected layers.
+
+SGNet uses root mean square error (RMSE) as the loss function. On the ETH/UCY datasets, SGNET
+evaluates performance using two metrics: average displacement error (ADE) and final displacement
+error (FDE). ADE measures the average L2 distance between the ground truth and predicted trajectories
+along the whole trajectory. FDE measures the L2 distance between the end points of the ground truth
+and predicted trajectories.
+
+#### Setup
+The following Colab notebook allows for training and testing SGNet as well as visualizing its output.
+The SGNet code in the GitHub repository published by the paper authors did not return trajectory data
+or include visualization code, so some setup and extra code is required to make the Colab notebook work.
+
+To try out SGNet for yourself, follow the instructions in this notebook: https://colab.research.google.com/drive/16vEoKwFUdcCuMD6FKGhkLS7zPjHe7e7_?usp=share_link
+
+#### Results
+In the paper, the authors achieved state-of-the-art performance on ETH/UCY data based on ADE and FDE.
+For example, SGNet achieved ADE=0.40 and FDE=0.96 on the ETH university dataset. Running SGNet on the
+same data in the Colab notebook, we achieved similar results, getting ADE = 0.30 and FDE = 0.64.
+
+Here are some visualizations of the results of running SGNet in deterministic mode on ETH/UCY data.
+The yellow line/dots represent historical (input) trajectory data, the red line/dots represent ground-truth
+trajectory data, and the cyan line/dots represent predicted trajectory data. Note that the visualization
+may be somewhat distorted or inaccurate because the paper GitHub repo did not include visualization code.
+
+!["SGNet Results (1)"](../assets/images/team32/sgnet_results_1.png)
+!["SGNet Results (2)"](../assets/images/team32/sgnet_results_2.png)
+!["SGNet Results (3)"](../assets/images/team32/sgnet_results_3.png)
+
+In all three examples, we can see that the predicted trajectories (cyan) are very close to the ground-truth
+trajectories (red), indicating good performance. We can also see that the dataset includes many examples where
+the pedestrian stands still or stays in the same area, as in the second image.
+
 ### Multimodal Trajectory Prediction Conditioned on Lane-Graph Traversals
 
 Paper: [https://doi.org/10.48550/arXiv.2106.15004](https://doi.org/10.48550/arXiv.2106.15004) [3]
@@ -348,8 +402,11 @@ Paper: [https://doi.org/10.48550/arXiv.2001.03093](https://doi.org/10.48550/arXi
 Repository: [https://github.com/StanfordASL/Trajectron-plus-plus](https://github.com/StanfordASL/Trajectron-plus-plus) [6]
 
 #### Overview
+This paper introduces a graph-structure recurrent model called Trajectron++. which predicts the trajectories of any number of agents.
+Trajectron++ incorporates agent dynamics and heterogeneous data (e.g. semantic maps).
 
-
+Unlike previous models, Trajectron++ accounts for dynamics constraints on agents and incorporates different kinds of 
+environmental information (e.g. maps)
 
 ## Results
 
