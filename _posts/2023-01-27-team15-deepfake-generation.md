@@ -15,6 +15,8 @@ date: 2023-01-24
 * TOC
 {:toc}
 
+## Overview
+<iframe width="786" height="360" src="https://www.youtube.com/embed/P4Xd4tSeGh4" title="188 Project" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 ## What Are "Deep Fakes"?
 
 “Deep Fakes” are synthetic media created using artificial intelligence. In current times, Deep Fake technology has been used to generate “fake” images or videos meant to look like they were captured in the real world. 
@@ -182,6 +184,18 @@ def backward_D_B(self):
 &nbsp;
 
 In each epoch $$ \mathcal{L}_G$$ is calculated and backpropogated. Next, $$ \mathcal{L}_{D_X} $$ is calculated and backpropogated. Lastly, $$\mathcal{L}_{D_Y}$$ is calculated and backpropogated.
+
+### Colab Notebook Results
+Here is an image translation we ran where we translated a picture of the UCLA campus to the domain of a Monet painting.
+
+![cycle gan experiments]({{ '/assets/images/team-15/CycleGAN_original.png' | relative_url }})
+{: style="width: 600px; max-width: 100%; padding-top: 5px;"}
+![cycle gan experiments]({{ '/assets/images/team-15/CycleGAN_translated.png' | relative_url }})
+{: style="width: 600px; max-width: 100%; padding-top: 5px;"}
+*Results generated from our colab notebook.*
+
+You can see that CycleGAN can perform domain to domain translation well.
+
 
 ## StarGAN
 An enhanced GAN variation, StarGAN, was proposed in 2018. StarGAN performs image-to-image translations for multiple domains with only a single model; this allows a single network to simultaneously train multiple datasets with different domains. There is some important terminology to keep in mind when discussing the StarGAN: *attribute* refers to an inherent meaningful feature such as hair color or gender, *attribute value* is the value of an attribute, for example, male/female for gender, and a *domain* is a set of images with the same attribute value.
@@ -364,6 +378,13 @@ The appropriate code is as follows:
 ```python
 loss = loss_adv + args.lambda_sty * loss_sty - args.lambda_ds * loss_ds + args.lambda_cyc * loss_cyc
 ```
+### Colab Notebook Results
+Here is an animation showing image generation using the input images of our faces, the professor's face, and our TA's face.
+
+<iframe src="https://drive.google.com/file/d/1eIe4tuzx6FmcFzhYs_r5ofMNIrBAs7vZ/preview" width="660" height="360" allow="autoplay"></iframe>
+*Results generated from our colab notebook.*
+
+You can see that the domain translation comes out well overall. However, small details make some translations unrealistic, such as a portion of a pair of glasses on a face or misaligned features.
 
 ## StyleGAN
 Another recently proposed model is StyleGAN, which is based on style transfer principles. StyleGAN proposes changes to the traditional GAN architecture which include the introduction of a mapping network that maps points in latent space to an intermediate latent space, which is used to control style at every point in the generator model. Stylegan also uses noise as a source of variation at every point in the generator model.
@@ -414,6 +435,14 @@ The overall design is as follows:
 {: style="width: 800px; max-width: 100%; padding-top: 5px;"}
 *“(a) 1D example of a 2× upsampling filter (b) Alias-free generator, the main datapath consists of Fourier features and normalization, modulated convolutions, and filtered nonlinearities (c) Flexible layer specifications.” (Image source: <https://arxiv.org/pdf/2106.12423.pdf>)*  
 
+### Colab Notebook Results
+Here is an animation showing image generation using StyleGAN v3.
+
+<iframe src="https://drive.google.com/file/d/14AaCBqj0DBiutcw_aM7OnHcNLLnwKLd2/preview" width="700" height="400" allow="autoplay"></iframe>
+*Results generated from our colab notebook.*
+
+You can see that the domain translation comes out very cleanly. The images transition very smoothly and texture sticking is not an issue.
+
 ## Comparisons and Conclusions
 Now that we have explored the topics of CycleGAN, StarGAN, and StyleGAN, let’s take a look at the similarities and differences between these three classes of generative adversarial networks.
 
@@ -428,7 +457,7 @@ Despite a shared architectural DNA, each model has its own strengths and weaknes
 - StyleGAN generates the most highly realistic and high-resolution images out of all three models. It contains a generator, consisting of a mapping network, an adaptive instance normalization (AdaIN) layer, and a synthesis network, in addition to a discriminator. Producing these high-quality images can require a more complex and resource intensive  training process due to the model’s approach of progressive growing and style mixing. It also suffers from other common GAN weaknesses such as mode collapse.
 
 ## Demo Links
-The link to our Google Colaboratory demo can be found [here](https://drive.google.com/file/d/12qYgaB2S6efx7BBMcy4uNYBIVKe46-Bg/view?usp=sharing) and our Drive Folder with results and our overview video can be found [here](https://drive.google.com/drive/folders/1jZMBHUQAnzkfdGsZ1QZWxod5DH2AaUxY?usp=sharing).
+The link to our Google Colaboratory demo can be found [here](https://drive.google.com/file/d/12qYgaB2S6efx7BBMcy4uNYBIVKe46-Bg/view?usp=sharing) and our Drive Folder with results and our overview video can be found [here](https://drive.google.com/drive/folders/1jZMBHUQAnzkfdGsZ1QZWxod5DH2AaUxY?usp=sharing). The results from our code can be found in the drive folder and our video overview covers the results as well.
 
 ## References
 [1] Shen, Tianxiang, et al. "“Deep Fakes” using Generative Adversarial Networks (GAN)." *University of California, San Diego*. 2018.
