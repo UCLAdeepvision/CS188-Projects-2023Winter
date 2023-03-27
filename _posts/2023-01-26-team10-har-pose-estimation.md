@@ -222,4 +222,6 @@ Experimentation: https://colab.research.google.com/drive/16mOY7WruSWIbGEAlU3i5Dr
 
 [3] V. Mazzia, S. Angarano, F. Salvetti, F. Angelini, and M. Chiaberge, ‘Action Transformer: A self-attention model for short-time pose-based human action recognition’, Pattern Recognition, vol. 124, p. 108487, Apr. 2022.
 
+[4] Wang Z, He X, Li Y, Chuai Q. EmbedFormer: Embedded Depth-Wise Convolution Layer for Token Mixing. Sensors. 2022; 22(24):9854. https://doi.org/10.3390/s22249854
+
 ---
