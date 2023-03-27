@@ -171,7 +171,7 @@ With the 4 datasets, we train 4 different AcT models. The models are trained wit
 	- Decay Steps: number of batches * number of epochs * 0.8
 - Weight Decay: 0.0001
 
-The datasets are split following a train-val-split. The training data is split into 90% training and 10% validation.
+The datasets are split following a train-val-test split. The training data is split into 90% training and 10% validation.
 
 ### Training and Testing the Convolution AcT
 
