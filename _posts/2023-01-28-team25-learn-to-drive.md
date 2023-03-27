@@ -6,13 +6,23 @@ author: Vivian Ha
 date: 2022-01-18
 ---
 
-> This project explores the latest technology behind pose estimation. Pose estimation uses machine learning
-to estimate the pose of a person or animal by looking at key joint positions in the body.
+> Introduction: This project explores the latest technology behind pose estimation. Pose estimation uses machine learning
+to estimate the pose of a person or animal by looking at key joint positions in the body. This project consists of 2 parts: this blog post, and a demonstration of pose estimation.
 
 <!--more-->
 {: class="table-of-content"}
 * TOC
 {:toc}
+
+## Spotlight Presentation
+Below, is a link to the video overview of the article and google colab demo of pose estimation.
+[Spotlight video](https://www.youtube.com/watch?v=PeybyXF3FVg&ab_channel=VivianHa)
+
+
+## Abstract
+In this project, I explored the background knowledge necessary for implementing pose estimation, some models that implement
+pose estimation, innovations in pose estimation, applications of pose estimation as well as a demonstration that shows pose
+estimation in use.
 
 ## Background
 Pose estimation works by detecting and tracking the position and orientation of human body parts in images or videos.
@@ -46,10 +56,11 @@ Instance segmentation plays an important role in pose estimation. Instance segme
 
 ### Challenges
 There are several different factors that can make pose estimation difficult. Some of these include:
-* **Occlusion:** Some objects or body parts may be fully or partially occluded making it difficult to estimate their position and orientation
-* **Illusion:** Lighting changes can affect what an object/person looks like making it hard for pose estimation to detect the object and estimate their pose
-* **Scale and viewpoint variation:** Objects can appear in different scales and points of view. It is difficult to create a robust model that can handle these different inputs
-* **Noise:** There may be noise in the image/video which can affect the accuracy of pose estimation
+1. **Occlusion**: if the body is partially or fully blocked by something, OpenPose struggles to correctly identify it
+2. **Low lighting conditions**: if lighting conditions are poor, it can affect the quality of the image, thus making it difficult for OpenPose to detect key points accurately
+3. **Complex poses**: if a person is in a complex pose (ie. twisted, folded limbs, etc) it can be difficult for OpenPose to accurately detect all key points
+4. **Clothing**: Baggy clothing that covers key points makes it difficult for OpenPose to accurately detect key points
+5. **Camera angle and distance**: if camera is placed at an angle or distance from the subject it can affect OpenPose's accuracy
 
 ### Datasets
 Some commonly used datasets for pose estimation include but are not limited to:
@@ -61,7 +72,7 @@ Some commonly used datasets for pose estimation include but are not limited to:
 Now that we have some intutition and background on how pose estimation works, we will now look at how some pose estimation models.
 
 ### OpenPose
-OpenPose was the first ever open-source realtime system for mult-person 2D pose dectection. OpenPose was developed by CVC at the Autonomous University of Barcelona (UAB) in collaboration with the Perception team at Carnegie Melon University.
+OpenPose [1] was the first ever open-source realtime system for mult-person 2D pose dectection. OpenPose was developed by CVC at the Autonomous University of Barcelona (UAB) in collaboration with the Perception team at Carnegie Melon University.
 
 Although OpenPose is no longer the cutting edge model of pose estimation, it's still important to understand how OpenPose works in order to understand successive models, as well as understand how to approach pose estimation.
 
@@ -70,8 +81,8 @@ OpenPose is a bottom up model. The below figure, illustrates the overall pipelin
 ![OpenPose Pipeline]({{'/assets/images/team-25/overall_pipeline.png'|relative_url}})
 * (a) system takes an input which is a color image of size *w x h*.
 * (b) feedforward network predicts a set of 2D confidence maps of body part locations
-* (c) degress of association between parts is encoded into part affinity fields (PAFs) (c)
-* (d) greedy inference parses the confidence maps and PAFS and bipartite matching is used to associate body part candidates
+* (c) degress of association between parts is encoded into part affinity fields (PAFs)
+* (d) greedy inference parses the confidence maps and PAFs and bipartite matching is used to associate body part candidates
 * (e) 2D anatomical keypoints for all people in the image are produced
 
 #### Network Architecture
@@ -111,18 +122,20 @@ Intermediate supervision at each stage replenishes the gradient periodically in 
 The eventual goal is
 ![Goal]({{'/assets/images/team-25/overall_goal.png'|relative_url}})
 
-### Mask R-CNN [5]
-Mask R-CNN is an extension of Faster R-CNN and is used to to perform image segmentation on images. Mask R-CNN extends Faster
-R-CNN by adding an additional branch that aims to predict object masks which are pixel-level binary masks that indicate which
-pixels belong to particular object instances. Object masks are used in addition with bounding boxes and class labels in order to 
-accurately segment an image.
+### Mask R-CNN
+Mask R-CNN [2] is an extension of Faster R-CNN and is used to to perform image segmentation on images. Because Mask R-CNN segments an image semantically (by pixels) or instantially (by image objects), it is relatively easy to apply Mask R-CNN to pose estimation.
 
-## Modern Architectures
-## Overview
+Mask R-CNN extends Faster R-CNN by adding an additional branch that aims to predict object masks which are pixel-level binary masks that indicate which pixels belong to particular object instances. Object masks are used in addition with bounding boxes and class labels in order to accurately segment an image.
+
+In particular, a CNN performs feature extraction on an image. After features have been extracted, a RPN (Region Proposal Network) generates bounding box candidates where objects could be. Features are reduced to be of similar size before being run in parallel in order to get mask proposals. These mask proposals are then used to create binary masks of where an object is and isn't in the image. Combined with the person's location, key points are extracted via segmenting and are used to create a human skeleton for each figure.
+
+This is a top-down approach because it first extracts the features of a person before estimating body joints within detected bounding boxes.
+
+## Innovations - Modern Architectures
 Although these are not my innovations, I wanted to briefly talk about some of the more modern architectures:
-* **HigherHRNet** [6] is a bottom up model of pose estimation. HigherHRNet uses high-resolution feature pyramids to learn
+* **HigherHRNet** [3] is a bottom up model of pose estimation. HigherHRNet uses high-resolution feature pyramids to learn
 scale-aware representations. It uses multi-resolution supervision for training and multi-resolution aggregation for inference.
-* **KP3D** [7] is a 3D pose estimation that uses a 2D image to predict the coordinates of a 3D object. 
+* **KP3D** [4] is a 3D pose estimation that uses a 2D image to predict the coordinates of a 3D object. 
 1. **Image Acquisition** - acquire a set of images of the 2D image taken from different viewpoints
 2. **Key-point detection** - Using feature detection techniques, detect distinct key points in a 2D image. These points should
 be easily detectable and matched across different images
@@ -149,7 +162,101 @@ Some applications of pose estimation include:
     * Human subjects can auto-generate and inject poses into the game environment for an interactive gaming experience (ex: Microsft Kinect uses 3D pose estimation to track players' motion and uses it to render the actions of the characters in game)
 
 ## Google Colab Demo
-[Pose Estimation Demo](https://colab.research.google.com/drive/1kCRVcCr9IRukDuI0K6OTRjjH1Afkuy4A#scrollTo=oNASdyyiO65I)
+This demo is an interactive demonstration of pose estimation. This notebook was adapted for the needs of this project, and I would like to give credit to the original creators of this notebook. More details can be found in the notebook itself.
+
+This demonstration makes use of OpenCV and OpenPose in order to perform pose estimation on images.
+
+[Pose Estimation Demo](https://colab.research.google.com/drive/1QQRIGezxntJy2r_NVR-YVaNknsnB4gho#scrollTo=kQikBO1zXM5S)
+
+## Results and Discussion
+In my demonstration, I found the pose estimation of three different images. Overall, the model was able to calculate some pose estimates for each of the images with varying degrees of success.
+
+Through my demonstration, as well as prior research, I have identified several points that make it difficult for a pose detector to create a pose estimation of an image.
+1. **Occlusion**: if the body is partially or fully blocked by something, OpenPose struggles to correctly identify it
+2. **Low lighting conditions**: if lighting conditions are poor, it can affect the quality of the image, thus making it difficult for OpenPose to detect key points accurately
+3. **Complex poses**: if a person is in a complex pose (ie. twisted, folded limbs, etc) it can be difficult for OpenPose to accurately detect all key points
+4. **Clothing**: Baggy clothing that covers key points makes it difficult for OpenPose to accurately detect key points
+5. **Camera angle and distance**: if camera is placed at an angle or distance from the subject it can affect OpenPose's accuracy
+
+### Easy Detection
+This image does not have any occlusion, low lighting conditions, complex poses, baggy clothing, or bad/far camera angles and distance.
+
+The original image before pose estimation looked like this:
+![Man Facing Front Before]({{'/assets/images/team-25/results/man_facing_front_before.jpeg'|relative_url}})
+
+After pose estimation detector:
+![Man Facing Front After]({{'/assets/images/team-25/results/man_facing_front_after.png'|relative_url}})
+
+Based off these results, it seems that the pose detector was able to accurately create a pose estimation for the given image. For example, the after picture shows that the pose detector was accurately able to identify most key joints such as eyes, ears, nose, neck, shoulder, elbows, wrists, hips, knees, and ankles.
+
+It is worth noting that the man's left wrist was not detected at all, however, all other key joints identified in the BODY_PARTS dictionary were correctly identified. I am not sure why the man's left wrist was not detected by the pose detector as it is not occluded, the lighting is not poor, the man is not in a complex pose, the clothing is not baggy and the camera is not far and does not have a strange angle. This may have just been caused by an error in the OpenPose detection with no fault to the image.
+
+### Occlusion
+**Occlusion**: if the body is partially or fully blocked by something, OpenPose struggles to correctly identify it
+
+This image is of a man occluded by the door of his car
+
+The original image before pose estimation looked like this:
+![Occlusion]({{'/assets/images/team-25/results/occlusion_before.jpeg'|relative_url}})
+
+After pose estimation detector:
+![Occlusion After]({{'/assets/images/team-25/results/occlusion_after.png'|relative_url}})
+
+Based off these results, we see that the pose detector was able to accurately identify the key joints that were not occluded by the car door, and was unable to identify the key joints that were occluded by the car door. These results were expected as it would not be possible for OpenPose toclassify joints that it was unable to see/detect.
+
+### Low Lighting
+**Low lighting condtions**: if lighting conditions are poor, it can affect the quality of the image, thus making it difficult for OpenPose to detect key points accurately
+
+This image is of a man in low lighting.
+
+The original image before pose estimation looked like this:
+![Low Lighting Before]({{'/assets/images/team-25/results/low_lighting_before.jpeg'|relative_url}})
+
+After pose estimation detector:
+![Low Lighting After]({{'/assets/images/team-25/results/low_lighting_after.png'|relative_url}})
+
+As seen in the results, the pose detector was unable to detect any key points of the man in low lighting. This is because OpenPose relies on computer vision algorithims that analyze images and detect key points. Low lighting may make it difficult to detect key points because it can result in more noise in the image which can obscure key data points. In addition, because there is not a lot of contrast in the image, it may be difficult for the pose detector to accurately identify what are key points and what is part of the background.
+
+### Complex Pose
+**Complex poses**: if a person is in a complex pose (ie. twisted, folded limbs, etc) it can be difficult for OpenPose to accurately detect all key points
+
+This image is taken of a man in a complex dance move.
+
+The original image before pose estimation looked like this:
+![Complex Pose Before]({{'/assets/images/team-25/results/complex_pose_before.webp'|relative_url}})
+
+After pose estimation detector:
+![Complex Pose After]({{'/assets/images/team-25/results/complex_pose_after.png'|relative_url}})
+
+Based off these results, we see that the pose detector was able to identify some key joints while not being able to detect others. These results were expected as OpenPose may struggle to detect key points of an image of a person in a complex pose because these points may be distorted or occluded. In this case, almost all of the dancer's key joints are distorted or occluded by other body parts. For example, the man's legs, hips, and shoulders appear to be distorted due to the pose that he is hitting. In addition, one of the man's knees is occluded by his foot. In addition, although the man's eyes, ears, and nose are not occluded or distorted, due to the complex pose that he is in, OpenPose is strugging to accurately identify these features.
+
+### Clothing
+**Clothing**: Baggy clothing that covers key points makes it difficult for OpenPose to accurately detect key points
+This image is of a man in baggy/boxy clothing that obscures his figure.
+
+The original image before pose estimation looked like this:
+![Clothing Before]({{'/assets/images/team-25/results/baggy_clothes_before.png'|relative_url}})
+
+After pose estimation detector:
+![Clothing After]({{'/assets/images/team-25/results/baggy_clothes_after.png'|relative_url}})
+
+Based off these results, we see that the pose detector was unable to detect any of the key points related to the body such as the shoulders, elbows, wrists, hips, knees, or ankles. However, it was able to detect the ears, eyes, nose, and neck. I believe that OpenPose struggles with baggy/boxxy clothing because it can obscure body parts, making it difficult for OpenPose to locate body parts. For example, the body parts that were not obscured by clothing were easily recognized while the parts that were hidden by the clohting were unidentifiable.
+
+### Camera Angle/Distance
+**Camera angle and distance**: if camera is placed at an angle or distance from the subject it can affect OpenPose's accuracy
+This image is of a person taken from a far distance
+
+The original image before pose estimation looked like this:
+![Camera Before]({{'/assets/images/team-25/results/camera_before.jpeg'|relative_url}})
+
+After pose estimation detector:
+![Camera After]({{'/assets/images/team-25/results/camera_after.png'|relative_url}})
+
+Based off these results, we see that the pose detector was unable to detect any of the key points. I believe that this is because the person is too far away for the OpenPose to accurately locate and identify their body parts.
+
+## Conclusion
+Baed off the above results, it appears that the best way to get good results is to ensure that the image you want to perform pose estimation on meets the following criteria: no occlusion, good lighting, no complex poses, clothing does not obscure person's figure, good camera angle and distance. The first image which met all of these criterias, had the best results in terms of pose estimation.
+
 
 ## Relevant Research Papers
 OpenPose: Realtime Multi-Person 2D Pose Estimation using Part Affinity Fields
@@ -164,10 +271,6 @@ Dynamics-Regulated Kinematic Policy for Egocentric Pose Estimation
 - [Paper] https://arxiv.org/abs/2106.05969
 - [Code] https://github.com/KlabCMU/kin-poly
 
-CLIFF: Carrying Location Information in Full Frames into Human Pose and Shape Estimation
-- [Paper] https://arxiv.org/pdf/2208.00571v2.pdf
-- [Code] https://paperswithcode.com/paper/cliff-carrying-location-information-in-full#code
-
 Mask R-CNN
 - [Paper] https://arxiv.org/abs/1703.06870
 
@@ -177,15 +280,11 @@ HigherHRNet: Scale-Aware Representation Learning for Bottom-Up Human Pose Estima
 ## Reference
 [1] DCao, Zhe, et al. “OpenPose: Realtime Multi-Person 2D Pose Estimation using Part Affinity Fields” arXiv preprint arXiv:1812.08008 (2019).
 
-[2]Cai, Yuanhao, et al. “Learning Delicate Local Representations for Multi-Person Pose Estimation” arXiv preprint arXiv:2003.04030 (2020).
+[2] He, Kaiming, et al. "Mask R-CNN" arXiv preprint arXiv:2208.00571 (2022)
 
-[3]Luo, Zhengyi, et al. “Dynamics-Regulated Kinematic Policy for Egocentric Pose Estimation” arXiv preprint arXiv:2106.05969 (2021)
+[3] Cheng, Bowen, et al. "HigherHRNet: Scale-Aware Representation Learning for Bottom-Up Human Pose Estimation" arXiv prepreint arXiv:1908.10357 (2020)
 
-[4] Li, Zhihao, et al. "CLIFF: Carrying Location Information in Full Frames into Human Pose and Shape Estimation" arXiv preprint arXiv:1703.06870 (2018)
-
-[5] He, Kaiming, et al. "Mask R-CNN" arXiv preprint arXiv:2208.00571 (2022)
-
-[6] Cheng, Bowen, et al. "" arXiv prepreint arXiv:1908.10357 (2020)
+[4] Guo, Xiaodan, Yifei Zhu, and Yun Fu. "KP3D: Pose Estimation for 3D Models Using Keypoint Detection and 2D-to-3D Matching." Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2019, pp. 5530-5539.
 
 
 
