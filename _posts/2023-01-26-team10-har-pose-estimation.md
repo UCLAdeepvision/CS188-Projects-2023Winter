@@ -171,7 +171,7 @@ After running the baseline AcT model on each of the 4 datasets, we took the data
 | OpenPose 13 Keypoints | 0.8939658403396606 |
 | PoseNet 17 Keypoints | 0.867806077003479 |
 | PoseNet 13 Keypoints | 0.8235089182853699 |
-| **Convolutional AcT Improvement with OpenPose 13 Keypoints Dataset** | **0.903034508228302** |
+| **Convolutional AcT Improvement with OpenPose 13 Keypoints Dataset** | **0.8814091682434082** |
 
 ## Code
 
