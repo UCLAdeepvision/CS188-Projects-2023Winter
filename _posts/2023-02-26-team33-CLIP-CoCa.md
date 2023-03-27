@@ -60,12 +60,12 @@ Research in 2017 revealed the potential of using Natural Language Processing (NL
 
 The Contrastive Language–Image Pre-training approach united contrastive representation learning with the existing zero-shot approach to using NLP to classify images in the form of a joint embedding matrix between text encodings and image encodings [1]. The key advancement was to use the aforementioned encodings to perform contrastive learning rather than the standard prediction where only the correct class is considered. Not only does this approach improve the training efficiency on the ImageNet accuracy benchmark compared to the status quo NLP based models, but it retains the full zero-shot capabilities. During pre-training, the model learns to maximize the similarity scores between correct image and text encodings while maximimizing dissimilirity scores between incorrect pairings:
 
-![Combining text and image encodings](../assets/images/team-33/overview-a.svg "overview-a")
+![Combining text and image encodings](assets/images/team-33/overview-a.svg "overview-a")
 *Figure 1: Summary of Contrastive Language–Image Pre-training (CLIP)*
 
 To adopt additional labels unseen during pre-training, all that needs to be done is to learn the encoding of these new potential classes. Then, during the forward pass, the model uses the  newly augment set of text label encodings to sythesize a linear classifier which calculates the highest similarity score between input images and said labels. While the length of the text encodings does have a finite length (76 elements in the case of CLIP), this representation still allows for a broad range of labels to be introduced for almost any downstream image classification task.
 
-![Dataset creation and Zero-shot prediction](../assets/images/team-33/overview-b.svg "overview-b")
+![Dataset creation and Zero-shot prediction](assets/images/team-33/overview-b.svg "overview-b")
 *Figure 2: Zero-shot predictive capabilities of CLIP*
 
 ### Encoders
@@ -75,7 +75,7 @@ The Image Encoder can either be a ResNet backbone or a Vision Transformer model.
 #### ResNets
 ResNet models are deep convolutional neural networks that use residual connections proposed by Kaiming He, which allow deep neural networks to easily learn the identity function and reduces the impact of vanishing gradients CITE. Below is an example of a simple ResNet architecture, where the curved arrows bypassing stacked 3x3 convolutions represent the residual connections.
 
-![ResNet18 Architecture](../assets/images/team-33/ResNet18.png "ResNet18")
+![ResNet18 Architecture](assets/images/team-33/ResNet18.png "ResNet18")
 
 *Figure 3: ResNet18 Architecture overview*
 
@@ -83,7 +83,7 @@ ResNet models are deep convolutional neural networks that use residual connectio
 
 Vision Transformers take inspiration from the success of Transformer models in NLP tasks. The input image is first divided into small patches of fixed size, which are then fed into a Transformer encoder. The Transformer encoder consists of multiple layers of self-attention and feedforward neural networks, which allow the model to discover the importance of each patch and learn complex representations of the image. Finally, a classification head is added on top of the Transformer encoder to predict the class label of the image.
 
-![ViT](../assets/images/team-33/ViT.png "ViT")
+![ViT](assets/images/team-33/ViT.png "ViT")
 
 *Figure 4: ViT Architecture overview*
 
@@ -210,14 +210,14 @@ Note that while ViT-g/14 is the largest the researchers at LAION ran into errors
 
 First let's briefly examine the OpenCLIP benchmarks results. The first important metric is top1 accuracy, or the percentage of samples where the model's top prediction was the correct class label.
 
-![Dataset creation and Zero-shot prediction](../assets/images/team-33/open_clip_results.png "open_clip results")
+![Dataset creation and Zero-shot prediction](assets/images/team-33/open_clip_results.png "open_clip results")
 *Figure 4: OpenCLIP Top1 accuracy benchmarks*
 
 No one model holds consistent superiority across all the VTAB (Visual Task Adaptation Benchmark) datasets along the x-axis in Figure 4. However, the larger models (ViT-L, ViT-H, and ViT-g) generally perform higher on regular classification tasks. There are some interesting spikes in variance between models in the imagenet-a dataset for instance, where the ViT-L/14 model from OpenAI far exceeds the accuracy of the ViT-L/14 from trained on LAION 2b by nearly 0.3, even though both have the exact same architecture. It even exceeded the accuracy of the ViT-g and ViT-H models, both of which are larger models. ImageNet-A consists of unmodified real-world pictures that are frequently misclassified by standard ResNet models. As both OpenAI's and LAION's datasets were scraped from image-text pairs on the internet, we can only speculate that the data used by OpenAI may have been more diverse in including images frequently misclassified by standard CNN models.
 
 (https://paperswithcode.com/dataset/imagenet-a)
 
-![Dataset creation and Zero-shot prediction](../assets/images/team-33/averaged_models_results.png "open_clip averaged results")
+![Dataset creation and Zero-shot prediction](assets/images/team-33/averaged_models_results.png "open_clip averaged results")
 *Figure 4: OpenCLIP averaged Top1 accuracy across architectures*
 
 We can already observe contrasts in general performance for the same classification sub-task. The VTAB/flowers dataset (known better as Oxford Flowers102) and cars dataset (Stanford Cars) both test intra-class differentiation, where objects sharing a greater category (flowers and cars) must be further differentiated (flower species and car make/model/year). Here the CLIP models perform fairly well, reaching over ~70% accuracy for the Flowers102 dataset and over ~80% on the Stanford Cars dataset averaged across all models. While these metrics pale in comparison to standard classification SoTA is 99.76% for Flowers102 and 96.32% for Stanford Cars, they're competive for zero-shot. The single zero-shot data point on Papers with Code is for VAE-GAN model at [70.8% top1 accuracy](https://paperswithcode.com/sota/zero-shot-learning-on-oxford-102-flower). ViT-H/14 from LAION reaches 80.2% top1 accuracy, making it SoTA on Papers with Code. The Stanford Cars doesn't have a current leaderboard on Papers with Code, but the 80%+ zero-shot top1 accuracy surpases the SoTA for few-shot classification on Papers with Code, which is currently only [73.15%](https://paperswithcode.com/sota/few-shot-image-classification-on-stanford-2).
@@ -237,15 +237,27 @@ Lastly, all CLIP models struggle on the dsprites datasets, all failing to surpas
 ## Our Zero-Shot Datasets
 
 
+### Tensorflow Datasets
 
+The original CLIP paper includes a suite of benchmarks of their pretrained models on various zero shot tasks. We performed a similar benchmark analysis across a different set of datasets provided by the [Tensorflow Datsets](https://www.tensorflow.org/datasets) package. Our benchmarking differs both by including a wider diversity of datasets to test robustness, as well as including all pretrained Laion models for comparison. We make changes to key metrics from OpenCLIP that are better suited for comparing performance across datasets. In addition, to accomplish a wide breadth of datasets on a lower computational budget, we selected datasets that were smaller in size but retained much of the attributes of larger datasets:
 
-### Environment setup
+![tfds overview](assets/images/team-33/tfds-overview.png)
 
-We use the original 
+The above histogram is similar to the one from the OpenCLIP benchmark results, although using completely different datsets. We make one key change to the y-axis, which uses `acc1_adjusted`. `acc1_adjusted` takes into account the random-chance accuracies of multi-class classifcation. For example, a random model on 5-class task could achieve 20% accuracy on average. As our datasets have category counts from 2-200, it is important to adjust for random chance. The computation of `acc1_adjusted` is simply:
+<p style="text-align: center;">$$acc_{adjusted}\ =\ acc\ -\ \frac{1}{N}$$</p>
+Where N is the number of categories. This metric enables us to better compare performance across classification tasks and avoid bias towards binary classification.
 
-### Code
+We included the imagenette and imagewang datasets as a control datasets to ensure our results align with the ones produced by OpenCLIP. Notably, imagenette and imagewang are subsets of the original imagenet and only include 10 categories. Similar to OpenCLIP's benchmarks, all clip models excel at at the imagenet tasks, acheiving >95% accuracy. This both confirms clip models ability to handle variations in imagenet tasks, but also the validity of our own benchmarks.
 
-Link to Colab:
+We can better explore CLIP's performance on high-level tasks by grouping datsets into broad types:
+
+![tfds overview](assets/images/team-33/tfds-dataset-type.png)
+
+As a result of the subtraction in `acc1_adjusted`, we gain the benefit of having bars that go in the negative direction, which indicate that the model performs worse than random chance. Further exploration of the tasks where negative performance occur reveals they tend have labels that are more scientific or esoteric. For example, the casava dataset contains 4 labels: `cbsd`, `cgm`, `cmd`, `healthy`, depicting different diseases inflicting a plant in the image. Besides `healthy`, all of these terms are abbreviations of diseases. The negative performance is likely a result of CLIP's dependency on the semantic meaning of labels. As these labels have no common sensical meaning, CLIP appears to have inferred counterproductive patterns from the abbreviations, resulting in negative performance. For example, `cmd` may be interpreted as the word `command` rather than the actual medical term `Cassava Mosaic Disease` in this context. Cassava belongs in the medical category, and we can see that similarly for plant and typography based tasks, CLIP has difficulty capturing the particular labeling scheme and domain knowledge of the task, resulting in poor or negative performance.
+
+#### Code
+
+A more detailed view of our zero-shot benchmarking can be found in this [colab](https://drive.google.com/file/d/1triv0P3MMXO3qP5bDU--Dk6xFGW_wUQO/view?usp=sharing)
 
 ### Miniplaces
 
@@ -281,12 +293,12 @@ Now we conduct an analysis of the self-attention across different CLIP architect
 
 In 2022 an extension of the ideas explored by CLIP was published in the form of CoCa (Contrastive Captioners). CoCa combines the contrastive learning methods of CLIP with techniques from Generative Adversarial Networks. First, note that CoCa uses a single image-text foundation that contains the to execute three different downstream tasks including Visual Recognition (single encoder), Crossmodal Alignment (dual encoder), and Image Captioning & Multimodal Understanding (encoder-decoder). However, for the purposes of this blog we will focus solely on the Image Classification capabilities of the architecture while leaving the other capabilities to a brief discussion. The dual encoder model shown below is used for downstream Image Classification.
 
-![CoCa Overview](../assets/images/team-33/coca2.jpg "overview-b")
+![CoCa Overview](assets/images/team-33/coca2.jpg "overview-b")
 *Figure 3: CoCa Overview*
 
 The primary change made to the architecture is the separation of the text decoder transformer into two parts, a unimodal decoder and a multimodal decoder. For the test-time downstream image classification task, only the Unimodal Text Decoder is used. However, the model itself is trained using a combination of the contrastive loss from the image encoding and unimodal text encodings as well as the captioning loss from the multimodal text encodings and the cross  attentional pooling of image encodings. The inclusion of both the captioning loss and the contrastive loss diversifies the training process and likely allows the model to extract more semantic meaning from the latent text labels because of the added focus on captioning loss (for the purposes of generative captioning).
 
-![Dataset creation and Zero-shot prediction](../assets/images/team-33/coca.jpg "overview-b")
+![Dataset creation and Zero-shot prediction](assets/images/team-33/coca.jpg "overview-b")
 *Figure 4: CoCa architecture and PseudoCode*
 
 
