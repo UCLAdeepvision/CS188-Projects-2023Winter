@@ -13,6 +13,10 @@ date: 2023-03-26
 {: class="table-of-content"}
 * TOC
 {:toc}
+### [Video Presentation](https://youtu.be/9rZEI6z2lzE)
+
+### [Github Code Link](https://github.com/jrbronkar/CS188_DLCV_PROJECT)
+
 # Abstract
 In this project, we analyze one prominent video grounding model to explore in depth: 2D-TAN [1]. We analyze the performance of this model on ActivityNet [5], Charades-STA [6], and TACoS [7] datasets based on provided pre-trained checkpoints. In addition, we introduced a novel dataset, Animal Kingdom [8], to analyze the extensibility of the 2D-TAN model to a new video domain by evaluating the results of the pre-trained models on this novel dataset. To further improve the results, we used transfer learning on the best-performing model, then evaluated and analyzed the final results. The results showed low extensibility from the untuned pre-trained models, but with transfer learning, the fine-tuned model performed quite well on the novel dataset. We conclude that though the baseline pre-trained 2D-TAN models fail to generalize across domains, small amounts of transfer-learning and fine-tuning can quickly scale 2D-TAN across novel applications.
 
@@ -23,14 +27,15 @@ Our project goal was to first replicate and explain the results of the 2D-TAN mo
 
 Our initial hypothesis for the data was that the pre-trained models out of the box would perform worse on the Animal Kingdom dataset due to a couple factors. The first is that word embeddings may have difficulty encoding some of the very specific animal classes in our Animal Kingdom data, which would lead to more difficulty identifying groundings for the novel data. Secondly, as the models were pre-trained on human activities, it would perform worse on these animal activities that it had never seen before. Our second hypothesis was that we could generalize the 2D-TAN model through transfer learning and fine-tune the 2D-TAN model for this downstream task, allowing for substantial performance increases for the downstream task. 
 
-![2DTANModel.png](../assets/images/team08/grounding_captions.png)
+![Grounding Captions]({{ '/assets/images/team08/grounding_captions.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
 
 # Video grounding models
 
 ## Moment Context Network
-![2DTANModel.png](../assets/images/team08/MCN.png)
-<!-- ![MCN]({{ '/assets/images/team08/MCN.png' | relative_url }})
-{: style="width: 400px; max-width: 100%;"} -->
+
+![MCN]({{ '/assets/images/team08/MCN.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
 
 The Moment Context Network (MCN) [2], proposed by Hendricks in 2017 is one of the earliest models for the video grounding task.
 
@@ -43,9 +48,9 @@ In MCN, the local features of a clip are represented with the output of a mean p
 
 ### Making Predictions
 The final prediction output of a clip is created with a sum of squares.
-![2DTANModel.png](../assets/images/team08/MCN_predictions.png)
-<!-- ![MCN]({{ '/assets/images/team08/MCN_predictions.png' | relative_url }})
-{: style="width: 400px; max-width: 100%;"} -->
+
+![MCN]({{ '/assets/images/team08/MCN_predictions.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
 
 Here, $s$ is sentence query, $v$ is the input video frames, and tau represents the temporal position. $P^V$ represents the temporal context output for the rgb features, $P^F$ represents the temporal context output for optical flow features, and $P^L$ represents the output from the language model. 
 
@@ -54,18 +59,16 @@ The loss between the model proposal and the ground truth is found by considering
 
 This is necessary because comparing moments only within the same video will lead to the learning of distinctions between subtle differences. However, it is important that the model also learns the semantic difference between broad concepts like “girl” vs. “sofa.”
 
-![2DTANModel.png](../assets/images/team08/MCN_loss2.png)
-<!-- ![MCN Loss]({{ '/assets/images/team08/MCN_loss.png' | relative_url }})
-{: style="width: 400px; max-width: 100%;"} -->
+![MCN Loss]({{ '/assets/images/team08/MCN_loss2.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
 
 ### Limitations of MCN
 The MCN introduced the important idea of evaluating intra-video temporal meaning. However, the MCN lacks flexibility. The paper mentions that each video is split into 5 second clips, with ground truth labels of their custom dataset also being made on these 5 second intervals. This means that only certain custom datasets can be used to train this model. More critically, temporal proposals will be inaccurate. We do not get flexibility to make 1 second proposals or 1 minute proposals. 
 
 ## 2D Temporal Adjacent Network
 
-![2DTANModel.png](../assets/images/team08/2DTANModel.png)
-<!-- ![2D TAN]({{ '/assets/images/team08/2DTANModel.png' | relative_url }})
-{: style="width: 400px; max-width: 100%;"} -->
+![2D TAN]({{ '/assets/images/team08/2DTANModel.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
 
 The 2D Temporal Adjacent Network (2D TAN) [1] introduces a novel method to address the lack of flexibility in MCN. This is done by creating a 2d feature map with one dimension representing start time, and another dimension representing stop time. The highest score here will predict a clip of variable length.
 
@@ -112,15 +115,13 @@ To make predictions, a Hadamard product (or element wise product) is applied to 
 ### Calculating Loss
 Loss is calculated using a scaled IoU over the time proposal. The IoU scaling can help keep scores more uniform across the different lengths of ground truth labels. Then, cross entropy loss is applied to minimize the loss.
 
-![2DTANModel.png](../assets/images/team08/2DTAN_IoU_scaling.png)
-<!-- ![2DTAN IoU Scaling]({{ '/assets/images/team08/2DTAN_IoU_scaling.png' | relative_url }})
-{: style="width: 400px; max-width: 100%;"} -->
+![2DTAN IoU Scaling]({{ '/assets/images/team08/2DTAN_IoU_scaling.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
 
 $o_i$ is the IoU value. $t_{min}$ and $t_{max}$ are thresholds used to scale.
 
-![2DTANModel.png](../assets/images/team08/2DTAN_loss.png)
-<!-- ![2DTAN IoU Scaling]({{ '/assets/images/team08/2DTAN_loss.png' | relative_url }})
-{: style="width: 400px; max-width: 100%;"} -->
+![2DTAN IoU Scaling]({{ '/assets/images/team08/2DTAN_loss.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
 
 # Experiments on 2D TAN
 The flexibility of the 2D TAN model made it promising for a wide range of video grounding applications. Because of this, we decided to reconstruct the model, first replicating the results in order to ensure correct model performance. We first analyzed the model on the three sets of data used in the paper: Charades-STA, ActivityNet Captions, and TACoS. Then, we introduced the model to a new dataset, AnimalKingdom to study the extensibility of 2D-TAN.
@@ -385,9 +386,8 @@ After generating the results seen below, we decided to fine-tune on Charades-STA
 --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |Conv|53.16|24.64|11.42|4.89|81.45|50.00|31.35|17.71|
 
-![2DTANModel.png](../assets/images/team08/loss_curves.png)
-<!-- ![loss curves]({{ '/assets/images/team08/loss_curves.png' | relative_url }})
-{: style="width: 400px; max-width: 100%;"} -->
+![loss curves]({{ '/assets/images/team08/loss_curves.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
 
 # Discussion
 ## TACoS pretrained weights work better for Rank1 while Charades pretrained weights work better for Rank5 (w/o finetuning)
