@@ -148,14 +148,9 @@ seq = iaa.Sequential([
 
 This resulted in three levels of data augmentation on the dataset. We have the original test videos, slightly rotated and/or flipped test videos, and heavily augmented videos. Examples of the three are shown below:
 
-No augmentation:
-<img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.10.14 PM.png" alt="Mesonet Architecture" width="250" align="middle">
-
-Rotation/flipping:
-<img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.41.42 PM.png" alt="Mesonet Architecture" width="250" align="middle">
-
-Heavy augmentation (as in code block above):
-<img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.40.01 PM.png" alt="Mesonet Architecture" width="250" align="middle">
+| No augmentation | Rotation/Flipping | Heavy Augmentation | 
+| :------: | :-----------------: | :---------: |
+| <img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.10.14 PM.png" alt="Mesonet Architecture" width="300" align="middle"> | <img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.41.42 PM.png" alt="Mesonet Architecture" width="300" align="middle"> | <img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.40.01 PM.png" alt="Mesonet Architecture" width="300" align="middle"> | 
 
 ### Results
 When testing the model weights on the CelebDF test dataset, we observed the following metrics. This is on the CelebDF test dataset with no data augmentation:
