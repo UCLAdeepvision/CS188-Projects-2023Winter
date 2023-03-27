@@ -213,8 +213,6 @@ Comparing the baseline models, it is also interesting to observe the performance
 
 ## Code
 
-[For now we've added just the colab notebooks, but will add a setup process once it is more streamlined]
-
 Convolutional AcT Implementation: https://github.com/michael1yu/AcT/blob/master/utils/conv_transformer_trainer.py
 
 Experimentation: https://colab.research.google.com/drive/16mOY7WruSWIbGEAlU3i5Dr4f72TuHeEa?usp=sharing
