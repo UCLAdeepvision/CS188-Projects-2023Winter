@@ -68,7 +68,7 @@ img_patches = img.unfold(2, self.patch_size, self.stride).unfold(3, self.patch_s
 ![Sample Images From the Dataset]({{'/assets/images/team09/sample_real_images.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
 <center><b>Fig 5.</b> Sample Images from the Dataset </center>
 
-All experiment will use a relatively small [dataset](https://www.kaggle.com/datasets/tianbaiyutoby/animegirl-faces) obtained from Kaggle consists of 2434 $$256\times256$$ anime faces of different styles. The dataset is preprocessed by using the `dataset_tool.py` utilities provided in the StyleGAN2-ADA code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).    
+All experiment will use a relatively small [dataset](https://www.kaggle.com/datasets/tianbaiyutoby/animegirl-faces) obtained from Kaggle consists of 2434 $$256\times256$$ anime faces of different styles. The dataset is first converted to jpeg format and preprocessed by using the `dataset_tool.py` utilities provided in the StyleGAN2-ADA code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).    
 ### Training Environment
 All model will be trained on a single Tesla T4 GPU, using docker environment provided in the code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).  
 ### Baseline Results
@@ -76,7 +76,7 @@ All model will be trained on a single Tesla T4 GPU, using docker environment pro
 <center><b>Fig 6.0.</b> Training Dynanmic of Baseline Model (Transfer learning)</center>
 
 ![Sample Baseline Output Images]({{'/assets/images/team09/sample_baseline_fake_images.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
-<center><b>Fig 6.1.</b> Sample Output Images From the Baseline Model (Transfer learning) (<b>FID=16.39</b>)</center>
+<center><b>Fig 6.1.</b> Sample Output Images From the Baseline Model (Transfer learning) (<b>FID(50k)=16.39</b>)</center>
 
 The above results are obtained by doing transfer learning using the original StyleGAN2 model and the model is trained for ~800K iterations. The base model used is the pretrained [ffhq-256](https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/transfer-learning-source-nets/ffhq-res256-mirror-paper256-noaug.pkl) model from NVIDIA which generate realistic human faces(a completely different domain from anime). 
 
@@ -84,7 +84,7 @@ The above results are obtained by doing transfer learning using the original Sty
 <center><b>Fig 6.2.</b> Training Dynanmic of Baseline Model (Train from Scratch)</center>
 
 ![Sample Baseline Output Images]({{'/assets/images/team09/sample_baseline_fake_images_2.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
-<center><b>Fig 6.3.</b> Sample Output Images From the Baseline Model (Train from Scratch) (<b>FID=123.62</b>)</center>
+<center><b>Fig 6.3.</b> Sample Output Images From the Baseline Model (Train from Scratch) (<b>FID(50k)=123.62</b>)</center>
 
 The above results are abtained using the default unmodified paper256 config of StyleGAN. The outputs were obtained after ~400k iterations. 
 ### ViT Discriminator Results
@@ -281,7 +281,7 @@ Total                                 14309137    0        -               -
 ```
 
 ![Sample Output Images 3nd Attempt]({{'/assets/images/team09/attempt_3_loss.png' | relative_url}}){: style="width: 800px; max-width: 100%;"}
-<center><b>Fig 9.0.</b> Sample Output Images From the Third Attempt</center>
+<center><b>Fig 9.0.</b> Training Dynanmic of the Third Attempt</center>
 
 ![Sample Output Images 3nd Attempt]({{'/assets/images/team09/attempt_3.png' | relative_url}}){: style="width: 800px; max-width: 100%;"}
 <center><b>Fig 9.1.</b> Sample Output Images From the Third Attempt (<b>FID(50k)=218.70</b>)</center>
