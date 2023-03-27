@@ -47,7 +47,7 @@ $$D(y) = {||x - y|| <= R}$$
 
 where y is the position of the keypoint, and x is a point in the disk, and R being a predefined radius which the authors set to 32 pixels. Then instead of using the association between body parts like OpenPose, it first finds a set of short offset vectors for each keypoint type that shoot from pixels in a keypoint disk to the nearest person’s keypoint of that type. These short offset vectors are panelized in the loss to help better locate the keypoints. The heatmaps and the short offset vectors are used in a Hough voting to localize the keypoints. To help piece the found keypoints together, posenet then creates another set of vector output called Mid-range pairwise offsets, which encode edges between every pair of keypoints. The mid-range offset output is refined by combining with the short offset to better locate the keypoint connection edges. Finally, the keypoint heatmaps and the offset vectors are passed to a person pose decoder to greedily parse together the keypoints and keypoint edges into full human poses.
 
-|![image](../assets/images/team10/posenet.png)|
+|![image](../assets/images/team10/posenet2.png)|
 |:--:| 
 | Refining mid-range offset vectors. |
 
