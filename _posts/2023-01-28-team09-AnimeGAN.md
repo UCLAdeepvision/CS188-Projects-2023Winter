@@ -51,16 +51,16 @@ Through self attention mechnism, ViT achieve a global view of the image even in 
 #### Attention 
 The original ViT attention score is computed by:
 <center> $$Attention_h(X) = softmax(\frac{(XW_q)(XW_k)^T}{\sqrt{d_h}})(XW_v)$$ </center>
-Where $$W_q$$, $$W_k$$, and $$W_v$$ are projection matrix for $$Q$$, $$K$$, and $$V$$. However, in GAN, it has been shown that the Lipschitz continuity is crucial for the model to reach Nash equilibrium, while the standard dot product form voilates the Lipschitz continuity and makes the training unstable. According to the paper "ViTGAN: Training GANs with Vision Transformers", it is necessary to use L2 attention score calculcation instead of standard dot product to enforce the Lipschitz continuity: 
+Where $$W_q$$, $$W_k$$, and $$W_v$$ are projection matrix for $$Q$$, $$K$$, and $$V$$. However, in GAN, it has been shown that the Lipschitz continuity is crucial for the model to reach Nash equilibrium, while the standard dot product voilates the Lipschitz continuity and makes the training unstable. According to the paper "ViTGAN: Training GANs with Vision Transformers", it is necessary to use L2 attention score calculcation instead of standard dot product to enforce the Lipschitz continuity: 
 <center> $$Attention_h(X) = softmax(\frac{d(XW_q, XW_k)}{\sqrt{d_h}})XW_v$$ </center>
 Where $$W_q = W_k$$, and $$W_v$$ are projection matrix for $$Q$$, $$K$$, and $$V$$ respectively. The dot product is replaced by L2 distance in the formula.[9]
 #### Spectual Normalization
-The paper "ViTGAN: Training GANs with Vision Transformers" also suggests to further improve the Lipschitz continuety by improving spectual normalization on $$W_q$$, $$W_k$$ and $$W_v$$:
+The paper "ViTGAN: Training GANs with Vision Transformers" also suggests to further improve the Lipschitz continuety by using spectual normalization on $$W_q$$, $$W_k$$ and $$W_v$$:
 <center>$$\overline{W}_{ISN}(W):= \frac{\sigma(W_{init})\cdot W}{\sigma(W)} $$</center>
-The matrix is normaized using the maximum singular value of the matrix (denoted by $$\sigma(.)$$) and multiply by the maximum singular value during initialization. The normalized weight further prevented the unstable training problem.
+The matrix is normaized using the maximum singular value of the matrix (denoted by $$\sigma(.)$$) and multiply by the maximum singular value during initialization. The normalized weight further prevents the unstable training problem.
 #### Code Implementation
-The modfified ViT discriminator is adapted from the original ViTGAN code [repository](https://github.com/wilile26811249/ViTGAN) and integrated to the official pytorch implementation of StyleGAN2. The ViT discriminator version of the StyleGAN2 is implemented and can be found in this code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).
-There are several issues that occured during integration. To better relate each image patch to each other, unlike the tranditional ViT, the patches have overlaps. This step was not implemented corretly in the original repository and had to be changed in order for it to work properly. Below are the changed code for the initial step of getting image patches:
+The modfified ViT discriminator is adapted from the original ViTGAN code [repository](https://github.com/wilile26811249/ViTGAN) and integrated into the official pytorch implementation of StyleGAN2. The ViT discriminator version of the StyleGAN2 is implemented and can be found in this code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).
+There were several issues that occured during integration. The major one was related to image patches. To better relate each image patch to each other, unlike the tranditional ViT, the patches have overlaps. This step was not implemented corretly in the original repository and had to be changed in order for it to work properly. Below are the changed code for the initial step of getting image patches:
 ```
 img_patches = img.unfold(2, self.patch_size, self.stride).unfold(3, self.patch_size, self.stride)
 ```
@@ -69,7 +69,7 @@ img_patches = img.unfold(2, self.patch_size, self.stride).unfold(3, self.patch_s
 ![Sample Images From the Dataset]({{'/assets/images/team09/sample_real_images.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
 <center><b>Fig 5.</b> Sample Images from the Dataset </center>
 
-All experiment will use a relatively small [dataset](https://www.kaggle.com/datasets/tianbaiyutoby/animegirl-faces) obtained from Kaggle consists of 2434 $$256\times256$$ anime faces of different styles. The dataset is first converted to jpeg format and preprocessed by using the `dataset_tool.py` utilities provided in the StyleGAN2-ADA code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).    
+All experiment will use a relatively small [dataset](https://www.kaggle.com/datasets/tianbaiyutoby/animegirl-faces) obtained from Kaggle consists of 2434 $$256\times256$$ anime faces of different styles. The dataset is first converted to `.jpg` format and preprocessed by using the `dataset_tool.py` utilities provided in the StyleGAN2-ADA code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).    
 ### Training Environment
 All model will be trained on a single Tesla T4 GPU, using docker environment provided in the code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).  
 ### Baseline Results
@@ -87,7 +87,7 @@ The above results are obtained by doing transfer learning using the original Sty
 ![Sample Baseline Output Images]({{'/assets/images/team09/sample_baseline_fake_images_2.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
 <center><b>Fig 6.3.</b> Sample Output Images From the Baseline Model (Train from Scratch) (<b>FID(50k)=123.62</b>)</center>
 
-The above results are abtained using the default unmodified paper256 config of StyleGAN. The outputs were obtained after ~400k iterations. 
+The above results are abtained using the default unmodified paper256 config of StyleGAN2. The outputs were obtained after ~400k iterations. 
 ### ViT Discriminator Results
 There are several attempts to train using the same dataset with the ViT discriminator and the original paper256 config generator. Below is a brief overview of the generator layers:
 ```
@@ -140,16 +140,16 @@ synthesis.b256:1      -           -        [32, 64, 256, 256]   float32
 Total                 24767458    175568   -                    -     
 ``` 
 
-However, due to hardware limitation and time constraints, neither attempt gave optimal results. To train the model, adam optimizer is used for both generator and discriminator, initially with a learning rate of 0.0025 which was shown to be too high. As each 1k iterations takes over 4 mins to train, it is very hard to find optimal hyperparameters for the new model given the time for this project. Below are some attempts over the course of over one week. 
+However, due to hardware limitation and time constraints, neither attempt gave optimal results. To train the model, adam optimizer is used for both generator and discriminator, initially with a learning rate of 0.0025 which was shown to be too high. As each 1k iterations takes over 4 mins to train, it is very hard to find optimal hyperparameters for the new model given the time and budget constraints for this project. Below are some attempts over the course of over one week. 
 #### Initial Attempt
-This attempt is before changing the image patch bug, therefore, no meaningful learning is achieved.
+This attempt was before changing the image patch bug, therefore, no meaningful learning was achieved.
 
 ![Sample Output Images 1st Attempt]({{'/assets/images/team09/attempt_1.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
 <center><b>Fig 7.</b> Sample Output Images From the Initial Attempt</center>
 
-The above result show the failed first attempt output after 1403k iterations of training. No meaningful image is produced, as there is an error in the discriminator image patching step. 
+The above result show the failed first attempt output after 1403k iterations of training. No meaningful image was produced, as there was an error in the discriminator image patching step. 
 #### Second Attempt
-This attempt fix the image patches generation with learning rate of 0.0025 set for both discriminator and generator. As the learning rate is set too high for the ViT discriminator, the training failed as well. The ViT discriminator was not optimized. Below is the ViT archetecture used for this attempt: 
+This attempt fixed the image patches generation with learning rate of 0.0025 set for both discriminator and generator. As the learning rate was set too high for the ViT discriminator, the training failed as well. The ViT discriminator was not optimized. Below is the ViT archetecture used for this attempt: 
 ```
 ViTDiscriminator                      Parameters  Buffers  Output shape    Datatype
 ---                                   ---         ---      ---             ---     
@@ -221,7 +221,7 @@ mlp_head.1                            433         -        [32, 1]         float
 ---                                   ---         ---      ---             ---     
 Total                                 23284369    0        -               -       
 ```
-The ViT discriminator is configured to have a patch size of 16 with the extended(overlap with nearby patches) size of 4, each patch is projected to a vector of dim 432. There are 10 transformer encoder block each with a attention block of 6 heads (dimention of the head remain the same size of the patch vector). Minibatch size is set to be 32. The learning rate if set to be 0.0025 which is shown to be too high for the ViT discriminator. 
+The ViT discriminator is configured to have a patch size of 16 with the extended(overlap with nearby patches) size of 4, each patch is projected to a vector of dim 432. There are 10 transformer encoder block each with a attention block of 6 heads (dimention of the head remain the same size of the patch vector). Minibatch size is set to be 32. The learning rate is set to be 0.0025 which is shown to be too high for the ViT discriminator. 
 
 ![Loss 2nd Attempt]({{'/assets/images/team09/attempt_2_loss.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
 <center><b>Fig 8.0.</b> Training Dynamic of the Second Attempt</center>
@@ -229,10 +229,10 @@ The ViT discriminator is configured to have a patch size of 16 with the extended
 ![Sample Output Images 2nd Attempt]({{'/assets/images/team09/attempt_2.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
 <center><b>Fig 8.1.</b> Sample Output Images From the Second Attempt</center>
 
-Similar to attempt one, as shown in the above figure, no meaningful image was generated even after ~200k iterations, also noticed from the training loss, the discriminator suffered from a training failure, indicated by a much higher loss than the generator loss. Therefore, it is necessary to change the learning rate which lead to attempt 3.  
+Similar to attempt one, as shown in the above figure, no meaningful image was generated even after ~200k iterations, also noticed from the training loss, the discriminator suffered from a training failure, indicated by a much higher loss than the generator loss. Therefore, it is necessary to change the learning rate which leads to attempt 3.  
 
 #### Third Attempt
-This attempt fix the learning rate issue by changing the learning rate for the discriminator to 0.0002, while keeping the learning rate for generator as 0.0025. The ViT discriminator is also slightly changed to have only 6 transformer blocks instead of 10 while keeping the rest of the configurations the same as the second attempt:
+This attempt fix the learning rate issue by changing the learning rate for the discriminator to 0.0002, while keeping the learning rate for generator as 0.0025. The ViT discriminator was also slightly changed to have only 6 transformer blocks instead of 10 while keeping the rest of the configurations the same as the second attempt:
 ```
 ViTDiscriminator                      Parameters  Buffers  Output shape    Datatype
 ---                                   ---         ---      ---             ---     
@@ -287,10 +287,10 @@ Total                                 14309137    0        -               -
 ![Sample Output Images 3nd Attempt]({{'/assets/images/team09/attempt_3.png' | relative_url}}){: style="width: 800px; max-width: 100%;"}
 <center><b>Fig 9.1.</b> Sample Output Images From the Third Attempt (<b>FID(50k)=218.70</b>)</center>
 
-From figure 9.1, the generator is able to generate some meaningful output after over 1000k iterations. However, not only the quality of the generated image is not ideal even compared to Fig 6.1 with a much higher FID score, it also suffers from a mode collapse. The generators learns to generate a few sets of the same faces to fool the discriminator, and the discriminator is unable to learn out of this trap from the generator. 
+From figure 9.1, the generator was able to generate some meaningful output after over 1000k iterations. However, not only the quality of the generated image is not ideal even compared to Fig 6.1 with a much higher FID score, it also suffers from a mode collapse. The generators learned to generate a few sets of the same faces to fool the discriminator, and the discriminator was unable to learn out of this trap from the generator. 
 ### Evaluation and Analysis
 From the above attempt, we can see that for a relatively small dataset, it is very hard to properly train a GAN model with ViT discriminator even after making necessary modeification of the original ViT. But from the training curve, we can see that the training is relatively stable with the modification, but there are still requirements of training GAN that might not be satisfied by the above experiments:
-1. The ViT model might not have the same model capacity as the generator, therefore, the the model tends to suffer from mode collapse.
+1. The ViT model might not have the same model capacity as the generator, therefore, the the model might tend to suffer from mode collapse.
 2. The learning rate of the discriminator and the generator need to be carefully chosen to successfully train the model, but the above experiments might be using suboptimal learning rates.
 3. Training ViT typically works better on larger datasets. With a dataset of only ~3000 images, it is very hard to train the ViT properly from scratch as ViT lacks the inductive bias that convolution based model such as ResNet has.
 
