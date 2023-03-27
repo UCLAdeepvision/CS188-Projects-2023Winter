@@ -101,11 +101,11 @@ Once the input tokens have successfully passed through the L layers of the Trans
 
 The final MLP layer is a simple linear classifier that outputs predictions values for each of the possible classes.
 
-## Improvement: Blending token sequences with convolutional layers
+## Improvement: Blending token sequences with a Convolutional AcT 
 
-Like most Transformer models, AcT splits the frames into tokens where one token maps to the keypoints in one frame in the video. Transformers learn global features well, but CNNs can help extract local features better. Here, by extracting the pose keypoints, we essentially have a preprocessing step in AcT that extracts the skeletal features of each frame. Our hypothesis is that we may be able to further extract local features before passing it through the Transformer architecture.
+Like most Transformer models, AcT splits the frames into tokens where one token maps to the keypoints in one frame in the video. Transformers learn global features well, but CNNs can help extract local features better. Here, by extracting the pose keypoints, we essentially have a preprocessing step in AcT that extracts the skeletal features of each frame. Our hypothesis is that we may be able to further extract local features before passing it through the Transformer architecture to improve accuracy, especially with a short training period.
 
-One problem is that the keypoints that are extracted are not nearly as dense as the original images. Each frame consists of just (# keypoints x 4 channels). For the largest dataset in terms of keypoints (OpenPose 23 Keypoints), that means each frame is only of size (4 x 23) = 92. As a result, performing convolutions may not be able to extract much benefit. However, we believe that there may be some value if we use the convolutions to learn some local features across consecutive frames.
+One problem is that the keypoints that are extracted are not nearly as dense as the original images. Each frame consists of just (# keypoints x 4 channels). For the largest dataset in terms of keypoints (OpenPose 23 Keypoints), that means each frame is only of size (4 x 23) = 92. As a result, performing convolutions may not be able to extract much benefit. CNNs operate on the concept of extracting local features, primarily in the spatial domain. However, by applying these convolutions across frames, we may be able to extract both spatial and temporal local features from the image sequences. 
 
 We added a single convolutional layer at the start of the AcT model. This convolutional layer uses ReLU activation and consists of 10 filters with parameters (K = 2, S = 1) with bias. The kernel size of 2 essentially learns features across two consecutive frames in the input sequence.
 
@@ -155,7 +155,7 @@ With the 4 datasets, we train 4 different AcT models. The models are trained wit
 
 The datasets are split following a train-val-split. The training data is split into 90% training and 10% validation.
 
-### Training an Testing the Convolution AcT
+### Training and Testing the Convolution AcT
 
 After running the baseline AcT model on each of the 4 datasets, we took the dataset that yielded the best model: OpenPose with 13 keypoints. Using this dataset, we trained the modified Convolution AcT model with the same optimizer and hyperparameter.
 
@@ -176,27 +176,29 @@ After running the baseline AcT model on each of the 4 datasets, we took the data
 | OpenPose 23 Keypoints | 0.8845483064651489 |
 | OpenPose 13 Keypoints | 0.8939658403396606 |
 | PoseNet 17 Keypoints | 0.867806077003479 |
-| PoseNet 13 Keypoints | 0.8235089182853699 |
+| PoseNet 13 Keypoints | 0.8235089182853699 | 
+| **Convolutional AcT Improvement with OpenPose 23 Keypoints Dataset** | **0.8705964684486389** |
 | **Convolutional AcT Improvement with OpenPose 13 Keypoints Dataset** | **0.8814091682434082** |
 
 ### Discussion
 
+Our hypothesis was somewhat confirmed. Although the Convolutional AcT achieves a lower test accuracy, it is able to reach a higher accuracy much faster than the other models. Looking at the training accuracy curve, the Convolutional AcT regularly has a training accuracy several percent higher than the rest of the models after the initial 10-20 epochs. This same trend holds when looking at the validation accuracy curve, the only difference is that the gap between the Convolutional AcT model and the base models is not as significant.
+
+The stark difference between the validation accuracies and the test accuracy for the Convolutional AcT likely indicates that the model is overfitted to the training data. This makes sense as the convolutional layer adds additional learnable parameters, increasing the model complexity. However, if it is not possible to train the model for a large amount of epochs (350 epochs in the experiment), the Convolutional AcT is a good choice.
+
+Overall, it appears that the Convolutional AcT allows for better performance with short training periods. This is something that is seen with CNNs, when compared with other Transformer models, as their convolutional layers allow it to learn quickly.
+
+Comparing the baseline models, it is also interesting to observe the performance differences between different datasets. It appears that OpenPose datasets yield the best performing baseline models. Within the OpenPose-based models, it is surprising to see that the 13 keypoint dataset performs better. This indicates that the additional head and feet keypoints may be redundant features. However, this is somewhat contradicted by the performance of the PoseNet-based models as the 17 keypoint dataset performs significantly better than the 13 keypoint model. The difference between the PoseNet and OpenPose dataset models may also indicate that OpenPose provides better/more consistent pose estimations.
 
 
 ## Code
 
 [For now we've added just the colab notebooks, but will add a setup process once it is more streamlined]
 
-https://drive.google.com/file/d/1zac8FQ5JRv0dyAUNSBFN43XraltNaY3q/view?usp=sharing
+Convolutional AcT Implementation: https://github.com/michael1yu/AcT/blob/master/utils/conv_transformer_trainer.py
 
-https://colab.research.google.com/drive/1_Uczgx2oKnYS3QtnyIOnJfY_wadCRiZ9?usp=sharing
+Experimentation: https://colab.research.google.com/drive/16mOY7WruSWIbGEAlU3i5Dr4f72TuHeEa?usp=sharing
 
-## Experiment Plans
-
-We are interested in seeing the effect on AcT HAR accuracy by different augmentations to the training data. Primarily:
-- OpenPose estimations vs PoseNet estimations
-- Different # of keypoints
-- Training modified AcT with different activations
 
 ## Three Relevant Research Papers
 
