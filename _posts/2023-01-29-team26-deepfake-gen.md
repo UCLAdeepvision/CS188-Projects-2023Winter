@@ -32,7 +32,7 @@ Once trained, the face swap model can be used to create new pictures or movies w
 
 The piepline has three main components: Extraction, Training, Conversion
 
- -Extraction is the first phase in DFL, which contains many algorithms and processing parts, i.e. face detection, face alignment, and face segmentation. After the procedure of Extraction, user will get the aligned faces with precise mask and facial landmarks 
+ - Extraction is the first phase in DFL, which contains many algorithms and processing parts, i.e. face detection, face alignment, and face segmentation. After the procedure of Extraction, user will get the aligned faces with precise mask and facial landmarks 
 
  ![Overview of extraction](/assets/images/team26/Overview_extraction.png)
 
@@ -46,6 +46,11 @@ DFL employs a mixed loss, combining DSSIM (structural dissimilarity) [18] and MS
  ![Overview of Conversion](/assets/images/team26/Overview_Conversion.png)
 
  # Facewap - VGG16 CNN Model
+- The FaceSwap uses the CNN VGG16 model to identify important characteristics of facial features. This process is accompanied by a series of alignment and realignment steps, which are crucial in ensuring the accuracy of the feature extraction. These alignment and realignment steps are an integral part of the overall process of identifying facial features. These faces would then be saved to be used in the next step.
+  ![VGG16 Face Dectction](/assets/images/team26/VGG16.png)
+- In the train phase, the two outputs are put into an encoder consisting of a NN where they share the same weights and one is decoded to be trained to be as close to the other one as possible. The loss function tries to minimize the error between the two faces and make the swap as natural as possible.
+
+- Finally in conversion phase, the CNN is applied again to stick the faces on top of eachother and replace the source face with the target face.
 
  # Model Comparison Overview 
 
@@ -57,10 +62,9 @@ Traditional CNNs, such the VGG16, on the other hand, are more commonly employed 
 # DeepFaceLab Implementation
 
 # FaceSwap Implementation 
-
-Modified VGG16 CNN 
-
 The folowing [colab](https://colab.research.google.com/drive/1_j_0N9uCR47ms5paXTKgQVTq1M4GX-9M?usp=sharing) will be used as the setup but there is also a [locally based](https://github.com/deepfakes/faceswap/blob/master/INSTALL.md) installation method based on your hardware configuration.
+
+**NOTE: Colab does not support deepfake training unless you pay premium and keep the session active throughout the whole training prcoess. The local based repo provided by u/deepfake is better or run the repo off a virtual machine with a GPU.**
 
 The process can be divided into three parts:
 
@@ -68,62 +72,37 @@ The process can be divided into three parts:
     
     This step will take photos from an `src` folder and extract faces into an `extract` folder.
 
-    ```
-    from google.colab import files
-    import os
-    import zipfile
-    !rm -rf src
-    src_path = 'src'
-    os.mkdir(src_path)
-    # Upload zip file(s) named after person/face containing face images of source (Ex. obama.zip)
-    uploaded = files.upload()
-    for k in uploaded.keys():
-      zip_file = zipfile.ZipFile(k, 'r')
-      zip_file.extractall(src_path)
-      print("Uploaded and unzipped:", k)
-
-    !rm -rf faces
-    face_path = 'faces'
-    os.mkdir(face_path)
-    for face in os.listdir(src_path):
-        !python faceswap.py extract -i src/"{face}" -o faces/"{face}"
-    ```
-    The following snippet takes in a zip file from user input where the zip would contain images of a person's face (best to use multiple angles for better results). The zip should be named after the person names so the files should be output at `src/{name}`. Then for every face input, the registered images would be output in the `face/{name}` folder.
-
-
 2. Train
 
     This step will take photos from two folders containing pictures of both faces and train a model that will be saved inside the `models` folder.
-
-    ```
-    # Once multiple faces registers
-    a = input("First face name to extract:")
-    b = input("Second name to extract:")
-    !python faceswap.py train -A faces/'{a}' -B faces/'{b}' -m models/"{a}_to_{b}_model"
-    ```
-    The following snippet takes two inputs where you would input the names of faces you want to replace where first face is the source and seconds face is the destination. Make sure to have atleast 25 images for each face.
 
 3. Convert
 
     This step will take photos from original folder and apply new faces into `modified` folder.
 
-    ```
-    # Once we finished training,
-    # we can convert faces now
-    a = input("Name to source from(replace): ")
-    b = input("Name of face origin: ")
-    !python faceswap.py convert -i src/'{a}' -o converted/ -m models/"{a}_to_{b}_model"
-    ```
-    The following snippet takes the input of what face you want replaced and then asks which face you want to use to replace. If a trained model exists it will proceed and output in the `converted` folder
 
 
 # Quantitative Results Comparison
-
+The following videos below shows results between face swaps between Biden and Trump using both models. Both models seems to perform poorly on Trump's speech while in Biden's speech DeepFakeLab's model is the better model by looking at the nose and lips. DeepFakeLab managed to get Trump's narrower nose and smaller mouth while the FaceSwap model is just jittering over and doesn't really show any Trump-like features.
 # Conclusion
-
+It is indeed true that GAN based deepfake models perform better than CNN based models. Although both of the models are not as perfect as the more popular videos, we have limited hardware. We used up our cloud educational credit and had to use a local 3070 with not enough VRAM or time to train the models better.
 # Video Demo
+The following are videos of small speeches by Biden and Trump Side-by-Side between their originals and respective model.
 
-# Colab Demo
+## Biden's Speech
+### Faceswap
+<iframe width="560" height="315" src="https://www.youtube.com/embed/SCYj_pg4sp0" frameborder="0" allowfullscreen></iframe>
+
+### DeepFakeLab
+<iframe width="560" height="315" src="https://www.youtube.com/embed/TzlQ1QFRrL4" frameborder="0" allowfullscreen></iframe>
+
+## Trump's Speech
+### Faceswap
+<iframe width="560" height="315" src="https://www.youtube.com/embed/SteB1xI8-V8" frameborder="0" allowfullscreen></iframe>
+
+### DeepFakeLab
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ccITACisf18" frameborder="0" allowfullscreen></iframe>
+
 
 # References
 
@@ -144,5 +123,9 @@ Siarohin, Aliaksandr, Stéphane Lathuilière, Sergey Tulyakov, Elisa Ricci, and 
 **DeepFaceLab**
 - Repository: DeepFaceLab. GitHub repository, https://github.com/iperov/DeepFaceLab, 2020.
 - Paper: Perov, I., Liu, K., Umé, C., Facenheim, C. S., Jiang, J., Zhou, B., Gao, D., Chervoniy, N., Zhang, S., Marangonda, S., dpfks, M., RP, L., Wu, P., & Zhang, W. (2020). "DeepFaceLab: A simple, flexible and extensible face swapping framework". https://arxiv.org/pdf/2005.05535v4.pdf.
+
+**Presidents' Face Datatset**
+
+ - [link](https://www.kaggle.com/datasets/sergiovirahonda/presidentsfacesdataset)
 
 
