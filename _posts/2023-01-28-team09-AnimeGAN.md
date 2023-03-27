@@ -9,6 +9,7 @@ date: 2023-3-25
 
 > Generative adversarial network (GAN) is a type of generative nueral network capable of varies tasks such as image creation, super-resolution, and image classifications[1]. This project will explore the usage of GAN model on the specific domain of **anime character** and try to find improvemnts on current GAN model by using more advanced discriminators.
 
+<iframe width="800" height="600" src="https://youtu.be/BPO9XJ3Aq6w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <!--more-->
 {: class="table-of-content"}
@@ -56,7 +57,7 @@ Where $$W_q = W_k$$, and $$W_v$$ are projection matrix for $$Q$$, $$K$$, and $$V
 #### Spectual Normalization
 The paper "ViTGAN: Training GANs with Vision Transformers" also suggests to further improve the Lipschitz continuety by improving spectual normalization on $$W_q$$, $$W_k$$ and $$W_v$$:
 <center>$$\overline{W}_{ISN}(W):= \frac{\sigma(W_{init})\cdot W}{\sigma(W)} $$</center>
-The matrix is normaized using the maximum item value of the matrix (denoted by $$\sigma(.)$$) and multiply by the maximum item value during initialization. The normalized weight further prevented the unstable training problem.
+The matrix is normaized using the maximum singular value of the matrix (denoted by $$\sigma(.)$$) and multiply by the maximum singular value during initialization. The normalized weight further prevented the unstable training problem.
 #### Code Implementation
 The modfified ViT discriminator is adapted from the original ViTGAN code [repository](https://github.com/wilile26811249/ViTGAN) and integrated to the official pytorch implementation of StyleGAN2. The ViT discriminator version of the StyleGAN2 is implemented and can be found in this code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).
 There are several issues that occured during integration. To better relate each image patch to each other, unlike the tranditional ViT, the patches have overlaps. This step was not implemented corretly in the original repository and had to be changed in order for it to work properly. Below are the changed code for the initial step of getting image patches:
@@ -73,7 +74,7 @@ All experiment will use a relatively small [dataset](https://www.kaggle.com/data
 All model will be trained on a single Tesla T4 GPU, using docker environment provided in the code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).  
 ### Baseline Results
 ![Baseline loss]({{'/assets/images/team09/sample_baseline_fake_images_loss.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
-<center><b>Fig 6.0.</b> Training Dynanmic of Baseline Model (Transfer learning)</center>
+<center><b>Fig 6.0.</b> Training Dynamic of Baseline Model (Transfer learning)</center>
 
 ![Sample Baseline Output Images]({{'/assets/images/team09/sample_baseline_fake_images.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
 <center><b>Fig 6.1.</b> Sample Output Images From the Baseline Model (Transfer learning) (<b>FID(50k)=16.39</b>)</center>
@@ -81,7 +82,7 @@ All model will be trained on a single Tesla T4 GPU, using docker environment pro
 The above results are obtained by doing transfer learning using the original StyleGAN2 model and the model is trained for ~800K iterations. The base model used is the pretrained [ffhq-256](https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/transfer-learning-source-nets/ffhq-res256-mirror-paper256-noaug.pkl) model from NVIDIA which generate realistic human faces(a completely different domain from anime). 
 
 ![Baseline loss 2]({{'/assets/images/team09/sample_baseline_fake_images_2_loss.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
-<center><b>Fig 6.2.</b> Training Dynanmic of Baseline Model (Train from Scratch)</center>
+<center><b>Fig 6.2.</b> Training Dynamic of Baseline Model (Train from Scratch)</center>
 
 ![Sample Baseline Output Images]({{'/assets/images/team09/sample_baseline_fake_images_2.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
 <center><b>Fig 6.3.</b> Sample Output Images From the Baseline Model (Train from Scratch) (<b>FID(50k)=123.62</b>)</center>
@@ -223,7 +224,7 @@ Total                                 23284369    0        -               -
 The ViT discriminator is configured to have a patch size of 16 with the extended(overlap with nearby patches) size of 4, each patch is projected to a vector of dim 432. There are 10 transformer encoder block each with a attention block of 6 heads (dimention of the head remain the same size of the patch vector). Minibatch size is set to be 32. The learning rate if set to be 0.0025 which is shown to be too high for the ViT discriminator. 
 
 ![Loss 2nd Attempt]({{'/assets/images/team09/attempt_2_loss.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
-<center><b>Fig 8.0.</b> Training Dynanmic of the Second Attempt</center>
+<center><b>Fig 8.0.</b> Training Dynamic of the Second Attempt</center>
 
 ![Sample Output Images 2nd Attempt]({{'/assets/images/team09/attempt_2.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
 <center><b>Fig 8.1.</b> Sample Output Images From the Second Attempt</center>
@@ -281,7 +282,7 @@ Total                                 14309137    0        -               -
 ```
 
 ![Sample Output Images 3nd Attempt]({{'/assets/images/team09/attempt_3_loss.png' | relative_url}}){: style="width: 800px; max-width: 100%;"}
-<center><b>Fig 9.0.</b> Training Dynanmic of the Third Attempt</center>
+<center><b>Fig 9.0.</b> Training Dynamic of the Third Attempt</center>
 
 ![Sample Output Images 3nd Attempt]({{'/assets/images/team09/attempt_3.png' | relative_url}}){: style="width: 800px; max-width: 100%;"}
 <center><b>Fig 9.1.</b> Sample Output Images From the Third Attempt (<b>FID(50k)=218.70</b>)</center>
@@ -294,7 +295,7 @@ From the above attempt, we can see that for a relatively small dataset, it is ve
 3. Training ViT typically works better on larger datasets. With a dataset of only ~3000 images, it is very hard to train the ViT properly from scratch as ViT lacks the inductive bias that convolution based model such as ResNet has.
 
 ## Conclusion and Future Improvement
-The generated anime faces is generally worse than the results obtained from the original archetecture. With limited time and computation budget, it is very hard to train a StyleGAN2 model with ViT discriminator from scratch using a small dataset dispite all the augmentation strategies implemented. It is possible to get better results if better hyperparameters for the model and the optimizer is chosen. It is also possible to get better results if a much larger dataset is used. But all the above options require significantly more computing power. Although, the original goal of improving the quality of generating better anime faces given the nature of ViT is not achieved, the ablation study showed and verified some important properties of StyleGAN2 with ViT discriminator, such as the requirement of different learning rate for generator and discriminator due to different achitecture, requirements of large dataset and longer training time to train ViT as ViT lacks inductive bias, and requirments of a similar model capacity for the generator and the discriminator.
+The generated anime faces is generally worse than the results obtained from the original archetecture. With limited time and computation budget, it is very hard to train a StyleGAN2 model with ViT discriminator from scratch using a small dataset dispite all the augmentation strategies implemented. It is possible to get better results if better hyperparameters for the model and the optimizer is chosen. It is also possible to get better results if a much larger dataset is used. But all the above options require significantly more computing power. Although, the original goal of improving the quality of generating better anime faces given the nature of ViT is not achieved, the study showed and verified some important properties of StyleGAN2 with ViT discriminator, such as the requirement of different learning rate for generator and discriminator due to different achitecture, requirements of large dataset and longer training time to train ViT as ViT lacks inductive bias, and requirments of a similar model capacity for the generator and the discriminator.
 
 To further improve the result, a proper hyperparameter search needs to be implemented to find better hyperparameters for the model. Also, a larger dataset is needed to train ViT based model from scratch. ViT based generator is also another good option for improvement as suggested by Han z. et al[9].
 
