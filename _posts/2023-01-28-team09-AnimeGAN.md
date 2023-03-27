@@ -30,7 +30,7 @@ GAN is short for generative adversarial network. There are mainly two components
 
 StyleGAN model mainly improves upon the generator components. As illustrated in Figure 2, instead of generating image directly from latent code, the latent code $$z$$ is first transformed by the mapping layer consists of fully connected layers into new latent code $$w$$, then through affine matrix transformation $$A$$, $$w$$ is converted into "style": $$y=(y_s, y_b)$$. $$y$$ is then mixed into the synthesis network via $$AdaIN$$ operation[3]:
 <center>$$AdaIN={y_{s,i}}\frac{x_i-\mu(x_i)}{\sigma}+y_{b,i}$$</center>
-From the equation, the feature map $x$ is first normalized, then the corresponding scale and bias is applied from the style. From the archetecture, each genearted image is based on a collection of style drew from the image samples.[3] This property of the StyleGan is particularly useful for anime character generation, as anime has unique art style and forms a distinct domain. As also described in the paper, "each styles can be expected to affect only certain aspect of the image", the architecture is capable of generating desired styled anime character as well. 
+From the equation, the feature map $$x$$ is first normalized, then the corresponding scale and bias is applied from the style. From the archetecture, each genearted image is based on a collection of style drew from the image samples.[3] This property of the StyleGan is particularly useful for anime character generation, as anime has unique art style and forms a distinct domain. As also described in the paper, "each styles can be expected to affect only certain aspect of the image", the architecture is capable of generating desired styled anime character as well. 
 
 ![Style-based generator revised]({{'/assets/images/team09/style-based-generator_revised.png' | relative_url}}){: style="width: 600px; max-width: 100%;"}
 <center><b>Fig 3.</b> StyleGAN2 Synthesis Network[4]: StyleGAN2 shares those same properties, but further improves the synthesis network and eliminates the droplet arifacts[4].</center>
@@ -76,7 +76,7 @@ All model will be trained on a single Tesla T4 GPU, using docker environment pro
 <center><b>Fig 6.0.</b> Training Dynanmic of Baseline Model (Transfer learning)</center>
 
 ![Sample Baseline Output Images]({{'/assets/images/team09/sample_baseline_fake_images.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
-<center><b>Fig 6.1.</b> Sample Output Images From the Baseline Model (Transfer learning)</center>
+<center><b>Fig 6.1.</b> Sample Output Images From the Baseline Model (Transfer learning) (<b>FID=16.39</b>)</center>
 
 The above results are obtained by doing transfer learning using the original StyleGAN2 model and the model is trained for ~800K iterations. The base model used is the pretrained [ffhq-256](https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/transfer-learning-source-nets/ffhq-res256-mirror-paper256-noaug.pkl) model from NVIDIA which generate realistic human faces(a completely different domain from anime). 
 
@@ -84,7 +84,7 @@ The above results are obtained by doing transfer learning using the original Sty
 <center><b>Fig 6.2.</b> Training Dynanmic of Baseline Model (Train from Scratch)</center>
 
 ![Sample Baseline Output Images]({{'/assets/images/team09/sample_baseline_fake_images_2.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
-<center><b>Fig 6.3.</b> Sample Output Images From the Baseline Model (Train from Scratch)</center>
+<center><b>Fig 6.3.</b> Sample Output Images From the Baseline Model (Train from Scratch) (<b>FID=123.62</b>)</center>
 
 The above results are abtained using the default unmodified paper256 config of StyleGAN. The outputs were obtained after ~400k iterations. 
 ### ViT Discriminator Results
@@ -148,7 +148,7 @@ This attempt is before changing the image patch bug, therefore, no meaningful le
 
 The above result show the failed first attempt output after 1403k iterations of training. No meaningful image is produced, as there is an error in the discriminator image patching step. 
 #### Second Attempt
-This attempt fix the image patches generation with learning rate of 0.0025 set for both discriminator and generator. As the learning rate is set too high for the ViT discriminator, the training failed as well. The ViT discriminator was not optimized. Below are the ViT archetecture used for this attempt: 
+This attempt fix the image patches generation with learning rate of 0.0025 set for both discriminator and generator. As the learning rate is set too high for the ViT discriminator, the training failed as well. The ViT discriminator was not optimized. Below is the ViT archetecture used for this attempt: 
 ```
 ViTDiscriminator                      Parameters  Buffers  Output shape    Datatype
 ---                                   ---         ---      ---             ---     
@@ -284,9 +284,9 @@ Total                                 14309137    0        -               -
 <center><b>Fig 9.0.</b> Sample Output Images From the Third Attempt</center>
 
 ![Sample Output Images 3nd Attempt]({{'/assets/images/team09/attempt_3.png' | relative_url}}){: style="width: 800px; max-width: 100%;"}
-<center><b>Fig 9.1.</b> Sample Output Images From the Third Attempt</center>
+<center><b>Fig 9.1.</b> Sample Output Images From the Third Attempt (<b>FID(50k)=218.70</b>)</center>
 
-From figure 9.1, the generator is able to generate some meaningful output after over 1000k iterations. However, not only the quality of the generated image is not ideal even compared to Fig 6.1, it also suffers from a mode collapse. The generators learns to generate a few sets of the same faces to fool the discriminator, and the discriminator is unable to learn out of this trick from the generator. 
+From figure 9.1, the generator is able to generate some meaningful output after over 1000k iterations. However, not only the quality of the generated image is not ideal even compared to Fig 6.1 with a much higher FID score, it also suffers from a mode collapse. The generators learns to generate a few sets of the same faces to fool the discriminator, and the discriminator is unable to learn out of this trap from the generator. 
 ### Evaluation and Analysis
 From the above attempt, we can see that for a relatively small dataset, it is very hard to properly train a GAN model with ViT discriminator even after making necessary modeification of the original ViT. But from the training curve, we can see that the training is relatively stable with the modification, but there are still requirements of training GAN that might not be satisfied by the above experiments:
 1. The ViT model might not have the same model capacity as the generator, therefore, the the model tends to suffer from mode collapse.
