@@ -15,6 +15,12 @@ date: 2023-03-18
 <iframe width="560" height="315" src="https://www.youtube.com/embed/gbeYgz-mAAA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
  **Our final models can be found in the form of interactive Jupyter Notebooks on our [related project GitHub repository](https://github.com/2Retr0/CS188-Final-Project)**
 
+Notes:
+
+- The second set of graphs in the video is incorrect. The blog post below contains the correct graphs.
+- After the creation of this video, we found a minor error in our SRCNN implementation (placement of ReLU operation). After fixing it, we retrained the model for 50 epochs and achieved a higher PSNR.
+- We also trained the GAN for more epochs and witnessed an improvement in perceptual similarity. The loss metrics were similar.
+
 ## Introduction
 
 Single-Image Super-Resolution (SISR) refers to the process of recovering a high-resolution image from a low-resolution counterpart. This is a classic example of an undetermined inverse problem, as there are multiple possible “solutions” for a given low-resolution image.
