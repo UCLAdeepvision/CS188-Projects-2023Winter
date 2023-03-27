@@ -18,6 +18,7 @@ Object detection is an incredibly important fundamental idea; many advanced and 
 - [Discussion](#discussion)
 
 # Overview Video
+[Google Drive Link](https://drive.google.com/file/d/1ICddX4uCBE1HJq2fEn7GDQPf0wVsDfZq/view?usp=share_link)
 
 # Abstract
 To see if different characteristics of object detection models can lead to significantly differing performances for different classes. A variety of models were chosen, for a total of five. Models were fine-tuned and ran on a subset of the COCO 2017 validation dataset for particular classes. The results show that there may be a slight link, but due to the factor of confounding variables, not many conclusions can be drawn.
@@ -40,7 +41,7 @@ Once we have the `json` files and all the images downloaded, we can begin model 
 Each model will be fine-tuned on each new dataset (`cow`, `banana`, and `backpack`) and then evaluate the performance using the AP metric. Each metric will be compared across classes, including the baseline (entire COCO dataset) and also across models.
 
 # Results
-| Model            | baseline | cow | banana | backpack |
+| Model            | baseline AP | cow AP | banana AP | backpack AP |
 | ---------------- | -------- | --- | ------ | -------- |
 | ResNet-50 Conv-4 | 35.7 | 51.745 | 17.241 | 11.790 |
 | ResNet-50 Dilated-Conv-5 | 37.3 | 49.004 | 15.596 | 15.130 |
