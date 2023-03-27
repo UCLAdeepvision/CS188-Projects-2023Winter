@@ -3,7 +3,7 @@ layout: post
 comments: true
 title: Driving Simulator
 author: Siwei Yuan, Yunqiu Han
-date: 2023-02-26
+date: 2023-03-26
 ---
 
 >In this blog, we explore the effectiveness of classification models trained by imitation learning in autonomous driving simulators.
