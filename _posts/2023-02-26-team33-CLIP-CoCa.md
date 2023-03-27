@@ -27,10 +27,16 @@ date: 2023-03-25
   - [Our Zero-Shot Datasets](#our-zero-shot-datasets)
     - [Environment setup](#environment-setup)
     - [Code](#code)
+    - [Miniplaces](#miniplaces)
+      - [Results](#results)
 - [Explainability](#explainability)
+  - [Setup](#setup)
+  - [Results](#results-1)
+    - [General results](#general-results)
+    - [Foreground Background Comparison](#foreground-background-comparison)
+    - [Object Specificity Comparison](#object-specificity-comparison)
 - [CoCa](#coca)
-- [Relevant Research Papers](#relevant-research-papers)
-  - [References](#references)
+- [References](#references)
   - [LINK DUMP](#link-dump)
 - [Appendix](#appendix)
 
@@ -211,7 +217,17 @@ No one model holds consistent superiority across all the VTAB (Visual Task Adapt
 
 (https://paperswithcode.com/dataset/imagenet-a)
 
-All the CLIP models struggle with intra-class differentiation, exemplified by the FGVC-Aircraft dataset. The best CLIP model was the ViT-H/14 model from LAION with 42.6% accuracy, compared to the 95.11% accuracy for Inceptionv4 which is SoTA (https://paperswithcode.com/sota/fine-grained-image-classification-on-fgvc).
+![Dataset creation and Zero-shot prediction](../assets/images/team-33/averaged_models_results.png "open_clip averaged results")
+*Figure 4: OpenCLIP averaged Top1 accuracy across architectures*
+
+We can already observe contrasts in general performance for the same classification sub-task. The VTAB/flowers dataset (known better as Oxford Flowers102) and cars dataset (Stanford Cars) both test intra-class differentiation, where objects sharing a greater category (flowers and cars) must be further differentiated (flower species and car make/model/year). Here the CLIP models perform fairly well, reaching over ~70% accuracy for the Flowers102 dataset and over ~80% on the Stanford Cars dataset averaged across all models. While these metrics pale in comparison to standard classification SoTA is 99.76% for Flowers102 and 96.32% for Stanford Cars, they're competive for zero-shot. The single zero-shot data point on Papers with Code is for VAE-GAN model at [70.8% top1 accuracy](https://paperswithcode.com/sota/zero-shot-learning-on-oxford-102-flower). ViT-H/14 from LAION reaches 80.2% top1 accuracy, making it SoTA on Papers with Code. The Stanford Cars doesn't have a current leaderboard on Papers with Code, but the 80%+ zero-shot top1 accuracy surpases the SoTA for few-shot classification on Papers with Code, which is currently only [73.15%](https://paperswithcode.com/sota/few-shot-image-classification-on-stanford-2).
+
+
+The zero-shot accuries of the aforementioned datasets compete with or surpass the SoTA for zero-shot and few-shot learning and are within a reasonable margin of models trained on the dataset itself.
+
+However, the CLIP models struggle with another form of intra-class differentiation with the FGVC-Aircraft dataset. The best CLIP model was the ViT-H/14 model from LAION with 42.6% accuracy, compared to the 95.11% accuracy for Inceptionv4 which is SoTA 
+
+https://paperswithcode.com/sota/few-shot-learning-on-fgvc-aircraft-1
 
 
 Lastly, all CLIP models struggle on the dsprites datasets, all failing to surpass 10% accuracy. However, this is not surprising considering 
@@ -231,11 +247,34 @@ We use the original
 
 Link to Colab:
 
+### Miniplaces
+
+We also decided it would be interesting to conduct some zero-shot analysis on Miniplaces, the toy dataset used for the class classification competition created originally by Dr. Zhou at MIT.
+
+We constructed our [notebook](https://colab.research.google.com/drive/1Jxg_Y73J9dt42gBA9XI8qU_3fl5WDmO3?usp=sharing) using the zero-shot classifier setup from CLIP_benchmark repository from LAION. We also download the Miniplaces dataset from the google drive link in the assignments and perform the necessary unzipping setup. The template we used to convert the labels into captions was "A photo of a {classname}". After encoding the class captions, we ran zero-shot classification on the Miniplaces test set and submitted to the Kaggle competition to get top1 accuracy results.
+
+#### Results
+
+|Model: | ViT-L/14 LAION | ResNet50 OpenAI | ResNet101 OpenAI |
+|:-----:|:-----:|:-----:|:-----:|
+|Miniplaces Top1 Accuracy: | 0.726 | 0.554 | 0.555 |
+
+The zero-shot accuracies above validate previous findings that CLIP models with ResNet based image encoders, even deep ResNets like ResNet101, fail to achieve nearly as high zero-shot accuracies as models with ViT image encoders. In the context of the class competition, which was to train on Miniplaces to evaluate standard classification accuracy, the ResNet models are still impressive, with the ResNet50 based model matching the highest standard classification accuracy and the ResNet101 surpassing all submissions. However, they're clearly not as versatile as ViT-L/14. One possible explanation for the relatively poor ResNet CLIP performance is that those architectures were designed to be good feature extractors for a finite number of classes, where the number of convolutional filters particularly in deeper layers is partially influenced by the final number of target classes. On the other hand the patchification and subsequent tokenization of images in transformer encoders are known to be better at extracting global image features and capturing long-range dependencies.
 
 
 # Explainability
 
-Now we conduct an analysis of the self-attention across different CLIP architectures and pre-trainings. Explainability is an important part of modern deep learning research, as the community moves away from treating models solely as black boxes.
+Now we conduct an analysis of the self-attention across different CLIP architectures and pre-trainings. Explainability is an important part of modern deep learning research, as the community moves away from treating models solely as black boxes. Similar to the class activation mappings done for ResNets in class, attention visualization attempts to visualize the sections of the image the model considers important for a given class label.
+
+## Setup
+
+## Results
+
+### General results
+
+### Foreground Background Comparison
+
+### Object Specificity Comparison
 
 
 # CoCa
@@ -251,36 +290,8 @@ The primary change made to the architecture is the separation of the text decode
 *Figure 4: CoCa architecture and PseudoCode*
 
 
-# Relevant Research Papers
 
-**Learning Transferable Visual Models From Natural Language Supervision**
-
-Proposes a novel method of training image classification models via latent label extraction with text encoders [1]
-
-Website article: https://openai.com/blog/clip/
-
-Paper: https://arxiv.org/abs/2103.00020
-
-Code: https://github.com/openai/CLIP
-
-
-**Coca: Contrastive captioners are image-text foundation models**
-
-Presents Contrastive Captioner (CoCa), a minimalist design to pretrain an image-text encoder-decoder foundation model jointly with contrastive loss and captioning loss, thereby subsuming model capabilities from contrastive approaches like CLIP and generative methods like SimVLM. [2]
-
-Paper: https://arxiv.org/abs/2205.01917
-
-Code: https://github.com/lucidrains/CoCa-pytorch
-
-**An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale**
-
-Demonstrates a method of image classification using a pure transformer applied directly to sequences of image patches which performs very well on image classification tasks without the use of a CNN. [3]
-
-Paper: https://arxiv.org/abs/2010.11929
-
-Code: https://github.com/google-research/vision_transformer
-
-## References
+# References
 
 [1] Radford, Alec, et al. "Learning transferable visual models from natural language supervision." International conference on machine learning. PMLR, 2021.
 
