@@ -56,7 +56,7 @@ Where $$W_q = W_k$$, and $$W_v$$ are projection matrix for $$Q$$, $$K$$, and $$V
 #### Spectual Normalization
 The paper "ViTGAN: Training GANs with Vision Transformers" also suggests to further improve the Lipschitz continuety by improving spectual normalization on $$W_q$$, $$W_k$$ and $$W_v$$:
 <center>$$\overline{W}_{ISN}(W):= \frac{\sigma(W_{init})\cdot W}{\sigma(W)} $$</center>
-The matrix is normaized using the maximum item value of the matrix (denoted by $$\sigma(.)$$) and multiply by the maximum item value during initialization. The normalized weight further prevented the gradient clipping problem of the model (unstable training).
+The matrix is normaized using the maximum item value of the matrix (denoted by $$\sigma(.)$$) and multiply by the maximum item value during initialization. The normalized weight further prevented the unstable training problem.
 #### Code Implementation
 The modfified ViT discriminator is adapted from the original ViTGAN code [repository](https://github.com/wilile26811249/ViTGAN) and integrated to the official pytorch implementation of StyleGAN2. The ViT discriminator version of the StyleGAN2 is implemented and can be found in this code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).
 There are several issues that occured during integration. To better relate each image patch to each other, unlike the tranditional ViT, the patches have overlaps. This step was not implemented corretly in the original repository and had to be changed in order for it to work properly. Below are the changed code for the initial step of getting image patches:
@@ -72,68 +72,74 @@ All experiment will use a relatively small [dataset](https://www.kaggle.com/data
 ### Training Environment
 All model will be trained on a single Tesla T4 GPU, using docker environment provided in the code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).  
 ### Baseline Results
+![Baseline loss]({{'/assets/images/team09/sample_baseline_fake_images_loss.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
+<center><b>Fig 6.0.</b> Training Dynanmic of Baseline Model (Transfer learning)</center>
+
 ![Sample Baseline Output Images]({{'/assets/images/team09/sample_baseline_fake_images.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
-<center><b>Fig 6.0.</b> Sample Output Images From the Baseline Model (Transfer learning)</center>
+<center><b>Fig 6.1.</b> Sample Output Images From the Baseline Model (Transfer learning)</center>
 
 The above results are obtained by doing transfer learning using the original StyleGAN2 model and the model is trained for ~800K iterations. The base model used is the pretrained [ffhq-256](https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/transfer-learning-source-nets/ffhq-res256-mirror-paper256-noaug.pkl) model from NVIDIA which generate realistic human faces(a completely different domain from anime). 
 
+![Baseline loss 2]({{'/assets/images/team09/sample_baseline_fake_images_2_loss.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
+<center><b>Fig 6.2.</b> Training Dynanmic of Baseline Model (Train from Scratch)</center>
+
 ![Sample Baseline Output Images]({{'/assets/images/team09/sample_baseline_fake_images_2.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
-<center><b>Fig 6.1.</b> Sample Output Images From the Baseline Model (Train from Scratch)</center>
+<center><b>Fig 6.3.</b> Sample Output Images From the Baseline Model (Train from Scratch)</center>
 
 The above results are abtained using the default unmodified paper256 config of StyleGAN. The outputs were obtained after ~400k iterations. 
 ### ViT Discriminator Results
-There are several attempts to train using the same dataset with the ViT discriminator. However, due to hardware limitation and time constraints, neither of them gave optimal results. Only one configuration of ViT discriminator was tested. The model layers are shown below:
+There are several attempts to train using the same dataset with the ViT discriminator and the original paper256 config generator. Below is a brief overview of the generator layers:
 ```
-ViTDiscriminator                      Parameters  Buffers  Output shape   Datatype
----                                   ---         ---      ---            ---     
-project_patches                       166272      -        [8, 625, 384]  float32 
-emb_dropout                           -           -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.0.norm1    768         -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.0.attn     590208      -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.0.dropout  -           -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.0.norm2    768         -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.0.mlp      1181568     -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.0          -           -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.1.norm1    768         -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.1.attn     590208      -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.1.dropout  -           -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.1.norm2    768         -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.1.mlp      1181568     -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.1          -           -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.2.norm1    768         -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.2.attn     590208      -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.2.dropout  -           -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.2.norm2    768         -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.2.mlp      1181568     -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.2          -           -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.3.norm1    768         -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.3.attn     590208      -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.3.dropout  -           -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.3.norm2    768         -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.3.mlp      1181568     -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.3          -           -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.4.norm1    768         -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.4.attn     590208      -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.4.dropout  -           -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.4.norm2    768         -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.4.mlp      1181568     -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.4          -           -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.5.norm1    768         -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.5.attn     590208      -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.5.dropout  -           -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.5.norm2    768         -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.5.mlp      1181568     -        [8, 626, 384]  float32 
-Transformer_Encoder.blocks.5          -           -        [8, 626, 384]  float32 
-mlp_head.0                            768         -        [8, 384]       float32 
-mlp_head.1                            385         -        [8, 1]         float32 
-<top-level>                           240768      -        [8, 1]         float32 
----                                   ---         ---      ---            ---     
-Total                                 11048065    0        -              -       
-```
-Due to GPU memory constraints, the minibatch size is set to 8, and the ViT is configured to have patch size of 8 with 2 pixel overlap to the patches next to each other, and 6 layers of transformer encoder block, each with 6 attention heads. The patch is projected to a vector of size 384. 
-To train the model adam optimizer is used for both generator and discriminator, initially with a learning rate of 0.0025 which was shown to be too high.
+Generator             Parameters  Buffers  Output shape         Datatype
+---                   ---         ---      ---                  ---     
+mapping.fc0           262656      -        [32, 512]            float32 
+mapping.fc1           262656      -        [32, 512]            float32 
+mapping.fc2           262656      -        [32, 512]            float32 
+mapping.fc3           262656      -        [32, 512]            float32 
+mapping.fc4           262656      -        [32, 512]            float32 
+mapping.fc5           262656      -        [32, 512]            float32 
+mapping.fc6           262656      -        [32, 512]            float32 
+mapping.fc7           262656      -        [32, 512]            float32 
+mapping               -           512      [32, 14, 512]        float32 
+synthesis.b4.conv1    2622465     32       [32, 512, 4, 4]      float32 
+synthesis.b4.torgb    264195      -        [32, 3, 4, 4]        float32 
+synthesis.b4:0        8192        16       [32, 512, 4, 4]      float32 
+synthesis.b4:1        -           -        [32, 512, 4, 4]      float32 
+synthesis.b8.conv0    2622465     80       [32, 512, 8, 8]      float32 
+synthesis.b8.conv1    2622465     80       [32, 512, 8, 8]      float32 
+synthesis.b8.torgb    264195      -        [32, 3, 8, 8]        float32 
+synthesis.b8:0        -           16       [32, 512, 8, 8]      float32 
+synthesis.b8:1        -           -        [32, 512, 8, 8]      float32 
+synthesis.b16.conv0   2622465     272      [32, 512, 16, 16]    float32 
+synthesis.b16.conv1   2622465     272      [32, 512, 16, 16]    float32 
+synthesis.b16.torgb   264195      -        [32, 3, 16, 16]      float32 
+synthesis.b16:0       -           16       [32, 512, 16, 16]    float32 
+synthesis.b16:1       -           -        [32, 512, 16, 16]    float32 
+synthesis.b32.conv0   2622465     1040     [32, 512, 32, 32]    float16 
+synthesis.b32.conv1   2622465     1040     [32, 512, 32, 32]    float16 
+synthesis.b32.torgb   264195      -        [32, 3, 32, 32]      float16 
+synthesis.b32:0       -           16       [32, 512, 32, 32]    float16 
+synthesis.b32:1       -           -        [32, 512, 32, 32]    float32 
+synthesis.b64.conv0   1442561     4112     [32, 256, 64, 64]    float16 
+synthesis.b64.conv1   721409      4112     [32, 256, 64, 64]    float16 
+synthesis.b64.torgb   132099      -        [32, 3, 64, 64]      float16 
+synthesis.b64:0       -           16       [32, 256, 64, 64]    float16 
+synthesis.b64:1       -           -        [32, 256, 64, 64]    float32 
+synthesis.b128.conv0  426369      16400    [32, 128, 128, 128]  float16 
+synthesis.b128.conv1  213249      16400    [32, 128, 128, 128]  float16 
+synthesis.b128.torgb  66051       -        [32, 3, 128, 128]    float16 
+synthesis.b128:0      -           16       [32, 128, 128, 128]  float16 
+synthesis.b128:1      -           -        [32, 128, 128, 128]  float32 
+synthesis.b256.conv0  139457      65552    [32, 64, 256, 256]   float16 
+synthesis.b256.conv1  69761       65552    [32, 64, 256, 256]   float16 
+synthesis.b256.torgb  33027       -        [32, 3, 256, 256]    float16 
+synthesis.b256:0      -           16       [32, 64, 256, 256]   float16 
+synthesis.b256:1      -           -        [32, 64, 256, 256]   float32 
+---                   ---         ---      ---                  ---     
+Total                 24767458    175568   -                    -     
+``` 
 
-As each 1k iterations takes over 4 mins to train, it is very hard to find optimal hyperparameters for the new model given the time for this project. Below are some attempts over the course of over one week. 
+However, due to hardware limitation and time constraints, neither attempt gave optimal results. To train the model, adam optimizer is used for both generator and discriminator, initially with a learning rate of 0.0025 which was shown to be too high. As each 1k iterations takes over 4 mins to train, it is very hard to find optimal hyperparameters for the new model given the time for this project. Below are some attempts over the course of over one week. 
 #### Initial Attempt
 This attempt is before changing the image patch bug, therefore, no meaningful learning is achieved.
 
@@ -142,20 +148,145 @@ This attempt is before changing the image patch bug, therefore, no meaningful le
 
 The above result show the failed first attempt output after 1403k iterations of training. No meaningful image is produced, as there is an error in the discriminator image patching step. 
 #### Second Attempt
-This attempt fix the image patches generation with learning rate of 0.0025 set for both discriminator and generator. As the learning rate is set too high for the ViT discriminator, the training failed as well. The ViT discriminator was not optimized.
+This attempt fix the image patches generation with learning rate of 0.0025 set for both discriminator and generator. As the learning rate is set too high for the ViT discriminator, the training failed as well. The ViT discriminator was not optimized. Below are the ViT archetecture used for this attempt: 
+```
+ViTDiscriminator                      Parameters  Buffers  Output shape    Datatype
+---                                   ---         ---      ---             ---     
+project_patches                       746928      -        [32, 225, 432]  float32 
+emb_dropout                           -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.0.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.0.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.0.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.0.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.0.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.0          -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.1.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.1.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.1.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.1.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.1.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.1          -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.2.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.2.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.2.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.2.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.2.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.2          -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.3.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.3.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.3.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.3.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.3.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.3          -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.4.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.4.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.4.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.4.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.4.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.4          -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.5.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.5.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.5.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.5.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.5.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.5          -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.6.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.6.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.6.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.6.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.6.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.6          -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.7.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.7.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.7.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.7.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.7.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.7          -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.8.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.8.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.8.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.8.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.8.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.8          -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.9.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.9.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.9.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.9.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.9.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.9          -           -        [32, 226, 432]  float32 
+mlp_head.0                            864         -        [32, 432]       float32 
+mlp_head.1                            433         -        [32, 1]         float32 
+<top-level>                           98064       -        [32, 1]         float32 
+---                                   ---         ---      ---             ---     
+Total                                 23284369    0        -               -       
+```
+The ViT discriminator is configured to have a patch size of 16 with the extended(overlap with nearby patches) size of 4, each patch is projected to a vector of dim 432. There are 10 transformer encoder block each with a attention block of 6 heads (dimention of the head remain the same size of the patch vector). Minibatch size is set to be 32. The learning rate if set to be 0.0025 which is shown to be too high for the ViT discriminator. 
+
+![Loss 2nd Attempt]({{'/assets/images/team09/attempt_2_loss.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
+<center><b>Fig 8.0.</b> Training Dynanmic of the Second Attempt</center>
 
 ![Sample Output Images 2nd Attempt]({{'/assets/images/team09/attempt_2.png' | relative_url}}){: style="width: 500px; max-width: 100%;"}
-<center><b>Fig 8.</b> Sample Output Images From the Second Attempt</center>
+<center><b>Fig 8.1.</b> Sample Output Images From the Second Attempt</center>
 
-Similar to attempt one, as shown in the above figure, no meaningful image was generated even after 340k iterations, so this attempt was aborted. 
+Similar to attempt one, as shown in the above figure, no meaningful image was generated even after ~200k iterations, also noticed from the training loss, the discriminator suffered from a training failure, indicated by a much higher loss than the generator loss. Therefore, it is necessary to change the learning rate which lead to attempt 3.  
 
 #### Third Attempt
-This attempt fix the learning rate issue by changing the learning rate for the discriminator to 0.0002, while keeping the learning rate for generator as 0.0025
+This attempt fix the learning rate issue by changing the learning rate for the discriminator to 0.0002, while keeping the learning rate for generator as 0.0025. The ViT discriminator is also slightly changed to have only 6 transformer blocks instead of 10 while keeping the rest of the configurations the same as the second attempt:
+```
+ViTDiscriminator                      Parameters  Buffers  Output shape    Datatype
+---                                   ---         ---      ---             ---     
+project_patches                       746928      -        [32, 225, 432]  float32 
+emb_dropout                           -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.0.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.0.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.0.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.0.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.0.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.0          -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.1.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.1.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.1.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.1.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.1.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.1          -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.2.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.2.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.2.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.2.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.2.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.2          -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.3.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.3.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.3.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.3.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.3.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.3          -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.4.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.4.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.4.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.4.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.4.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.4          -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.5.norm1    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.5.attn     746928      -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.5.dropout  -           -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.5.norm2    864         -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.5.mlp      1495152     -        [32, 226, 432]  float32 
+Transformer_Encoder.blocks.5          -           -        [32, 226, 432]  float32 
+mlp_head.0                            864         -        [32, 432]       float32 
+mlp_head.1                            433         -        [32, 1]         float32 
+<top-level>                           98064       -        [32, 1]         float32 
+---                                   ---         ---      ---             ---     
+Total                                 14309137    0        -               -       
+```
 
 ![Sample Output Images 3nd Attempt]({{'/assets/images/team09/attempt_3.png' | relative_url}}){: style="width: 800px; max-width: 100%;"}
-<center><b>Fig 9.</b> Sample Output Images From the Third Attempt</center>
+<center><b>Fig 9.0.</b> Sample Output Images From the Third Attempt</center>
 
-From figure 9, the generator is able to generate some meaningful output after over 1000k iterations. However, not only the quality of the generated image is not ideal even compared to Fig 6.1, it also suffers from a mode collapse. The generators learns to generate a few sets of the same faces to fool the discriminator, and the discriminator is unable to learn out of this trick from the generator. 
+![Sample Output Images 3nd Attempt]({{'/assets/images/team09/attempt_3.png' | relative_url}}){: style="width: 800px; max-width: 100%;"}
+<center><b>Fig 9.1.</b> Sample Output Images From the Third Attempt</center>
+
+From figure 9.1, the generator is able to generate some meaningful output after over 1000k iterations. However, not only the quality of the generated image is not ideal even compared to Fig 6.1, it also suffers from a mode collapse. The generators learns to generate a few sets of the same faces to fool the discriminator, and the discriminator is unable to learn out of this trick from the generator. 
 ### Evaluation and Analysis
 Since for GAN, there are no training curve to evaluate the model performance, the above generated results are anaylized visually by myself. 
 From the above attempt, we can see that for a relatively small dataset, it is very hard to properly train a GAN model with ViT discriminator even after making necessary modeification of the original ViT. Several requirement of training GAN might not be satisfied by the above experiments:
