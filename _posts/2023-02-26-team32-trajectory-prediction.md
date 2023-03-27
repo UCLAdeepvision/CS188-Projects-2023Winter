@@ -47,28 +47,28 @@ To this end, SGNet estimates and uses goals at multiple time scales to predict a
 The model uses a recurrent encoder-decoder architecture and consists of an encoder,
 a stepwise goal estimator (SGE), two goal aggregators, an optional conditional
 variational autoencoder (CVAE) for stochastic results, and a decoder. 
-Both the encoder and the decoder are recurrent and evolve over time.
+Both the encoder and the decoder are recurrent and evolve over time [1].
 
 The encoder encodes an agent's movement behavior into a latent vector by embedding historical
 trajectory information. At each time step, the input feature is concatenated with aggregated goal
-information from the previous time step, then the hidden state is updated via a recurrent cell.
+information from the previous time step, then the hidden state is updated via a recurrent cell [1].
 
 The stepwise goal estimator predicts coarse stepwise goals for use in the encoder and decoder. At each
 time step, the input is concatenated with predicted stepwise goals from the previous step to form
 the input to the encoder. The SGE also uses a goal aggregator that uses an attention mechanism to learn
-the importance of each stepwise goal to reduce the impact of inaccurate goals.
+the importance of each stepwise goal to reduce the impact of inaccurate goals [1].
 
 !["SGNet Goal Aggregator"](../assets/images/team32/sgnet_goal_aggregator.png)
 
 The conditional variational autoencoder learns the distribution of the future trajectory given the
 observed trajectory. The CVAE comprises a recognition network, a prior network, and a generation network,
-each of which is implemented using fully-connected layers.
+each of which is implemented using fully-connected layers [1].
 
 SGNet uses root mean square error (RMSE) as the loss function. On the ETH/UCY datasets, SGNET
 evaluates performance using two metrics: average displacement error (ADE) and final displacement
 error (FDE). ADE measures the average L2 distance between the ground truth and predicted trajectories
 along the whole trajectory. FDE measures the L2 distance between the end points of the ground truth
-and predicted trajectories.
+and predicted trajectories [1].
 
 #### Setup
 The following Colab notebook allows for training and testing SGNet as well as visualizing its output.
@@ -79,7 +79,7 @@ To try out SGNet for yourself, follow the instructions in this notebook: https:/
 
 #### Results
 In the paper, the authors achieved state-of-the-art performance on ETH/UCY data based on ADE and FDE.
-For example, SGNet achieved ADE=0.40 and FDE=0.96 on the ETH university dataset. Running SGNet on the
+For example, SGNet achieved ADE=0.40 and FDE=0.96 on the ETH university dataset [1]. Running SGNet on the
 same data in the Colab notebook, we achieved similar results, getting ADE = 0.30 and FDE = 0.64.
 
 Here are some visualizations of the results of running SGNet in deterministic mode on ETH/UCY data.
@@ -403,12 +403,14 @@ Repository: [https://github.com/StanfordASL/Trajectron-plus-plus](https://github
 
 #### Overview
 This paper introduces a graph-structure recurrent model called Trajectron++. which predicts the trajectories of any number of agents.
-Trajectron++ incorporates agent dynamics and heterogeneous data (e.g. semantic maps).
+Trajectron++ incorporates agent dynamics and heterogeneous data (e.g. semantic maps) [5].
 
 Unlike previous models, Trajectron++ accounts for dynamics constraints on agents and incorporates different kinds of 
-environmental information (e.g. maps)
+environmental information (e.g. maps) [5].
 
 ## Results
+
+[SGNet Colab](https://colab.research.google.com/drive/16vEoKwFUdcCuMD6FKGhkLS7zPjHe7e7_?usp=share_link)
 
 [Project Results](https://drive.google.com/drive/folders/11nyN8z7PIid8eK1MmgqYeR7rRLOr_JX5?usp=share_link)
 
