@@ -186,7 +186,7 @@ We also found that transfer learning, by leveraging pretraining on large dataset
 Overall, our results suggest that ResNetLSTM is the most promising architecture for deepfake detection, but further research is needed to evaluate its performance on a wider range of datasets to further test its robustness. The development of more advanced deepfake techniques also highlights the importance of constantly improving deepfake detection methods to counteract malicious actors.
 
 ## Code and Demo
-- [Google Colab](https://colab.research.google.com/drive/1VFP30CacdN8N8ncp4QjYg6YUHU4C74Vr#scrollTo=NpShPgOxt0Uz)
+- [Google Colab](https://colab.research.google.com/drive/1VFP30CacdN8N8ncp4QjYg6YUHU4C74Vr)
 - [Github](https://github.com/jchangz01/CS188-Project-Deepfake-Detection)
 - [Video Demo](https://drive.google.com/file/d/1DOaWGxxVRK8bFn0BaWFuLypfMwbHtMQb/view?usp=share_link)
 
