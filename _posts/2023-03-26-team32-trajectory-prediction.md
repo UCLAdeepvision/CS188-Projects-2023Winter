@@ -42,7 +42,7 @@ Unlike previous research which model an agent as having a single, long-term goal
 To this end, SGNet estimates and uses goals at multiple time scales to predict agents' trajectories. It comprises an encoder that captures historical information, a stepwise goal estimator that predicts successive goals into the future, and a decoder to predict future trajectory [1].
 
 #### Technical Details
-!["SGNet Architecture"](../assets/images/team32/sgnet_architecture.png)
+!["SGNet Architecture [1]"](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2023Winter/main/assets/images/team32/sgnet_architecture.png)
 
 The model uses a recurrent encoder-decoder architecture and consists of an encoder,
 a stepwise goal estimator (SGE), two goal aggregators, an optional conditional
@@ -58,7 +58,7 @@ time step, the input is concatenated with predicted stepwise goals from the prev
 the input to the encoder. The SGE also uses a goal aggregator that uses an attention mechanism to learn
 the importance of each stepwise goal to reduce the impact of inaccurate goals [1].
 
-!["SGNet Goal Aggregator"](../assets/images/team32/sgnet_goal_aggregator.png)
+!["SGNet Goal Aggregator [1]"](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2023Winter/main/assets/images/team32/sgnet_goal_aggregator.png)
 
 The conditional variational autoencoder learns the distribution of the future trajectory given the
 observed trajectory. The CVAE comprises a recognition network, a prior network, and a generation network,
@@ -87,9 +87,9 @@ The yellow line/dots represent historical (input) trajectory data, the red line/
 trajectory data, and the cyan line/dots represent predicted trajectory data. Note that the visualization
 may be somewhat distorted or inaccurate because the paper GitHub repo did not include visualization code.
 
-!["SGNet Results (1)"](../assets/images/team32/sgnet_results_1.png)
-!["SGNet Results (2)"](../assets/images/team32/sgnet_results_2.png)
-!["SGNet Results (3)"](../assets/images/team32/sgnet_results_3.png)
+!["SGNet Results 1"](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2023Winter/main/assets/images/team32/sgnet_results_1.png)
+!["SGNet Results 2"](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2023Winter/main/assets/images/team32/sgnet_results_2.png)
+!["SGNet Results 3"](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2023Winter/main/assets/images/team32/sgnet_results_3.png)
 
 In all three examples, we can see that the predicted trajectories (cyan) are very close to the ground-truth
 trajectories (red), indicating good performance. We can also see that the dataset includes many examples where
@@ -377,19 +377,19 @@ In all visualizations, the left view shows the movement of the vehicle itself, t
 
 Pre-trained:
 
-!["Pre-Trained"](../assets/images/team32/examplePreTrained.gif)
+!["Pre-Trained"](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2023Winter/main/assets/images/team32/examplePreTrained.gif)
 
 Trained from scratch:
 
-!["Original"](../assets/images/team32/exampleOriginal.gif)
+!["Original"](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2023Winter/main/assets/images/team32/exampleOriginal.gif)
 
 Four GAT layers:
 
-!["Encoder GAT 4"](../assets/images/team32/exampleEncoderGAT4.gif)
+!["Encoder GAT 4"](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2023Winter/main/assets/images/team32/exampleEncoderGAT4.gif)
 
 Finetuned:
 
-!["Finetune"](../assets/images/team32/exampleFinetune.gif)
+!["Finetune"](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2023Winter/main/assets/images/team32/exampleFinetune.gif)
 
 Overall, the pre-trained model performs the best when it comes to ADE, while the model with four GAT layers and the finetuned model perform the best when it comes to miss rate.
 
