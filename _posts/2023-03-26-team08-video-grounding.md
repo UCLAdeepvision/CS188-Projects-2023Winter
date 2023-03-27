@@ -370,15 +370,15 @@ After generating the results seen below, we decided to fine-tune on Charades-STA
 **TACoS Pre-Trained Model on Animal Kingdom:**
 |Method |Rank1@0.1 |Rank1@0.3 |Rank1@0.5 |Rank1@0.7 |Rank5@0.1 |Rank5@0.3 |Rank5@0.5 |Rank5@0.7|
 --- | --- | --- | --- | --- | --- | --- | --- | --- |
-|Pool|0.2402|33.21|15.87|7.66|2.61|64.95|40.01|24.83|11.55|
-|Conv|0.1188|33.05|17.12|7.90|3.04|72.02|45.91|26.94|11.36|
+|Pool|33.21|15.87|7.66|2.61|64.95|40.01|24.83|11.55|
+|Conv|33.05|17.12|7.90|3.04|72.02|45.91|26.94|11.36|
 
 
 **Charades-STA Pre-Trained Model on Animal Kingdom:**
 |Method |Rank1@0.1 |Rank1@0.3 |Rank1@0.5 |Rank1@0.7 |Rank5@0.1 |Rank5@0.3 |Rank5@0.5 |Rank5@0.7|
 --- | --- | --- | --- | --- | --- | --- | --- | --- |
-|Pool|0.1488|22.89|11.36|4.99|2.03|84.37|55.53|29.98|12.80|
-|Conv|0.1330|30.91|16.70|6.91|2.32|71.43|47.24|24.42|11.04|
+|Pool|22.89|11.36|4.99|2.03|84.37|55.53|29.98|12.80|
+|Conv|30.91|16.70|6.91|2.32|71.43|47.24|24.42|11.04|
 
 **Transfer learning on Charades-STA**
 |Method |Rank1@0.1 |Rank1@0.3 |Rank1@0.5 |Rank1@0.7 |Rank5@0.1 |Rank5@0.3 |Rank5@0.5 |Rank5@0.7|
