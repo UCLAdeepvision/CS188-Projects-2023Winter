@@ -112,13 +112,19 @@ We added a single convolutional layer at the start of the AcT model. This convol
 ![image](../assets/images/team10/conv_transformer.jpg)
 
 ### Modified AcT construction
+
 ```
-inputs = tf.keras.layers.Input(shape=(self.config[self.config['DATASET']]['FRAMES'] // self.config['SUBSAMPLE'], 
-                                              self.config[self.config['DATASET']]['KEYPOINTS'] * self.config['CHANNELS']))
-x = tf.keras.layers.Conv2D(10, 2, activation='relu')(inputs) # convolutional layer for blending
-x = tf.keras.layers.Dense(self.d_model)(inputs)
-x = PatchClassEmbedding(self.d_model, self.config[self.config['DATASET']]['FRAMES'] // self.config['SUBSAMPLE'], 
-                        pos_emb=None)(x)
+shape = (self.config[self.config['DATASET']]['FRAMES'] // self.config['SUBSAMPLE'], self.config[self.config['DATASET']]['KEYPOINTS'] * self.config['CHANNELS'])
+inputs = tf.keras.layers.Input(shape=shape)
+
+############ Begin Convolution ############
+x = tf.keras.layers.Lambda(lambda x: tf.expand_dims(x, axis=-1))(inputs)
+x = tf.keras.layers.Conv2D(10, 2, activation='relu', padding='same', input_shape=(*shape, 1))(x)
+x = tf.keras.layers.Reshape((x.get_shape()[1], x.get_shape()[2] * x.get_shape()[3]))(x)
+############ End Convolution ############
+
+x = tf.keras.layers.Dense(self.d_model)(x)
+x = PatchClassEmbedding(self.d_model, self.config[self.config['DATASET']]['FRAMES'] // self.config['SUBSAMPLE'], pos_emb=None)(x)
 x = transformer(x)
 x = tf.keras.layers.Lambda(lambda x: x[:,0,:])(x)
 x = tf.keras.layers.Dense(self.mlp_head_size)(x)
@@ -172,6 +178,10 @@ After running the baseline AcT model on each of the 4 datasets, we took the data
 | PoseNet 17 Keypoints | 0.867806077003479 |
 | PoseNet 13 Keypoints | 0.8235089182853699 |
 | **Convolutional AcT Improvement with OpenPose 13 Keypoints Dataset** | **0.8814091682434082** |
+
+### Discussion
+
+
 
 ## Code
 
