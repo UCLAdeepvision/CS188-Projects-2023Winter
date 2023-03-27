@@ -53,11 +53,11 @@ The original ViT attention score is computed by:
 <center> $$Attention_h(X) = softmax(\frac{(XW_q)(XW_k)^T}{\sqrt{d_h}})(XW_v)$$ </center>
 Where $$W_q$$, $$W_k$$, and $$W_v$$ are projection matrix for $$Q$$, $$K$$, and $$V$$. However, in GAN, it has been shown that the Lipschitz continuity is crucial for the model to reach Nash equilibrium, while the standard dot product voilates the Lipschitz continuity and makes the training unstable. According to the paper "ViTGAN: Training GANs with Vision Transformers", it is necessary to use L2 attention score calculcation instead of standard dot product to enforce the Lipschitz continuity: 
 <center> $$Attention_h(X) = softmax(\frac{d(XW_q, XW_k)}{\sqrt{d_h}})XW_v$$ </center>
-Where $$W_q = W_k$$, and $$W_v$$ are projection matrix for $$Q$$, $$K$$, and $$V$$ respectively. The dot product is replaced by L2 distance in the formula.[9]
+Where $$W_q = W_k$$, and $$W_v$$ are projection matrix for $$Q$$, $$K$$, and $$V$$ respectively. The dot product is replaced by L2 distance in the formula[10].
 #### Spectual Normalization
 The paper "ViTGAN: Training GANs with Vision Transformers" also suggests to further improve the Lipschitz continuety by using spectual normalization on $$W_q$$, $$W_k$$ and $$W_v$$:
 <center>$$\overline{W}_{ISN}(W):= \frac{\sigma(W_{init})\cdot W}{\sigma(W)} $$</center>
-The matrix is normaized using the maximum singular value of the matrix (denoted by $$\sigma(.)$$) and multiply by the maximum singular value during initialization. The normalized weight further prevents the unstable training problem.
+The matrix is normaized using the maximum singular value of the matrix (denoted by $$\sigma(.)$$) and multiply by the maximum singular value during initialization. The normalized weight further prevents the unstable training problem[10].
 #### Code Implementation
 The modfified ViT discriminator is adapted from the original ViTGAN code [repository](https://github.com/wilile26811249/ViTGAN) and integrated into the official pytorch implementation of StyleGAN2. The ViT discriminator version of the StyleGAN2 is implemented and can be found in this code [repository](https://github.com/CcccYxx/stylegan2-ada-pytorch.git).
 There were several issues that occured during integration. The major one was related to image patches. To better relate each image patch to each other, unlike the tranditional ViT, the patches have overlaps. This step was not implemented corretly in the original repository and had to be changed in order for it to work properly. Below are the changed code for the initial step of getting image patches:
@@ -297,7 +297,7 @@ From the above attempt, we can see that for a relatively small dataset, it is ve
 ## Conclusion and Future Improvement
 The generated anime faces is generally worse than the results obtained from the original archetecture. With limited time and computation budget, it is very hard to train a StyleGAN2 model with ViT discriminator from scratch using a small dataset dispite all the augmentation strategies implemented. It is possible to get better results if better hyperparameters for the model and the optimizer is chosen. It is also possible to get better results if a much larger dataset is used. But all the above options require significantly more computing power. Although, the original goal of improving the quality of generating better anime faces given the nature of ViT is not achieved, the study showed and verified some important properties of StyleGAN2 with ViT discriminator, such as the requirement of different learning rate for generator and discriminator due to different achitecture, requirements of large dataset and longer training time to train ViT as ViT lacks inductive bias, and requirments of a similar model capacity for the generator and the discriminator.
 
-To further improve the result, a proper hyperparameter search needs to be implemented to find better hyperparameters for the model. Also, a larger dataset is needed to train ViT based model from scratch. ViT based generator is also another good option for improvement as suggested by Han z. et al[9].
+To further improve the result, a proper hyperparameter search needs to be implemented to find better hyperparameters for the model. Also, a larger dataset is needed to train ViT based model from scratch. ViT based generator is also another good option for improvement as suggested by Kwonjoon L. et al.[10].
 
 ---
 
@@ -321,5 +321,7 @@ TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE"](https://arxiv.org/pdf/2010.11929.p
 [8] Kaiming H., et al. ["Deep Residual Learning for Image Recognition"](https://arxiv.org/pdf/1512.03385.pdf)
 
 [9] Han Z. et al. ["Self-Attention Generative Adversarial Networks"](https://arxiv.org/pdf/1805.08318.pdf)
+
+[10] Kwonjoon L. et al. ["ViTGAN: Training GANs with Vision Transformers"](https://arxiv.org/pdf/2107.04589.pdf)
 
 ---
