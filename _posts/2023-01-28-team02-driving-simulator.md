@@ -131,51 +131,36 @@ models using the following conventions:
 6. M: training data manipulation
 
 ### Baseline Resnet And ViT
-ResNet was used as the backbone and was fully fintuned on the collected 1K images. It demonstrates the ability of a simple classification model to correctly steer the ego vehicle. However, the high costs and the occasional DNFs show that there is still great potential of classification models.
+We used pretrained ResNet18, with no modifications to the input structure. We replaced the final linear layer to ouput a 2-element vector, representing the action space. For ViT, we used the architecture in the assignment. The extra class token is used to predict the final action space, and similarly we replaced the linear layer in the final MLP head to achieve so. However, it's worth noticing that we have to manually set the acceleration to 0 when the vehicle's speed exceeds a certain maximum speed, otherwise the ego vehicle simply keeps accelerating.
 
 
-We implemented the basic version of ViT, treating the original class token as a vector that encodes the action space, which include both the acceleration and steering. The model was trained using the same dataset as ResNet. The model immediately showed an improvement from ResNet, demonstrating the effectiveness of the attention mechanism. It achieved an average cost of 6.3 on a lane of width 4, in comparison, ResNet had a cost of 109 (not considering one DNF).
+### ViT Three Tokens (VT-TT) 
+Instead of using one extra token (the class token) for action space prediction, we used three tokens, corresponding to acceleration, steering, and speed respectively. We hoped the three tokens can have attention on each other, and learn to control the speed. Similar to the previous approaches, we still manually imposed the maximum speed limit, but now the max speed came from model predictions. 
 
-
-However, a downside of both models is that they failed to properly maintain the speed. The acceleration prediction was always greater than 0. We had to manually impose a maximum speed and set acceleration to 0 accordingly. This was against our purpose of developing a fully autonomous vehicle using classification models.
-
-
-### ViT Three Tokens (VT-TT)
-Instead of using one extra token for action space prediction, we used three tokens, corresponding to acceleration, steering, and speed respectively. We hoped the three tokens can have attention on each other, and learn to control the speed. Similar to the previous approaches, we still manually imposed the maximum speed limit, but now the max speed came from model predictions. This model was first trained on the baseline 1K images, and achieved a significant improvement with respect to ResNet and baseline ViT. The average cost on width-4 lane was 0, and 120 on width-3.25 lane. We thus further trained the model with the expanded 2K images dataset. The model, again, achieved 0 cost on the wider lane, and a lower 73.3 average cost on the narrow lane.
+### Slow Fast (SF)
+It is rather difficult to capture speed info using image classification models. Slow Fast was thus proposed as an alternative approach as it outputs a classification result based on video, or consecutive frames, as the input. Thus, the input itself can incoporate speed information.
+Since the input is of a completely different format, we had to recollect all the training data. For each run using the expert policy, we collected every other frame, and we collected 4 runs in total. As a result, we ended up with a training set consisting of ~300 videos.
 
 ### Data augmentation (-A)
-After identifying the issue that the model was paying too much attention to the while line on the right of the lane, thus continously crossing the central yellow line, we applied grayscale trasnformation to the images as data augmentation. ViT with three tokens' performance was further improved. Average cost on the 3.25-width lane decreased to 24.
+We applied grayscale trasnformation to the images as data augmentation.
 
 
-### ViT With Speed Token (VT-SA)
-Although ViT with three tokens had achieved great performance, it was still not a "fully autonomous" model as we had to manually define a policy, setting the acceleration to zero if the ego vehicle's speed exceeds the predicted speed. We discovered a caveat of the previous approaches: speed should be a given variable or an input to the model, instead of an output. Thus, we proposed ViT V2.
+### Speed Token For ViT (-S)
+Although ViT with three tokens can be used to predict the desired speed of the vehicle in every time stamp, it was still not a "fully autonomous" model as we had to manually define a policy, setting the acceleration to zero if the ego vehicle's speed exceeds the predicted speed. We discovered a caveat of the previous approaches: speed should be a given variable or an input to the model, instead of an output. Thus, we proposed VT-S.
 
 ![fig3]({{ '/assets/images/Team02/image3.png' | relative_url }})
 *VT-S Diagram*
 
-ViT V2 has three extra tokens. The first one represents the current speed of the ego vehicle. The second and the third token, after the encoder layers, are concatenated and passed into an MLP head to output the final action space, acceleration and steering, prediction.
+VT-S has three extra tokens. The first one represents the current speed of the ego vehicle. The second and the third token, after the encoder layers, are concatenated and passed into an MLP head to output the final action space, acceleration and steering, prediction. We hope by this design, we can encode the speed information into the model learning & prediction process, and make the model able to establish attention mechanisms between acceleration, steering, and the given speed.
 
 
-ViT V2's performance was promising. Not only it achieved similar low costs as the previous best model, it greatly reduced the time to reach the destination. The average cost on 4-width lane was 0, and the average time was 59.8s. In comparison, ViT with three tokens' time was 68.5s. ViT V2's time on 3.25-width lane also decreased from 63.6s to 58.3s.
-
-
-In addition to the reduced time and cost, ViT V2 needed no manually defined policis. It was able to learn to brake when the speed was too fast and when entering a turn. ViT V2 model fully demonstrated its capability of manuvering the ego vehicle in an ideal no traffic situation.
-
-
-### ViT With Speed Token In Traffic (VT-ST)
-In addition to the previous 2K images dataset without traffic, we further added 1.5K images with traffic and trained ViT V2 on the new dataset. However, the model became more likely to output noisy acceleration values, such as braking when not necessary. Most importantly, the model was not able to properly brake when a vehicle was in front of the ego vehicle. While the expert policy was able to achieve 0 crash, ours ViT V2 constantly crashes.
+### With Traffic (-T)
+In addition to the 2K images dataset without traffic, we further added 1.5K images with traffic and trained the best-performing model in no-traffic environment on the new dataset. We hope by this we can extend the usability of the classification model in autonomous driving.
 
 
 ### Training Data Manipulation (-M)
 Instead of having a training dataset consisting of both no-traffic and with-traffic sitautions, we redesigned the entire dataset to consist only of with-traffic situation. We collected 1K images using fixed-interval sampling, and collected an additional 1K images when the vehicle was braking due to another vehicle in front. By changing the ditribution and adding bias to the dataset, we hoped the model could learn to brake and follow a front vehicle easier.
 
-However, the result was that the model could not even properly accelerate the ego vehicle when there was nothing in front. The ego vehicle didn't even start to move forward, showing that such a dataset manipulation approach completely failed its purpose.
-
-
-### Slow Fast (SF)
-In order to capture speed information, ViT based models need explicit token input to represent the speed. Slow Fast was thus proposed as an alternative approach as it outputs a classification result based on video, or consecutive frames, as the input. Thus, the input itself can incoporate speed information.
-Since the input is of a completely different format, we had to recollect all the training data. For each run using the expert policy, we collected every other frame, and we collected 4 runs in total. As a result, we ended up with a training set consisting of ~300 videos.
-However, results of Slow Fast was not as expected. Not only the model failed to learn to brake/ deccelrate properly, it failed to keep the ego vehicle in the lane, which ViT was good at.
 
 
 ### Training Setup
@@ -291,7 +276,42 @@ Our evaluation involves three steps. Firstly, we train each model we choose and 
 ![fig5]({{ '/assets/images/Team02/image2.png' | relative_url }})
 *Result for Lane Width = 3.25*
 
+### Baseline Resnet And ViT
+ResNet18 demonstrates the ability of a simple classification model to correctly steer the ego vehicle. However, the high costs and the occasional DNFs show that there is still great potential of classification models.
+
+The basic version of ViT was trained using the same dataset as ResNet. The model immediately showed an improvement from ResNet, demonstrating the effectiveness of the attention mechanism. It achieved an average cost of 6.3 on a lane of width 4, in comparison, ResNet had a cost of 109 (not considering one DNF).
+
+However, a downside of both models is that they failed to properly maintain the speed. The acceleration prediction was always greater than 0. We had to manually impose a maximum speed and set acceleration to 0 accordingly. This was against our purpose of developing a fully autonomous vehicle using classification models.
+
+
+### ViT Three Tokens
+Similar to the previous approaches, we still manually imposed the maximum speed limit, but now the max speed came from model predictions. This model was first trained on the baseline 1K images, and achieved a significant improvement with respect to ResNet and baseline ViT. The average cost on width-4 lane was 0, and 120 on width-3.25 lane. We thus further trained the model with the expanded 2K images dataset. The model, again, achieved 0 cost on the wider lane, and a lower 73.3 average cost on the narrow lane.
+
+
+### Data augmentation
+After identifying the issue that the model was paying too much attention to the while line on the right of the lane, thus continously crossing the central yellow line, we applied grayscale trasnformation to the images as data augmentation. ViT with three tokens' performance was further improved. Average cost on the 3.25-width lane decreased to 24.
+
+
+### ViT With Speed Token And Data Augmentation
+VT-SA's performance was promising. Not only it achieved similar low costs as the previous best model, it greatly reduced the time to reach the destination. The average cost on 4-width lane was 0, and the average time was 59.8s. In comparison, ViT with three tokens' time was 68.5s. VT-SA's time on 3.25-width lane also decreased from 63.6s to 58.3s.
+
+
+In addition to the reduced time and cost, VT-SA needed no manually defined policis. It was able to learn to brake when the speed was too fast and when entering a turn. VT-SA model fully demonstrated its capability of manuvering the ego vehicle in an ideal no traffic situation.
+
+
+### ViT With Speed Token In Traffic
+In addition to the previous 2K images dataset without traffic, we further added 1.5K images with traffic and trained VT-STA on the new dataset. However, the model became more likely to output noisy acceleration values, such as braking when not necessary. Most importantly, the model was not able to properly brake when a vehicle was in front of the ego vehicle. While the expert policy was able to achieve 0 crash, ours VT-STA constantly crashes.
+
+
+### Training Data Manipulation
+As against to our original hope, the result after training data manipulation was that the model could not even properly accelerate the ego vehicle when there was nothing in front. The ego vehicle didn't even start to move forward, showing that such a dataset manipulation approach completely failed its purpose.
+
+
 ## Discussion
+
+### Limitation of Classification Model
+Autonomous vehicles rely heavily on computer vision models to recognize and interpret the environment around them. Image classification models are commonly used in these systems to identify and classify objects in the scene. However, when it comes to predicting continuous action space values, such as steering angle or speed, these models have limitations.
+Image classification models are designed to categorize images into a set of predefined classes based on their visual features. These models work by learning the patterns and features in the input images and then using this information to make predictions about the class labels of new images. However, these models have limitations when it comes to predicting continuous action space values. This is because continuous action spaces involve predicting a value that lies on a continuous scale according to a large variety of possible input data. That is to say, action space prediction should be the last component of autonous driving's pipeline, while classification models are seemingly more suiable for the prior tasks.
 
 ### Effectiveness of Data Augmentation
 Comparing ViT and VT-TT, we can see that for both lane width = 3.25 and lane width = 4 cases, data augmentation helps reduce the cost during evaluation. By converting the images to grayscale, certain details that may be present in the original images, such as color gradients or textures, are removed. This can allow the model to focus more on the overall layout and composition of the image, which may be more important for driving simulation tasks.
@@ -301,6 +321,13 @@ Among the models we chose, i.e., ResNet, ViT and SlowFast, ViT proves to be the 
 
 ### Limitation of SlowFast
 As mentioned earlier, the SlowFast model requires learning from sequences of images, or videos, in order to capture the temporal information. During our training, we used 300 videos as the input data. While this is a relatively large dataset, it may not be sufficient for the SlowFast model to learn the correct speed information. This is because the SlowFast model requires a significant amount of data samples to effectively learn the temporal information and capture the relationship between motion and appearance.
+
+### Dfficulty of Training Data Collection
+As explained in the data collection section, this process can be rather time consuming depending on the coputation power. Additionally, the sampling process of the images inevitablly adds bias to the training data set, as the ground-truth action space at every time frame can be drstaically different. However, collecting every time frame as well leads to overfitting issue. Balancing between the two extremes can be a difficult process, and the data collected eventually determines the performance of the model.
+
+### Difficulty of Evaluation
+Evaluating the model performances in MetaDrive was a relatively difficult process. While fixing the block sequence or disabling randomness can seemingly establish a fair comparison between models, those approaches may as well introduce bias in situations where a certain model can perform exceptionally well in a apsecific map. Thus, we had to manually test the performance by running the same model in randomly generated maps of the same block sequence several times (three trials per lane width). Due to the computation power limitation, each trial takes a rather long time. Spending too much evaluating the models' performances has impeded us from extending the project to more realistic environments such as multi-lane maps. 
+
 
 ### Future Improvements
 There are several implementation ideas that we thought of but did not fulfill within the time constraints. For example, we can use model ensembles to aggregate the predictions of different models and improve the performance.
