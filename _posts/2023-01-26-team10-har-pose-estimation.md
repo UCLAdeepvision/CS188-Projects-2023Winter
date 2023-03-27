@@ -1,7 +1,7 @@
 ---
 layout: post
 comments: true
-title: Pose Estimation
+title: Human Action Recognition using Pose Estimation and Transformers
 author: Michael Yu and Zhuoran Liao
 date: 2023-03-26
 ---
