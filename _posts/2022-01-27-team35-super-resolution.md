@@ -3,23 +3,15 @@ layout: post
 comments: true
 title: Deep Learning-Based Single Image Super-Resolution Techniques
 author: Ethan Truong, Archisha Datta
-date: 2022-03-18
+date: 2023-03-18
 ---
 
 > Image super-resolution is a process used to upscale low-resolution images to higher resolution images while preserving texture and semantic data. We will outline how state-of-the art techniques have evolved over the last decade and compare each model to its predecessor. We will also show PyTorch implementations for some of the described models.
 
 <!--more-->
 
-### Table of Contents
-
-<!--more-->
-{: class="table-of-content"}
-* TOC
-{:toc}
-
----
-
 ## Demo
+
 <iframe width="560" height="315" src="https://www.youtube.com/embed/gbeYgz-mAAA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 **Our final models can be found in the form of interactive Jupyter Notebooks on our [related project GitHub repository](https://github.com/2Retr0/CS188-Final-Project)**
 
@@ -33,13 +25,13 @@ Notes:
 
 Single-Image Super-Resolution (SISR) refers to the process of recovering a high-resolution image from a low-resolution counterpart. This is a classic example of an undetermined inverse problem, as there are multiple possible “solutions” for a given low-resolution image.
 
-| ![]({{ '/assets/images/team35/intro.png' | relative_url }}) | 
-|:--:| 
+|               ![]({{ '/assets/images/team35/intro.png'               | relative_url }}) |
+| :------------------------------------------------------------------: | ---------------- |
 | _fig 1. An example of three different image super-resolution models_ |
 
-In this blog post, we will compare and constrast four super-resolution techniques via: *classical methods*, *sparse coding*, *deep convolutional neural networks*, and *generative adversarial models*.
+In this blog post, we will compare and constrast four super-resolution techniques via: _classical methods_, _sparse coding_, _deep convolutional neural networks_, and _generative adversarial models_.
 
-### Evaluation Metrics
+## Evaluation Metrics
 
 Before diving into the methods of super-resolution, let us first define how we measure the effectiveness of a model.
 
@@ -49,7 +41,7 @@ Peak Signal-to-Noise Ratio (PSNR) is a commonly-used metric which takes the rati
 
 First, we calculate the mean squared error between images (MSE):
 
-$$ MSE = \tfrac 1 {h \times w} \sum_{i=0}^{h-1}\sum_{j=0}^{w-1}[I(i,j)-K(i,j)]^2 $$
+$$ MSE = \tfrac 1 {h \times w} \sum*{i=0}^{h-1}\sum*{j=0}^{w-1}[I(i,j)-K(i,j)]^2 $$
 
 Then, PSNR is defined, in decibels, as:
 
@@ -66,7 +58,8 @@ where _MAX_ is the maximum value of a pixel (e.g., for a standard 8-bit image, t
 Intuitively, a high PSNR implies a better model because it minimizes the MSE between images.
 
 #### Structural Similarity Index Measure
-Structural Similarity Index Measure (SSIM) is a metric that attempts to predict the percieved quality of an image. SSIM is comprised of three sub-comparisons between two samples: *luminance*, *contrast*, and *structure*.
+
+Structural Similarity Index Measure (SSIM) is a metric that attempts to predict the percieved quality of an image. SSIM is comprised of three sub-comparisons between two samples: _luminance_, _contrast_, and _structure_.
 
 The Structural Similarity Index Measure is then defined as:
 
@@ -84,10 +77,10 @@ where $$c_i = (k_i \cdot MAX_I)^2$$ for some constant $$k_i$$.
 
 #### Perceptual Similarity
 
-Although PSNR and SSIM are theoretically sound evaluation metrics, empirical results have shown that they do not effectively capture perceptual similarity. In layman’s terms, a high-resolution image and super-resolution image may both have the same PSNR, but their *perceptural* quality to the human eye may greatly differ. This is often because error-based metrics such as PSNR do not account for fine textural detail.
+Although PSNR and SSIM are theoretically sound evaluation metrics, empirical results have shown that they do not effectively capture perceptual similarity. In layman’s terms, a high-resolution image and super-resolution image may both have the same PSNR, but their _perceptual_ quality to the human eye may greatly differ. This is often because error-based metrics such as PSNR do not account for fine textural detail.
 
-| ![]({{ '/assets/images/team35/perceptual.png' | relative_url }}) | 
-|:--:| 
+|                                        ![]({{ '/assets/images/team35/perceptual.png'                                         | relative_url }}) |
+| :--------------------------------------------------------------------------------------------------------------------------: | ---------------- |
 | _fig 2. Although the SRResNet model has a higher PSNR, the SRGAN model better preserves textural details in the background._ |
 
 Since perceptual similarity is a qualitative property, it is measured through a Mean Opinion Score (MOS) metric. MOS works by essentially averaging the subjective quality of an image across multiple human-answered surveys.
@@ -98,14 +91,14 @@ While we will not discuss classical image upsampling techiniques in detail, we w
 
 ### Bicubic Interpolation
 
-| ![]({{ '/assets/images/team35/bicubic.png' | relative_url }}) |
-|:--:|
+|                                                  ![]({{ '/assets/images/team35/bicubic.png'                                                  | relative_url }}) |
+| :------------------------------------------------------------------------------------------------------------------------------------------: | ---------------- |
 | _fig 3. Different interpolation methods where the black dot is the interpolated estimate based on the red, yellow, green, and blue samples._ |
 
 Bicubic interpolation samples 16 in the original low-resolution image for each pixel in the upscaled image. Here’s a real life example where I upsize my profile picture.
 
-| ![]({{ '/assets/images/team35/bicubicex.png' | relative_url }}) |
-|:--:|
+|     ![]({{ '/assets/images/team35/bicubicex.png'      | relative_url }}) |
+| :---------------------------------------------------: | ---------------- |
 | _fig 4. Bicubic interpolation on my profile picture._ |
 
 Bicubic interpolation and other similar methods are used widely because they are memory efficient and require comparatively less computational power than deep learning models. However, because there is no learning involved, the super-resolved images do not actually recover any information. For instance, if you’ve ever resized an image on a document as I did above, you’ll know that although you can make the image dimension larger, it will make the image blurry.
@@ -120,14 +113,14 @@ Under this assumption, sections of the downsampled image (referred to as patches
 
 These dictionaries are generated by randomly sampling patches for training images of similar distribution. For example, if we want to upscale animal images, we generate our training dictionary with images that contain fur, skin, and scale textures. For a given category of images, we need only about 100,000 images which is considerably smaller than previous methods. Once patches are generated, we subtract the mean value of each patch as to represent image texture rather than absolute intensity.
 
-| ![]({{ '/assets/images/team35/scpatches.png' | relative_url }}) |
-|:--:|
+|         ![]({{ '/assets/images/team35/scpatches.png'          | relative_url }}) |
+| :-----------------------------------------------------------: | ---------------- |
 | _fig 5. Training images and the patches generated from them._ |
 
 The algorithm of sparse coding super-resolution is as follows: take overlapping patches of the input image, find the sparse coded approximation of the low-resolution patch, map to a high-resolution patch, combine into a locally consistent recovered image by enforcing that the reconstructed patches agree on areas of overlap.
 
-| ![]({{ '/assets/images/team35/scalg.png' | relative_url }}) |
-|:--:|
+|           ![]({{ '/assets/images/team35/scalg.png'           | relative_url }}) |
+| :----------------------------------------------------------: | ---------------- |
 | _fig 6. Formal algorithm of sparse coding super-resolution._ |
 
 The uniqueness property of the mapping comes from the linear algebra of sparse matrices. Essentially, because our textural dictionaries are sufficiently large, we can define any low-resolution image as a linear combination of the training patches. This condition is referred to as having an overcomplete basis. Under certain conditions, the sparsest representation (meaning the linear combination using the least patches) is unique—hence the name sparse coding.
@@ -163,16 +156,16 @@ In sparse coding, this operation aggregates all the high-resolution patches to g
 We can think of this as “averaging” the overlapping patches which corresponds to an averaging filter.
 
 | ![]({{ '/assets/images/team35/cnn.png' | relative_url }}) |
-|:--:|
-| _fig 7. Sparse coding as a CNN._ |
+| :------------------------------------: | ---------------- |
+|    _fig 7. Sparse coding as a CNN._    |
 
 Since Yang et. al’s 2008 sparse coding algorithm, many changes have been proposed to improve the speed and accuracy of mapping low-resolution patches to their high-resolution counterparts. However, the dictionary generation and patch aggregation processes are considered pre/post-processing and thus have not been subject to the same optimization. The key advantage of using a CNN for the process is that because all steps of the pipeline are implicitly embedded into the network, they are equally subject to learning as the model finds the optimal weights.
 
 Furthermore, the sparse coding algorithm is an iterative algorithm, taking one pass per patch of the input image. In contrast, SRCNN is a fully feed-forward neural net and it reconstructs the image in a single pass. Below, we can see that SRCNN bypasses the sparse coding algorithm in just a few iterations.
 
 | ![]({{ '/assets/images/team35/cnnres.png' | relative_url }}) |
-|:--:|
-| _fig 8. PSNR of SRCNN._ |
+| :---------------------------------------: | ---------------- |
+|          _fig 8. PSNR of SRCNN._          |
 
 #### Model Architecture
 
@@ -192,8 +185,8 @@ Empirical results show that a deeper structure does not necessarily lead to bett
 
 Up until now, we have not discussed how to deal with multi-channel images in our SR algorithms. The conventional approach to super-resolve color images is to first transform the images into the YCbCr space. The Y channel is the luminance, while the Cb and Cr channels are the blue-difference and red-difference channels, respectively. Then, we train the proposed algorithm on only the Y channel while the Cb and Cr channels are upscaled through bicubic interpolation.
 
-| ![]({{ '/assets/images/team35/color.png' | relative_url }}) |
-|:--:|
+|              ![]({{ '/assets/images/team35/color.png'              | relative_url }}) |
+| :----------------------------------------------------------------: | ---------------- |
 | _fig 9. An image of a mountain separated into its YCbCr channels._ |
 
 ## Generative Adversarial Network-based Super-Resolution
@@ -202,8 +195,8 @@ Up until now, we have not discussed how to deal with multi-channel images in our
 
 Although deep convolutional neural networks were a breakthrough in the field of image super-resolution, a key challenge they faced was that they were unable to recover fine textural details. In 2016, a generative adversarial model for super-resolution called [SRGAN](https://arxiv.org/pdf/1609.04802.pdf) was proposed that showed significant empirical improvement in perceptual similarity when compared with SRCNN.
 
-| ![]({{ '/assets/images/team35/ganmanifold.png' | relative_url }}) |
-|:--:|
+|                                                                                                                                                               ![]({{ '/assets/images/team35/ganmanifold.png'                                                                                                                                                               | relative_url }}) |
+| :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | ---------------- |
 | _fig 11. Patches from the natural image manifold (red) and super-resolved patches obtained with MSE (blue) and GAN (orange). The MSE-based solution appears overly smooth due to the pixel-wise average of possible solutions in the pixel space, while GAN drives the reconstruction towards the natural image manifold producing perceptually more convincing solution._ |
 
 #### Moving Forward from Convolutional Neural Networks
@@ -212,14 +205,15 @@ Generative adversarial models work by simultaneously training two networks: a ge
 
 One of the most important improvements with SRGAN is the addition of a "perceptural loss" for the generator. Recall our earlier discussion of loss functions, where we noted the difference between perceptual similarity and pixel similarity. SRGAN allows for better recovery of textural detail by defining a loss function which prioritizes perceptual similarity over pixel similarity.
 
-The pereptual loss function is defined as weighted sum of a *content loss* and the *adversarial loss*.
-* **Content Loss (VGG Loss):** Instead of using a pixel-based MSE loss, we calculate the loss based on the Euclidian distance between feature maps produced by VGG-19 of the ground truth image and the super-resolved image. Thus, for the feature map after the $$j$$th convolution and before the $$i$$th max-pooling layer in VGGNet ($$\phi_{i,j}$$),  the content loss is defined as:
+The pereptual loss function is defined as weighted sum of a _content loss_ and the _adversarial loss_.
+
+- **Content Loss (VGG Loss):** Instead of using a pixel-based MSE loss, we calculate the loss based on the Euclidian distance between feature maps produced by VGG-16 of the ground truth image and the super-resolved image. Thus, for the feature map after the $$j$$th convolution and before the $$i$$th max-pooling layer in VGG-16 ($$\phi_{i,j}$$), the content loss is defined as:
 
 $$
     l^{SR}_{VGG/i,j} = MSE[\phi_{i,j}(I^{HR}(x,y)), \phi_{i,j}(G_\theta(I^{LR}(x,y)))]
 $$
 
-* **Adversarial Loss:** We want to maximize the discriminator network’s perceived probability that the reconstructed image is a natural image. This encourages perceptually superior solutions because we prioritize similarity to natural images instead of only evaluating MSE loss. Adversarial loss is defined as:
+- **Adversarial Loss:** We want to maximize the discriminator network’s perceived probability that the reconstructed image is a natural image. This encourages perceptually superior solutions because we prioritize similarity to natural images instead of only evaluating MSE loss. Adversarial loss is defined as:
 
 $$
     l^{SR}_{Gen}= NLL[D_\theta(G_\theta(I^{LR}(x,y)))]
@@ -231,18 +225,18 @@ Ledig et al. speculate that this method of evaluation improves recovery of textu
 
 The generator network is a residual neural network that uses two convolutional layers with small $$3 \times 3$$ kernels and 64 feature maps followed by batch-normalization layers and PReLU as the activation function.
 
-The discriminator network is a feed-forward network that contains eight convolutional layers with an increasing number of $$3 \times 3$$ filter kernels, increasing by a factor of 2 from 64 to 512 kernels similar to the VGG-19. Strided convolutions are used to reduce the image resolution each time the number of features is doubled. The resulting 512 feature maps are followed by two fully-connected layers and a final sigmoid activation. We use LeakyReLU as the activation ($$ \alpha = 0.2$$) and avoid max-pooling.
+The discriminator network is a feed-forward network that contains eight convolutional layers with an increasing number of $$3 \times 3$$ filter kernels, increasing by a factor of 2 from 64 to 512 kernels similar to the VGG-19 network. Strided convolutions are used to reduce the image resolution each time the number of features is doubled. The resulting 512 feature maps are followed by two fully-connected layers and a final sigmoid activation. We use LeakyReLU as the activation ($$ \alpha = 0.2$$) and avoid max-pooling.
 
-| ![]({{ '/assets/images/team35/srganmodel.png' | relative_url }}) |
-|:--:|
+|            ![]({{ '/assets/images/team35/srganmodel.png'            | relative_url }}) |
+| :-----------------------------------------------------------------: | ---------------- |
 | _fig 12. Model architecture for SRGAN discriminator and generator._ |
 
 ### Real-ESRGAN
 
 After SRGAN, an improved version called [ESRGAN](https://esrgan.readthedocs.io/en/latest/) (Enhanced SRGAN) was released in 2018 with some network tweaks. However, the current state-of-the-art model in image super-resolution is [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN), an improvement upon ESRGAN that was released in 2021. The key difference is that Real-ESRGAN is trained on purely synthetic data that is generated through a multi-step degradation process designed to simulate real-life degradations. In contrast, ESRGAN simply applies a Gaussian filter followed by a bicubic downsampling operation. This method removes artifacts that were previously common when super-resolving common real-world images.
 
-| ![]({{ '/assets/images/team35/realesrgan.png' | relative_url }}) |
-|:--:|
+|                                                                                                     ![]({{ '/assets/images/team35/realesrgan.png'                                                                                                      | relative_url }}) |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | ---------------- |
 | _fig 13. Comparisons of bicubic-upsampled, ESRGAN, RealSR, and Real-ESRGAN results on real-life images. The Real-ESRGAN model trained with pure synthetic data is capable of enhancing details while removing artifacts for common real-world images._ |
 
 #### Super-Resolution for Multiple Degredations
@@ -257,20 +251,20 @@ Real-ESRGAN uses a high-order degradation model which means that image degradati
 
 Empirically, this allows for super-resolution with respect to multiple types of image degredations. For example, images which have been compressed multiple times (perhaps by being repeatedly uploaded to different social media sites) can be super-resolved whereas SRGAN and SRCNN trained with only bicubic degreadation cannot.
 
-| ![]({{ '/assets/images/team35/degradation.png' | relative_url }}) |
-|:--:|
+|                                                                                                ![]({{ '/assets/images/team35/degradation.png'                                                                                                | relative_url }}) |
+| :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | ---------------- |
 | _fig 14. Overview of the pure synthetic data generation adopted in Real-ESRGAN. It utilizes a second-order degradation process to model more practical degradations, where each degradation process adopts the classical degradation model._ |
 
 ## Model Implementations in PyTorch
 
-For our implementation, we chose to recreate and compare SRCNN and SRGAN using PyTorch. **Our final models can be found in the form of interactive Jupyter Notebooks on our [related project GitHub respostiory](https://github.com/2Retr0/CS188-Final-Project)**. Final trained weights for both models can also be found there.
+For our implementation, we chose to recreate and compare SRCNN and SRGAN using PyTorch. **Our final models can be found in the form of interactive Jupyter Notebooks on our [related project GitHub repository](https://github.com/2Retr0/CS188-Final-Project)**. Final trained weights for both models can also be found there.
 
 #### Dataset Preparation
 
 For simplicity, instead of the traditional train-test-val sets, we used a single dataset for the training and testing. Specifically, we used a [dataset designed for super-resolution tasks](https://www.kaggle.com/datasets/akhileshdkapse/super-image-resolution) downloade from Kaggle. The training was performed on randomly selected patches of of the images and the testing was performed on the full images.
 
-| ![]({{ '/assets/images/team35/data.png' | relative_url }}) |
-|:--:|
+|      ![]({{ '/assets/images/team35/data.png'      | relative_url }}) |
+| :-----------------------------------------------: | ---------------- |
 | _fig 15. Examples of images in the training set._ |
 
 ##### Evaluation Metrics
@@ -322,19 +316,19 @@ As described in the paper, we train by minimizing MSE loss, but we also record P
 
 Below you see the loss for each evaluation metric. Something we observed is that the loss plateaus earlier than 200 epochs so it may not have been necessary to train this long.
 
-| ![]({{ '/assets/images/team35/srcnnloss.png' | relative_url }}) |
-|:--:|
+|   ![]({{ '/assets/images/team35/srcnnloss.png'    | relative_url }}) |
+| :-----------------------------------------------: | ---------------- |
 | _fig 16. MSE/PSNR/SSIM loss from SRCNN training._ |
 
 #### SRCNN Results
 
 | ![]({{ '/assets/images/team35/srcnnresults.png' | relative_url }}) |
-|:--:|
-| _fig 17. Super-resolution results from SRCNN._ |
+| :---------------------------------------------: | ---------------- |
+| _fig 17. Super-resolution results from SRCNN._  |
 
 | ![]({{ '/assets/images/team35/srcnnzoomed.png' | relative_url }}) |
-|:--:|
-| _fig 18. Zooming into a particular image._ |
+| :--------------------------------------------: | ---------------- |
+|   _fig 18. Zooming into a particular image._   |
 
 As you can see, such a simple CNN delivers powerful results on the above images.
 
@@ -345,8 +339,8 @@ Implementing the SRGAN architecture was a much more challenging feat than SRCNN.
 #### Generator Implementation
 
 | ![]({{ '/assets/images/team35/generator.png' | relative_url }}) |
-|:--:|
-| _fig 19. SRGAN generator architecture._ |
+| :------------------------------------------: | ---------------- |
+|   _fig 19. SRGAN generator architecture._    |
 
 Below is our PyTorch impelementation of the SRGAN generator (SRResNet). It consists of 16 residual block encoder along with a decoder.
 
@@ -418,8 +412,8 @@ class UpsampleBlock(nn.Module):
 #### Discriminator Architecture
 
 | ![]({{ '/assets/images/team35/discriminator.png' | relative_url }}) |
-|:--:|
-| _fig 19. SRGAN generator architecture._ |
+| :----------------------------------------------: | ---------------- |
+|     _fig 19. SRGAN generator architecture._      |
 
 Below is our PyTorch implementation of the SRGAN discriminator. The discriminator is a standard convolutional neural netowrk consisting of many blocks which reduce the input size, but increase the number of filters.
 
@@ -489,7 +483,7 @@ class ContentLoss(nn.Module):
         vgg19 = models.vgg19(pretrained=True).to(device)
         for param in vgg19.parameters():
             param.requires_grad = False
-        
+
         self.features = nn.Sequential(*list(vgg19.children())[0][:36])
 
     def forward(self, inputs_real, inputs_fake):
@@ -519,35 +513,35 @@ There are two steps to train SRGAN: A SRResNet (generator) pretraining process s
 
 Below, we see the training losses from the pre-training process.
 
-| ![]({{ '/assets/images/team35/srgantrain.png' | relative_url }}) |
-|:--:|
+|   ![]({{ '/assets/images/team35/srgantrain.png'   | relative_url }}) |
+| :-----------------------------------------------: | ---------------- |
 | _fig 20. MSE/PSNR/SSIM loss from SRGAN training._ |
 
 #### Deviations From the Paper
 
-Our discriminator implementation has slightly different Sigmoid operation at the end of the forward pass to output the un-normalized probabilities of the discriminator. This allowed us to use the `nn.BCELoss()` from the PyTorch library. 
+Unlike in the paper, our discriminator implementation has a Sigmoid operation at the end of the forward pass to output the un-normalized probabilities of the discriminator. This allowed us to use the `nn.BCELoss()` from the PyTorch library.
 
-Additionally, the paper describes the addition of a very-lightly weighted Total Variation (TV) loss when earlier feature maps of VGG-19 which we omitted from our training process. Additionally, no learning rate scheduling was used during our training process ($$\eta = 10^{-5}$$).
+Additionally, the paper describes the addition of a very-lightly weighted Total Variation (TV) loss when using earlier feature maps of VGG-19 which we omitted from our training process. Additionally, no learning rate scheduling was used during our training process ($$\eta = 10^{-5}$$).
 
 #### SRGAN Results
 
-| ![]({{ '/assets/images/team35/srganresults.png' | relative_url }}) |
-|:--:|
-| _fig 21. Super-resolution results from SRGAN._ |
+|                                                                     ![]({{ '/assets/images/team35/srganresults.png'                                                                      | relative_url }}) |
+| :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | ---------------- |
+| _fig 21. Super-resolution results from SRGAN. The first row is the original image, the second row is the super-resolved image, and the third row is the original high-resolution image._ |
 
-Due to time constraints, SRGAN model debugging was limited and as a result, we could not achieve the metrics described in the original paper. Still, the general improvements in the paper can be seen when comparing outputs between our SRCNN and SRGAN implementations.
+### Comparison
 
-### Comparison with SRCNN
 Ultimately, SRCNN achieved a PSNR of 24.7 dB on the test set while SRGAN achieved 22.1 dB. The PSNR before any super-resolution was performed is approximately 23.9.
 
 These results seem counterintuitive initially because it seems like SRGAN showed no improvement. A partial reason for this is likely that we did not have the time or credits to train the model for longer. It took about 5 hours hours to train the GAN for 20 epochs (not including the pre-training process), which was much slower than SRCNN because of the increased complexity.
+
 However, as we discussed above, we must note that PSNR and other MSE-based evaluation metrics do not capture perceptual similarity which was prioritized in the implementation of SRGAN. In the source paper, SRGAN showed a very minimal increase in PSNR compared to the bicubic baseline after training. Furthermore, both PSNR and SSIM decreased while training the GAN after the pre-training process. However, the images themselves seemed more realistic to the human eye. Our model shows similar results and preserves textural details better than our implementation of SRCNN.
 
 ## Conclusion
 
 | ![]({{ '/assets/images/team35/timeline.png' | relative_url }}) |
-|:--:|
-| _fig 15. Timeline of SR methods._ |
+| :-----------------------------------------: | ---------------- |
+|      _fig 15. Timeline of SR methods._      |
 
 So far in our discussion of the evolution of methods for single image super-resolution, we have covered four key models: sparse coding, SRCNN, SRGAN, and Real-ESRGAN (the current state-of-the-art). We have gone on to recreate the SRCNN and SRGAN models. Of course, there are other models in the field that we have not been able to cover in detail today. One notable mention is the transformer based model, Efficient Super-Resolution Transformer (ESRT) released last year. Although there has been rapid improvement in the field of super-resolution, there are still many challenges to overcome. Current research is focused on expanding single image super-resolution to video resolution, reducing the amount of data needed to simulate real-world degradation processes, and fine-tuning models for specific SR tasks such as face reconstruction.
 
@@ -564,9 +558,10 @@ So far in our discussion of the evolution of methods for single image super-reso
 [5] X. Wang, L. Xie, C. Dong and Y. Shan, ["Real-ESRGAN: Training Real-World Blind Super-Resolution with Pure Synthetic Data,"](https://arxiv.org/pdf/2107.10833.pdf) 2021 IEEE/CVF International Conference on Computer Vision Workshops (ICCVW), Montreal, BC, Canada, 2021, pp. 1905-1914, doi: 10.1109/ICCVW54120.2021.00217.
 
 ##### Other Resources Used
-* [Bicubic Interpolation](https://en.wikipedia.org/wiki/Bicubic_interpolation)
-* [PSNR](https://en.wikipedia.org/wiki/Peak_signal-to-noise_ratio)
-* [YCbCr](https://en.wikipedia.org/wiki/YCbCr)
-* [Future of SR](https://towardsdatascience.com/image-super-resolution-an-overview-of-the-current-state-of-research-94294a77ed5a)
+
+- [Bicubic Interpolation](https://en.wikipedia.org/wiki/Bicubic_interpolation)
+- [PSNR](https://en.wikipedia.org/wiki/Peak_signal-to-noise_ratio)
+- [YCbCr](https://en.wikipedia.org/wiki/YCbCr)
+- [Future of SR](https://towardsdatascience.com/image-super-resolution-an-overview-of-the-current-state-of-research-94294a77ed5a)
 
 ---
