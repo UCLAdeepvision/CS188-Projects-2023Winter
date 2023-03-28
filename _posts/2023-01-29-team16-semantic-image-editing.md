@@ -146,12 +146,16 @@ While the latent mapper allows for a fast inference time, the authors found that
 
 The high-level idea of this approach is to first use the CLIP text encoder to obtain a vector $$\Delta t$$ in CLIP's joint language-image embedding and then map this vector into a manipulation direction $$\Delta s$$ in $$\mathcal{S}$$. A stable $$\Delta t$$ is obtained from natural language using prompt engineering. The corresponding direction $$\Delta s$$ is then determined by assessing the relevance of each style channel to the target attribute.
 
+### Method Comparison
+[StyleCLIP2 here]
+Figure 4 compares the three methods put forward by StyleCLIP. Notice that although the latent mapper and global direction methods require more time before image generation, the generation process itself is much faster compared to latent optimization.
+
 
 ## Cross-Attention Control (Prompt-to-Prompt)
 The final option we will explore for semantic image editing is cross-attention control. This approach uses cross-attention maps, which are high-dimensional tensors that bind pixels and tokens extracted from the prompt text. These maps contain rich semantic relations which affect the generated image.
 
 [Cross-Attention Control 1 Here]
-Figure 4 shows a visual representation of the processes described below.
+Figure 5 shows a visual representation of the processes described below.
 
 ### Cross-Attention in Text-Conditioned Diffusion Models
 In a diffusion model, each diffusion step $$t$$ consists of predicting the noise $$\epsilon$$ from a noisy image $$z_{t}$$ and text embedding $$\psi(\mathcal{P})$$ using a U-shaped network. The final step yields the generated image $$\mathcal{I}=z_{0}$$. More formally, the deep spatial features of the noisy image $$\phi (z_{t})$$ are projected to a query matrix $$Q = \ell_{Q}(\phi(z_{t}))$$, and the textual embedding is projected to a key matrix $$K = \ell_{K}(\psi(\mathcal{P}))$$ and a value matrix $$V = \ell_{V}(\psi(\mathcal{P}))$$, via learned linear projections $$\ell_{Q}$$, $$\ell_{K}$$, and $$\ell_{V}$$. Attention maps are then
@@ -165,7 +169,7 @@ Intuitively, the cross-attention output $$MV$$ is a weighted average of the valu
 Pixels in the cross-attention maps are more attracted to the words that describe them. Since attention reflects the overall composition, injecting the attention maps $$M$$ obtained from the generation with the original prompt $$\mathcal{P}$$ into a second generation with the modified prompt $$\mathcal{P}^{*}$$ allows the synthesis of an edited image $$\mathcal{I}^{*}$$ that is manipulated according to the edited prompt while keeping the structure of the original image $$\mathcal{I}$$ intact.
 
 [Cross-Attention Control 2 Here]
-Figure 5 shows some visualizations of cross-attention maps. The top row shows the average attention masks for each word in the prompt for the image on the left. The bottom row shows the attention maps for with respect to the word "bear" across different time-stamps.
+Figure 6 shows some visualizations of cross-attention maps. The top row shows the average attention masks for each word in the prompt for the image on the left. The bottom row shows the attention maps for with respect to the word "bear" across different time-stamps.
 
 Let $$DM(z_{t}, \mathcal{P}, t, s)$$ be the computation of a single step in the diffusion process which outputs the noisy image $$z_{t-1}$$ and the attention map $$M_{t}$$. Let  $$DM(z_{t}, \mathcal{P}, t, s) \lbrace M \gets \widehat{M} \rbrace$$ be the diffusion step where the attention map $$M$$ is overridden with an additional given map $$\widehat{M}$$ with the same values $$V$$ from the supplied prompt. Let $$M_{t}^{*}$$ be the produced attention map from the edited prompt $$\mathcal{P}^{*}$$. Let $$Edit(M_{t}, M_{t}^{*}, t)$$ be a general edit function that receives the $$t$$-th attention maps of the original and edited images as input.
 
