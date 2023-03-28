@@ -9,6 +9,9 @@ date: 2022-01-29
 >Image generation has the potential to greatly streamline creative processes for professional artists. While current capabilities of image generators have shown to be impressive, these models aren't able to produce good results without fail. However, slightly tweaking text prompts can often result in wildly different images. Semantic image editing has the potential to alleviate this problem, by letting users of image generation models to slightly tweak results in order to achieve higher quality end results. This project will explore and compare some technologies currently available for semantic image editing.
 
 <!--more-->
+{: class="table-of-content"}
+* TOC
+{:toc}
 
 ## Semantic Guidance (SEGA)
 One option for semantic image editing is semantic guidance. This method bases its functionality on the idea that operations performed in semantic space can result in predictable semantic modifications in the final generated image. A well known example of this can be seen in language prediction: under the word2vec text embedding, the vector representation of 'King - male + female' results in 'Queen'. 
@@ -211,22 +214,115 @@ $$Edit(M_{t}, M_{t}^{*}, t)_{i, j} :=
 
 
 
-## Demonstration
+## Demos
 
-We have included a colab notebook demonstrating SEGA (more demos to come) \
+We have included a colab notebooks demonstrating each of the methods we have examined:
+- [SEGA](https://colab.research.google.com/drive/1SPfwN8EOAUBfbxqe6Qw4ckNVgPRueCwU#scrollTo=ydu5tDsdxj0W)
+- [StyleCLIP (latent optimization)](https://colab.research.google.com/drive/1delPgn5M4NgaYqZXBl5RIhf0ilDbgVOQ#scrollTo=ChaAmJS3yhWn)
+- [StyleCLIP (latent mapper)](https://colab.research.google.com/drive/1tqXXqLY97OyzFvpExOJrzGVt0lA_7_H3#scrollTo=njI3AV3mtt-j)
+- [StyleCLIP (global directions)](https://colab.research.google.com/drive/1jU9pdM2VY8ujcjBJcN2TAzzj1elAmveZ#scrollTo=W00duhN2r0Vu)
+- [Prompt to Prompt](https://colab.research.google.com/drive/17Iv9ael14zWwVob1UZeB9ZkPS4kuyMas#scrollTo=f0rwAgCPTB4P)
+
+
 [Demo Colab](https://colab.research.google.com/drive/1SPfwN8EOAUBfbxqe6Qw4ckNVgPRueCwU?usp=sharing)
 
 
+## Model Comparisons
+
+In order to compare each of these methods, we initially devised two different studies
+- In the first study, we will assess the rate at which models could create “acceptable” inferences
+- In the second study, we will assess the overall quality of the outputs, through use of a survey
+
+### Experiment 1: Prompt Success Rate
+When exploring the models, we noticed that oftentimes models would completely fail to generate acceptable results for specific prompts, even across different seeds. For this experiment, we intended to explore how often each model can successfully generate an image based on a prompt, and possibly find if certain prompts appear to be universally difficult to generate.
+
+One problem we ran into when conducting the experiment was the number of unique hyperparameters for each model. It would have been prohibitively time consuming to test the full range of possible hyperparameter combinations across all models. As a compromise, we fixed the hyperparameters for each model to the hyperparameters that we arrived at when trying to generate the highest possible quality images for the second part of our study (with the exception for training steps, which we set to 50 for models that had this hyperparameter) 
+
+*Note: StyleCLIP’s latent mapper method was excluded from this portion of the study, due to its architectural specifics. In particular, the latent mappers available to use could only make a very limited set of edits applicable to a small library of celebrity images, and thus comparison to the other four models would have been extremely limited*
+
+#### Procedure
+For this experiment, we collected 50 sample points (reseeding the model with a random seed between each sample) from each model on two different prompts
+- person -> person with beard
+- person -> person with glasses
+
+*Note: the way these prompts were applied varied slightly between models, but in general the prompts followed this idea*
+
+For each sample point, three people voted on whether the model had acceptably applied the edit (in this case, “acceptably” meant that the model had applied the edit while retaining most of the details from the initial image)
+#### Results
+
+![High to low ]({{ '/assets/images/team16/table1.jpg' | relative_url }})
+{: style="width: 600px; max-width: 100%;"}
+*Table 1. Prompt Success Rates*.
+
+From these results, we’re able to conclude that prompts are not necessarily “universally difficult” - different models had varying levels of success with different prompts. 
+
+While not necessarily part of this study, in developing the experiment we discovered that small differences between prompts can result in massively changed generations (for example, StyleCLIP’s latent optimization method appeared to have slightly better results when processing the grammatically incorrect prompt “a old man” when compared to the prompt “an old man”)
+
+### Experiment 2: Generation Quality
+For this portion of the study, we intended to gauge the overall quality of generated images. However, we realized that it would be very difficult to obtain objective results, due to the sheer number of variables involved. From our previous study, one main takeaway we had learned was that different models seemed to be better at performing different types of edits. Furthermore, since the models were not trained on the same datasets, different models had inherent advantages for different prompts (for example, the StyleCLIP models, trained on FFHQ, were unable to render anything besides faces, but appeared to be much better at generating human faces than the other models as a result). Regardless, we were curious to see what our friends thought of the power of the models, and so we decided to collect survey results to gauge people’s opinions.
+
+#### Procedure
+
+For each of the models, we collected the best sample result we could from three prompts:
+- “Man with a beard”
+- “Man wearing glasses”
+- “Man with no hair”
+
+*Note: for StyleCLIP’s latent mapper, we simply included three random prompts, for the same reasons as outlined above*
+
+Additionally, we included three control images (survey respondents were not told how many of the presented images were real photographs, only that some of them were)
+
+Survey respondents were presented with unlabeled images, and were asked to rate the image on a scale of 1 to 5 on how well the AI did at creating the image.
+
+#### Results
+Initially, we tried to run the survey with more examples, but the first few survey respondents complained about survey length. After reducing the survey size, we obtained the following results from surveying 30 people:
+
+![High to low ]({{ '/assets/images/team16/table2.jpg' | relative_url }})
+{: style="width: 600px; max-width: 100%;"}
+*Table 2. Average Rating Per Image/Model*.
+![High to low ]({{ '/assets/images/team16/table3.jpg' | relative_url }})
+{: style="width: 600px; max-width: 100%;"}
+*Table 3. Average Rating Per Prompt*.
+
+While we tried to fix as many variables as possible when running this survey, the study is clearly not rigorous. Nonetheless, we noted some interesting details:
+- The control images performed surprisingly poorly, with one of the examples performing equally well to one generated example. 
+- On average, adding glasses was more convincing than adding a beard or removing hair 
+- StyleCLIP’s Latent Mapper didn't perform as well as expected, despite being a more focused model and having easier prompts (This was likely due to survey respondent confusion, which lead to respondents rating these images lower due to being able to recognize the images as clearly manipulated) 
+
+### Additional Comparisons
+A more objective comparison that we were able to make in our exploration was per-prompt generation time:
+
+![High to low ]({{ '/assets/images/team16/table4.jpg' | relative_url }})
+{: style="width: 600px; max-width: 100%;"}
+*Table 4. Generation Time For One Image*.
+
+(For models that used maximum steps as a hyperparameter, this was fixed to 50)
 
 
+Notably, the methods presented by StyleCLIP are significantly faster than Prompt to Prompt and SEGA. Impressively, the latent mapper and global directions methods are both able to produce results in less than a second each (granted, the latent mapper method is heavily dependent on being able to train a focused mapper, while the global directions method requires twice as much human input as other methods). 
 
+### Conclusions 
+As beginners, we found it particularly difficult to set up and use the implementations of the methods we chose to explore. Due to various factors, including outdated libraries, bugs, and incompatible hardware, it took many hours of debugging, research, and trial and error to be able to run our demo notebooks and collect results. In some cases, we had to directly solve some of these problems in code, making forks and manually fixing outdated and broken code. For some projects we initially intended to explore, the hours spent poring over various project repositories went to waste, as we were ultimately unable to find a way to run these methods successfully. Even for the models that we were eventually able to successfully collect results from, we weren’t able to do everything we had planned to do. Ideally, we would have liked to train each of the models from the same datasets in order to offer a more fair and objective comparison, but due to time and resource constraints we ultimately weren’t able to do this. Additionally, we made some naive assumptions in the initial stages of experimentation, and as a result encountered problems with specific prompts for some models, and had to throw away all previously collected data points. 
+
+Despite the difficulties we experienced with this project, we nonetheless believe it was a good learning experience (a good example of “trial by fire”). We became much faster at diagnosing technical problems with setting up models after we successfully set up our first two models.
+
+Aside from the technical challenges we faced, we encountered many obstacles in the experimental design process. While some computer vision models, such as classification, have obvious ways to compare and compute performance, we learned that this isn’t necessarily true for all of them. While surveys may seem like an obvious way to gauge the performance of generative models, we learned that it is not always easy to develop an easily understood scale for ordinary people to rate things by. If anything, our struggles to design a sound experiment highlight the difficulties that researchers may face when attempting to compare different models and methods objectively. 
+
+Granted a second chance (and more time), we would have liked to make the following key improvements:
+- Retrain the models to use the same dataset
+- Try a wider variety of prompts, and collected more sample data points
+- Collect results for different combinations of hyperparameters
+- Obtain more survey responses
+
+
+In the end, we hope that you have learned something interesting about semantic image editing, and have gained a glimpse into what the future might hold for the technology. 
 
 <!--more-->
 
 ## Three Relevant Research Papers
-1. ##### EditGAN: High-Precision Semantic Image Editing
-  - [Paper] https://arxiv.org/abs/2111.03186
-  - [Code] https://github.com/nv-tlabs/editGAN_release
+1. ##### Prompt-to-Prompt Image Editing with Cross Attention Control
+  - [Paper] https://arxiv.org/abs/2208.01626
+  - [Code] https://github.com/google/prompt-to-prompt
 2. ##### SEGA: Instructing Diffusion using Semantic Dimensions
   - [Paper] https://arxiv.org/abs/2301.12247
   - [Code] https://github.com/ml-research/semantic-image-editing
@@ -237,7 +333,7 @@ We have included a colab notebook demonstrating SEGA (more demos to come) \
 
 
 ## Reference
-[1] Ling, Huan, et al. EditGAN: High-Precision Semantic Image Editing. 1, arXiv, 2021, doi:10.48550/ARXIV.2111.03186.
+[1] Hertz, Amir, et al. Prompt-to-Prompt Image Editing with Cross Attention Control. 1, arXiv, 2022, doi:10.48550/arXiv.2208.01626.
 
 [2] Brack, Manuel, et al. SEGA: Instructing Diffusion using Semantic Dimensions. 1, arXiv, 2022, doi:10.48550/arXiv.2301.12247.
 
