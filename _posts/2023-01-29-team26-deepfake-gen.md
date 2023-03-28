@@ -48,9 +48,15 @@ DFL employs a mixed loss, combining DSSIM (structural dissimilarity) [18] and MS
  # Facewap - VGG16 CNN Model
 - The FaceSwap uses the CNN VGG16 model to identify important characteristics of facial features. This process is accompanied by a series of alignment and realignment steps, which are crucial in ensuring the accuracy of the feature extraction. These alignment and realignment steps are an integral part of the overall process of identifying facial features. These faces would then be saved to be used in the next step.
   ![VGG16 Face Dectction](/assets/images/team26/VGG16.png)
-- In the train phase, the two outputs are put into an encoder consisting of a NN where they share the same weights and one is decoded to be trained to be as close to the other one as possible. The loss function tries to minimize the error between the two faces and make the swap as natural looking as possible.
 
-- Finally in conversion phase, the CNN is applied again to stick the faces on top of eachother and replace the source face with the target face.
+
+- The architecture of this network involves multiple branches that operate on different versions of the input image, with each branch containing blocks of zero-padded convolutions and linear rectification. The branches are combined through nearest-neighbor upsampling and concatenation along the channel axis. The last branch has a 1x1 convolution and outputs 3 color channels.
+
+- This network is designed for 128x128 inputs and has 1 million parameters. It can be easily adapted for larger inputs, such as 256x256 or 512x512, by adding extra branches. The output of the network comes from the branch with the highest resolution.
+
+- To train the network on larger images, it is convenient to first train it on 128x128 inputs and then use it as a starting point for larger images. However, the availability of high quality image data for model training is a limiting factor.
+
+  ![transformation network](/assets/images/team26/transformation_network.png)
 
 
 # DeepFaceLab Implementation
@@ -62,10 +68,9 @@ DFL employs a mixed loss, combining DSSIM (structural dissimilarity) [18] and MS
 
  - File set up: you need a workspace file with a data_src, data_dst, and model sub-folders.
 
- - Collecting data: to implement the deepfacelab model you must collect two quality videos that the model can train on. You need to ensure that both videos capture the same facial profiles of each person you are doing a swap on. You labels these as "data_src.mp4" and "data_dst.mp4" and store in the workspace file.
+ - Collecting data: to implement the deepfacelab model you must collect two quality videos that the model can train on. You need to ensure that both videos capture the same facial profiles of each person you are doing a swap on. You labels these as "data_src.mp4" and "data_dst.mp4" and store in the workspace file. The other option is to utilize facesets for source and dst.
 
- - Preprocessing data: The videos need to be extracted into frames, sorted, resized, and aligned.  We attempted to do this on collab but it took hours since it runs on the cpu. The runtime resets after 12 hours so we went ahead and preprocesed the data on a linux server using the available scripts to preprocess. We then packed the preprocessed data into faceset.pak and downloaded it to local. We then unpacked this in collab. 
-
+ - Preprocessing data: The videos need to be extracted into frames, sorted, resized, and aligned.  We attempted to do this on collab but it took hours since it runs on the cpu. The runtime resets after 12 hours so we went ahead and preprocesed the data on a linux server using the available scripts to preprocess. We decided to use celebrity and non-celebrity faceset 
  - Train: The final step is to train the model. We used Sparse Auto Encoder HD. The standard model and trainer for most deepfakes.
 
 ## Implementation
@@ -227,39 +232,26 @@ The process can be divided into three parts:
 
 
 
-# Model Comparison Overview 
+# Model Comparison 
 
 Deepfakes trained on GANs typically result in results that are more visually convincing than deepfakes trained on conventional CNNs like VGG16. This is due to the fact that GANs were created primarily for creating realistic images by playing an adversarial game between a generator network and a discriminator network. The generator tries to create realistic images while the discriminator tries to differentiate between real and fake images. Over time, the generator learns to produce increasingly realistic images that can fool the discriminator.
 
+The following image below shows the results between the two facesets using Deepfakelab. 
+
+![results](/assets/images/team26/results_deepfacelab.png)
+
 Traditional CNNs, such the VGG16, on the other hand, are more commonly employed for classification jobs and might not be designed to produce realistic images. Although they can still be utilized for deepfake generation, they could need more training data or longer training cycles to match GAN-based techniques' levels of visual realism.
 
-# Quantitative Results Comparison
-The following videos below shows the results between face swaps between Biden and Trump using both models. Both models seems to perform poorly on Trump's speech while in Biden's speech DeepFakeLab's model is the better model by looking at the nose and lips. DeepFakeLab managed to get Trump's narrower nose and smaller mouth while the FaceSwap model is just jittering over and doesn't really show any Trump-like features.
+Results from faceswap 
 
-Trump's speech low performance could possibly be linked due to both models not correctly being able to handle the hue difference between Biden and Trump. Trump's skin is a lot darker than Biden's and both models cannot accurate train with that hue difference when replacing Trump's face with Biden's.
+![results](/assets/images/team26/faceswap_results.png)
 
+The GAN based deepfake models perform better than CNN based models. Although both of the models are not as perfect as the more popular videos, we have limited hardware. We used up our cloud educational credit and had to use a local 3070 with not enough VRAM or time to train the models better. Given more resources it is likely both deepfake models would be better. The GAN model has better results around the mouth and eyes due to its ability to create more realistic images with its generator and discriminator network. 
 
+Gan vs Non Gan Results
 
-# Conclusion
-It is indeed true that GAN based deepfake models perform better than CNN based models. Although both of the models are not as perfect as the more popular videos, we have limited hardware. We used up our cloud educational credit and had to use a local 3070 with not enough VRAM or time to train the models better. Given more resources it is likely both deepfake models would be better.
+![Gan vs. Non Gan](/assets/images/team26/gan_vs_non_gan.png)
 
-The overall quality of the deepfakes could have also been better. This is likely due to the VRAM bottleneck and the President's Face dataset not being the highest quality. If the dataset had more high quality images of the President's face and used better hardware, the models would have been able to train better and produce better results. 
-# Video Demo
-The following are videos of small speeches by Biden and Trump Side-by-Side between their originals and respective model.
-
-## Biden's Speech
-### Faceswap
-<iframe width="560" height="315" src="https://www.youtube.com/embed/SCYj_pg4sp0" frameborder="0" allowfullscreen></iframe>
-
-### DeepFakeLab
-<iframe width="560" height="315" src="https://www.youtube.com/embed/TzlQ1QFRrL4" frameborder="0" allowfullscreen></iframe>
-
-## Trump's Speech
-### Faceswap
-<iframe width="560" height="315" src="https://www.youtube.com/embed/SteB1xI8-V8" frameborder="0" allowfullscreen></iframe>
-
-### DeepFakeLab
-<iframe width="560" height="315" src="https://www.youtube.com/embed/ccITACisf18" frameborder="0" allowfullscreen></iframe>
 
 
 # References
@@ -282,8 +274,11 @@ Siarohin, Aliaksandr, Stéphane Lathuilière, Sergey Tulyakov, Elisa Ricci, and 
 - Repository: DeepFaceLab. GitHub repository, https://github.com/iperov/DeepFaceLab, 2020.
 - Paper: Perov, I., Liu, K., Umé, C., Facenheim, C. S., Jiang, J., Zhou, B., Gao, D., Chervoniy, N., Zhang, S., Marangonda, S., dpfks, M., RP, L., Wu, P., & Zhang, W. (2020). "DeepFaceLab: A simple, flexible and extensible face swapping framework". https://arxiv.org/pdf/2005.05535v4.pdf.
 
-**Presidents' Face Datatset**
+**Google Collab Ban**
+- TechRadar. "Google Is Cracking Down Hard on Deepfakes." TechRadar, 25 Sept. 2020, https://www.techradar.com/news/google-is-cracking-down-hard-on-deepfakes.
 
- - [link](https://www.kaggle.com/datasets/sergiovirahonda/presidentsfacesdataset)
+**[Collab Notebook](https://colab.research.google.com/github/chervonij/DFL-Colab/blob/master/DFL_Colab.ipynb#scrollTo=JNeGfiZpxlnz,)**
+
+
 
 
