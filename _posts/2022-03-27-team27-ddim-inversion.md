@@ -7,7 +7,7 @@ date: 2022-03-27
 ---
 
 
-> We explore the inversion and latent space manipulation of diffusion models, particularly the DDIM, a variant of the DDPM with acceleratable deterministic sampling and thus a meaningful mapping from the latent space $$\mathcal{Z}$$ to the image space $$\mathcal{X}$$. We implement and compare optimization-based, learning-based, and hybrid inversion methods adapted from GAN inversion, and we find that optimization-based methods work well, but learning-based and hybrid methods run into obstacles fundamental to diffusion models. We also perform latent space interpolation to show that the DDIM latent space is continuous and meaningful, just like that of GANs. Lastly, we apply GAN semantic feature editing methods to DDIMs, visualizing binary attribute decision boundaries to showcase the unique interpretability of the diffusion latent space.
+> We explore the inversion and latent space manipulation of diffusion models, particularly the denoising diffusion implicit model (DDIM), a variant of the denoising diffusion probabilistic model (DDPM) with deterministic (and acceleratable) sampling and thus a meaningful mapping from the latent space $$\mathcal{Z}$$ to the image space $$\mathcal{X}$$. We implement and compare optimization-based, learning-based, and hybrid inversion methods adapted from GAN inversion, and we find that optimization-based methods work well, but learning-based and hybrid methods run into obstacles fundamental to diffusion models. We also perform latent space interpolation to show that the DDIM latent space is continuous and meaningful, just like that of GANs. Lastly, we apply GAN semantic feature editing methods to DDIMs, visualizing binary attribute decision boundaries to showcase the unique interpretability of the diffusion latent space.
 
 <!--more-->
 {: class="table-of-content"}
@@ -35,6 +35,17 @@ date: 2022-03-27
 </head>
 
 [Here](https://github.com/kuanhenglin/ddim-inversion) is the link to the GitHub repository containing my current code, some snippets of which is shown below.
+
+<div>
+    <div class="column-half">
+        <iframe style="aspect-ratio: 16 / 9;" width="100%" src="https://www.youtube.com/embed/IRETsJ33uCk" title="Spotlight presentation, short version" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen> </iframe>
+    </div>
+    <div class="column-half">
+        <iframe style="aspect-ratio: 16 / 9;" width="100%" src="https://www.youtube.com/embed/OXtUHdFbPfU" title="Spotlight presentation, long version" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen> </iframe>
+    </div>
+</div>
+
+*Video 1: The short (left) and long (right) versions of the spotlight presentation for this project. The long version is much more detailed and provides a way better explanation of this report. I recommend watching the long version if possible.*
 
 ## Introduction
 
@@ -1088,9 +1099,9 @@ As mentioned in the Methods section, because learning-based methods do not work 
     </div>
 </div>
 
-*Figure 5: Interpolating between two inverted latent vectors and the generated results on CelebA, with image at $$\alpha = 0$$, image at $$\alpha = 1$$, and the interpolation animation of intermediate $$\alpha$$ values.*
+*Figure 5: Interpolating between two inverted latent vectors and the generated results, with image at $$\alpha = 0$$, image at $$\alpha = 1$$, and the interpolation animation of intermediate $$\alpha$$ values.*
 
-Suppose we have two images $$\mathbf{x}_1$$ and $$\mathbf{x}_2$$ and their respective inverted latent vector $$\mathbf{z}_1$$ and $$\mathbf{z}_2$$, we can interpolate $$\mathbf{x}_1$$ and $$\mathbf{x}_2$$ in image space by interpolating $$\mathbf{z}_1$$ and $$\mathbf{z}_2$$ in latent space. Particularly, we assume $$\mathbf{z} \sim \mathcal{N}(0, \mathbf{I})$$, linear interpolation does not maintain the magnitude of $$\mathbf{z}$$ (e.g., consider $$\mathbf{z}_1 = -\mathbf{z}_2$$ as an extreme example), so we instead use spherical interpolation inspired by [1]. Particularly, given two latent vectors $$\mathbf{z}_1$$ and $$\mathbf{z}_2$$ and some $$\alpha \in [0, 1]$$, where $$\alpha = 0$$ produces $$\mathbf{z}_1$$ and $$\alpha = 1$$ produces $$\mathbf{z}_2$$, we interpolate with
+Suppose we have two images $$\mathbf{x}_1$$ and $$\mathbf{x}_2$$ and their respective inverted latent vector $$\mathbf{z}_1$$ and $$\mathbf{z}_2$$, we can interpolate $$\mathbf{x}_1$$ and $$\mathbf{x}_2$$ in image space by interpolating $$\mathbf{z}_1$$ and $$\mathbf{z}_2$$ in latent space. Particularly, we assume $$\mathbf{z} \sim \mathcal{N}(0, \mathbf{I})$$, linear interpolation does not maintain the magnitude of $$\mathbf{z}$$ (e.g., consider $$\mathbf{z}_1 = -\mathbf{z}_2$$ as an extreme example), so we instead use spherical interpolation inspired by [1]. Given two latent vectors $$\mathbf{z}_1$$ and $$\mathbf{z}_2$$ and some $$\alpha \in [0, 1]$$, where $$\alpha = 0$$ produces $$\mathbf{z}_1$$ and $$\alpha = 1$$ produces $$\mathbf{z}_2$$, we interpolate with
 
 $$
 \theta = \arccos\left( \frac{\mathbf{z}_1 \cdot \mathbf{z}_2}{\| \mathbf{z}_1 \|_2 \| \mathbf{z}_2 \|_2} \right) \\
@@ -1188,7 +1199,7 @@ We see that the decision boundaries does indeed semantically correspond to the b
 
 Importantly, the visualization of the decision boundary provides insight into the dataset (CelebA), specifically the bias inherently within the dataset. For example, we notice that the blonde hair vector seems to assume that the hair of the generated face is long, which is an effect we see with the feature editing results where those with short hair seems to 'gain' hair length when their hair becomes blonde. Similarly, the vectors for age and especially attractiveness display a rough face outline that looks more feminine than masculine, indicating not only an imbalance of these binary attributes between masculine and feminine faces (i.e., feminine faces are more likely to be labeled "young" or "attractive"). More broadly, since CelebA is a dataset of celebrities, we can argue that age and attractiveness are perhaps attributes more valued in female celebrities than male ones. We see this with the feature editing results as well, as age and attractiveness seems to be entangled with masculinity.
 
-This sort of visualization shows one advantage of the DDIM latent space over the GAN latent space---interpretability. Even though the GAN latent space is arguably superior to the DDIM latent space in every way, with its lower dimensionality for easier computation, existence of more separated $$\mathcal{W}$$ space with StyleGAN designs that provides coarse to fine control, and an inference process that requires just one forward propagation (and thus one backpropagation for most inversion techniques). However, the fact that the DDIM noise latent space is the same dimension as its image space, and that there is a direct spatial correspondence between the pixels in the noise latent space and that of the image space by the diffusion (denoising) process, means the noise latent space has great interpretability, as we have seen with the decision boundary visualization above. In other words 
+This sort of visualization shows one advantage of the DDIM latent space over the GAN latent space---interpretability. Even though the GAN latent space is arguably superior to the DDIM latent space in every way, with its lower dimensionality for easier computation, existence of more separated $$\mathcal{W}$$ space with StyleGAN designs that provides coarse to fine control, and an inference process that requires just one forward propagation (and thus one backpropagation for most inversion techniques). However, the fact that the DDIM noise latent space is the same dimension as its image space, and that there is a direct spatial correspondence between the pixels in the noise latent space and that of the image space by the diffusion (denoising) process, means the noise latent space has great interpretability, as we have seen with the decision boundary visualization above.
 
 ## Conclusion
 
