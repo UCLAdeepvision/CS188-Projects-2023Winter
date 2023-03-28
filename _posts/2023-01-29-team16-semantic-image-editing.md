@@ -40,7 +40,7 @@ At a high level, guided diffusion can be explained from the following figure, il
 {: style="width: 600px; max-width: 100%;"}
 *Fig 1. Semantic space under semantic guidance applied to an image with description "a portrait of a king"* [2].
 
-Here, the unconditioned noise estimate is represented by a black dot, which starts at a random point without semantic grounding. On executing the prompt "a portrait of a king", the black dot is guided (blue vector) to the space intersecting the concepts 'royal' and 'male', resulting in an image of a king. Under guided diffusion, vectors representing the concepts 'male' and 'female' (orange/green vectors) can be made using estimates conditioned on the respective prompts. After subtracting 'male' and adding 'female' to the guidance, the black dot arrives at a point in the space intersecting the concepts 'royal' and 'male', resulting in an image of a queen. 
+Here, the unconditioned noise estimate is represented by a black dot, which starts at a random point without semantic grounding. On executing the prompt "a portrait of a king", the black dot is guided (blue vector) to the space intersecting the concepts 'royal' and 'male', resulting in an image of a king. Under guided diffusion, vectors representing the concepts 'male' and 'female' (orange/green vectors) can be made using estimates conditioned on the respective prompts. After subtracting 'male' and adding 'female' to the guidance, the black dot arrives at a point in the space intersecting the concepts 'royal' and 'female', resulting in an image of a queen. 
 
 ![High to low ]({{ '/assets/images/team16/2.jpg' | relative_url }})
 {: style="width: 600px; max-width: 100%;"}
