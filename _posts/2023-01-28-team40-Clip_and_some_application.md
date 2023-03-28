@@ -491,7 +491,7 @@ Maybe there is an example of one answer: This is a video model based on the CLIP
 You can refer to the [source code](https://github.com/ningwebbeginner/CS188-Projects-2023Winter/tree/main/_posts) for article structure ideas or Markdown syntax. We've provided a [sample post](https://ucladeepvision.github.io/CS188-Projects-2022Winter/2017/06/21/an-overview-of-deep-learning.html) and you can find the source code [here](https://colab.research.google.com/drive/1pzJr8JsXCsdclFakjjUNXY7cg9zoG_cm?usp=sharing)
 
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/hkzLiqhgxno" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/FUlmXE84M4w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 
 
