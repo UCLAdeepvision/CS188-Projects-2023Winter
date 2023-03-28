@@ -70,24 +70,29 @@ The process can be divided into three parts:
 
 1. Extract
     
-    This step will take photos from an `src` folder and extract faces into an `extract` folder.
+    This step will take photos from an `src` folder and extract faces into an `extract` folder. The `extract` folder will contains the recognized faces from the respective `src` folder. Be sure to erase any incorrectly recognized faces from the `extract` folder.
 
 2. Train
 
-    This step will take photos from two folders containing pictures of both faces and train a model that will be saved inside the `models` folder.
+    This step will take photos from two folders containing pictures of both faces and train a model that will be saved inside the `models` folder. The `models` folder will contain the trained model that will be used in the next step. If you have low VRAM, you can use the `lowmem` option to reduce the VRAM usage or you can lower batch size with a set cap of iterations.
 
 3. Convert
 
-    This step will take photos from original folder and apply new faces into `modified` folder.
+    This step will take photos from original folder and apply new faces into `modified` folder. The `modified` folder will contain the new faces applied to the original photos. This can also work with videos but be sure to have proper CPU cooling as this maximizes CPU usage.
 
 
 
 # Quantitative Results Comparison
-The following videos below shows results between face swaps between Biden and Trump using both models. Both models seems to perform poorly on Trump's speech while in Biden's speech DeepFakeLab's model is the better model by looking at the nose and lips. DeepFakeLab managed to get Trump's narrower nose and smaller mouth while the FaceSwap model is just jittering over and doesn't really show any Trump-like features.
+The following videos below shows the results between face swaps between Biden and Trump using both models. Both models seems to perform poorly on Trump's speech while in Biden's speech DeepFakeLab's model is the better model by looking at the nose and lips. DeepFakeLab managed to get Trump's narrower nose and smaller mouth while the FaceSwap model is just jittering over and doesn't really show any Trump-like features.
+
+Trump's speech low performance could possibly be linked due to both models not correctly being able to handle the hue difference between Biden and Trump. Trump's skin is a lot darker than Biden's and both models cannot accurate train with that hue difference when replacing Trump's face with Biden's.
+
 
 
 # Conclusion
-It is indeed true that GAN based deepfake models perform better than CNN based models. Although both of the models are not as perfect as the more popular videos, we have limited hardware. We used up our cloud educational credit and had to use a local 3070 with not enough VRAM or time to train the models better. Given more resources it is likely both deepfake models would be better 
+It is indeed true that GAN based deepfake models perform better than CNN based models. Although both of the models are not as perfect as the more popular videos, we have limited hardware. We used up our cloud educational credit and had to use a local 3070 with not enough VRAM or time to train the models better. Given more resources it is likely both deepfake models would be better.
+
+The overall quality of the deepfakes could have also been better. This is likely due to the VRAM bottleneck and the President's Face dataset not being the highest quality. If the dataset had more high quality images of the President's face and used better hardware, the models would have been able to train better and produce better results. 
 # Video Demo
 The following are videos of small speeches by Biden and Trump Side-by-Side between their originals and respective model.
 
