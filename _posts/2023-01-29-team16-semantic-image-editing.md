@@ -105,7 +105,7 @@ Another option for semantic image editing is contrastive language-image pre-trai
 
 
 ### Latent Optimization
-The first approach presented by StyleCLIP is latent code optimization. Given a source latent code $$w_{s} \in \mathcal{W}+$$, and a directive in natural language, or a text prompt $$t$$, StyleCLIP solves the following optimization problem:
+The first approach presented by StyleCLIP is latent code optimization. Given a source latent code $$w_{s} \in \mathcal{W}+$$, and a text prompt $$t$$, StyleCLIP solves the following optimization problem:
 
 
 $$\underset{w_{s}\in \mathcal{W}+}{\text{arg min }} D_{\text{CLIP}}(G(w),t) + \lambda_{\text{L2}} \lVert w-w_{s} \rVert_{2} + \lambda_{\text{ID}}\mathcal{L}_{\text{ID}}(w)$$
@@ -118,7 +118,7 @@ $$\mathcal{L}_{\text{ID}}(w)=1-\langle R(G(w_{s})),R(G(w))\rangle$$
 
 
 where R is a pretrained ArcFace network for face recognition, and $$\langle.,.\rangle$$ computes the cosine similarity between its arguments. StyleCLIP solves this optimization problem through gradient descent, by back-propagating the gradient objective through the pretrained and fixed StyleGAN generator G and the CLIP image encoder.
-
+ 
 ### Latent Mapper
 Although latent optimization is effective, it takes several minutes to edit a single image. The second approach presented by StyleCLIP is the use of a mapping network that is trained, for a specific text prompt $$t$$, to infer a manipulation step $$M_{t}(w)$$ in the $$\mathcal{W}+$$ space, for any given latent image embedding $$w \in \mathcal{W}+$$.
 
@@ -138,6 +138,9 @@ where $$G$$ denotes the pretrained StyleGAN generator. To preserve the visual at
 
 $$\mathcal{L}(w) = \mathcal{L}_{\text{CLIP}}(w) + \lambda_{L2} \lVert M_{t}(w) \rVert_{2} + \lambda_{\text{ID}}\mathcal{L}_{\text{ID}}(w)$$
 
+[StyleCLIP1 here]
+Figure 3 shows the architecture of the latent mapper using the text prompt "surprised". First, source image on the left is inverted into a latent code $w$. Next, three mapping functions are trained to generate residuals which are added to $w$ to yield the target code. Finally, a pretrained StyleGAN generates the modified image.
+
 ### Global Directions
 While the latent mapper allows for a fast inference time, the authors found that it sometimes fell short when a fine-grained disentangled manipulation was desired. In addition, the directions of different manipulation steps for a given text prompt tended to be similar. Because of these observations, the third approach presented by StyleCLIP is a method for mapping a text prompt into a single, global direction in StyleGAN's style space $$\mathcal{S}$$, which has been shown to be more disentangled than other latent spaces.
 
@@ -146,6 +149,9 @@ The high-level idea of this approach is to first use the CLIP text encoder to ob
 
 ## Cross-Attention Control (Prompt-to-Prompt)
 The final option we will explore for semantic image editing is cross-attention control. This approach uses cross-attention maps, which are high-dimensional tensors that bind pixels and tokens extracted from the prompt text. These maps contain rich semantic relations which affect the generated image.
+
+[Cross-Attention Control 1 Here]
+Figure 4 shows a visual representation of the processes described below.
 
 ### Cross-Attention in Text-Conditioned Diffusion Models
 In a diffusion model, each diffusion step $$t$$ consists of predicting the noise $$\epsilon$$ from a noisy image $$z_{t}$$ and text embedding $$\psi(\mathcal{P})$$ using a U-shaped network. The final step yields the generated image $$\mathcal{I}=z_{0}$$. More formally, the deep spatial features of the noisy image $$\phi (z_{t})$$ are projected to a query matrix $$Q = \ell_{Q}(\phi(z_{t}))$$, and the textual embedding is projected to a key matrix $$K = \ell_{K}(\psi(\mathcal{P}))$$ and a value matrix $$V = \ell_{V}(\psi(\mathcal{P}))$$, via learned linear projections $$\ell_{Q}$$, $$\ell_{K}$$, and $$\ell_{V}$$. Attention maps are then
@@ -157,6 +163,9 @@ Intuitively, the cross-attention output $$MV$$ is a weighted average of the valu
 
 ### Controlling the Cross-Attention
 Pixels in the cross-attention maps are more attracted to the words that describe them. Since attention reflects the overall composition, injecting the attention maps $$M$$ obtained from the generation with the original prompt $$\mathcal{P}$$ into a second generation with the modified prompt $$\mathcal{P}^{*}$$ allows the synthesis of an edited image $$\mathcal{I}^{*}$$ that is manipulated according to the edited prompt while keeping the structure of the original image $$\mathcal{I}$$ intact.
+
+[Cross-Attention Control 2 Here]
+Figure 5 shows some visualizations of cross-attention maps. The top row shows the average attention masks for each word in the prompt for the image on the left. The bottom row shows the attention maps for with respect to the word "bear" across different time-stamps.
 
 Let $$DM(z_{t}, \mathcal{P}, t, s)$$ be the computation of a single step in the diffusion process which outputs the noisy image $$z_{t-1}$$ and the attention map $$M_{t}$$. Let  $$DM(z_{t}, \mathcal{P}, t, s) \lbrace M \gets \widehat{M} \rbrace$$ be the diffusion step where the attention map $$M$$ is overridden with an additional given map $$\widehat{M}$$ with the same values $$V$$ from the supplied prompt. Let $$M_{t}^{*}$$ be the produced attention map from the edited prompt $$\mathcal{P}^{*}$$. Let $$Edit(M_{t}, M_{t}^{*}, t)$$ be a general edit function that receives the $$t$$-th attention maps of the original and edited images as input.
 
