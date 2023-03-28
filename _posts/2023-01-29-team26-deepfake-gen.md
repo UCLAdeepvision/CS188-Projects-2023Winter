@@ -8,7 +8,7 @@ date: 2022-01-30
 
 > This article investigates the topic of DeepFake Generation, comparing two models, GAN and CNN, and analyzing their similarities and differences in the context of Faceswap. The study was conducted by implementing the Deepfacelab model and comparing it with the Faceswap CNN model. The hypothesis is that GAN will perform better due to its traditional generative model nature that specializes in image generation, whereas CNNs are designed for image processing tasks, such as object recognition and segmentation. The results of the study shed light on the effectiveness of these models for DeepFake Generation.
 
-> Deepfake Generation
+
 <!--more-->
 {: class="table-of-content"}
 * TOC
@@ -254,8 +254,6 @@ Gan vs Non Gan Results
 
 
 
-# References
-
 **First order Motion Model**
 
 - Repository:
@@ -264,7 +262,11 @@ Gan vs Non Gan Results
 - Paper:
 Siarohin, Aliaksandr, Stéphane Lathuilière, Sergey Tulyakov, Elisa Ricci, and Nicu Sebe. (2019). "First Order Motion Model for Image Animation". https://papers.nips.cc/paper/2019/hash/31c0b36aef265d9221af80872ceb62f9-Abstract.html
 
+# Video Showcase
+<iframe width="989" height="617" src="https://www.youtube.com/embed/a3aWuqTT_uM" title="Deepfake Project Video Showcase" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
+
+# References
 **Face Swap**
 - Repository: DeepFakes. FaceSwap. Github repository,  https://github.com/deepfakes/faceswap, 2018.
 
