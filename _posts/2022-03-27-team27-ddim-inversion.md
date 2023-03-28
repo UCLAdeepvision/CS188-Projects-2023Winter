@@ -31,6 +31,12 @@ date: 2022-03-27
             width: 66.7%;
             padding: 0px;
         }
+        .16-9 {
+            aspect-ratio: 16/9;
+        }
+        .square {
+            aspect-ratio: 1/1;
+        }
     </style>
 </head>
 
@@ -38,10 +44,10 @@ date: 2022-03-27
 
 <div>
     <div class="column-half">
-        <iframe style="aspect-ratio: 16 / 9;" width="100%" src="https://www.youtube.com/embed/IRETsJ33uCk" title="Spotlight presentation, short version" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen> </iframe>
+        <iframe class="16-9" width="100%" src="https://www.youtube.com/embed/IRETsJ33uCk" title="Spotlight presentation, short version" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen> </iframe>
     </div>
     <div class="column-half">
-        <iframe style="aspect-ratio: 16 / 9;" width="100%" src="https://www.youtube.com/embed/OXtUHdFbPfU" title="Spotlight presentation, long version" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen> </iframe>
+        <iframe class="16-9" width="100%" src="https://www.youtube.com/embed/OXtUHdFbPfU" title="Spotlight presentation, long version" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen> </iframe>
     </div>
 </div>
 
@@ -651,7 +657,7 @@ for some $$\alpha \in \mathbb{R}$$, we can semantically edit attributes/features
         <img src="/CS188-Projects-2023Winter/assets/images/team27/celeba_sample.png" width="100%" />
     </div>
     <div class="column-half">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/celeba_sample.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/celeba_sample.webm" /> </video>
     </div>
 </div>
 <div>
@@ -659,7 +665,7 @@ for some $$\alpha \in \mathbb{R}$$, we can semantically edit attributes/features
         <img src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_sample.png" width="100%" />
     </div>
     <div class="column-half">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_sample.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_sample.webm" /> </video>
     </div>
 </div>
 <div>
@@ -667,7 +673,7 @@ for some $$\alpha \in \mathbb{R}$$, we can semantically edit attributes/features
         <img src="/CS188-Projects-2023Winter/assets/images/team27/church_sample.png" width="100%" />
     </div>
     <div class="column-half">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/church_sample.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/church_sample.webm" /> </video>
     </div>
 </div>
 <div>
@@ -675,7 +681,7 @@ for some $$\alpha \in \mathbb{R}$$, we can semantically edit attributes/features
         <img src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_sample.png" width="100%" />
     </div>
     <div class="column-half">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_sample.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_sample.webm" /> </video>
     </div>
 </div>
 <div>
@@ -683,7 +689,7 @@ for some $$\alpha \in \mathbb{R}$$, we can semantically edit attributes/features
         <img src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_sample.png" width="100%" />
     </div>
     <div class="column-half">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_sample.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_sample.webm" /> </video>
     </div>
 </div>
 <div>
@@ -691,7 +697,7 @@ for some $$\alpha \in \mathbb{R}$$, we can semantically edit attributes/features
         <img src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_sample.png" width="100%" />
     </div>
     <div class="column-half">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_sample.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_sample.webm" /> </video>
     </div>
 </div>
 <div>
@@ -699,7 +705,7 @@ for some $$\alpha \in \mathbb{R}$$, we can semantically edit attributes/features
         <img src="/CS188-Projects-2023Winter/assets/images/team27/anime_sample.png" width="100%" />
     </div>
     <div class="column-half">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_sample.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_sample.webm" /> </video>
     </div>
 </div>
 
@@ -720,7 +726,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/celeba_inversion_1_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/celeba_inversion_1_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/celeba_inversion_1_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -728,7 +734,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/celeba_inversion_1_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/celeba_inversion_1_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/celeba_inversion_1_2.webm" /> </video>
     </div>
 </div>
 <div>
@@ -736,7 +742,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/celeba_inversion_2_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/celeba_inversion_2_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/celeba_inversion_2_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -744,7 +750,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/celeba_inversion_2_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/celeba_inversion_2_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/celeba_inversion_2_2.webm" /> </video>
     </div>
 </div>
 <!--  -->
@@ -753,7 +759,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_inversion_1_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_inversion_1_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_inversion_1_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -761,7 +767,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_inversion_1_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_inversion_1_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_inversion_1_2.webm" /> </video>
     </div>
 </div>
 <div>
@@ -769,7 +775,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_inversion_2_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_inversion_2_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_inversion_2_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -777,7 +783,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_inversion_2_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_inversion_2_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_inversion_2_2.webm" /> </video>
     </div>
 </div>
 <!--  -->
@@ -786,7 +792,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/church_inversion_1_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/church_inversion_1_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/church_inversion_1_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -794,7 +800,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/church_inversion_1_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/church_inversion_1_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/church_inversion_1_2.webm" /> </video>
     </div>
 </div>
 <div>
@@ -802,7 +808,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/church_inversion_2_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/church_inversion_2_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/church_inversion_2_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -810,7 +816,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/church_inversion_2_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/church_inversion_2_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/church_inversion_2_2.webm" /> </video>
     </div>
 </div>
 <!--  -->
@@ -819,7 +825,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_inversion_1_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_inversion_1_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_inversion_1_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -827,7 +833,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_inversion_1_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_inversion_1_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_inversion_1_2.webm" /> </video>
     </div>
 </div>
 <div>
@@ -835,7 +841,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_inversion_2_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_inversion_2_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_inversion_2_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -843,7 +849,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_inversion_2_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_inversion_2_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_inversion_2_2.webm" /> </video>
     </div>
 </div>
 <!--  -->
@@ -852,7 +858,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_inversion_1_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_inversion_1_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_inversion_1_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -860,7 +866,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_inversion_1_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_inversion_1_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_inversion_1_2.webm" /> </video>
     </div>
 </div>
 <div>
@@ -868,7 +874,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_inversion_2_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_inversion_2_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_inversion_2_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -876,7 +882,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_inversion_2_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_inversion_2_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_inversion_2_2.webm" /> </video>
     </div>
 </div>
 <!--  -->
@@ -885,7 +891,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_1_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_1_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_1_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -893,7 +899,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_1_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_1_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_1_2.webm" /> </video>
     </div>
 </div>
 <div>
@@ -901,7 +907,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_2_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_2_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_2_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -909,7 +915,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_2_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_2_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_inversion_2_2.webm" /> </video>
     </div>
 </div>
 <!--  -->
@@ -918,7 +924,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_1_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_1_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_1_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -926,7 +932,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_1_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_1_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_1_2.webm" /> </video>
     </div>
 </div>
 <div>
@@ -934,7 +940,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_2_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_2_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_2_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -942,7 +948,7 @@ We use the Adam optimizer with learning rate $$0.0002$$ and default hyperparamet
         <img src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_2_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_2_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_inversion_2_2.webm" /> </video>
     </div>
 </div>
 
@@ -985,7 +991,7 @@ As mentioned in the Methods section, because learning-based methods do not work 
         <img src="/CS188-Projects-2023Winter/assets/images/team27/celeba_interpolation_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/celeba_interpolation_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/celeba_interpolation_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -993,7 +999,7 @@ As mentioned in the Methods section, because learning-based methods do not work 
         <img src="/CS188-Projects-2023Winter/assets/images/team27/celeba_interpolation_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/celeba_interpolation_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/celeba_interpolation_2.webm" /> </video>
     </div>
 </div>
 <!--  -->
@@ -1002,7 +1008,7 @@ As mentioned in the Methods section, because learning-based methods do not work 
         <img src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_interpolation_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_interpolation_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_interpolation_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -1010,7 +1016,7 @@ As mentioned in the Methods section, because learning-based methods do not work 
         <img src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_interpolation_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_interpolation_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/ffhq_interpolation_2.webm" /> </video>
     </div>
 </div>
 <!--  -->
@@ -1019,7 +1025,7 @@ As mentioned in the Methods section, because learning-based methods do not work 
         <img src="/CS188-Projects-2023Winter/assets/images/team27/church_interpolation_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/church_interpolation_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/church_interpolation_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -1027,7 +1033,7 @@ As mentioned in the Methods section, because learning-based methods do not work 
         <img src="/CS188-Projects-2023Winter/assets/images/team27/church_interpolation_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/church_interpolation_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/church_interpolation_2.webm" /> </video>
     </div>
 </div>
 <!--  -->
@@ -1036,7 +1042,7 @@ As mentioned in the Methods section, because learning-based methods do not work 
         <img src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_interpolation_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_interpolation_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_interpolation_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -1044,7 +1050,7 @@ As mentioned in the Methods section, because learning-based methods do not work 
         <img src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_interpolation_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_interpolation_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/flowers102_interpolation_2.webm" /> </video>
     </div>
 </div>
 <!--  -->
@@ -1053,7 +1059,7 @@ As mentioned in the Methods section, because learning-based methods do not work 
         <img src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_interpolation_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_interpolation_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_interpolation_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -1061,7 +1067,7 @@ As mentioned in the Methods section, because learning-based methods do not work 
         <img src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_interpolation_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_interpolation_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/imagenet64_interpolation_2.webm" /> </video>
     </div>
 </div>
 <!--  -->
@@ -1070,7 +1076,7 @@ As mentioned in the Methods section, because learning-based methods do not work 
         <img src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_interpolation_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_interpolation_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_interpolation_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -1078,7 +1084,7 @@ As mentioned in the Methods section, because learning-based methods do not work 
         <img src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_interpolation_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_interpolation_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/miniplaces_interpolation_2.webm" /> </video>
     </div>
 </div>
 <!--  -->
@@ -1087,7 +1093,7 @@ As mentioned in the Methods section, because learning-based methods do not work 
         <img src="/CS188-Projects-2023Winter/assets/images/team27/anime_interpolation_1.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_interpolation_1.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_interpolation_1.webm" /> </video>
     </div>
 </div>
 <div>
@@ -1095,7 +1101,7 @@ As mentioned in the Methods section, because learning-based methods do not work 
         <img src="/CS188-Projects-2023Winter/assets/images/team27/anime_interpolation_2.png" width="100%" />
     </div>
     <div class="column-third">
-        <video width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_interpolation_2.webm" /> </video>
+        <video class="square" width="100%" muted="" controls=""> <source src="/CS188-Projects-2023Winter/assets/images/team27/anime_interpolation_2.webm" /> </video>
     </div>
 </div>
 
