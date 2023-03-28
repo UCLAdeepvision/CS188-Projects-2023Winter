@@ -15,7 +15,7 @@ date: 2023-01-28
 * TOC
 {:toc}
 
-## Privious papers
+## Contrastive Learning
 ### MoCO And SimClR
 Unsupervised representation learning has shown great success in natural language processing (NLP), but supervised pre-training remains dominant in the visual field. Despite this, there is a lot of promising unsupervised work in the visual field, although it tends to perform worse than supervised models. The authors suggest that this may be due to the vastly different signal space in the two fields.
 
@@ -45,7 +45,9 @@ Conversely, if the query q is dissimilar to the positive sample key plus or if t
 
 
 $$
-\mathcal{L}{\text{InfoNCE}}=-\frac{1}{N}\sum{i=1}\log\frac{\exp(\text{sim}(\mathbf{z}i,\tilde{\mathbf{z}}i)/\tau)}{\sum{j=1}^{K}\mathbb{1}{[j\neq i]}\exp(\text{sim}(\mathbf{z}_i,\tilde{\mathbf{z}}_j)/\tau)}
+\label{eq:loss}
+\mathcal{L}_{\mathrm{N}}=-\underset{X}{\mathbb{E}}\left[\log \frac{f_{k}\left(x_{t+k}, c_{t}\right)}{\sum_{x_{j} \in X} f_{k}\left(x_{j}, c_{t}\right)}\right],
+
 $$
 
 
@@ -60,11 +62,13 @@ Why we need the large batch size?
 In the Figure, the author also wrote that the encoders q and k can be different networks but before, many works used the same network. For the sake of simplicity, in MoCo's experiment, the encoder q and k are the same model, which is a Res 50. Because both positive and negative samples come from the same Mini-batch, it means that $$x_q$$ and $$x_k$$ here are all from the same batch. He can get the characteristics of all samples by doing one forward, and these samples are highly consistent.
 The limitation lies in the size of the dictionary, because the size of the dictionary is equivalent to the size of the mini-batch size in the end-to-end learning framework. Then if we want a large dictionary with tens of thousands of keys, it means that the mini-batch size must also be tens of thousands, which is very difficult.(The SimClR uses the end-to-end learning framework.)
 
-I introduced these concepts first because my next experiment reflects some of the conjecture in small data and small batch size.
-
 ![SimClr]({{ '/assets/images/team40/simClr.png' | relative_url }})
 {: style="width: 800px; max-width: 200%;"}
 *Fig 2. A Simple Framework for Contrastive Learning of Visual Representations* [2].
+
+
+I introduced these concepts first to illustrate something about the idea in experiments with small data and small batch sizes.
+
 
 ## Main Content in CLIP Paper
 ### Concepts explanation in CLIP idea
@@ -80,7 +84,7 @@ Pre-Training on Large Datasets: CLIP is pre-trained on a large dataset of images
 
 The key to CLIP's ability to perform zero-shot learning is its use of a shared embedding space that maps both images and text into a common feature space. During training, CLIP is trained to associate images and their corresponding text descriptions with similar feature vectors in the embedding space, and to associate dissimilar pairs with dissimilar feature vectors. This allows CLIP to learn to recognize and differentiate between a wide variety of objects and concepts based on their textual descriptions, even if it has not been explicitly trained on them. To perform zero-shot learning, CLIP takes a new textual description as input and maps it into the embedding space to obtain a feature vector. It then searches for the image in the dataset that has the most similar feature vector to the input description. The image that best matches the input description is returned as the model's prediction. CLIP is able to perform zero-shot learning on a wide range of objects and concepts, including ones that are rare, obscure, or previously unseen, as long as they can be described using natural language. This makes it a powerful tool for a wide range of applications, including computer vision, natural language processing, and other areas where it is difficult or impractical to obtain large datasets of labeled examples.
 
-### Image
+### Model
 ![CLIP]({{ '/assets/images/team40/clip1.png' | relative_url }})
 {: style="width: 800px; max-width: 200%;"}
 *Fig 3. Learning Transferable Visual Models From Natural Language Supervision* [1].
@@ -235,9 +239,8 @@ def cross_entropy(preds, targets, reduction='none'):
  ProjectionHead is smiliar to the SimCLR picture above.
 
 
-## Some experiment of hyperparameters 
-I would regard this experiment as a war against overfitting. Clip trains each model for
-32 epochs at which point transfer performance begins to plateau due to overfitting[1]. In my case,  it's easier to overfit 30k datasets.
+## Experiments of hyperparameters 
+Clip trains each model for 32 epochs at which point transfer performance begins to plateau due to overfitting[1]. In my case,  it's easier to overfit 30k datasets.
 ### baseline of resnet50 and resnet34
 Due to some GCP network reasons, I lost some train loss data. But Vaild loss is completely preserved. In the baseline, clip with resnet50 rans for 13 epchos and clip with resnet34 rans for 15 epchos.
 
@@ -316,7 +319,7 @@ Since I have alrealy talk about the MoCo paper, I am not talking about it too mu
 
 
 #### Rebuild the simple model
-
+The dataloader, model, and fine-tuning processes have all been rebuilt, but I have only introduced changes to the structure of some important modules. All of the code is in Colab.
 
 ##### Augmentation
 ```
@@ -329,7 +332,8 @@ def get_transforms(mode="train"):
                 A.HorizontalFlip(p=0.5),
                 A.RandomBrightnessContrast(p=0.2),
                 A.Normalize(max_pixel_value=255.0, always_apply=True),
-                A.CoarseDropout(max_holes=8, max_height=16, max_width=16, p=1.0),
+                #A.CoarseDropout(max_holes=8, max_height=16, max_width=16, p=1.0),
+                A.CoarseDropout(max_holes=16, max_height=32, max_width=32,  min_holes=8, p=1.0),
              
             ]
         )
@@ -376,31 +380,118 @@ class ProjectionHeadImage(nn.Module):
 
 ```
 I add the ProjectionHeadImage in CLIP model to control the drop out of projection for image embedding.
-Limited by the gpu size, I have to freeze the text encoder so that there are more batch size.
+Due to the limited size of the GPU, I have to freeze the text encoder so that a larger batch size can be used. This experiment can be seen as using image encoding to learn text encoding, similar to distillation.
 
 
 
 
 ## Result
-Best average vaild loss
-|  proption\batch size |   256   |  512    |
-| :---                 |   :----:|    ---: |
-| 0.4  large mask      | 3.47    | Text          |
-| 0.4  small mask      |         | Text          |
-| 0.8  large mask      |         | Text          |
-| 0.8  small mask      | 3.40    | Text          |
-
-(20% dataset is test)
+Best average vaild loss(16 epochs)
 
 
+|  proption\batch size |   256   |  128    |   64  |
+| :---                 |   :----:|    ---: |  ---: |
+| 0.4  small mask      | 3.49    |    *    |   *   |
+| 0.4  large mask      | 3.48    |    *    |   *   |
+| 0.8  small mask      | 3.40    |    *    |   *   |
+| 0.8  large mask      | 3.38    | 2.96    |  2.59 |
 
-### Experience
-Experience on reading paper:
 
-Experience on code: 
-You can refer to the [source code](https://github.com/ningwebbeginner/CS188-Projects-2023Winter/tree/main/_posts) for article structure ideas or Markdown syntax. We've provided a [sample post](https://ucladeepvision.github.io/CS188-Projects-2022Winter/2017/06/21/an-overview-of-deep-learning.html) and you can find the source code [here](https://raw.githubusercontent.com/UCLAdeepvision/CS188-Projects-2022Winter/main/_posts/2017-06-21-an-overview-of-deep-learning.md)
+(20% dataset is test, small mask: 0.04. large mask 0.32.)
+Loss Curves for the follwing tensorboard link:[tensorboard](https://tensorboard.dev/experiment/zOOB6xlJSpqEx390lJipmg),[tensorboard](https://tensorboard.dev/experiment/zhYP3779QcO726j24ukyZQ),[tensorboard](https://tensorboard.dev/experiment/vGdZwpHNTnKI5gRINE7onw),[tensorboard](https://tensorboard.dev/experiment/QU53ULh0SA6kZKqoRWjpLg),[tensorboard](https://tensorboard.dev/experiment/sQ6IdrRcQsmEzt0mXIBmNg).
 
 
+### Discussion
+From a masking perspective, it can be observed that suitable masks can improve the impact on the results, whether it is in 40% of the data or in 80% of the data. It can be said that this type of image data augmentation is effective in small data, which is consistent with the trend revealed in Flip. However, excessively large masks can also have an impact. For example, if we erase certain features from an image, but these features are reflected in the text code, it may affect the training results.
+
+From the perspective of a larger batch size, it can be observed in this experiment that a larger batch size does not necessarily lead to better results, which goes against my original intention.
+
+Why doesn't this experiment follow the theory of Moco where larger batch sizes result in better training results? These are some reasons I can think of. 
+First, the data in CLIP is very large, and training a large model with several hundred million data may require a larger batch size. However, in this experiment with a small model training on 30k data, a larger batch size is not suitable.
+Second, when using a larger batch size, it is often necessary to scale the learning rate accordingly to avoid overshooting the optimal solution. If the learning rate is not scaled correctly, the optimization can become unstable and lead to a higher loss. In particular, when using AdamW, it is important to ensure that the weight decay rate is also scaled accordingly to maintain the balance between the gradient updates and the weight decay.
+
+
+
+
+### Inference
+Some example(9 pic for every sentences):
+
+The image shows cats on the grass.      The image shows dogs on the grass.
+<div style="display:flex;">
+    <div style="flex:1;padding-right:5px;">
+        <img src="{{ '/assets/images/team40/cats2.png' | relative_url }}" alt="tarin loss" style="width:100%;">
+    </div>
+    <div style="flex:1;padding-left:5px;">
+        <img src="{{ '/assets/images/team40/dogs2.png' | relative_url }}" alt="tarin loss" style="width:100%;">
+    </div>
+</div>
+The image shows a man plays basketball.     The image shows a women plays basketball.
+<div style="display:flex;">
+    <div style="flex:1;padding-right:5px;">
+        <img src="{{ '/assets/images/team40/man2.png' | relative_url }}" alt="tarin loss" style="width:100%;">
+    </div>
+    <div style="flex:1;padding-left:5px;">
+        <img src="{{ '/assets/images/team40/woman2.png' | relative_url }}" alt="tarin loss" style="width:100%;">
+    </div>
+</div>
+In these images, it can be seen that the model has indeed learned some features that correspond to text and images. For example, in this image, the grass, man, woman, plays, basketball can be recognized, but it can also be seen that the model has not understood some image features, such as the cat, nor the meaning of the relative relationship between sentences.
+
+
+
+
+## Review
+I use the simple CLIP encoder can match images and text inputs that describe the same visual content. For example, given an image of a dog and a text input that says "dogs in the grass", the CLIP encoder can recognize that the text input describes the image and assign a high similarity score to the pair.
+
+What else can CLIP model do?
+### Applications
+GLIDE:
+
+The GLIDE[5] paper explores two different techniques for guiding diffusion models in text-conditional image synthesis. Classifier-free guidance replaces the label in a class-conditional diffusion model with a null label with a fixed probability during training. During sampling, the output of the model is extrapolated further in the direction of the label and away from the null label. Classifier-free guidance has two appealing properties: it allows a single model to leverage its own knowledge during guidance, and it simplifies guidance when conditioning on information that is difficult to predict with a classifier. CLIP guidance involves using a CLIP model, which is a scalable approach for learning joint representations between text and images, to replace the classifier in classifier guidance. The reverse-process mean is then perturbed with the gradient of the dot product of the image and caption encodings with respect to the image.
+
+
+CLIP-NeRF:
+
+In CLIP-NeRF paper[6], the authors propose a method for manipulating 3D objects using neural radiance fields (NeRF). The method uses a joint language-image embedding space of the CLIP model to allow for user-friendly manipulation of NeRF using either a short text prompt or an exemplar image. The authors introduce a disentangled conditional NeRF architecture that allows individual control over both shape and appearance. They also design two code mappers that take a CLIP embedding as input and update the latent codes to reflect the targeted editing. The mappers are trained with a CLIP-based matching loss to ensure manipulation accuracy. Additionally, the authors propose an inverse optimization method that accurately projects an input image to the latent codes for manipulation to enable editing on real images. The method is evaluated through extensive experiments on a variety of text prompts and exemplar images, and an intuitive interface for interactive editing is provided.
+
+
+#### Simple GLIDE Implement
+I show some results of the simple CLIP-guide diffusion model.
+
+dogs on the grass.                              cats on the grass.
+<div style="display:flex;">
+    <div style="flex:1;padding-right:5px;">
+        <img src="{{ '/assets/images/team40/dogsgen.png' | relative_url }}" alt="tarin loss" style="width:100%;">
+    </div>
+    <div style="flex:1;padding-left:5px;">
+        <img src="{{ '/assets/images/team40/catsgen.png' | relative_url }}" alt="tarin loss" style="width:100%;">
+    </div>
+</div>
+A man plays basketball.                         A women plays basketball.
+<div style="display:flex;">
+    <div style="flex:1;padding-right:5px;">
+        <img src="{{ '/assets/images/team40/mangen.png' | relative_url }}" alt="tarin loss" style="width:100%;">
+    </div>
+    <div style="flex:1;padding-left:5px;">
+        <img src="{{ '/assets/images/team40/womangen.png' | relative_url }}" alt="tarin loss" style="width:100%;">
+    </div>
+</div>
+
+
+### Discussion
+With the increasing number of recently released language models, it is foreseeable that CV models will also become larger and larger. For example, the CLIP model, as well as the EVA (1B) model distilled from the CLIP model. However, in this current "large model competition," more and more resources are required, such as more training time and more GPUs. What can people with limited resources do in this kind of "large model competition"?
+
+Maybe there is an example of one answer: This is a video model based on the CLIP approach[6]. The idea presented in this article is very appealing. In addition to fine-tuning some pre-trained models, we could also try adding adapters to the original model parameters freezing the original model parameters, just like adding FC layers to the original model as we learned in class. Perhaps this method will give us better results with limited computing resources.
+
+
+
+![AIM]({{ '/assets/images/team40/aim.png' | relative_url }})
+{: style="width: 500px; max-width: 100%;"}
+*Fig 6. AIM: ADAPTING IMAGE MODELS FOR EFFICIENT VIDEO ACTION RECOGNITION* [7].
+
+You can refer to the [source code](https://github.com/ningwebbeginner/CS188-Projects-2023Winter/tree/main/_posts) for article structure ideas or Markdown syntax. We've provided a [sample post](https://ucladeepvision.github.io/CS188-Projects-2022Winter/2017/06/21/an-overview-of-deep-learning.html) and you can find the source code [here](https://colab.research.google.com/drive/1pzJr8JsXCsdclFakjjUNXY7cg9zoG_cm?usp=sharing)
+
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/hkzLiqhgxno" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 
 
@@ -413,8 +504,16 @@ You can refer to the [source code](https://github.com/ningwebbeginner/CS188-Proj
 
 [1] Radford, Alec et al. “*Learning Transferable Visual Models From Natural Language Supervision*.” International Conference on Machine Learning 2021.
 
-[2] Luo, Huaishao et al. “*CLIP4Clip: An Empirical Study of CLIP for End to End Video Clip Retrieval*.” Neurocomputing 508 (2021): 293-304.
+[2] Chen et al. “*A Simple Framework for Contrastive Learning of Visual Representations*.” ICML 2020.
 
-[3] Zhang, Renrui et al. “*PointCLIP: Point Cloud Understanding by CLIP*.” 2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) (2021): 8542-8552.
+[3] He, Fan et al. “*Momentum Contrast for Unsupervised Visual Representation Learning*.” 	CVPR 2020.
+
+[4] Li, Fan et al. “*Scaling Language-Image Pre-training via Masking*.” 2023 ICLR. 	arXiv:2212.00794.
+
+[5] Nichol, Dhariwalet al. “*GLIDE: Towards Photorealistic Image Generation and Editing with Text-Guided Diffusion Models*.” arXiv:2112.10741.
+
+[6] Wang, Chai et al. “*CLIP-NeRF: Text-and-Image Driven Manipulation of Neural Radiance Fields*.”  CVPR(2022). 	arXiv:2112.05139.
+
+[7] Yang, Zhu et al. “*AIM: ADAPTING IMAGE MODELS FOR EFFICIENT VIDEO ACTION RECOGNITION*.” 2023 ICLR.
 
 ---
