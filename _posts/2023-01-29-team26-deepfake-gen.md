@@ -6,7 +6,7 @@ author: Freddy Aguilar, Luis Frias
 date: 2022-01-30
 ---
 
-> This post explores DeepFake Generation. In this artcle, we explore two models : GAN and CNN. The report analyze's the similarties and differences of the two models when conducting Faceswap. 
+> This article investigates the topic of DeepFake Generation, comparing two models, GAN and CNN, and analyzing their similarities and differences in the context of Faceswap. The study was conducted by implementing the Deepfacelab model and comparing it with the Faceswap CNN model. The hypothesis is that GAN will perform better due to its traditional generative model nature that specializes in image generation, whereas CNNs are designed for image processing tasks, such as object recognition and segmentation. The results of the study shed light on the effectiveness of these models for DeepFake Generation.
 
 > Deepfake Generation
 <!--more-->
@@ -16,7 +16,7 @@ date: 2022-01-30
 
 
 # Introduction
-Recent years have seen a tremendous advancement in deep fake technology, with new models and algorithms emerging that enable more convincing and realistic picture swaps. There are many uses for the skill of seamlessly and convincingly swapping out a person's face, from entertainment to political influence. But as deep fake technology spreads, so is the need to comprehend its strengths and weaknesses. The first model is based on Generative Adversarial Networks (GANs), and the second model is based on a modified version of the VGG16 CNN architecture. In this article, we will compare and contrast these two deep fake generation methods for picture swap. In order to learn more, we will evaluate each model's performance and take into account its advantages and disadvantages. We intend to provide light on the current state of deep fake creation for picture swap and add to ongoing discussions regarding its appropriate use by comparing these models side by side.
+Recent years have seen a tremendous advancement in deep fake technology, with new models and algorithms emerging that enable more convincing and realistic picture swaps. There are many uses for the skill of convincingly and flawlessly switching someone's visage, from entertainment to political influence. But as deep fake technology spreads, it's critical to comprehend both its advantages and disadvantages. The Generative Adversarial Networks (GANs) and a modified version of the VGG16 CNN architecture are two deep fake generation techniques for picture swaps that are compared and contrasted in this article. The essay will assess each model's performance and go through its merits and cons. We implemented the deepfacelab model and used output data from the CNN model. It's vital to highlight that we concentrated our efforts on the deepfacelab model due to  limitations of implementing models. Google has made it difficult AI systems that can be used to generate deepfakes on its Google Colaboratory platform due to ethical reasons. Nonetheless, we proceeded with the comparsions. We expect that the GAN model will produce higher quality images due to its capability to generate high-quality images with complex textures and details, which is crucial for creating convincing deepfakes. This study aims to provide insights into the current state of deep fake creation for picture swaps and contribute to ongoing discussions regarding its appropriate use by comparing these models side by side.
 
 
 # Deep Fake Generation?
@@ -52,14 +52,159 @@ DFL employs a mixed loss, combining DSSIM (structural dissimilarity) [18] and MS
 
 - Finally in conversion phase, the CNN is applied again to stick the faces on top of eachother and replace the source face with the target face.
 
- # Model Comparison Overview 
-
-Deepfakes trained on GANs typically result in results that are more visually convincing than deepfakes trained on conventional CNNs like VGG16. This is due to the fact that GANs were created primarily for creating realistic images by playing an adversarial game between a generator network and a discriminator network. The generator tries to create realistic images while the discriminator tries to differentiate between real and fake images. Over time, the generator learns to produce increasingly realistic images that can fool the discriminator.
-
-Traditional CNNs, such the VGG16, on the other hand, are more commonly employed for classification jobs and might not be designed to produce realistic images. Although they can still be utilized for deepfake generation, they could need more training data or longer training cycles to match GAN-based techniques' levels of visual realism.
-
 
 # DeepFaceLab Implementation
+
+## Implementation Overview 
+ For the deepfacelab implementation we choose google collab despite the [ban](https://www.techradar.com/news/google-is-cracking-down-hard-on-deepfakes). We believe they only allow google collab pro users to implement such models. Given only one of us had google collab pro, we were only able to implement DeepfaceLab on collab using the given guide on the repository. We made an attempt to implement deepfacelab with the [linux based repository](https://github.com/nagadit/DeepFaceLab_Linux) but we had issues training the model on a google cloud virtual machine. There were specific hardware and software requirements not available on google cloud. 
+
+ There are 4 main steps involved in generating an output:
+
+ - File set up: you need a workspace file with a data_src, data_dst, and model sub-folders.
+
+ - Collecting data: to implement the deepfacelab model you must collect two quality videos that the model can train on. You need to ensure that both videos capture the same facial profiles of each person you are doing a swap on. You labels these as "data_src.mp4" and "data_dst.mp4" and store in the workspace file.
+
+ - Preprocessing data: The videos need to be extracted into frames, sorted, resized, and aligned.  We attempted to do this on collab but it took hours since it runs on the cpu. The runtime resets after 12 hours so we went ahead and preprocesed the data on a linux server using the available scripts to preprocess. We then packed the preprocessed data into faceset.pak and downloaded it to local. We then unpacked this in collab. 
+
+ - Train: The final step is to train the model. We used Sparse Auto Encoder HD. The standard model and trainer for most deepfakes.
+
+## Implementation
+There are a multiple of different steps possible in the [collab notebook](https://colab.research.google.com/github/chervonij/DFL-Colab/blob/master/DFL_Colab.ipynb#scrollTo=JNeGfiZpxlnz) given. We only utilized the following code blocks/steps.
+
+ 1. Install DeepfaceLab repository (in collab)
+
+ 2. Upload workspace to google drive with the given file structure (two videos, facesets, data_src, data_dst, and model folder) 
+
+ 3. import workspace from drive 
+
+ 
+ ```
+Mode = "workspace" #@param ["workspace", "data_src", "data_dst", "data_src aligned", "data_dst aligned", "models"]
+Archive_name = "workspace.zip" #@param {type:"string"}
+
+#Mount Google Drive as folder
+from google.colab import drive
+drive.mount('/content/drive')
+
+def zip_and_copy(path, mode):
+  unzip_cmd=" -q "+Archive_name
+  
+  %cd $path
+  copy_cmd = "/content/drive/My\ Drive/"+Archive_name+" "+path
+  !cp $copy_cmd
+  !unzip $unzip_cmd    
+  !rm $Archive_name
+
+if Mode == "workspace":
+  zip_and_copy("/content", "workspace")
+elif Mode == "data_src":
+  zip_and_copy("/content/workspace", "data_src")
+elif Mode == "data_dst":
+  zip_and_copy("/content/workspace", "data_dst")
+elif Mode == "data_src aligned":
+  zip_and_copy("/content/workspace/data_src", "aligned")
+elif Mode == "data_dst aligned":
+  zip_and_copy("/content/workspace/data_dst", "aligned")
+elif Mode == "models":
+  zip_and_copy("/content/workspace", "model")
+  
+print("Done!")
+  ```
+
+4. unpack faceset
+```
+Folder = "data_src" #@param ["data_src", "data_dst"]
+Mode = "unpack" #@param ["pack", "unpack"]
+
+cmd = "/content/DeepFaceLab/main.py util --input-dir /content/workspace/" + \
+      f"{Folder}/aligned --{Mode}-faceset"
+
+!python $cmd
+```
+
+5. training SAEHD model and backup every hour due to runtime limitations
+
+```
+#@title Training
+Model = "SAEHD" #@param ["SAEHD", "AMP", "Quick96", "XSeg"]
+Backup_every_hour = True #@param {type:"boolean"}
+Silent_Start = True #@param {type:"boolean"}
+
+%cd "/content"
+
+#Mount Google Drive as folder
+from google.colab import drive
+drive.mount('/content/drive')
+
+import psutil, os, time
+
+p = psutil.Process(os.getpid())
+uptime = time.time() - p.create_time()
+
+if (Backup_every_hour):
+  if not os.path.exists('workspace.zip'):
+    print("Creating workspace archive ...")
+    !zip -0 -r -q workspace.zip workspace
+    print("Archive created!")
+  else:
+    print("Archive exist!")
+
+if (Backup_every_hour):
+  print("Time to end session: "+str(round((43200-uptime)/3600))+" hours")
+  backup_time = str(3600)
+  backup_cmd = " --execute-program -"+backup_time+" \"import os; os.system('zip -0 -r -q workspace.zip workspace/model'); os.system('cp /content/workspace.zip /content/drive/My\ Drive/'); print('Backed up!') \"" 
+elif (round(39600-uptime) > 0):
+  print("Time to backup: "+str(round((39600-uptime)/3600))+" hours")
+  backup_time = str(round(39600-uptime))
+  backup_cmd = " --execute-program "+backup_time+" \"import os; os.system('zip -0 -r -q workspace.zip workspace'); os.system('cp /content/workspace.zip /content/drive/My\ Drive/'); print('Backed up!') \"" 
+else:
+  print("Session expires in less than an hour.")
+  backup_cmd = ""
+    
+cmd = "DeepFaceLab/main.py train --training-data-src-dir workspace/data_src/aligned --training-data-dst-dir workspace/data_dst/aligned --pretraining-data-dir pretrain --model-dir workspace/model --model "+Model
+
+if Model == "Quick96":
+  cmd+= " --pretrained-model-dir pretrain_Q96"
+
+if Silent_Start:
+  cmd+= " --silent-start"
+
+if (backup_cmd != ""):
+  train_cmd = (cmd+backup_cmd)
+else:
+  train_cmd = (cmd)
+
+!python $train_cmd
+```
+6. Merge frames 
+```
+#@title Merge
+Model = "SAEHD" #@param ["SAEHD", "AMP", "Quick96" ]
+
+cmd = "DeepFaceLab/main.py merge --input-dir workspace/data_dst --output-dir workspace/data_dst/merged --output-mask-dir workspace/data_dst/merged_mask --aligned-dir workspace/data_dst/aligned --model-dir workspace/model --model "+Model
+
+%cd "/content"
+!python $cmd
+```
+
+7. Video results 
+
+```
+#@title Get result video 
+Mode = "result video" #@param ["result video", "result_mask video"]
+Copy_to_Drive = True #@param {type:"boolean"}
+
+
+if Mode == "result video":
+  !python DeepFaceLab/main.py videoed video-from-sequence --input-dir workspace/data_dst/merged --output-file workspace/result.mp4 --reference-file workspace/data_dst.mp4 --include-audio
+  if Copy_to_Drive:
+    !cp /content/workspace/result.mp4 /content/drive/My\ Drive/
+elif Mode == "result_mask video":
+  !python DeepFaceLab/main.py videoed video-from-sequence --input-dir workspace/data_dst/merged_mask --output-file workspace/result_mask.mp4 --reference-file workspace/data_dst.mp4
+  if Copy_to_Drive:
+    !cp /content/workspace/result_mask.mp4 /content/drive/My\ Drive/
+
+```
 
 # FaceSwap Implementation 
 The folowing [colab](https://colab.research.google.com/drive/1_j_0N9uCR47ms5paXTKgQVTq1M4GX-9M?usp=sharing) will be used as the setup but there is also a [locally based](https://github.com/deepfakes/faceswap/blob/master/INSTALL.md) installation method based on your hardware configuration.
@@ -81,6 +226,12 @@ The process can be divided into three parts:
     This step will take photos from original folder and apply new faces into `modified` folder. The `modified` folder will contain the new faces applied to the original photos. This can also work with videos but be sure to have proper CPU cooling as this maximizes CPU usage.
 
 
+
+# Model Comparison Overview 
+
+Deepfakes trained on GANs typically result in results that are more visually convincing than deepfakes trained on conventional CNNs like VGG16. This is due to the fact that GANs were created primarily for creating realistic images by playing an adversarial game between a generator network and a discriminator network. The generator tries to create realistic images while the discriminator tries to differentiate between real and fake images. Over time, the generator learns to produce increasingly realistic images that can fool the discriminator.
+
+Traditional CNNs, such the VGG16, on the other hand, are more commonly employed for classification jobs and might not be designed to produce realistic images. Although they can still be utilized for deepfake generation, they could need more training data or longer training cycles to match GAN-based techniques' levels of visual realism.
 
 # Quantitative Results Comparison
 The following videos below shows the results between face swaps between Biden and Trump using both models. Both models seems to perform poorly on Trump's speech while in Biden's speech DeepFakeLab's model is the better model by looking at the nose and lips. DeepFakeLab managed to get Trump's narrower nose and smaller mouth while the FaceSwap model is just jittering over and doesn't really show any Trump-like features.
