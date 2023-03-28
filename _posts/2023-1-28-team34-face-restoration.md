@@ -20,7 +20,7 @@ My project is to study the usage of Generative Adversarial Networks, and in part
 
 ## Main Focus
 
-The main focus of this project is to explore GAN architectures and how GPEN builds upon GAN architectures in order to generate high-quality images from low-quality images that could have different defects such as blur, omission of certain pixels in the image, and low-resolution. In particular, GPEN hopes to resolve most, if not all of these issues, in the wild, or in real-world scenarios, and not specially curated images. We will go further into these architectures by conducting some ablation studies on StyleGAN2-ADA and (hopefully) GPEN in order to see how the different improvements and aspects of their architectures handle image generation better than the baseline simple DCGAN architecture. 
+The main focus of this project is to explore GAN architectures improvements and additions have been made upon GAN architectures in order to generate high-quality images from low-quality images that could have different defects such as blur, omission of certain pixels in the image, and low-resolution. In particular, GPEN and Real-ESRGAN are two such architectures that hopes to resolve most, if not all of these issues, in the wild, or in real-world scenarios, and not specially curated images. We will compare the techniques both of these architectures utilize in order to achieve super-resolution, as well as present a method of comparing the observed performance of two architectures by manipulating the low-resolution test image and also by running the same low-resolution test image through the same model multiple times. 
 
 ### Algorithms
 
@@ -36,7 +36,17 @@ Below is a picture of the min-max loss function where it details how the generat
 
 ![GAN Min-Max Loss Function]({{'/assets/images/team34/model/min-max-loss.PNG' | relative_url}})
 
+Pictured below is a simplified look at the full DCGAN architecture, where we can see the generator part of the model to the left of the middle "lesion" and the discriminator to the right of the model. 
+
+![DCGAN Architecture]({{'/assets/images/team34/model/DCGAN-ARCH.PNG' | relative_url}})
+
+DCGAN makes full use of strided convolutions by replacing older GAN architectures method of spatial downsampling of pooling (such as maxpooling). The reason for this switch to strided convolutions is so that the generator is able to learn and train its own spatial downsampling due to the fact that strided convolutions have parameters that can be optimized while most pooling methods do not have such trainable parameters. 
+
+Batch normalization also played a large effect on improving this model and future models as it assisted in the learning process. The purpose of batch normalization is to normalize the input for a single batch 
+
 #### StyleGAN2-ADA
+
+Pictured below is the 
 
 ![GAN vs StyleGan1 Architecture]({{'/assets/images/team34/Stylegan/traditional_vs_style.PNG' | relative_url}})
 
@@ -60,10 +70,12 @@ Due to several factors such as simplicity of the model, lack of features to help
 
 ![DCGAN Graph of Generator and Discriminator Loss]({{'/assets/images/team34/model/1st_attempt_loss_graph.PNG' | relative_url}})
 
-Looking up online, multiple additional methods are suggested that could help the discriminator not converge towards 0, but towards some loss greater than 0, such as implementing dropout into the discriminator architecture, and other methods to fix (or help alleviate) the vanishing gradient problem, mode collapse problem, and other issues that appear in other machine learning architectures. If time permits, perhaps implementing several of these methods into my GAN and observing the results will be interesting. It would also be interesting to study if StyleGAN2-ADA and GPEN also account for these issues, and if so, how do they solve it and how does it differ from conventional methods.
+Looking up online, multiple additional methods are suggested that could help the discriminator not converge towards 0, but towards some loss greater than 0, such as implementing dropout into the discriminator architecture, and other methods to fix (or help alleviate) the vanishing gradient problem, mode collapse problem, and other issues. 
 
 
 #### StyleGAN2-ADA Model
+
+
 
 Below is a gif/mp4 of linear interpolation over the z-space of StyleGAN2-ADA and how we can see the change over the different features of the face such as hair, facial expression, clothing, and even the direction of which the person is facing. Throughout the different frames of the GIF, we can see that the output from the model can be considered as generally close to actual human faces (at a quick glance due to the high frame rate of the GIF). However, we can also see issues within each image, especially of blurry splotches around the hair and background. The StyleGAN2 paper addresses these issues and talks about splitting their Adaptive Instance Normalization block/method into separate parts and introducing weights/latent space will be effective at helping erase the blurs, at least better than StyleGAN1 did. These generated frames were based on a pretrained model from this [github repo](https://github.com/justinpinkney/awesome-pretrained-stylegan2/#faces-FFHQ-config-e-256x256) and the specific dataset and weights used were based on the FFHQ dataset but with a 256x256 resolution. 
 
@@ -85,12 +97,15 @@ This [google colab file](https://colab.research.google.com/drive/1lO3QKY0uCHAGMW
 
 3. This [paper](https://openaccess.thecvf.com/content_CVPR_2020/papers/Karras_Analyzing_and_Improving_the_Image_Quality_of_StyleGAN_CVPR_2020_paper.pdf) talks about the redesigns of the original StyleGAN in order to improve upon its generative image modeling capabilities.
 
+4. This [paper](https://arxiv.org/pdf/2006.06676.pdf) talks about the particular StyleGAN2 model that was used in this project which was StyleGAN2-ADA. 
+
+5. This [paper](https://arxiv.org/pdf/1511.06434v2.pdf) talks about the DCGAN model.
+
 ### Most Relevant Code
-This [github repository](https://github.com/lucidrains/stylegan2-pytorch) implements a simple Pytorch implementation of StyleGan2, which is the style-based GAN Architecture. This repository will be used as a baseline to compare StyleGan architecture to GPEN architecture, and it is also used as the prior GAN for GPEN. 
 
 This [github repository](https://github.com/justinpinkney/awesome-pretrained-stylegan2/#faces-FFHQ-config-e-256x256) contains a list of pretrained weights for the StyleGAN2-ADA model on different datasets.
 
-
+This [github repository](https://github.com/pranjaldatta/SSIM-PyTorch) has an implementation of the SSIM metric that will be used to compare the ground truth original images to the generated images from the models that we are testing. 
 
 
 ## Reference
@@ -108,4 +123,9 @@ This [github repository](https://github.com/justinpinkney/awesome-pretrained-sty
 
 [7] Dwivedi, Harshit. “Understanding Gan Loss Functions.” Neptune.ai, 30 Jan. 2023, https://neptune.ai/blog/gan-loss-functions. 
 
+[8] Karras, Tero, et al. "Training generative adversarial networks with limited data." Advances in neural information processing systems 33 (2020): 12104-12114.
+
+[9] Radford, Alec, Luke Metz, and Soumith Chintala. "Unsupervised representation learning with deep convolutional generative adversarial networks." arXiv preprint arXiv:1511.06434 (2015).
+
+[10] Shorten, Connor & Khoshgoftaar, Taghi. (2019). A survey on Image Data Augmentation for Deep Learning. Journal of Big Data. 6. 10.1186/s40537-019-0197-0. 
 ---
