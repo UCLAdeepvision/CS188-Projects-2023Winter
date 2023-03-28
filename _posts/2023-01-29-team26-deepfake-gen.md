@@ -48,7 +48,7 @@ DFL employs a mixed loss, combining DSSIM (structural dissimilarity) [18] and MS
  # Facewap - VGG16 CNN Model
 - The FaceSwap uses the CNN VGG16 model to identify important characteristics of facial features. This process is accompanied by a series of alignment and realignment steps, which are crucial in ensuring the accuracy of the feature extraction. These alignment and realignment steps are an integral part of the overall process of identifying facial features. These faces would then be saved to be used in the next step.
   ![VGG16 Face Dectction](/assets/images/team26/VGG16.png)
-- In the train phase, the two outputs are put into an encoder consisting of a NN where they share the same weights and one is decoded to be trained to be as close to the other one as possible. The loss function tries to minimize the error between the two faces and make the swap as natural as possible.
+- In the train phase, the two outputs are put into an encoder consisting of a NN where they share the same weights and one is decoded to be trained to be as close to the other one as possible. The loss function tries to minimize the error between the two faces and make the swap as natural looking as possible.
 
 - Finally in conversion phase, the CNN is applied again to stick the faces on top of eachother and replace the source face with the target face.
 
@@ -84,8 +84,10 @@ The process can be divided into three parts:
 
 # Quantitative Results Comparison
 The following videos below shows results between face swaps between Biden and Trump using both models. Both models seems to perform poorly on Trump's speech while in Biden's speech DeepFakeLab's model is the better model by looking at the nose and lips. DeepFakeLab managed to get Trump's narrower nose and smaller mouth while the FaceSwap model is just jittering over and doesn't really show any Trump-like features.
+
+
 # Conclusion
-It is indeed true that GAN based deepfake models perform better than CNN based models. Although both of the models are not as perfect as the more popular videos, we have limited hardware. We used up our cloud educational credit and had to use a local 3070 with not enough VRAM or time to train the models better.
+It is indeed true that GAN based deepfake models perform better than CNN based models. Although both of the models are not as perfect as the more popular videos, we have limited hardware. We used up our cloud educational credit and had to use a local 3070 with not enough VRAM or time to train the models better. Given more resources it is likely both deepfake models would be better 
 # Video Demo
 The following are videos of small speeches by Biden and Trump Side-by-Side between their originals and respective model.
 
