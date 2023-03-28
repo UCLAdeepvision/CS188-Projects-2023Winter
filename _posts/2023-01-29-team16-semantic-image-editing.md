@@ -75,7 +75,7 @@ $$\mu(\psi;s_e, \lambda) =
   s_e & \text{where} |\psi| \geq \eta_\lambda (|\psi|)\\
   0 & \text{otherwise} 
 \end{cases}$$
-(Here, $$\eta\_\lambda(\psi)$$ is the $$\lambda$$-th percentile of $$\psi$$)
+(Here, $$\eta_\lambda(\psi)$$ is the $$\lambda$$-th percentile of $$\psi$$)
 
 Additionally, SEGA uses two additional adjustments:
  - a warm-up parameter $$\delta$$ to only apply guidance after a warm-up period $$(\gamma(z_t, c_p, c_s) := 0$$ if $$t < \delta)$$
@@ -130,7 +130,7 @@ The CLIP loss, $$\mathcal{L}_{\text{CLIP}}(w)$$, guides the mapper to minimize t
 $$\mathcal{L}_{\text{CLIP}}(w) = \mathcal{D}_{\text{CLIP}}(G(w + M_{t}(w), t))$$
 
 
-where $$G$$ denotes the pretrained StyleGAN generator. To preserve the visual attributes of the original input image, StyleCLIP minimizes the $$L_{2}$$ norm of the manipulation step in the latent space. Finally, for edits that require identity preservation, StyleCLIP uses the identity loss $$\mathcal{L}\_{ID}(w)$$ defined earlier. The total loss function is a weighted combination of these losses:
+where $$G$$ denotes the pretrained StyleGAN generator. To preserve the visual attributes of the original input image, StyleCLIP minimizes the $$L_{2}$$ norm of the manipulation step in the latent space. Finally, for edits that require identity preservation, StyleCLIP uses the identity loss $$\mathcal{L}_{ID}(w)$$ defined earlier. The total loss function is a weighted combination of these losses:
 
 
 $$\mathcal{L}(w) = \mathcal{L}_{\text{CLIP}}(w) + \lambda_{L2} \lVert M_{t}(w) \rVert_{2} + \lambda_{\text{ID}}\mathcal{L}_{\text{ID}}(w)$$
@@ -141,73 +141,74 @@ While the latent mapper allows for a fast inference time, the authors found that
 The high-level idea of this approach is to first use the CLIP text encoder to obtain a vector $$\Delta t$$ in CLIP's joint language-image embedding and then map this vector into a manipulation direction $$\Delta s$$ in $$\mathcal{S}$$. A stable $$\Delta t$$ is obtained from natural language using prompt engineering. The corresponding direction $$\Delta s$$ is then determined by assessing the relevance of each style channel to the target attribute.
 
 
-## Cross-Attention Control
-The final option we explore for semantic image editing is cross-attention control. This approach uses cross-attention maps, which are high-dimensional tensors that bind pixels and tokens extracted from the prompt text. These maps contain rich semantic relations which affect the generated image.
+## Cross-Attention Control (Prompt-to-Prompt)
+The final option we will explore for semantic image editing is cross-attention control. This approach uses cross-attention maps, which are high-dimensional tensors that bind pixels and tokens extracted from the prompt text. These maps contain rich semantic relations which affect the generated image.
 
 ### Cross-Attention in Text-Conditioned Diffusion Models
-In a diffusion model, each diffusion step $t$ consists of predicting the noise $\epsilon$ from a noisy image $z_{t}$ and text embedding $\psi(\mathcal{P})$ using a U-shaped network. The final step yields the generated image $\mathcal{I}=z_{0}$. More formally, the deep spatial features of the noisy image $\phi (z_{t})$ are projected to a query matrix $Q = \ell_{Q}(\phi(z_{t}))$, and the textual embedding is projected to a key matrix $K = \ell_{K}(\psi(\mathcal{P}))$ and a value matrix $V = \ell_{V}(\psi(\mathcal{P}))$, via learned linear projections $\ell_{Q}$, $\ell_{K}$, and $\ell_{V}$. Attention maps are then
+In a diffusion model, each diffusion step $$t$$ consists of predicting the noise $$\epsilon$$ from a noisy image $$z_{t}$$ and text embedding $$\psi(\mathcal{P})$$ using a U-shaped network. The final step yields the generated image $$\mathcal{I}=z_{0}$$. More formally, the deep spatial features of the noisy image $$\phi (z_{t})$$ are projected to a query matrix $$Q = \ell_{Q}(\phi(z_{t}))$$, and the textual embedding is projected to a key matrix $$K = \ell_{K}(\psi(\mathcal{P}))$$ and a value matrix $$V = \ell_{V}(\psi(\mathcal{P}))$$, via learned linear projections $$\ell_{Q}$$, $$\ell_{K}$$, and $$\ell_{V}$$. Attention maps are then
 
 $$M = \text{Softmax}(\frac{QK^{T}}{\sqrt{d}})$$,
-where the cell $M_{ij}$ defines the weight of the value of the $j$-th token on the pixel $i$, and $d$ is the latent projection dimension of the keys and queries. Finally, the cross-attention output is defined to be $\hat{\phi}(z_{t}) = MV$, which is then used to update the spatial features $\phi(z_{t})$.
+where the cell $$M_{ij}$$ defines the weight of the value of the $$j$$-th token on the pixel $$i$$, and $$d$$ is the latent projection dimension of the keys and queries. Finally, the cross-attention output is defined to be $$\hat{\phi}(z_{t}) = MV$$, which is then used to update the spatial features $$\phi(z_{t})$$.
 
-Intuitively, the cross-attention output $MV$ is a weighted average of the values $V$ where the weights are the attention maps $M$, which are correlated to the similarity between $Q$ and $K$.
+Intuitively, the cross-attention output $$MV$$ is a weighted average of the values $$V$$ where the weights are the attention maps $$M$$, which are correlated to the similarity between $$Q$$ and $$K$$.
 
 ### Controlling the Cross-Attention
-Pixels in the cross-attention maps are more attracted to the words that describe them. Since attention reflects the overall composition, injecting the attention maps $M$ obtained from the generation with the original prompt $\mathcal{P}$ into a second generation with the modified prompt $\mathcal{P}^{\*}$ allows the synthesis of an edited image $\mathcal{I}^{\*}$ that is manipulated according to the edited prompt while keeping the structure of the original image $\mathcal{I}$ intact.
+Pixels in the cross-attention maps are more attracted to the words that describe them. Since attention reflects the overall composition, injecting the attention maps $$M$$ obtained from the generation with the original prompt $$\mathcal{P}$$ into a second generation with the modified prompt $$\mathcal{P}^{*}$$ allows the synthesis of an edited image $$\mathcal{I}^{*}$$ that is manipulated according to the edited prompt while keeping the structure of the original image $$\mathcal{I}$$ intact.
 
-Let $DM(z_{t}, \mathcal{P}, t, s)$ be the computation of a single step in the diffusion process which outputs the noisy image $z_{t-1}$ and the attention map $M_{t}$. Let  $DM(z_{t}, \mathcal{P}, t, s) \lbrace M \gets \widehat{M} \rbrace$ be the diffusion step where the attention map $M$ is overridden with an additional given map $\widehat{M}$ with the same values $V$ from the supplied prompt. Let $M_{t}^{\*}$ be the produced attention map from the edited prompt $\mathcal{P}^{\*}$. Let $Edit(M_{t}, M_{t}^{\*}, t)$ be a general edit function that receives the $t$-th attention maps of the original and edited images as input.
+Let $$DM(z_{t}, \mathcal{P}, t, s)$$ be the computation of a single step in the diffusion process which outputs the noisy image $$z_{t-1}$$ and the attention map $$M_{t}$$. Let  $$DM(z_{t}, \mathcal{P}, t, s) \lbrace M \gets \widehat{M} \rbrace$$ be the diffusion step where the attention map $$M$$ is overridden with an additional given map $$\widehat{M}$$ with the same values $$V$$ from the supplied prompt. Let $$M_{t}^{*}$$ be the produced attention map from the edited prompt $$\mathcal{P}^{*}$$. Let $$Edit(M_{t}, M_{t}^{*}, t)$$ be a general edit function that receives the $$t$$-th attention maps of the original and edited images as input.
 
 The general algorithm for controlled generation performs the iterative diffusion process for both prompts simultaneously, where an attention-based manipulation is applied in each step according to the desired editing task. The internal randomness is fixed since different seeds produce wildly different outputs, even for the same prompt.
 
 **Algorithm 1**: Prompt-to-Prompt Image Editing  
 
-**Input**: A source prompt $\mathcal{P}$, a target prompt $\mathcal{P}^{\*}$, and a random seed $s$  
-**Optional for local editing**: $w$ and $w^{\*}$, words in $\mathcal{P}$ and $\mathcal{P}^{\*}$, specifying the editing region  
-**Output**: A source image $x_{src}$ and an edited image $x_{dst}$  
-$z_{T} \sim N(0, I)$ A unit Gaussian random variable with random seed $s;$  
-$z_{T}^{\*} \gets z_{T};$  
-**for** $t = T, T-1, ..., 1$ **do**  
-&nbsp;&nbsp;&nbsp;&nbsp; $z_{t-1}, M_{t} \gets DM(z_{t}, \mathcal{P}, t, s);$  
-&nbsp;&nbsp;&nbsp;&nbsp; $M_{t}^{\*} \gets DM(z_{t}^{\*}, \mathcal{P}\_{t}^{\*}, t, s);$  
-&nbsp;&nbsp;&nbsp;&nbsp; $\widehat{M}\_{t} \gets Edit(M_{t}, M_{t}^{\*}, t);$  
-&nbsp;&nbsp;&nbsp;&nbsp; $z_{t-1}^{\*} \gets DM(z_{t}^{\*}, \mathcal{P}^{\*}, t, s) \lbrace M \gets \widehat{M}\_{t} \rbrace$  
-&nbsp;&nbsp;&nbsp;&nbsp; **if** $local$ **then**  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $\alpha \gets B(\overline{M}\_{t, w}) \cup B(\overline{M}\_{t, w^{\*}}^{\*});$  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $z_{t-1}^{\*} \gets (1 - \alpha) \odot z_{t-1} + \alpha \odot z_{t-1}^{\*}$  
+**Input**: A source prompt $$\mathcal{P}$$, a target prompt $$\mathcal{P}^{*}$$, and a random seed $$s$$  
+**Optional for local editing**: $$w$$ and $$w^{*}$$, words in $$\mathcal{P}$$ and $$\mathcal{P}^{*}$$, specifying the editing region  
+**Output**: A source image $$x_{src}$$ and an edited image $$x_{dst}$$  
+$$z_{T} \sim N(0, I)$$ A unit Gaussian random variable with random seed $$s;$$  
+$$z_{T}^{*} \gets z_{T};$$  
+**for** $$t = T, T-1, ..., 1$$ **do**  
+&nbsp;&nbsp;&nbsp;&nbsp; $$z_{t-1}, M_{t} \gets DM(z_{t}, \mathcal{P}, t, s);$$  
+&nbsp;&nbsp;&nbsp;&nbsp; $$M_{t}^{*} \gets DM(z_{t}^{*}, \mathcal{P}_{t}^{*}, t, s);$$  
+&nbsp;&nbsp;&nbsp;&nbsp; $$\widehat{M}_{t} \gets Edit(M_{t}, M_{t}^{*}, t);$$  
+&nbsp;&nbsp;&nbsp;&nbsp; $$z_{t-1}^{*} \gets DM(z_{t}^{*}, \mathcal{P}^{*}, t, s) \lbrace M \gets \widehat{M}_{t} \rbrace$$  
+&nbsp;&nbsp;&nbsp;&nbsp; **if** $$local$$ **then**  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $$\alpha \gets B(\overline{M}_{t, w}) \cup B(\overline{M}_{t, w^{*}}^{*});$$  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $$z_{t-1}^{*} \gets (1 - \alpha) \odot z_{t-1} + \alpha \odot z_{t-1}^{*}$$  
 &nbsp;&nbsp;&nbsp;&nbsp; **end**  
 **end**  
-**Return** $(z_{0}, z_{0}^{\*})$
+**Return** $$(z_{0}, z_{0}^{*})$$
 
 ### Local Editing
-To modify a specific object or region while leaving the rest of the scene intact, the cross-attention map layers corresponding to the edited object are used. A mask of the edited part is approximated and the modification is constrained to be applied only in this local region. To calculate the mask at step $t$, compute the average attention map $\overline{M}\_{t, w}$ (averaged over the steps $T,...,t$) of the original word $w$ and the map $\overline{M}\_{t, w^{\*}}^{\*}$ of the new word $w^{\*}$. Next, apply a threshold to produce binary maps ($B(x) := x > k$ and $k = 0.3$). The final mask $\alpha$ is a union of the binary maps since the edited region should include silhouettes of both the original and the newly edited object to support geometric modifications. Finally, the mask is used to constrain the editing region, where $\odot$ denotes element-wise multiplication.
+To modify a specific object or region while leaving the rest of the scene intact, the cross-attention map layers corresponding to the edited object are used. A mask of the edited part is approximated and the modification is constrained to be applied only in this local region. To calculate the mask at step $$t$$, compute the average attention map $$\overline{M}_{t, w}$$ (averaged over the steps $$T,...,t$$) of the original word $$w$$ and the map $$\overline{M}_{t, w^{*}}^{*}$$ of the new word $$w^{*}$$. Next, apply a threshold to produce binary maps ($$B(x) := x > k$$ and $$k = 0.3$$). The final mask $$\alpha$$ is a union of the binary maps since the edited region should include silhouettes of both the original and the newly edited object to support geometric modifications. Finally, the mask is used to constrain the editing region, where $$\odot$$ denotes element-wise multiplication.
 
 ### Word Swap
-"Word swap" is the case where the user swaps tokens in the prompt with alternatives, such as $\mathcal{P} =$ "a big bicycle" and $\mathcal{P}^{\*} =$ "a big car". In order to preserve the original composition while addressing the content of the new prompt, the attention maps of the source image are injected into the generation with the modified prompt. Since this attention injection may over-constrain the geometry, a softer attention constrain is used:
-$$Edit(M_{t}, M_{t}^{\*}) :=
+"Word swap" is the case where the user swaps tokens in the prompt with alternatives, such as $$\mathcal{P} =$$ "a big bicycle" and $$\mathcal{P}^{*} =$$ "a big car". In order to preserve the original composition while addressing the content of the new prompt, the attention maps of the source image are injected into the generation with the modified prompt. Since this attention injection may over-constrain the geometry, a softer attention constrain is used:
+$$Edit(M_{t}, M_{t}^{*}) :=
   \begin{cases}
-    M_{t}^{\*} & \text{if} t < \tau \\
-    M_{t} & \text{otherwise,}
+    M_{t}^{*} & \text{if } t < \tau \\
+    M_{t} & \text{otherwise.}
   \end{cases}$$
 
-where $\tau$ is a timestamp parameter that determines until which step the injection is applied. Since the composition is determined in the early steps, by limiting the number of injection steps, the composition will have the necessary geometric freedom for adapting to the new prompt. Another relaxation is to assign a different number of injection steps for different tokens in the prompt. If two words are represented using a different number of tokens, the maps are duplicated/averaged as necessary using an alignment function described next.
+where $$\tau$$ is a timestamp parameter that determines until which step the injection is applied. Since the composition is determined in the early steps, by limiting the number of injection steps, the composition will have the necessary geometric freedom for adapting to the new prompt. Another relaxation is to assign a different number of injection steps for different tokens in the prompt. If two words are represented using a different number of tokens, the maps are duplicated/averaged as necessary using an alignment function described next.
 
 ### Prompt Refinement
-"Prompt refinement" is the case where a user adds new tokens to the prompt, such as $\mathcal{P} =$ "a castle" and $\mathcal{P}^{\*} =$ "children drawing of a castle". To preserve the common details, the attention injection is only applied over the common tokens from both prompts. The alignment function $A$ receives a token index from the target prompt $\mathcal{P}^{\*}$ and outputs the corresponding token index in $\mathcal{P}$ or $None$ if there is no match. Then, the editing function is:
-$$(Edit(M_{t}, M_{t}^{\*}, t))\_{i, j} :=
+"Prompt refinement" is the case where a user adds new tokens to the prompt, such as $$\mathcal{P} =$$ "a castle" and $$\mathcal{P}^{*} =$$ "children drawing of a castle". To preserve the common details, the attention injection is only applied over the common tokens from both prompts. The alignment function $$A$$ receives a token index from the target prompt $$\mathcal{P}^{*}$$ and outputs the corresponding token index in $$\mathcal{P}$$ or $$None$$ if there is no match. Then, the editing function is:
+$$Edit(M_{t}, M_{t}^{*}, t)_{i, j} :=
   \begin{cases}
-    (M_{t}^{\*})\_{i, j} & \text{if } A(j) = None \\
-    (M_{t})\_{i, A(j)} & \text{otherwise.}
+    (M_{t}^{*})_{i, j} & \text{if } A(j) = None \\
+    (M_{t})_{i, A(j)} & \text{otherwise.}
   \end{cases}$$
   
-$i$ coresponds to a pixel while $j$ corresponds to a text token.
+where $$i$$ coresponds to a pixel while $$j$$ corresponds to a text token.
 
 ### Attention Re-Weighting
-Lastly, the user may wish to strenghten or weaken how much each token affects the resulting image. For example, consider the prompt $\mathcal{P} =$ "a fluffy ball", and assume the user wants to make the ball more or less fluffy. To achieve this, the attention map of the assigned token $j^{\*}$ is scaled with a parameter $c \in [-2, 2]$, resulting in a stronger or weaker effect. The rest of the attention maps remain unchanged. Thus, the editing function is:
-$$(Edit(M_{t}, M_{t}^{\*}, t))\_{i, j} :=
+Lastly, the user may wish to strenghten or weaken how much each token affects the resulting image. For example, consider the prompt $$\mathcal{P} =$$ "a fluffy ball", and assume the user wants to make the ball more or less fluffy. To achieve this, the attention map of the assigned token $$j^{*}$$ is scaled with a parameter $$c \in [-2, 2]$$, resulting in a stronger or weaker effect. The rest of the attention maps remain unchanged. Thus, the editing function is:
+$$Edit(M_{t}, M_{t}^{*}, t)_{i, j} :=
   \begin{cases}
-    c \cdot (M_{t}\_{i, j}) & \text{if } j = j^{\*} \\
-    (M_{t})\_{i, j} & \text{otherwise.}
+    c \cdot (M_{t})_{i, j} & \text{if } j = j^{*} \\
+    (M_{t})_{i, j} & \text{otherwise.}
   \end{cases}$$
+
 
 
 ## Demonstration
