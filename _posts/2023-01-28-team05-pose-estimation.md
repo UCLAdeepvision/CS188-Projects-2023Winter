@@ -44,7 +44,7 @@ The network connects high-to-low subnetworks in parallel and maintains high reso
 
 ### 3.1 Environment
 
-You can visit our colab we used to train the model [here](https://colab.research.google.com/drive/1shL_ki5Uqe3tdqVRjuxlFTCga69tz_q7?usp=sharing).
+[You can visit our Colab Notebook that we used to demo training and running the model here!](https://colab.research.google.com/drive/1shL_ki5Uqe3tdqVRjuxlFTCga69tz_q7?usp=sharing).
 
 First up, environment setup and installation! Since Google Colaboratory has many of the Python packages we need to train and test this dataset, we'll assume that anyone replicating our work is using it. From here, the original model will be referred to as HRNet.
 
