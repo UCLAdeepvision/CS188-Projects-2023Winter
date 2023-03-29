@@ -118,10 +118,8 @@ Top 5 accuracy: 54.52%
 >Trained with epoch=30, learning rate=0.1, batch size=16, number of classes=20
 
 
-![Actionformer Table]({{ '/assets/images/team22/image11.png' | relative_url }})
-{: style="width: 400px; max-width: 100%;"}
-
-
+<!--![Actionformer Table]({{ '/assets/images/team22/image11.png' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}-->
 
 
 |  Method (IoU) | .1 |  .3  |  .5  |  .6  |  .7  |  Avg  |
