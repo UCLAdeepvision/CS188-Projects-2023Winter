@@ -7,7 +7,7 @@ date: 2023-03-25
 ---
 
 
-> The manual labelling of high quality datasets for the purposes of training Computer Vision models remains one of the most time consuming tasks for Computer Vision research. Consequently, alternative methods of extracting label information from existing images and visual data is one of the areas of focus for recent research. In this blog we explore these state of the art methods in pre-training Image Classification models, namely CLIP (Contrastive Language–Image Pre-training) and CoCa (Contrastive Captioners) with a variety of pre-trainings. Extracting latent labels from images already associated with text widely available on the internet is a promising method to fast-track the training of Computer Vision models using text *and* image encoders. These models demonstrate the power of Contrastive Pre-training to perform well with "zero-shot" classification, or classifying images which the model has not been trained on or seen before.
+> The manual labelling of high quality datasets for the purposes of training Computer Vision models remains one of the most time consuming tasks for Computer Vision research. Consequently, alternative methods of extracting label information from existing images and visual data is one of the areas of focus for recent research. In this blog we explore one of the state of the art models in pre-training Image Classification models, namely CLIP (Contrastive Language–Image Pre-training). Extracting latent labels from images already associated with text widely available on the internet is a promising method to fast-track the training of Computer Vision models using text *and* image encoders. These models demonstrate the power of Contrastive Pre-training to perform well with "zero-shot" classification, or classifying images which the model has not been trained on or seen before.
 
 
 - [Introduction](#introduction)
@@ -25,19 +25,20 @@ date: 2023-03-25
   - [Pre-training datasets](#pre-training-datasets)
   - [OpenCLIP Benchmarks](#openclip-benchmarks)
   - [Our Zero-Shot Datasets](#our-zero-shot-datasets)
-    - [Environment setup](#environment-setup)
-    - [Code](#code)
+    - [Tensorflow Datasets](#tensorflow-datasets)
+      - [Code](#code)
     - [Miniplaces](#miniplaces)
       - [Results](#results)
 - [Explainability](#explainability)
   - [Setup](#setup)
   - [Results](#results-1)
-    - [General results](#general-results)
-    - [Foreground Background Comparison](#foreground-background-comparison)
-    - [Object Specificity Comparison](#object-specificity-comparison)
-- [CoCa](#coca)
+      - [Experiment 1](#experiment-1)
+      - [Experiment 2](#experiment-2)
+      - [Experiment 3](#experiment-3)
+      - [Experiment 4](#experiment-4)
+      - [Experiment 5](#experiment-5)
+    - [Code](#code-1)
 - [References](#references)
-  - [LINK DUMP](#link-dump)
 - [Appendix](#appendix)
 
 
@@ -247,7 +248,7 @@ The above histogram is similar to the one from the OpenCLIP benchmark results, a
 <p style="text-align: center;">$$acc_{adjusted}\ =\ acc\ -\ \frac{1}{N}$$</p>
 Where N is the number of categories. This metric enables us to better compare performance across classification tasks and avoid bias towards binary classification.
 
-We included the imagenette and imagewang datasets as a control datasets to ensure our results align with the ones produced by OpenCLIP. Notably, imagenette and imagewang are subsets of the original imagenet and only include 10 categories. Similar to OpenCLIP's benchmarks, all clip models excel at at the imagenet tasks, acheiving >95% accuracy. This both confirms clip models ability to handle variations in imagenet tasks, but also the validity of our own benchmarks.
+We included the imagenette and imagewang datasets as a control datasets to ensure our results align with the ones produced by OpenCLIP. Notably, imagenette and imagewang are subsets of the original imagenet and only include 10 categories. Similar to OpenCLIP's benchmarks, all CLIP models excel at at the imagenet tasks, acheiving >95% accuracy. This both confirms clip models ability to handle variations in imagenet tasks, but also the validity of our own benchmarks.
 
 We can better explore CLIP's performance on high-level tasks by grouping datsets into broad types:
 
@@ -257,7 +258,7 @@ As a result of the subtraction in `acc1_adjusted`, we gain the benefit of having
 
 #### Code
 
-A more detailed view of our zero-shot benchmarking can be found in this [colab](https://drive.google.com/file/d/1triv0P3MMXO3qP5bDU--Dk6xFGW_wUQO/view?usp=sharing)
+A more detailed view of our zero-shot benchmarking can be found in this [colab](https://drive.google.com/file/d/1triv0P3MMXO3qP5bDU--Dk6xFGW_wUQO/view?usp=sharing).
 
 ### Miniplaces
 
@@ -267,9 +268,13 @@ We constructed our [notebook](https://colab.research.google.com/drive/1Jxg_Y73J9
 
 #### Results
 
+---
+
 |Model: | ViT-L/14 LAION | ResNet50 OpenAI | ResNet101 OpenAI |
-|:-----:|:-----:|:-----:|:-----:|
+|:-----:|:-------:|:-------:|:-----:|
 |Miniplaces Top1 Accuracy: | 0.726 | 0.554 | 0.555 |
+
+---
 
 The zero-shot accuracies above validate previous findings that CLIP models with ResNet based image encoders, even deep ResNets like ResNet101, fail to achieve nearly as high zero-shot accuracies as models with ViT image encoders. In the context of the class competition, which was to train on Miniplaces to evaluate standard classification accuracy, the ResNet models are still impressive, with the ResNet50 based model matching the highest standard classification accuracy and the ResNet101 surpassing all submissions. However, they're clearly not as versatile as ViT-L/14. One possible explanation for the relatively poor ResNet CLIP performance is that those architectures were designed to be good feature extractors for a finite number of classes, where the number of convolutional filters particularly in deeper layers is partially influenced by the final number of target classes. On the other hand the patchification and subsequent tokenization of images in transformer encoders are known to be better at extracting global image features and capturing long-range dependencies.
 
@@ -280,16 +285,119 @@ Now we conduct an analysis of the self-attention across different CLIP architect
 
 ## Setup
 
+We base our notebooks off the CLIP-explainability notebook from Chefer et al's paper [4] and corresponding repository Transformer-MM-Explainability. We modified it to include images of our own choosing to probe specificity and limits of CLIP's visual and text encoders. While the original notebook only used ViT models from OpenAI, we also included a variety of models from OpenCLIP to allow for a more complete analysis.
+
+<!-- Note that the method of visualizing attention in [4] uses co-attention, which is better suited for CLIP than self-attention because it assumes context is being provided as the queries and keys to the attention mechanism. -->
+
 ## Results
 
-### General results
 
-### Foreground Background Comparison
+#### Experiment 1
 
-### Object Specificity Comparison
+Prompt: "A photo of a pair of elephants"
+
+| Model | Original/Attention | 
+| :--------: | :--------: | 
+| OpenAI ViT-B/16   |  ![opanai-ViT-B16-elephants](assets/images/team-33/openAI-ViT-B:16-elephants.png)  | 
+| LAION ViT-B/16-400m   | ![laion-ViT-B16-elephants](assets/images/team-33/laion-B:16-elephants.png)   | 
+| OpenAI ViT-B/32   | ![opanai-ViT-B32-elephants](assets/images/team-33/openAI-ViT-B:32-elephants.png)   | 
+| LAION ViT-B/32-400m   | ![laion-ViT-B32-400m-elephants](assets/images/team-33/laion-B:32-400m-elephants.png)   | 
+| LAION ViT-B/32-2b   | ![laion-ViT-B32-2b-elephants](assets/images/team-33/laion-B:32-2b-elephants.png)  | 
+| OpenAI ViT-L/14  | ![opanai-ViT-L14-elephants](assets/images/team-33/openAI-ViT-L:14-elephants.png)  | 
+| LAION ViT-L/14-400m  | ![laion-ViT-L14-elephants](assets/images/team-33/laion-L:14-elephants.png)  |
 
 
-# CoCa
+Here we can see the model architecture affects the attention the most. The models with patch size 16px (ViT-B/16) from both OpenAI and LAION highlight the attention on the left elephant, although not the right one.
+
+The attention is about the same for the OpenAI B/32 model, focusing on the left elephant. The LAION ViT-B/32-400m model struggles, focusing on a patch of the lake with very weak attention on the left elephant. Interestingly, the LAION ViT-B/32-2b model is the only model whose main attention hotspot contains both elephants. This implies the text encoding for the word "pair" had more correspondance with the ViT model when pretrained on a larger dataset.
+
+The attention results for the ViT-L/14 models are consistent between OpenAI and LAION. 
+
+Now let's see what happens when we change the prompt.
+
+#### Experiment 2
+
+Prompt: "A photo of a pond"
+
+| Model | Original/Attention | 
+| :--------: | :--------: | 
+| OpenAI ViT-B/16   |  ![opanai-ViT-B16-pond](assets/images/team-33/openAI-ViT-B:16-pond.png)  | 
+| LAION ViT-B/16-400m   | ![laion-ViT-B16-pond](assets/images/team-33/laion-B:16-pond.png)   | 
+| OpenAI ViT-B/32   | ![opanai-ViT-B32-pond](assets/images/team-33/openAI-ViT-B:32-pond.png)   | 
+| LAION ViT-B/32-400m   | ![laion-ViT-B32-400m-pond](assets/images/team-33/laion-B:32-400m-pond.png)   | 
+| LAION ViT-B/32-2b   | ![laion-ViT-B32-2b-pond](assets/images/team-33/laion-B:32-2b-pond.png)  | 
+| OpenAI ViT-L/14  | ![opanai-ViT-L14-pond](assets/images/team-33/openAI-ViT-L:14-pond.png)  | 
+| LAION ViT-L/14-400m  | ![laion-ViT-L14-pond](assets/images/team-33/laion-L:14-pond.png)  |
+
+There are some more interesting differences here. The ViT-B/32-2b from LAION once again appears to have the most accurate attention, with the hotspot existing across the whole pond fairly continuously. The ViT-B/32 from OpenAI is a close second, also being fairly uniform and spanning the whole pond. The ViT-B/32-400m struggles once again with the hotspot in a single location in the pond matching its attention for the elephant prompt, suggesting the image encoding for this image is poor given that the prompt didn't change its attention much.
+
+It's also interesting to see the ViT-L/14 from LAION perform the worst here, with weak attention across the pond and two random hotspots in the sky. The fact that this particular ViT-L/14, the ViT-B/16, and the ViT-B/32 specified as 400m were all pretrained on the same dataset, yet have such drastically different results, suggests architecture does matter significantly even when dealing with datasets with 400 million image-text pairs. Even that large a dataset can be considered relatively small in the context of CLIP models.
+
+#### Experiment 3
+
+Prompt: "A photo of a group of ducks"
+
+| Model | Original/Attention | 
+| :--------: | :--------: | 
+| OpenAI ViT-B/16   |  ![opanai-ViT-B16-ducks](assets/images/team-33/openAI-ViT-B:16-ducks.png)  | 
+| LAION ViT-B/16-400m   | ![laion-ViT-B16-ducks](assets/images/team-33/laion-B:16-ducks.png)   | 
+| OpenAI ViT-B/32   | ![opanai-ViT-B32-ducks](assets/images/team-33/openAI-ViT-B:32-ducks.png)   | 
+| LAION ViT-B/32-400m   | ![laion-ViT-B32-400m-ducks](assets/images/team-33/laion-B:32-400m-ducks.png)   | 
+| LAION ViT-B/32-2b   | ![laion-ViT-B32-2b-ducks](assets/images/team-33/laion-B:32-2b-ducks.png)  | 
+| OpenAI ViT-L/14  | ![opanai-ViT-L14-ducks](assets/images/team-33/openAI-ViT-L:14-ducks.png)  | 
+| LAION ViT-L/14-400m  | ![laion-ViT-L14-ducks](assets/images/team-33/laion-L:14-ducks.png)  |
+
+All of the models perform surprisingly well here considering the ducks themselves are tiny relative to the size of the photo. The only model which perform mediocre are the ViT-B/32 from OpenAI which misses the two left duck groups, and the ViT-B/32-400m from LAION which does the same and has the same attention artifact at the bottom of the image as the first two prompts.
+
+#### Experiment 4
+
+Prompt: "sushi rolls"
+
+| Model | Original/Attention | 
+| :--------: | :--------: | 
+| OpenAI ViT-B/16   |  ![opanai-ViT-B16-sushi](assets/images/team-33/openAI-ViT-B:16-sushi.png)  | 
+| LAION ViT-B/16-400m   | ![laion-ViT-B16-sushi](assets/images/team-33/laion-B:16-sushi.png)   | 
+| OpenAI ViT-B/32   | ![opanai-ViT-B32-sushi](assets/images/team-33/openAI-ViT-B:32-sushi.png)   | 
+| LAION ViT-B/32-400m   | ![laion-ViT-B32-400m-sushi](assets/images/team-33/laion-B:32-400m-sushi.png)   | 
+| LAION ViT-B/32-2b   | ![laion-ViT-B32-2b-sushi](assets/images/team-33/laion-B:32-2b-sushi.png)  | 
+| OpenAI ViT-L/14  | ![opanai-ViT-L14-sushi](assets/images/team-33/openAI-ViT-L:14-sushi.png)  | 
+| LAION ViT-L/14-400m  | ![laion-ViT-L14-sushi](assets/images/team-33/laion-L:14-sushi.png)  |
+
+All models do fairly well here, with the majority of the attention hotspot focusing on the sushi rolls at the bottom left of the photo. One potential reason for the consistency is that food, particularly sushi, is generally well photographed and published on social media, perhaps increasing the representation of sushi-like photos in the pre-training datasets.
+
+For some reason, the LAION ViT-B/14 has many small attention artifacts throughout the image.
+
+Let's see how the attention shifts with other prompts:
+
+#### Experiment 5
+
+Prompt: "an egg"
+
+| Model | Original/Attention | 
+| :--------: | :--------: | 
+| OpenAI ViT-B/16   |  ![opanai-ViT-B16-egg](assets/images/team-33/openAI-ViT-B:16-egg.png)  | 
+| LAION ViT-B/16-400m   | ![laion-ViT-B16-egg](assets/images/team-33/laion-B:16-egg.png)   | 
+| OpenAI ViT-B/32   | ![opanai-ViT-B32-egg](assets/images/team-33/openAI-ViT-B:32-egg.png)   | 
+| LAION ViT-B/32-400m   | ![laion-ViT-B32-400m-egg](assets/images/team-33/laion-B:32-400m-egg.png)   | 
+| LAION ViT-B/32-2b   | ![laion-ViT-B32-2b-egg](assets/images/team-33/laion-B:32-2b-egg.png)  | 
+| OpenAI ViT-L/14  | ![opanai-ViT-L14-egg](assets/images/team-33/openAI-ViT-L:14-egg.png)  | 
+| LAION ViT-L/14-400m  | ![laion-ViT-L14-egg](assets/images/team-33/laion-L:14-egg.png)  |
+
+This prompt leads to more differentiation between models. The ViT-B/32 from OpenAI is particulaly bad here, with attention hotspots on the soy sauce container and table larger than the egg at the bottom right of the photo. In contrast, the LAION ViT-L/14 was nearly perfect, with attention almost exclusively on the egg. Another interesting observation is the fact the ViT-B/32-2b has attention artifacts on the sushi and potatos on the left of the image despite having been trained on a larger dataset. 
+
+### Code
+
+A full implentation of our explainability analysis can be found at the following colabs:
+
+- [ViT/B16 OpenAI](https://colab.research.google.com/drive/1WZdVLVardRGehSEiclMCG66x76DXAtij?usp=sharing)
+- [ViT-B/32 OpenAI](https://colab.research.google.com/drive/1o64hvykZVvnfOdN4dXMW1p_gs9MPeyg9?usp=sharing)
+- [ViT-L/14 OpenAI ](https://colab.research.google.com/drive/1_LwCf3mh2-QdjxNXcnRqX19iM17s20dz?usp=sharing) 
+- [ViT-B/16-400m LAION](https://colab.research.google.com/drive/1bmCYiqMyT4fyM_4dJwvgVWJXrv8r2Q3E?usp=sharing)
+-  [ViT-B/32-400m LAION](https://colab.research.google.com/drive/1ATwELdswxl_IhdUrpadbDpe50QoBe6-k?usp=sharing)
+- [ViT-B/32-2b LAION](https://colab.research.google.com/drive/1Qvkt0rke7ulC1-mf8jH0CZHg7ws2vfpq?usp=sharing)
+- [ViT-L/14 LAION](https://colab.research.google.com/drive/1rW5P2FJ7PXs-_05ehXylojq-EMXMvaW_?usp=sharing)
+
+<!-- # CoCa
 
 In 2022 an extension of the ideas explored by CLIP was published in the form of CoCa (Contrastive Captioners). CoCa combines the contrastive learning methods of CLIP with techniques from Generative Adversarial Networks. First, note that CoCa uses a single image-text foundation that contains the to execute three different downstream tasks including Visual Recognition (single encoder), Crossmodal Alignment (dual encoder), and Image Captioning & Multimodal Understanding (encoder-decoder). However, for the purposes of this blog we will focus solely on the Image Classification capabilities of the architecture while leaving the other capabilities to a brief discussion. The dual encoder model shown below is used for downstream Image Classification.
 
@@ -299,7 +407,7 @@ In 2022 an extension of the ideas explored by CLIP was published in the form of 
 The primary change made to the architecture is the separation of the text decoder transformer into two parts, a unimodal decoder and a multimodal decoder. For the test-time downstream image classification task, only the Unimodal Text Decoder is used. However, the model itself is trained using a combination of the contrastive loss from the image encoding and unimodal text encodings as well as the captioning loss from the multimodal text encodings and the cross  attentional pooling of image encodings. The inclusion of both the captioning loss and the contrastive loss diversifies the training process and likely allows the model to extract more semantic meaning from the latent text labels because of the added focus on captioning loss (for the purposes of generative captioning).
 
 ![Dataset creation and Zero-shot prediction](assets/images/team-33/coca.jpg "overview-b")
-*Figure 4: CoCa architecture and PseudoCode*
+*Figure 4: CoCa architecture and PseudoCode* -->
 
 
 
@@ -311,19 +419,16 @@ The primary change made to the architecture is the separation of the text decode
 
 [3] Dosovitskiy, Alexey, et al. "An image is worth 16x16 words: Transformers for image recognition at scale." arXiv preprint arXiv:2010.11929 (2020).
 
-## LINK DUMP
+[4] LAION-AI. CLIP_benchmark. GitHub, 2021, https://github.com/LAION-AI/CLIP_benchmark.
 
-https://github.com/CSAILVision/miniplaces
+[5] Chefer, Hila, et al. "Generic Attention-model Explainability for Interpreting Bi-Modal and Encoder-Decoder Transformers." CoRR, vol. abs/2103.15679, 2021, arXiv:2103.15679.
 
-https://github.com/openai/CLIP/blob/main/data/prompts.md
+[6] Chefer, Hila. Transformer-MM-Explainability. GitHub, 2021, https://github.com/hila-chefer/Transformer-MM-Explainability.
 
-https://github.com/moein-shariatnia/OpenAI-CLIP
-
-https://github.com/LAION-AI/CLIP_benchmark
-
-https://github.com/hila-chefer/Transformer-MM-Explainability/blob/main/CLIP/clip/model.py
+[7] Zhao, Andrew, et al. miniplaces. GitHub, 2016, https://github.com/CSAILVision/miniplaces.
 
 # Appendix
+---
 
 | dataset                             |   ViT-B-16 laion400m_e32 |   ViT-B-16 openai |   ViT-B-16-plus-240 laion400m_e32 |   ViT-B-32 laion2b_e16 |   ViT-B-32 laion2b_s34b_b79k |   ViT-B-32 openai |   ViT-B-32-quickgelu laion400m_e32 |   ViT-H-14 laion2b_s32b_b79k |   ViT-L-14 laion2b_s32b_b82k |   ViT-L-14 laion400m_e32 |   ViT-L-14 openai |   ViT-L-14-336 openai |   ViT-g-14 laion2b_s12b_b42k |
 |:------------------------------------|-------------------------:|------------------:|----------------------------------:|-----------------------:|-----------------------------:|------------------:|-----------------------------------:|-----------------------------:|-----------------------------:|-------------------------:|------------------:|----------------------:|-----------------------------:|
@@ -365,9 +470,10 @@ https://github.com/hila-chefer/Transformer-MM-Explainability/blob/main/CLIP/clip
 
 *Table 1: Top1 Accuracy across all tested models*
 
-*Note that the term following the model name denotes the pre-training dataset used.
+*Note that the term following the model name denotes the pre-training dataset used.\
 *QuickGELU refers to a fast implementation of GELU (Gaussian Error Linear Unit), an activation function used mainly in Transformer architectures.
 
+---
 
 | dataset                             |   ViT-B-16 laion400m_e32 |   ViT-B-16 openai |   ViT-B-16-plus-240 laion400m_e32 |   ViT-B-32 laion2b_e16 |   ViT-B-32 laion2b_s34b_b79k |   ViT-B-32 openai |   ViT-B-32-quickgelu laion400m_e32 |   ViT-H-14 laion2b_s32b_b79k |   ViT-L-14 laion2b_s32b_b82k |   ViT-L-14 laion400m_e32 |   ViT-L-14 openai |   ViT-L-14-336 openai |   ViT-g-14 laion2b_s12b_b42k |
 |:------------------------------------|-------------------------:|------------------:|----------------------------------:|-----------------------:|-----------------------------:|------------------:|-----------------------------------:|-----------------------------:|-----------------------------:|-------------------------:|------------------:|----------------------:|-----------------------------:|
@@ -406,4 +512,7 @@ https://github.com/hila-chefer/Transformer-MM-Explainability/blob/main/CLIP/clip
 | vtab/smallnorb_label_azimuth        |                0.0603763 |         0.0522661 |                         0.0553795 |              0.0537674 |                    0.0631907 |         0.0630119 |                          0.045024  |                    0.0559609 |                    0.0567608 |                0.05266   |         0.0456437 |             0.0457953 |                    0.0601925 |
 | vtab/smallnorb_label_elevation      |                0.0977694 |         0.117643  |                         0.10851   |              0.108625  |                    0.115905  |         0.120896  |                          0.0973287 |                    0.110218  |                    0.109893  |                0.108132  |         0.113863  |             0.113338  |                    0.114651  |
 | vtab/svhn                           |                0.368531  |         0.350374  |                         0.403349  |              0.379297  |                    0.421682  |         0.133264  |                          0.2796    |                    0.556531  |                    0.486993  |                0.405775  |         0.588689  |             0.559174  |                    0.568346  |
+
 *Table 2: Mean Accuracy per Class Recall*
+
+---
