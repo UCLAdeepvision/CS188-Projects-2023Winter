@@ -13,10 +13,27 @@ date: 2023-03-28
 
 {: class="table-of-content"}
 
-- TOC
-  {:toc}
+1. [Introduction](#introduction)
 
----
+2. [Data Exploration](#exploration)
+   
+   1. [SDSS](#sdss)
+   
+   2. [Galaxy Zoo](#zoo)
+   
+   3. [SDSS Data](#sdata)
+
+3. [YOLO](#yolo)
+
+4. [Training](#training)
+   
+   1. [Training Results](#tresults)
+
+5. [YOLO Detections with Pretrained Weights](#detection)
+
+6. [Limitations, Possible Improvements](#limitation)
+
+7. [Discussion](#discussion)
 
 
 
@@ -24,17 +41,17 @@ date: 2023-03-28
 
 
 
-## 1. Introduction
+## 1. Introduction <a name="introduction"></a>
 
 Astronomical datasets are constantly increasing in size and complexity. The modern generation of integral field units (IFUs) are generating about 60 GB of data per night while imaging instruments are generating 300 GB of data per night. In particular, the James Webb Space Telescope produces and transmits about 57 GB of data using the Deep Space Network (DSN) and the Large Synoptic Survey Telescope (LSST, now called Vera C. Rubin Observatory) which is under construction in Chile expected to start full operations in 2024. With a wide 9.6 square degree field of view 3.2 Gigapixel camera, LSST will generate about 20 TB of data per night (González et al).  Although these astronomical data include a lot more information than intensities measured with specific filters (igr band filters, RBVRI broadband filters), as the size of data produced everyday is increasing over time, deep learning algorithms in computer vision may help researchers to identify key targets to perform more in-depth, conventional analyses. 
 
-## 2. Data Exploration
+## 2. Data Exploration <a name="exploration"> </a>
 
-### 2-1. SDSS
+### 2-1. SDSS<a name="sdss"></a>
 
 The Sloan Digital Sky Survey (SDSS), is a massive astronomical survey which was conducted from 2000 to 2008 which collected more than 3 million astronomical objects (stars, galaxies, and quasars) from over 35% of the sky with a 2.5 meter telescope at Apache Point Observatory in New Mexico, United States. Some of the most important discoveries from the SDSS are 1) discovering and characterizing dark energy, 2) understanding the large-scale structure of the Universe through the distribution of galaxies and the presence of cosmic voids, clusters, and filaments.
 
-### 2-2. Galaxy Zoo
+### 2-2. Galaxy Zoo<a name="zoo"></a>
 
 https://www.kaggle.com/competitions/galaxy-zoo-the-galaxy-challenge/data
 
@@ -80,7 +97,7 @@ Some of the images in the dataset look like the figure below.
 
 [**Figure 2]** *Galaxies in the Galaxy Zoo Dataset. Each image is labeled with its Galaxy-ID and Galaxy type classified by the volunteers* <br>
 
-### 2-3. SDSS Data
+### 2-3. SDSS Data <a name="sdata"></a>
 
 Instead of using cropped images of single galaxies shown above, González et al. used a Python astroquery package to fetch about 20000 field images in FITS format (each with multiple galaxies per single image) from the SDSS database. However, the images fetched from the SDSS are not in a normal RGB format (YOLO method is designed to work with 3-channel color images). Instead, we have access to multiple images of the same field taken with different optical filters. Here, González et al. used three images, each taken with g, r, i band filters. (g-band filter transmits light in the green portion of the spectrum; 400-550 nm, r-band filter transmits light in the red portion of the spectrum; 550-700 nm, and i-band filter transmits light in the near-infrared portion of the spectrum; 700-850 nm). Below are the screenshots of the three FITS images of the same field loaded onto SAOImage DS9, a popular astronomical viewer and analysis tool.
 
@@ -120,7 +137,7 @@ With this conversion method, González et al. converted the three FITS images pe
 
 As the SDSS data contains fields' boundaries and objects' ID and location that are present in the field, González et al. were able to obtain bounding box and label for each object in the field, which are required to train YOLO network.
 
-## 3. YOLO
+## 3. YOLO<a name="yolo"></a>
 
 ![]({{'/assets/images/team39/yolo.png'|relative_url}})
 
@@ -142,7 +159,7 @@ YOLO (You Only Look Once) is a deep learning computer vision algorithm used for 
 
 7. The remaining bounding boxes are visualized on the input image, along with their associated class probabilities.
 
-## 4. Training
+## 4. Training<a name='training'></a>
 
 In YOLO, data augmentation, increasing the training dataset with different transformations of the same data through scaling, rotations, crops, warps, is already implemented. However, in astrophysical context, input images may vary depending on the band-filters and instruments used to obtain the data. Therefore, González et al. trained the YOLO network with 6 different training datasets.
 
@@ -177,7 +194,7 @@ In YOLO, data augmentation, increasing the training dataset with different trans
 
 [**Figure 6-3**] *i-band filter image scaled with sqrt.*
 
-### 4-2. Training Results
+### 4-1. Training Results<a name='tresults'></a>
 
 ![]({{'/assets/images/team39/T123.png'|relative_url}})
 
@@ -189,7 +206,7 @@ In YOLO, data augmentation, increasing the training dataset with different trans
 
 González et al stated that the recall and IOU for T4, T5, and T6 (training datasets with more filter augmentations) remain quite similar to the ones for the first three datasets, however, detection and classification is more robust against different conversion functions and instruments.
 
-## 5. YOLO Detections with Pretrained Weights
+## 5. YOLO Detections with Pretrained Weights<a name="detection"></a>
 
 All of the final results display all the bounding boxes with confidence scores greater than or equal to 0.10.
 
@@ -235,9 +252,7 @@ All of the final results display all the bounding boxes with confidence scores g
 
 [**Figure 11**] Hubble Deep Field image. Lot more galaxies are detected with a more recent version of YOLO network. This is the last update from the González et al's github repo, however, there were no pretrained weights available to public. 
 
-## 6. Limitations, Possible Improvements
-
-- The most recent version of the AstroCV, which is based on YOLO-3 (released in 2018) already suggests significant improvements in performance when compared to the one based on the original YOLO network. If I have access to more powerful computing system with multiple GPUs, I wish I could try the latest YOLO version, YOLO8.
+## 6. Limitations, Possible Improvements<a name="limitation"></a>
 
 - There is no universal conversion method. The conversion method depends on the band filters, and/or the instruments used to collect the data, therefore, the model may not perform very well on the images generated with different conversion methods to the method used in training dataset. 
 
@@ -247,9 +262,19 @@ All of the final results display all the bounding boxes with confidence scores g
   
   - There is one paper tried to use R-CNN to detect low surface brightness galaxies (https://par.nsf.gov/servlets/purl/10340970) <br>
 
-## 7. Discussion
+## 7. Discussion<a name="discussion"></a>
 
 Even though space science research generates TBs of data every day, due to its complexity, attempts to integrate deep-learning computer vision models have been extremely rare. The paper that I heavily relied on, González et al's *Galaxy Detection and Identification Using Deep Learning and Data Augmentation*, is one of the very first papers that tried to integrate modern computer vision algorithms into astrophysical research. However, after the launch of JWST last year and the expected launch of Rubin Observatory (previously named, LSST) in 2024, there's a growing expectation and interest in integrating computer vision deep learning algorithms into astrophysics. (List of more modern papers in astro-computer vision: https://github.com/georgestein/ml-in-cosmology#structure). As a student who majored in both computer science and astrophysics, willing to pursue an academic career in astrophysics, I wish I could use novel computer vision algorithms into my research later in the future.
+
+
+
+
+
+You can find the link code I used at [AstroCV](https://github.com/astroCV/astroCV), and [gdrive](https://drive.google.com/drive/folders/1z7BH06J4YILdo3PrCQjoIeMPOs2SSgFo?usp=share_link)
+
+
+
+
 
 ## Relevant Papers
 
