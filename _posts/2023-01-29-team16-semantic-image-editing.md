@@ -13,6 +13,9 @@ date: 2022-01-29
 * TOC
 {:toc}
 
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=wPRfZBUR_Uk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+If the embed for the video doesn't work, click [here](https://www.youtube.com/watch?v=wPRfZBUR_Uk)
+
 ## Semantic Guidance (SEGA)
 One option for semantic image editing is semantic guidance. This method bases its functionality on the idea that operations performed in semantic space can result in predictable semantic modifications in the final generated image. A well known example of this can be seen in language prediction: under the word2vec text embedding, the vector representation of 'King - male + female' results in 'Queen'. 
 
