@@ -36,13 +36,13 @@ During inference, the model is sampled using $$x = (z_t - \tilde{\epsilon}_\thet
 
 At a high level, guided diffusion can be explained from the following figure, illustrating the $$\epsilon$$-space ($$\epsilon \sim \mathcal{N}(0,I)$$) during diffusion, and the semantic spaces for the concepts involved in editing a prompt "a portrait of a king".
 
-![High to low ]({{ '/assets/images/team16/1.jpg' | relative_url }})
+![Figure 1]({{ '/assets/images/team16/1.jpg' | relative_url }})
 {: style="width: 600px; max-width: 100%;"}
 *Fig 1. Semantic space under semantic guidance applied to an image with description "a portrait of a king"* [2].
 
 Here, the unconditioned noise estimate is represented by a black dot, which starts at a random point without semantic grounding. On executing the prompt "a portrait of a king", the black dot is guided (blue vector) to the space intersecting the concepts 'royal' and 'male', resulting in an image of a king. Under guided diffusion, vectors representing the concepts 'male' and 'female' (orange/green vectors) can be made using estimates conditioned on the respective prompts. After subtracting 'male' and adding 'female' to the guidance, the black dot arrives at a point in the space intersecting the concepts 'royal' and 'female', resulting in an image of a queen. 
 
-![High to low ]({{ '/assets/images/team16/2.jpg' | relative_url }})
+![Figure 2]({{ '/assets/images/team16/2.jpg' | relative_url }})
 {: style="width: 600px; max-width: 100%;"}
 *Fig 2. Result of guidance operation using 'king' - 'male' + 'female'* [2].
 
@@ -138,8 +138,9 @@ where $$G$$ denotes the pretrained StyleGAN generator. To preserve the visual at
 
 $$\mathcal{L}(w) = \mathcal{L}_{\text{CLIP}}(w) + \lambda_{L2} \lVert M_{t}(w) \rVert_{2} + \lambda_{\text{ID}}\mathcal{L}_{\text{ID}}(w)$$
 
-[StyleCLIP1 here]
-Figure 3 shows the architecture of the latent mapper using the text prompt "surprised". First, source image on the left is inverted into a latent code $w$. Next, three mapping functions are trained to generate residuals which are added to $w$ to yield the target code. Finally, a pretrained StyleGAN generates the modified image.
+![Figure 3]({{ '/assets/images/team16/StyleCLIP1.png' | relative_url }})
+{: style="width: 600px; max-width: 100%; text-align: center;"}
+*Fig 3. The architecture of the latent mapper using the text prompt "surprised". First, source image on the left is inverted into a latent code $$w$$. Next, three mapping functions are trained to generate residuals which are added to $w$ to yield the target code. Finally, a pretrained StyleGAN generates the modified image* [3].
 
 ### Global Directions
 While the latent mapper allows for a fast inference time, the authors found that it sometimes fell short when a fine-grained disentangled manipulation was desired. In addition, the directions of different manipulation steps for a given text prompt tended to be similar. Because of these observations, the third approach presented by StyleCLIP is a method for mapping a text prompt into a single, global direction in StyleGAN's style space $$\mathcal{S}$$, which has been shown to be more disentangled than other latent spaces.
@@ -147,15 +148,17 @@ While the latent mapper allows for a fast inference time, the authors found that
 The high-level idea of this approach is to first use the CLIP text encoder to obtain a vector $$\Delta t$$ in CLIP's joint language-image embedding and then map this vector into a manipulation direction $$\Delta s$$ in $$\mathcal{S}$$. A stable $$\Delta t$$ is obtained from natural language using prompt engineering. The corresponding direction $$\Delta s$$ is then determined by assessing the relevance of each style channel to the target attribute.
 
 ### Method Comparison
-[StyleCLIP2 here]
-Figure 4 compares the three methods put forward by StyleCLIP. Notice that although the latent mapper and global direction methods require more time before image generation, the generation process itself is much faster compared to latent optimization.
+![Figure 4]({{ '/assets/images/team16/StyleCLIP2.png' | relative_url }})
+{: style="width: 600px; max-width: 100%;"}
+*Fig 4. Comparison between the three methods put forward by StyleCLIP. Notice that although the latent mapper and global direction methods require more time before image generation, the generation process itself is much faster compared to latent optimization* [3].
 
 
 ## Cross-Attention Control (Prompt-to-Prompt)
 The final option we will explore for semantic image editing is cross-attention control. This approach uses cross-attention maps, which are high-dimensional tensors that bind pixels and tokens extracted from the prompt text. These maps contain rich semantic relations which affect the generated image.
 
-[Cross-Attention Control 1 Here]
-Figure 5 shows a visual representation of the processes described below.
+![Figure 5]({{ '/assets/images/team16/CAC1.png' | relative_url }})
+{: style="width: 600px; max-width: 100%; text-align: center;"}
+*Fig 5. A visual representation of the processes described below* [1].
 
 ### Cross-Attention in Text-Conditioned Diffusion Models
 In a diffusion model, each diffusion step $$t$$ consists of predicting the noise $$\epsilon$$ from a noisy image $$z_{t}$$ and text embedding $$\psi(\mathcal{P})$$ using a U-shaped network. The final step yields the generated image $$\mathcal{I}=z_{0}$$. More formally, the deep spatial features of the noisy image $$\phi (z_{t})$$ are projected to a query matrix $$Q = \ell_{Q}(\phi(z_{t}))$$, and the textual embedding is projected to a key matrix $$K = \ell_{K}(\psi(\mathcal{P}))$$ and a value matrix $$V = \ell_{V}(\psi(\mathcal{P}))$$, via learned linear projections $$\ell_{Q}$$, $$\ell_{K}$$, and $$\ell_{V}$$. Attention maps are then
@@ -168,8 +171,9 @@ Intuitively, the cross-attention output $$MV$$ is a weighted average of the valu
 ### Controlling the Cross-Attention
 Pixels in the cross-attention maps are more attracted to the words that describe them. Since attention reflects the overall composition, injecting the attention maps $$M$$ obtained from the generation with the original prompt $$\mathcal{P}$$ into a second generation with the modified prompt $$\mathcal{P}^{*}$$ allows the synthesis of an edited image $$\mathcal{I}^{*}$$ that is manipulated according to the edited prompt while keeping the structure of the original image $$\mathcal{I}$$ intact.
 
-[Cross-Attention Control 2 Here]
-Figure 6 shows some visualizations of cross-attention maps. The top row shows the average attention masks for each word in the prompt for the image on the left. The bottom row shows the attention maps for with respect to the word "bear" across different time-stamps.
+![Figure 6]({{ '/assets/images/team16/CAC2.png' | relative_url }})
+{: style="width: 600px; max-width: 100%; text-align: center;"}
+*Fig 6. Visualizations of cross-attention maps. The top row shows the average attention masks for each word in the prompt for the image on the left. The bottom row shows the attention maps for with respect to the word "bear" across different time-stamps* [1].
 
 Let $$DM(z_{t}, \mathcal{P}, t, s)$$ be the computation of a single step in the diffusion process which outputs the noisy image $$z_{t-1}$$ and the attention map $$M_{t}$$. Let  $$DM(z_{t}, \mathcal{P}, t, s) \lbrace M \gets \widehat{M} \rbrace$$ be the diffusion step where the attention map $$M$$ is overridden with an additional given map $$\widehat{M}$$ with the same values $$V$$ from the supplied prompt. Let $$M_{t}^{*}$$ be the produced attention map from the edited prompt $$\mathcal{P}^{*}$$. Let $$Edit(M_{t}, M_{t}^{*}, t)$$ be a general edit function that receives the $$t$$-th attention maps of the original and edited images as input.
 
@@ -237,9 +241,6 @@ We have included a colab notebooks demonstrating each of the methods we have exa
 - [Prompt to Prompt](https://colab.research.google.com/drive/17Iv9ael14zWwVob1UZeB9ZkPS4kuyMas#scrollTo=f0rwAgCPTB4P)
 
 
-[Demo Colab](https://colab.research.google.com/drive/1SPfwN8EOAUBfbxqe6Qw4ckNVgPRueCwU?usp=sharing)
-
-
 ## Model Comparisons
 
 In order to compare each of these methods, we initially devised two different studies
@@ -263,7 +264,7 @@ For this experiment, we collected 50 sample points (reseeding the model with a r
 For each sample point, three people voted on whether the model had acceptably applied the edit (in this case, “acceptably” meant that the model had applied the edit while retaining most of the details from the initial image)
 #### Results
 
-![High to low ]({{ '/assets/images/team16/table1.jpg' | relative_url }})
+![Table 1]({{ '/assets/images/team16/table1.jpg' | relative_url }})
 {: style="width: 600px; max-width: 100%;"}
 *Table 1. Prompt Success Rates*.
 
@@ -290,22 +291,23 @@ Survey respondents were presented with unlabeled images, and were asked to rate 
 #### Results
 Initially, we tried to run the survey with more examples, but the first few survey respondents complained about survey length. After reducing the survey size, we obtained the following results from surveying 30 people:
 
-![High to low ]({{ '/assets/images/team16/table2.jpg' | relative_url }})
+![Table 2]({{ '/assets/images/team16/table2.jpg' | relative_url }})
 {: style="width: 600px; max-width: 100%;"}
 *Table 2. Average Rating Per Image/Model*.
-![High to low ]({{ '/assets/images/team16/table3.jpg' | relative_url }})
+![Table 3]({{ '/assets/images/team16/table3.jpg' | relative_url }})
 {: style="width: 600px; max-width: 100%;"}
 *Table 3. Average Rating Per Prompt*.
 
+
 While we tried to fix as many variables as possible when running this survey, the study is clearly not rigorous. Nonetheless, we noted some interesting details:
-- The control images performed surprisingly poorly, with one of the examples performing equally well to one generated example. 
+- The control images performed surprisingly poorly, with some generated examples matching or exceeding the ratings of some real photographs.
 - On average, adding glasses was more convincing than adding a beard or removing hair 
 - StyleCLIP’s Latent Mapper didn't perform as well as expected, despite being a more focused model and having easier prompts (This was likely due to survey respondent confusion, which lead to respondents rating these images lower due to being able to recognize the images as clearly manipulated) 
 
 ### Additional Comparisons
 A more objective comparison that we were able to make in our exploration was per-prompt generation time:
 
-![High to low ]({{ '/assets/images/team16/table4.jpg' | relative_url }})
+![Table 4]({{ '/assets/images/team16/table4.jpg' | relative_url }})
 {: style="width: 600px; max-width: 100%;"}
 *Table 4. Generation Time For One Image*.
 
