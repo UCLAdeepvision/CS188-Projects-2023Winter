@@ -11,7 +11,7 @@ date: 2023-01-28
 <!--more-->
 
 
-
+<iframe width="560" height="315" src="https://www.youtube.com/embed/UB1TUYuYO6g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## 1. Introduction and Objective
 
@@ -43,6 +43,8 @@ The network connects high-to-low subnetworks in parallel and maintains high reso
 ## 3. Setup and Preparation
 
 ### 3.1 Environment
+
+You can visit our colab we used to train the model [here](https://colab.research.google.com/drive/1shL_ki5Uqe3tdqVRjuxlFTCga69tz_q7?usp=sharing).
 
 First up, environment setup and installation! Since Google Colaboratory has many of the Python packages we need to train and test this dataset, we'll assume that anyone replicating our work is using it. From here, the original model will be referred to as HRNet.
 
@@ -121,7 +123,7 @@ We have used the discussed HRNet and observed some results from the model descri
 {: style="width: 600px; max-width: 100%;"}
 *Fig 2. Validation Mean Accuracy vs. Epoch for the default HRNet model*.
 
-This chart does an excellent job highlighting the average performance of our model while training it for 9 epochs. There are several notable takeaways from the graph. For one, our validation mean never regresses, which is to be expected. Secondly, after the fourth epoch, the model's performance begins to improve at a much slower rate. Lastly, by the final epoch, our model reaches a mean average validation accuracy of around 70%. Now that we know how our model performs normally, we can evaluate how well our modifications perform in comparison. Our first ablation was to explore the performance of the model after removing batch normalization from the model's architecture. The results are in the following chart:
+This chart does an excellent job highlighting the average performance of our model while training it for 9 epochs. There are several notable takeaways from the graph. For one, our validation mean never regresses, which is to be expected. Secondly, after the fourth epoch, the model's performance begins to improve at a much slower rate in general. Lastly, by the final epoch, our model reaches a mean average validation accuracy of around 70%. Now that we know how our model performs normally, we can evaluate how well our modifications perform in comparison. Our first ablation was to explore the performance of the model after removing batch normalization from the model's architecture. The results are in the following chart:
 
 ![Validation Mean Accuracy vs. Epoch for the model with batch normalization removed]({{ '/assets/images/HendersonHouser/remove_batchnorms_valid_mean.jpg' | relative_url }})
 {: style="width: 600px; max-width: 100%;"}
@@ -133,7 +135,7 @@ This chart reveals several key observations about this experiment. First, the mo
 {: style="width: 600px; max-width: 100%;"}
 *Fig 4. Validation Mean Accuracy vs. Epoch for the model with both batch normalization and activations removed*.
 
-This graph allows us to gain a better insight into how the model is performing throughout the various epochs. For one, as the epochs progress, it seems that the model performs better at an increasing rate. Secondly, the model reaches a performance of 70% at epoch 9. For better comparison, we can also directly compare these experiments by plotting them on the same chart. This is best seen here:
+This graph allows us to gain a better insight into how the model is performing throughout the various epochs. For one, as the epochs progress, it seems that the model performs better at a decreasing rate. Secondly, the model reaches a performance of 70% at epoch 9. For better comparison, we can also directly compare these experiments by plotting them on the same chart. This is best seen here:
 
 ![Validation Mean Accuracy vs. Epoch across all three experiments]({{ '/assets/images/HendersonHouser/valid_Mean VS epoch all three.jpg' | relative_url }})
 {: style="width: 600px; max-width: 100%;"}
@@ -141,11 +143,11 @@ This graph allows us to gain a better insight into how the model is performing t
 
 There are some interesting explanations that can be derived from this graph. Firstly, all three models actually reach about the same performance of 70% by the final epoch. Secondly, in all three experiments the validation mean never regresses. Lastly, the performance of the different experiments is never more than about ~8% at any individual epoch.
 
-It seems that the ablations did not affect the performance in a significant way. This suggests that the activation functions and batch normalization do not have a notable impact on the performance of the model HRnet. However, it is likely that we did not the train the model for a long enough amount of time in order for the batch normalization and activation functions to have had a major impact on the performance. If we had instead trained the model for more than 30 epochs, we would have likely seen the model's performance degrade significantly as a result of our modifications. 
+It seems that the ablations did not affect the performance in a significant way. This suggests that the activation functions and batch normalization do not have a notable impact on the performance of the model HRnet. However, it is likely that we did not the train the model for a long enough amount of time in order for the batch normalization and activation functions to have had a major impact on the performance. If we had instead trained the model for more than 30 epochs, we may have seen that the model's performance degraded significantly as a result of our modifications. We do not necessarily know if this is the case here though. It is possible that the results would not change even if we increased the training time to 30+ epochs.
 
 ## 6. Conclusion
 
-In conclusion, we explored the architecture of HRnet in this post and its use in pose estimation. We have shown this model is capable of predicting the location of joints in humans with an impressive accuracy. The architecture of the model relies on several innovative ideas to maintain these results while dealing with high resolution images. Notably, the model takes advantage of the high to low and low to high stages. In addition, we also explored two ablations that were designed to test the architecture choices of the model. Ultimately, we showed that our model's performance was not impacted by these modifications in a meaningful way.
+In conclusion, we explored the architecture of HRnet in this post and its use in pose estimation. We have shown this model is capable of predicting the location of joints in humans with an impressive accuracy. The architecture of the model relies on several innovative ideas to maintain these results while dealing with high resolution images. Notably, the model takes advantage of the high to low and low to high stages. In addition, we also explored two ablations that were designed to test the architecture choices of the model. Ultimately, we showed that our model's performance was not impacted by these modifications in a meaningful way. 
 
 ## References
 
