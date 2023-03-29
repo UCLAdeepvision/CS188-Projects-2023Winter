@@ -105,38 +105,18 @@ Unfortunately, this is where we started running into problems. We were unable to
 ## Discussion
 We had most of the pieces together in order to figure out which encoder would be most successful for UPerNet. Our data was loaded into a dataset and was set up to be loaded into batches during training. We were able to load the encoders and decoder we wanted to use into our code. We also had functions to calculate a couple metrics, pixel accuracy and IoU, in order to test how well our model was performing semantic segmentation on the ADE20K dataset. However, when it came time to put all of these pieces together, they would not fit. Somehow, even though the image processors we loaded in were able to process the images from the dataset, we could not get any of our models to successfully run on them. Because of this, we were unable to perform training. Unfortunately, this meant we could not make any progress in determining which encoder, ConvNeXt V2, NAT, or DiNAT, would be best for encoding images for UPerNet to process. We were also unable to use CAM to visualize our results. In retrospect, we most likely should have used a different library to load these encoders and decoder into our code. If we had been able to get all of the pieces we finished to work together, because we took advantage of the previous success of these pretrained models, I suspect we would have seen useful results. 
 
-## References
-
-## Sample Code
-import timm
-import torch.nn as nn
-import torch.nn.functional as F
-  
-class Model(nn.Module):
-    def __init__(
-        self,
-        num_classes,
-        beit_version="beitv2_base_patch16_224_in22k",
-        head=None
-    ):
-        if head is None:
-            head = nn.Sequential(
-                nn.Flatten(),
-                nn.Linear(768, num_classes)
-            )
-        super().__init__()
-        self.encoder = timm.create_model(
-            beit_version,
-            num_classes=0
-        ).to("cuda:0")
-        self.encoder.requires_grad_(False)
-        self.head = head
-
-    def forward(self, image):
-        tokens = self.encoder(image).detach()
-        return self.head(tokens)
+## Presentation Link
+https://youtu.be/W87jOS2OkmE
 
 ## References
-- https://arxiv.org/abs/2106.08254
-- https://arxiv.org/abs/2010.11929
----
+- Woo, Sanghyun, et al. “ConvNeXt V2: Co-designing and Scaling ConvNets with Masked Autoencoders. “ arXiv preprint arXiv:2301.00808. 2023.
+
+- Hassani, Ali, et al. “Dilated Neighborhood Attention Transformer. “ arXiv preprint arXiv:2209.15001. 2023.
+
+- Xiao, Tete, et al. “Unified Perceptual Parsing for Scene Understanding. “ arXiv preprint arXiv:1807.10221. 2018.
+
+- Hassani, Ali, et al. “Neighborhood Attention Transformer. “ arXiv preprint arXiv:2204.07143. 2022.
+
+- Scene Parsing through ADE20K Dataset. Bolei Zhou, Hang Zhao, Xavier Puig, Sanja Fidler, Adela Barriuso and Antonio Torralba. Computer Vision and Pattern Recognition (CVPR), 2017.
+
+- Semantic Understanding of Scenes through ADE20K Dataset. Bolei Zhou, Hang Zhao, Xavier Puig, Tete Xiao, Sanja Fidler, Adela Barriuso and Antonio Torralba. International Journal on Computer Vision (IJCV).
