@@ -202,7 +202,11 @@ After fine-tuning using textual inversion, the model learns a new embedding (rep
 A token is mapped to this new embedding and is used together with a diffusion model in order to predict a denoised version of the image.
 The model is trained and the embedding is improved to better capture the object or style present in the training images and can therefore be used to generate images that utilize the new token that has been learnt.
 
-### Method
+## Method
+
+
+Our code was based heavily off of the work in the following google collaboratory notebook: https://huggingface.co/docs/diffusers/training/text_inversion.
+A link to our code is https://colab.research.google.com/drive/121-zeCUnTE2uchMMa6svERFr_B4HYdEo?usp=sharing
 
 The goal of this process is to produce images featuring UCLA mascot Joe Bruin. 
 
@@ -223,7 +227,7 @@ Next, the tokenizer of the diffusion model is augmented with the placeholder tok
 With the model initialized, it is run for 2000 iterations at a learning rate of .0005.
 
 
-# Results
+## Results
 
 Prompt: "\<joe-bruin> doing homework"
 
