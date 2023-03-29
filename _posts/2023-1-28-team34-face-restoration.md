@@ -16,7 +16,7 @@ date: 2023-1-29
 {:toc}
 
 ## Main Content
-My project is to study the usage of Generative Adversarial Networks, and in particular the style-based GAN architecture, in order to generate photorealistic images with some noise involved, that allows it to be utilized in the application of face restoration. The models we will analyze will have been trained particularly on the human face, allowing it to enhance the image quality of real-world inputs. 
+My project is to study the usage of Generative Adversarial Networks, and in particular the style-based GAN architectures, in order to generate photorealistic images with some noise involved, that allows it to be utilized in the application of face restoration. The models we will analyze will have been trained particularly on the human face, allowing it to enhance the image quality of real-world inputs. 
 
 ## Main Focus
 
@@ -42,21 +42,39 @@ Pictured below is a simplified look at the full DCGAN architecture, where we can
 
 DCGAN makes full use of strided convolutions by replacing older GAN architectures method of spatial downsampling of pooling (such as maxpooling). The reason for this switch to strided convolutions is so that the generator is able to learn and train its own spatial downsampling due to the fact that strided convolutions have parameters that can be optimized while most pooling methods do not have such trainable parameters. 
 
-Batch normalization also played a large effect on improving this model and future models as it assisted in the learning process. The purpose of batch normalization is to normalize the input for a single batch 
+Batch normalization also played a large effect on improving this model and future models as it assisted in the learning process. The purpose of batch normalization is to reduce the internal covariance shift that occurs when the change in network parameters during training affects the change in the distribution of network activations.[11] The paper claims that including batch normalization allows for much higher learning rates, the removal of dropout layers, and less care about the initialization of the model. All of these aspects stem from batch normalization making training of models more resilient to the scale of its parameters in each layer as it helps tackle the issue of vanishing gradient and model explosion that many models have, especially GANs.
+
+From DCGAN, future GANs will be created where the models will be optimized to focus on certain characteristic features on the pictures they are meant to train on. This will in turn spawn numerous different style-based architectures.
 
 #### StyleGAN2-ADA
 
-Pictured below is the 
+StyleGAN2-ADA is an improvement upon StyleGAN2 which itself was an improvement on StyleGAN1. StyleGAN1 is a style-based GAN where unlike DCGAN and previous other GANs, the input latent z code will not be directly fed into the generator/synthesis network but will instead be fed into a mapping network comprised of a number of fully connected layers, and transformed into an intermediate latent code w. This latent code w alongside some noise will be injected into a convolutional block connected to a certain resolution. For example, the convolutonal block responsible for the 4x4 resolution will have its own latent code w and noise then after upsampling occurs, the 8x8 resolution block will have the latent code w and some noise injected into it as well. So, the style-based architecture starts at lower resolutions, then upsamples to higher resolutions while being fed inputs from the latent code w, the output from the lower resolution block before it, and noise. (The first convolutional block will receive a constant input that replaces where the "z" latent code would have been in models like DCGAN.) 
 
-![GAN vs StyleGan1 Architecture]({{'/assets/images/team34/Stylegan/traditional_vs_style.PNG' | relative_url}})
+Pictured below is a comparison between a traditional GAN generator and a style-based generator. 
+
+![GAN vs StyleGan Architecture]({{'/assets/images/team34/Stylegan/traditional_vs_style.PNG' | relative_url}})
+
+Another different aspect of style-based architectures than that of previous traditional GAN architectures is the inclusion of the Adaptive Instance Normalization block. Adaptive Instance Normalization is meant to align the channel-wise mean and variance of the content input (the input from the lower resolution blocks) and align it to the style input (the input from the latent code w).[12] It will detect the style from the style input and apply it onto the content input while maintaining the spatial information of the content input. This in turn allows styles from the latent code w to be picked up and carried over to the final output. A picture of AdaIN is provided below.
 
 ![StyleGAN1 Adaptive Instance Normalization]({{'/assets/images/team34/Stylegan/AdaIN.PNG' | relative_url}})    
 
 #### GPEN
 
+GPEN or GAN Prior Embedded Network is a model created to tackle the issue of blind face restoration tasks. Blind face restoration refers to the act of creating a higher-quality image from a lower-quality image that could suffer from a variety of issues, such as blur, noise, and outright missing complete parts of the input. 
+
+The model consists of taking a style-based GAN model such as StyleGAN2 (which is what the authors of the paper and model had used, although the underlying generative prior could be any such style-based architecture) and training it to then insert it as a decoder into deep neural network. This method is what is known as GPEN. 
+
+The first part of the model consists taking a convolutional neural network encoder which will learn to map a degraded low quality image into a latent code z that will be the latent code input for the GAN network. We need this encoder as unlike previous GAN models we have discussed in this project, they are not given an image as an input as they are meant to simply generate some random image that shouldn't necessarily be a direct copy of one of the training images. But, the downstream task at hand is to restore a low-quality image, which requires an actual image as input, and therefore requires an encoder to be able to transform that image into some latent code z that will allow the GAN prior to construct a high-quality image that resembles the original input image. This technique is reminiscent of GAN inversion which attempts to take an image and produce a latent code z. The issue discussed in the paper with this is that with GAN inversion, it would be nearly impossible to construct a latent code z from a blind degraded face.[2] 
+
+The model is constructed to resemble a U-Net architecture as the paper lists it as as being used in many image restoration tasks and is effective at preserving image details, which is what we want as we don't want to construct a completely different person than whom is shown in the degraded image.[2] 
+
+A picture of the different parts of the GPEN architecture as well as a simplified model of the entire GPEN architecture is shown below.
+
 ![GPEN Architecture]({{'/assets/images/team34/GPEN/GPEN-arch.PNG' | relative_url}})
 
+We can see in Figure 3c that the degraded image is the original input to the model, and from there, will be downsampled (as this is the first part to the U-Net architecture that the GPEN model is based on), but the shallower features of the encoder will be sent to the GAN prior network so as to retain the features of the original image, such as the background of the face image and overall structure of the face. We can see in the picture that the deeper features of the encoder will be sent to the fully connected layer and converted into an intermediate latent code z, as discussed above. 
 
+#### Real ESRGAN
 
 ### Examples of Output
 
@@ -128,4 +146,10 @@ This [github repository](https://github.com/pranjaldatta/SSIM-PyTorch) has an im
 [9] Radford, Alec, Luke Metz, and Soumith Chintala. "Unsupervised representation learning with deep convolutional generative adversarial networks." arXiv preprint arXiv:1511.06434 (2015).
 
 [10] Shorten, Connor & Khoshgoftaar, Taghi. (2019). A survey on Image Data Augmentation for Deep Learning. Journal of Big Data. 6. 10.1186/s40537-019-0197-0. 
+
+[11] Ioffe, Sergey, and Christian Szegedy. "Batch normalization: Accelerating deep network training by reducing internal covariate shift." International conference on machine learning. pmlr, 2015.
+
+[12] Huang, Xun, and Serge Belongie. "Arbitrary style transfer in real-time with adaptive instance normalization." Proceedings of the IEEE international conference on computer vision. 2017.
+
+
 ---
