@@ -259,11 +259,17 @@ In hierarchical sampling, two NeRFs are trained at the same time. A coarse model
 
 # Building a NeRF
 
-A full working example of this model can be found in the accompanying [An Introduction to NeRFs](https://colab.research.google.com/drive/19WoCxed1EeEY1atC3IFj3KW-1SqXbKlv?usp=sharing) Colab notebook.
+A full working example of this model can be found in the accompanying [An Introduction to NeRFs](https://colab.research.google.com/drive/1tBMHgN7maC7pgoGvchSiG-aqXWFUDcd9?usp=sharing) Colab notebook.
 
 This example tries to closely follow the model presented in the original paper, but some consolations must be made in order to fit within the limitations of the Colab environment, especially with regards to available GPU memory.
 
 Additionally, this example will uses preprocessed images of the synthetic LEGO bulldozer scene with known view poses and focal length.
+
+Here is an example of the results:
+
+<figure>
+    <img src='../assets/images/team50/colab.png' />
+</figure>
 
 
 # Going Further with NeRFs 
