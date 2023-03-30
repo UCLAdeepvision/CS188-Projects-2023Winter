@@ -207,7 +207,7 @@ Overall, with these innovations, Instant NeRF makes it possible to render high-r
 *Fig 8. NeRF of a toy car*.
 ![NeRF]({{ '/assets/images/team17/video2.gif' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
-*Fig 8. NeRF of a poster*.
+*Fig 8. NeRF of a poster, made by [nerfstudio](https://github.com/nerfstudio-project/nerfstudio)*.
 Once the model is fully trained, it is relatively simple for the NeRF model to generate 3D scenes. Similarly to Assignment 4, we can generate the 3D views of a toy car. We can also generate the 3D views of the poster. 
 
 ## Discussion
@@ -223,6 +223,4 @@ Papers:
     * [Github](https://github.com/NVlabs/instant-ngp)
 * [Mip-NeRF: A Multiscale Representation for Anti-Aliasing Neural Radiance Fields](https://arxiv.org/abs/2103.13415)
     * [Github](https://github.com/google/mipnerf)
-* [Understanding Diffusion Models: A Unified Perspective](https://arxiv.org/abs/2208.11970)
-
 ---
