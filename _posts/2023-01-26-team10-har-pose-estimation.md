@@ -185,7 +185,7 @@ After running the baseline AcT model on each of the 4 datasets, we took the data
 
 #### Training Accuracy Curves
 
-![image]({{'/assets/images/team10/training_acc.png'}} | relative_url}})
+![image]({{'/assets/images/team10/training_acc.png' | relative_url}})
 
 #### Validation Accuracy Curves
 
