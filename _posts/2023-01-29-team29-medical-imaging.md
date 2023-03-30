@@ -1,7 +1,7 @@
 ---
 layout: post
 comments: true
-title: medical imaging using UNet and contrastive loss
+title: Art Generation using Cycle GANS
 author: Charlotte Meyer and Hussein Hassan
 date: 2023-1-29
 ---
@@ -13,8 +13,6 @@ date: 2023-1-29
 {:toc}
 
 <!-- ::: {.cell .markdown id="Ds10C2GR2MoY"} -->
-
-# **Art Generation using Cycle GANS**
 
 # Abstract
 
