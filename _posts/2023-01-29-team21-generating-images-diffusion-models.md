@@ -1,9 +1,14 @@
---- fundamental
-title: "My Report"
-output: 
-  html_document:
-    number_sections: true
 ---
+layout: post
+comments: true
+author:
+date: 2023-03-27
+---
+
+<!--more-->
+{: class="table-of-content"}
+* TOC
+{:toc}
 
 # Fine-tuning stable diffusion using textual inversion
 
