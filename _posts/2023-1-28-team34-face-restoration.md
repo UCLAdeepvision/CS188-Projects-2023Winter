@@ -12,21 +12,36 @@ date: 2023-1-29
 
 <!--more-->
 {: class="table-of-content"}
-
-{:toc}
+- [Main Content](#main-content)
+- [Main Focus](#main-focus)
+- [Algorithms](#algorithms)
+  - [DCGAN](#dcgan)
+  - [StyleGAN2-ADA](#stylegan2-ada)
+  - [GPEN](#gpen)
+  - [Real-ESRGAN, ESRGAN, and SRGAN](#real-esrgan-esrgan-and-srgan)
+- [Examples of Output](#examples-of-output)
+  - [DCGAN model](#dcgan-model)
+  - [StyleGAN2-ADA Model](#stylegan2-ada-model)
+  - [GPEN Model vs Real-ESRGAN Model](#gpen-model-vs-real-esrgan-model)
+  - [Multiple Run-Through of Same Image](#multiple-run-through-of-same-image)
+- [Future Projects and Improvements](#future-projects-and-improvements)
+- [Codebase](#codebase)
+- [Most Relevant Research Papers](#most-relevant-research-papers)
+- [Most Relevant Code](#most-relevant-code)
+- [Reference](#reference)
 
 ## Main Content
-My project is to study the usage of Generative Adversarial Networks, and in particular the style-based GAN architectures, in order to generate photorealistic images with some noise involved, that allows it to be utilized in the application of face restoration. The models we will analyze will have been trained particularly on the human face, allowing it to enhance the image quality of real-world inputs. 
+My project is to study the overall architecture and application of Generative Adversarial Networks, and in particular the style-based GAN architectures, in order to generate photorealistic images with some noise involved, that allows it to be utilized in the application of face restoration. The models we will analyze will have been trained particularly on the human face, allowing it to enhance the image quality of real-world inputs. 
 
 ## Main Focus
 
 The main focus of this project is to explore GAN architectures improvements and additions have been made upon GAN architectures in order to generate high-quality images from low-quality images that could have different defects such as blur, omission of certain pixels in the image, and low-resolution. In particular, GPEN and Real-ESRGAN are two such architectures that hopes to resolve most, if not all of these issues, in the wild, or in real-world scenarios, and not specially curated images. We will compare the techniques both of these architectures utilize in order to achieve super-resolution, as well as present a method of comparing the observed performance of two architectures by manipulating the low-resolution test image and also by running the same low-resolution test image through the same model multiple times. 
 
-### Algorithms
+## Algorithms
 
 This section will focus on the algorithms within each generative adversarial network, along with diagrams of their architectures. Since GPEN uses previous GAN models as a prior, the section will start with the DCGAN model as the foundation of a simple GAN leading into StyleGAN2-ADA, then illustrating how GPEN is able to take the previously mentioned GAN models and build upon it to work on the issue of Blind Face Restoration in the Wild.
 
-#### DCGAN
+### DCGAN
 
 ![DCGAN Basic Architecture Model]({{'/assets/images/team34/model/basic-GAN-arch.PNG' | relative_url}})
 
@@ -46,7 +61,7 @@ Batch normalization also played a large effect on improving this model and futur
 
 From DCGAN, future GANs will be created where the models will be optimized to focus on certain characteristic features on the pictures they are meant to train on. This will in turn spawn numerous different style-based architectures.
 
-#### StyleGAN2-ADA
+### StyleGAN2-ADA
 
 StyleGAN2-ADA is an improvement upon StyleGAN2 which itself was an improvement on StyleGAN1. StyleGAN1 is a style-based GAN where unlike DCGAN and previous other GANs, the input latent z code will not be directly fed into the generator/synthesis network but will instead be fed into a mapping network comprised of a number of fully connected layers, and transformed into an intermediate latent code w. This latent code w alongside some noise will be injected into a convolutional block connected to a certain resolution. For example, the convolutonal block responsible for the 4x4 resolution will have its own latent code w and noise then after upsampling occurs, the 8x8 resolution block will have the latent code w and some noise injected into it as well. So, the style-based architecture starts at lower resolutions, then upsamples to higher resolutions while being fed inputs from the latent code w, the output from the lower resolution block before it, and noise. (The first convolutional block will receive a constant input that replaces where the "z" latent code would have been in models like DCGAN.) 
 
@@ -58,7 +73,7 @@ Another different aspect of style-based architectures than that of previous trad
 
 ![StyleGAN1 Adaptive Instance Normalization]({{'/assets/images/team34/Stylegan/AdaIN.PNG' | relative_url}})    
 
-#### GPEN
+### GPEN
 
 GPEN or GAN Prior Embedded Network is a model created to tackle the issue of blind face restoration tasks. Blind face restoration refers to the act of creating a higher-quality image from a lower-quality image that could suffer from a variety of issues, such as blur, noise, and outright missing complete parts of the input. 
 
@@ -98,7 +113,7 @@ $$
 
 Alpha and Beta are hyperparameters to set, and in the GPEN paper, they empirically set $\alpha$ = 1 and $\beta$ = 0.02.
 
-#### Real-ESRGAN, ESRGAN, and SRGAN
+### Real-ESRGAN, ESRGAN, and SRGAN
 
 This project utilizes an implementation of Real-ESRGAN, which builds upon ESRGAN, and ESRGAN builds upon SRGAN. SRGAN 
 
@@ -108,9 +123,19 @@ For a short description of ESRGAN, it improves upon SRGAN by replacing the batch
 
 Real-ESRGAN focuses on blind-world degradations and the issue that a model like ESRGAN is not complex enough to recognize all of the multitude of degradations that can occur in the real-world, and be able to identify them all. Real-ESRGAN like GPEN both utilize the U-Net architecture, and in Real-ESRGAN's case it replaces the VGG features in ESRGAN with an U-Net design. 
 
-### Examples of Output
+Pictured below is the architecture of Real-ESRGAN:
 
-#### DCGAN model
+![Real-ESRGAN Architecture]({{'/assets/images/team34/resrgan/resrgan_arch.PNG' | relative_url}})   
+
+We can see that Real-ESRGAN uses the same RDDB blocks that ESRGAN utilizes as well and overall the same generator network. The pixel-unshuffling at the beginning of the network is to reduce the spatial size of the input image and to resize the information to be compatible in the channel dimension. [14]
+
+Real-ESRGAN also conducted improvements on the synthesis between the higher-quality ground truth image and the lower-quality image that it is trained on. Below is a diagram of the different operations that result in image degradation, such as compression and noise, that are purposefully used in order for the model to be capable of the different types of degradation in the wild.
+
+![Real-ESRGAN Synthetic Data Generation]({{'/assets/images/team34/resrgan/synth_gen.PNG' | relative_url}})   
+
+## Examples of Output
+
+### DCGAN model
 
 Below is an image of several images that my DCGAN model created when trained on the flowers102 dataset. The input and output of the images are only 32x32, and so limits how much the latent vector is able to capture/control of the outputted image. Due to the low resolution of my model in comparison to StyleGAN which can handle 1024x1024 images, this DCGAN implementation can only capture very broad characteristics, not the minute details/features in the dataset.
 
@@ -122,7 +147,7 @@ Due to several factors such as simplicity of the model, lack of features to help
 
 Looking up online, multiple additional methods are suggested that could help the discriminator not converge towards 0, but towards some loss greater than 0, such as implementing dropout into the discriminator architecture, and other methods to fix (or help alleviate) the vanishing gradient problem, mode collapse problem, and other issues. 
 
-#### StyleGAN2-ADA Model
+### StyleGAN2-ADA Model
 
 Below is a gif/mp4 of linear interpolation over the z-space of StyleGAN2-ADA and how we can see the change over the different features of the face such as hair, facial expression, clothing, and even the direction of which the person is facing. Throughout the different frames of the GIF, we can see that the output from the model can be considered as generally close to actual human faces (at a quick glance due to the high frame rate of the GIF). However, we can also see issues within each image, especially of blurry splotches around the hair and background. The StyleGAN2 paper addresses these issues and talks about splitting their Adaptive Instance Normalization block/method into separate parts and introducing weights/latent space will be effective at helping erase the blurs, at least better than StyleGAN1 did. These generated frames were based on a pretrained model from this [github repo](https://github.com/justinpinkney/awesome-pretrained-stylegan2/#faces-FFHQ-config-e-256x256) and the specific dataset and weights used were based on the FFHQ dataset but with a 256x256 resolution. 
 
@@ -131,9 +156,9 @@ Below is a gif/mp4 of linear interpolation over the z-space of StyleGAN2-ADA and
 We can see from the change of different features the effect that changing the latent code z has on capturing the different styles that were found during training. This discovery will carry on in both the GPEN model and the Real-ESRGAN model and how they will use the latent code z as a tool to preserve and modify the styles/content in the low-quality image and how it will these features will be propagated to future layers in the model in order to influence the end result.
 
 
-#### GPEN Model vs Real-ESRGAN Model
+### GPEN Model vs Real-ESRGAN Model
 
-The setup for the comparison between these two models was to download 256x256 images of faces from [this Kaggle dataset](https://www.kaggle.com/datasets/rahulbhalley/ffhq-256x256?resource=download). For this project, I had only utilized 100 images which is understandably a small amount of samples. I then stack blurred the image on [this website](https://pinetools.com/bulk-batch-blur-image) in order to obtain the low-quality image that will be the input for both models. Using the image quality classification metrics in the python [sewar library](https://sewar.readthedocs.io/en/latest/), I made [this google colab notebook](https://colab.research.google.com/drive/1lvBs3M-EKbB_WW9XeWP0PXN6v9b7v3wC?usp=sharing) in order to retrieve the different scores for the ground-truth images against the stack blurred low-quality image as a baseline, the GPEN generated image, and the Real-ESRGAN generated image. Below is a table with the scores calculated for each image and then averaged. For each of these metrics, the higher the score, the better. 
+The setup for the comparison between these two models was to download 256x256 images of faces from [this Kaggle dataset](https://www.kaggle.com/datasets/rahulbhalley/ffhq-256x256?resource=download). For this project, I had only utilized 100 images which is understandably a small amount of samples. I then stack blurred the image on [this website](https://pinetools.com/bulk-batch-blur-image) in order to obtain the low-quality image that will be the input for both models. To get the generated images using a GPEN model, I used [this website](https://huggingface.co/spaces/akhaliq/GPEN) and [this website](https://replicate.com/yangxy/gpen) as unfortunately their google colab notebook was not working despite my attempts to fix it. To get the generated images using a Real-ESRGAN model, I used [this google colab notebook](https://colab.research.google.com/drive/10JV30Bj0Spx4UnwoxOPkE57Ls7bds_0Z?usp=sharing). Using the image quality classification metrics in the python [sewar library](https://sewar.readthedocs.io/en/latest/), I made [this google colab notebook](https://colab.research.google.com/drive/1lvBs3M-EKbB_WW9XeWP0PXN6v9b7v3wC?usp=sharing) in order to retrieve the different scores for the ground-truth images against the stack blurred low-quality image as a baseline, the GPEN generated image, and the Real-ESRGAN generated image. Below is a table with the scores calculated for each image and then averaged. For each of these metrics, the higher the score, the better. 
 
 |  | Blurred | GPEN | Real-ESRGAN |  |
 |---|---|---|---|---|
@@ -141,7 +166,7 @@ The setup for the comparison between these two models was to download 256x256 im
 | PSNR | 9.406 | 11.93 | 22.20 |
 | UQI | 0.6052 | 0.7211 | 0.9364 |
 
-We can see that both GPEN and Real-ESRGAN both achieved scores in all metrics better than the baseline blurred image that was the input, but Real-ESRGAN achieved much higher scores in SSIM and PSNR, and a slightly higher score in UQI. This was surprising to see as 
+We can see that both GPEN and Real-ESRGAN both achieved scores in all metrics better than the baseline blurred image that was the input, but Real-ESRGAN achieved much higher scores in SSIM and PSNR, and a slightly higher score in UQI. This was surprising to see as written in the GPEN paper, their metric scores generally scored quite high. There are multiple reasonings to the low scores documented here that could be attributed to how their GPEN demo may only use a commercial version of their model that is weaker than the one in their paper and the small amount of test samples. 
 
 Below are some GIFS that showcase the different generated images and the ground truth images for a small sample of the tested data. 
 
@@ -188,7 +213,29 @@ Another interesting aspect to this experiment is that it reveals, at least in Re
 
 It may be possible that with repeated testing of this method on different samples, that we can see what specific features a model focuses on making "high-quality" depending on which features stay more consistent throughout the repeated process versus those that end up less realistic. 
 
-Understandably, the outputs do make some sense as the purpose of these models is to simply create high-quality images from degraded images, and not necessarily realistic images of a human face. If the purpose was to create a believable realistic human face from any image, then I would understand that to train both models, a combination of feeding high-quality images that appear unrealistic (such as the ones in the final outputs of the repeated trial) and low-quality images would suffice. 
+Understandably, the outputs do make some sense as the purpose of these models is to simply create high-quality images from degraded images, and not necessarily realistic images of a human face. Passing already high-quality images could have confused the model and caused it to be under the assumption that the input image is degraded, and therefore apply the same/similar methods of creating a higher-quality image on the already HQ input image. From Real-ESRGAN, we can see that it attempts to enhance features that are smaller such as the faint red color on the hair due to light which became very apparent and bold. Perhaps this technique was learned by the model in order to compensate for the low resolution of expected input images and how certain colors are only present in a few pixels. The model learns to bring those colors out by increasing the resolution and perhaps making these colors more vibrant. From GPEN, it seems to possibly be the opposite than Real-ESRGAN as the overall color of the person's face becomes more and more pronounced over time. 
+
+
+## Future Projects and Improvements
+
+Here are a list of some future projects and improvements to the models:
+
+1. Incorporate the annotation of training images and inclusion of textual context surrounding the image to influence the output of the high-quality image. For example, if someone enters in that the gender is male and at a certain age, perhaps the model will take these into account and generate a high-quality image that matches this description. I feel like it would help users when interacting with an application in production as most users likely understand what features the low-quality image has and wants some way to tell the model this information.
+
+2. Produce a model that is capable of producing realistic images given any quality of image, and not just a lower quality degraded image. In my experiment above, it showed the flaws with the models when the input is already high-quality and that it produced less realistic images. Using the discriminator listed in ESRGAN that differentiates between realistic and not realistic, along with training the model with high-quality and low-quality training images could work together in producing this type of model. Although, I imagine that the model would have to be a lot more complex in order to take these improvements into account.
+
+3. Combine a segmentation model with these super-resolution models in order to enhance the accuracy of the segmentation models. This could save a lot of money in hardware as the software would be capable of enhancing the quality and so the older, outdated cameras and equipment would not have to be replaced. 
+
+<iframe
+    width="640"
+    height="480"
+    src="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"
+    frameborder="0"
+    allow="autoplay; encrypted-media"
+    allowfullscreen
+>
+</iframe>
+
 
 ## Codebase 
 
@@ -224,6 +271,9 @@ This [github repository](https://github.com/yangxy/GPEN) is the official reposit
 
 This [github repository](https://github.com/xinntao/Real-ESRGAN) is a repository for the Real-ESRGAN model.
 
+This [website](https://huggingface.co/spaces/akhaliq/GPEN) is a demo for GPEN model.
+
+This [website](https://replicate.com/yangxy/gpen) shows off the different other applications of the GPEN model other than face restoration, such as face inpainting and face colorization
 
 ## Reference
 [1] MWang, Xintao, et al. "Towards real-world blind face restoration with generative facial prior." Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition. 2021.
