@@ -92,7 +92,6 @@ The results received from training are as follows:
 ## Testing
 
 ### Procedure
-We wanted to observe the difference between 
 We observed that further finetuning for Mesonet and ResNetLSTM on the CelebDF dataset did not increase validation accuracy compared to the model weights that were already finetuned to those datasets. Therefore, we used the given model weights rather than the weights we trained, as this gave us higher validation accuracies and reduced the needed computing units and time. To test the finetuned model, we ran the models through the CelebDF test dataset to see the final testing accuracies. The process for this is shown below:
 
 ```
@@ -150,7 +149,7 @@ This resulted in three levels of data augmentation on the dataset. We have the o
 
 | No augmentation | Rotation/Flipping | Heavy Augmentation | 
 | :------: | :-----------------: | :---------: |
-| <img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.10.14 PM.png" alt="Mesonet Architecture" width="300" align="middle"> | <img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.41.42 PM.png" alt="Mesonet Architecture" width="300" align="middle"> | <img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.40.01 PM.png" alt="Mesonet Architecture" width="300" align="middle"> | 
+| <img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.10.14 PM.png" alt="No Augmentation Example" width="300" align="middle"> | <img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.41.42 PM.png" alt="Rotation/Flipping Example" width="300" align="middle"> | <img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.40.01 PM.png" alt="Heavy Augmentation Example" width="300" align="middle"> | 
 
 ### Results
 When testing the model weights on the CelebDF test dataset, we observed the following metrics. This is on the CelebDF test dataset with no data augmentation:
