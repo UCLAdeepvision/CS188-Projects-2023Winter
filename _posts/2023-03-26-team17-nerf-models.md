@@ -230,4 +230,5 @@ Papers:
     * [Github](https://github.com/NVlabs/instant-ngp)
 * [Mip-NeRF: A Multiscale Representation for Anti-Aliasing Neural Radiance Fields](https://arxiv.org/abs/2103.13415)
     * [Github](https://github.com/google/mipnerf)
+    
 ---
