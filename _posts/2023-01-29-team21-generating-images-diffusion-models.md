@@ -3,7 +3,7 @@ layout: post
 comments: true
 title: Generating Images with Diffusion Models
 author: Evan He, Samarth Upadhyaya
-date: 2017-06-21 01:09:00
+date: 2023-03-27
 ---
 
 > This project focuses on the generating images from text using diffusion models.
