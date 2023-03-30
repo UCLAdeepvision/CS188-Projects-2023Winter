@@ -5,7 +5,7 @@ title: Object Detection
 author: Jay Jay Phoemphoolsinchai
 date: 2022-01-29
 ---
-
+<!--more-->
 
 # Use Case Object Detection
 Object detection is an incredibly important fundamental idea; many advanced and sophisticated tasks are directly impacted by the performance of an object detection model. In this article, we take a close look at developments in the object detection field of computer vision that may or may not lend themselves more towards a particular use case.
