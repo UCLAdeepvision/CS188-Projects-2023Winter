@@ -10,7 +10,7 @@ date: 2023-01-29
 * TOC
 {:toc} -->
 
-# Project Proposal
+# Final Report
 ## Action Localization for Emergency Detection
 
 > *(Portions of) the research in this paper used the NTU RGB+D (or NTU RGB+D 120) Action Recognition Dataset made available by the ROSE Lab at the Nanyang Technological University, Singapore.*
@@ -41,6 +41,8 @@ In this project, we wanted to achieve action localization that works well with e
 
 ## Introduction
 >introduce the task you are working on, e.g. semantic segmentation, and image generation, and what is the project goal or your hypotheses.
+
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=1UiqdXFNhrk&ab_channel=CalebLee" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### Action Localization
 Temporal Action Localization detects and identifies actions within a video and provides the timestamps of the actions. Our aim of the project was not to simply recognize the actions but to observe the performance of the model in emergency situations. If a model can properly recognize emergency situations fast, there will be no delay in responding to the situation. For example, if there is model specialized at recognizing medical emergency constantly observing security cameras, it will call 911 faster than anyone if someone collapses on the ground due to seizure. Thus, we want the action localization models that can perform recognizing and classifying emergency situations well. Action localization focuses on 18 key points to accurately identify human actions. The 18 key points are: nose, left eye, right eye, left ear, right ear, left shoulder, right shoulder, left elbow, right elbow, left wrist, right wrist, left hip, right hip, left knee, right knee, left ankle, right ankle, and neck. Below, Figure 1 portrays the visualization of 18 keypoints (17 exactly in the picture as it does not show the neck).
@@ -103,7 +105,7 @@ Moreover, ActionFormer measures different from ST-GCN. It instead uses mean Aver
 Top 1 accuracy: 2.78%
 Top 5 accuracy: 49.96%
 
-![Cross Subject 14]({{ '/assets/images/team22/image10.png' | relative_url }})
+![Cross Subject 14]({{ '/assets/images/team22/imagecs14.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 
 **ST-GCN THUMOS14  cross view:**  
@@ -111,7 +113,7 @@ Top 5 accuracy: 49.96%
 Top 1 accuracy: 6.54%
 Top 5 accuracy: 54.52%
 
-![Cross View]({{ '/assets/images/team22/image9.png' | relative_url }})
+![Cross View]({{ '/assets/images/team22/imagecv14.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 
 **ActionFormer THUMOS14:**
