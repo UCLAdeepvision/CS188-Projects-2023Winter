@@ -168,6 +168,8 @@ The setup for the comparison between these two models was to download 256x256 im
 
 We can see that both GPEN and Real-ESRGAN both achieved scores in all metrics better than the baseline blurred image that was the input, but Real-ESRGAN achieved much higher scores in SSIM and PSNR, and a slightly higher score in UQI. This was surprising to see as written in the GPEN paper, their metric scores generally scored quite high. There are multiple reasonings to the low scores documented here that could be attributed to how their GPEN demo may only use a commercial version of their model that is weaker than the one in their paper and the small amount of test samples. 
 
+Another possible explanation for the difference in performance is due to the GAN prior used in GPEN. The model tested used StyleGANv2 as the generative prior which possibly performed weaker than Real-ESRGAN due to not enough finetuning or the difficulty in handling the latent code generation from StyleGANv2 to generate high-quality features that matches the input image. An interesting interaction between Real-ESRGAN and GPEN is that due to the nature of GPEN and its ability to incorporate generally any GAN as long as it can generated high-quality images and the GAN can be embedded as a decoder, technically Real-ESRGAN could be the generative prior for GPEN which could lead to much higher performance with the combination of the both of them.
+
 Below are some GIFS that showcase the different generated images and the ground truth images for a small sample of the tested data. 
 
 ![Ground Truth GIF]({{'/assets/images/team34/output/gt_gif.gif' | relative_url}})
@@ -179,7 +181,6 @@ Below are some GIFS that showcase the different generated images and the ground 
 ![Real-ESRGAN GIF]({{'/assets/images/team34/output/resrgan_gif.gif' | relative_url}})
 
 Observing this small sample, we can see that specific features in the person's face (such as eyes, mouth, and nose) generally appear much more clear than the blurred image, although at times other features such as the hair of the person appears blurred occasionally for both models. From just looking at these outputs, it seems that both models tend to increase the quality of the image mostly around the face, as the hair closest to the face tends to be higher quality than those farther away. Perhaps we could conclude this as a possible issue of the models determining the background from the person's hair or that when the hair becomes much more "solid" and not just strands of hair, the models method of downscaling and upsampling could have just reduced the hair as a singular color. Also for both models, the background tends to remain blurred even after running through each model. 
-
 
 ### Multiple Run-Through of Same Image
 
