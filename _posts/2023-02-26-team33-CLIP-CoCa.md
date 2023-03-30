@@ -13,7 +13,7 @@ date: 2023-03-29
 - [Introduction](#introduction)
 - [Background](#background)
     - [Contrastive Representation Learning](#contrastive-representation-learning)
-    - [NLP and Zero-Shot Transfer Learning](#nlp-and-zero-shot-transfer-learning)
+    - [NLP and Zero-Shot](#nlp-and-zero-shot)
   - [CLIP](#clip)
     - [Encoders](#encoders)
       - [ResNets](#resnets)
@@ -56,8 +56,8 @@ Our project aims to examine the robustness and explainability of novel contrasti
 ### Contrastive Representation Learning
 In principle, contrastive representation learning seeks to make machine learning models more closely mimic the way humans learn to categorize the world around them. The standard approach of machine learning is to miminimize a cost function know as "loss" representing how far off a model was from predicting the correct class of input data. With contrastive learning, the loss is calculated both from the how closely the model predicted the correct class but also how "far" it was from predicting incorrect classes.
 
-### NLP and Zero-Shot Transfer Learning
-Research in 2017 revealed the potential of using Natural Language Processing (NLP) to aid in expanding the output feature space for image classification tasks. Rather than relying on a fixed set of class labels, the use of NLP allows for new labels to be introduced simply by learning a the textual encoding of said labels. This allows for zero-shot transfer learning, where models had the theoretical capability to predict classes on which they had not been trained for previously unseen data. However, the accuracy of the NLP based zero-shot method was poor on benchmark datasets such as ImageNet compared to state of the art (SoTA) methods. While the approach was improved by using a vastly larger datasets during training, training was slow and abandoned full capabilities of zero-shot transfer by restricting outputs to the output labels of the target benchmarks.
+### NLP and Zero-Shot
+Rather than relying on a fixed set of class labels, the use of NLP with classification models allows for new labels to be introduced simply by learning a the textual encoding of said labels. This allows for zero-shot transfer learning, where models had the theoretical capability to predict classes on which they had not been trained for previously unseen data. However, the accuracy of the NLP based zero-shot method was poor on benchmark datasets such as ImageNet compared to state of the art (SoTA) methods. While the approach was improved by using a vastly larger datasets during training, training was slow and abandoned full capabilities of zero-shot transfer by restricting outputs to the output labels of the target benchmarks.
 
 ## CLIP
 
