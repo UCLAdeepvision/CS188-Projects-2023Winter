@@ -1,3 +1,4 @@
+
 ---
 layout: post
 comments: true
@@ -181,7 +182,7 @@ The Featurization procedure is also different, the original NeRF involves obtain
 There are also differences in hierarchical sampling procedure, NeRF utilizes two distict MLPs that one is "coarse" and one is "fine". There are also uneven samples of "coarse" and "fine" in the original NeRF. In Mip-NeRF, there's only a single MLP with equal samples for "coarse" and "fine". The even samples are a result of the single MLP which is shown in the following optimization problem:
 
 $$
-\min_{\theta} \sum_{r \in \R} (\lambda || \mathbf{C}^*(\mathbf{r}) - \mathbf{C}^*(\mathbf{r}; \Theta, \mathbf{t}^c)||^2_2 + || \mathbf{C}^*(\mathbf{r}) - \mathbf{C}^*(\mathbf{r}; \Theta, \mathbf{t}^f))
+\min_{\theta} \sum_{r \in \R} (\lambda || \mathbf{C}^*(\mathbf{r}) - \mathbf{C}^*(\mathbf{r}; \Theta, \mathbf{t}^c)||^2_2 + || \mathbf{C}^*(\mathbf{r}) - \mathbf{C}^*(\mathbf{r}; \Theta, \mathbf{t}^f)||^2_2)
 $$
 
 In this way, the model size can be cut in half, renderings becomes more accurate, sampling is more efficient, and the overal structure becomes simplier. 
@@ -199,7 +200,7 @@ Then we look up the corresponding $F$-dimensional feature vectors from the hash 
 
 The Linear Interpolation step linearly interpolate the $F$-dimensional feature vectors based on the relative position of the input coordinate $x$ within its respective $l$-th voxel.
 
-After the linear interpolation, we then concatenate the resulting feature vectors from each resolution level. We will also include auxiliary inputs $\xi ∈ \R^𝐸$ to create the encoded MLP (Multilayer Perceptron) input $𝑦 ∈ \R^{𝐿𝐹 + 𝐸}$.
+After the linear interpolation, we then concatenate the resulting feature vectors from each resolution level. We will also include auxiliary inputs $\xi \in \R^E$ to create the encoded MLP (Multilayer Perceptron) input $y \in \R^{LF + E}$.
 
 The final step is to evaluate the encoded MLP input using a multilayer perceptron.
 
