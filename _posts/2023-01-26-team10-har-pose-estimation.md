@@ -36,11 +36,11 @@ The first stage involves detecting human poses from RGB images, and generating c
 
 In contrast to the top-down approach, OpenPose by Cao et al, is a real-time human pose estimator that implements a bottom-up approach. OpenPose does not attempt to first use some human detectors to identify each human characters’ bounding box. Instead, it first directly passes the input image through a feedforward convolutional neural network to search for body parts such as heads, feet and limbs across the image and encode them in part-confidence heat maps. Then, input image features are concatenated with the output. In the next stage, through another feedforward convolutional neural network, unstructured pairwise relationships between body parts are identified in a 2d vector field which the authors call Part Affinity Fields. Then Finally, with these two sets of information, body parts are pieced together in a greedy inference approach to generate human poses. There are several advantages to OpenPose’s bottom up approach. One is that it does not require fully visible human figures to estimate their poses, and therefore unlike top down approach, pose estimation does not stop short if the human figure is not fully present. Also, by its nature of being bottom-up, it can work on images with multiple human figures at the same time without having to first identify and crop in on them using an object detector.
 
-|![image](../assets/images/team10/openpose_arch.png)|
+|![image](/CS188-Projects-2023Winter/assets/images/team10/openpose_arch.png)|
 |:--:| 
 | OpenPose pipeline: the blue block outputs Part Affinity field, which is concatenated with the original image feature, and then the beige part outputs the confidence map. |
 
-![image](../assets/images/team10/openpose.png)
+![image](/CS188-Projects-2023Winter/assets/images/team10/openpose.png)
 
 
 ### PoseNet
@@ -51,11 +51,11 @@ $$D(y) = {||x - y|| <= R}$$
 
 where y is the position of the keypoint, and x is a point in the disk, and R being a predefined radius which the authors set to 32 pixels. Then instead of using the association between body parts like OpenPose, it first finds a set of short offset vectors for each keypoint type that shoot from pixels in a keypoint disk to the nearest person’s keypoint of that type. These short offset vectors are panelized in the loss to help better locate the keypoints. The heatmaps and the short offset vectors are used in a Hough voting to localize the keypoints. To help piece the found keypoints together, posenet then creates another set of vector output called Mid-range pairwise offsets, which encode edges between every pair of keypoints. The mid-range offset output is refined by combining with the short offset to better locate the keypoint connection edges. Finally, the keypoint heatmaps and the offset vectors are passed to a person pose decoder to greedily parse together the keypoints and keypoint edges into full human poses.
 
-|![image](../assets/images/team10/posenet2.png)|
+|![image](/CS188-Projects-2023Winter/assets/images/team10/posenet2.png)|
 |:--:| 
 | Refining mid-range offset vectors. |
 
-|![image](../assets/images/team10/posenet.png)|
+|![image](/CS188-Projects-2023Winter/assets/images/team10/posenet.png)|
 |:--:| 
 | PoseNet Pipeline. |
 
@@ -91,18 +91,18 @@ In AcT, tokens are generated temporaly, mapping each frame to a single token. Th
 
 Following these steps, we get the tokens:
 
-$X = \text{pose input mapped to dimension } D_{model}$
+$$X = \text{pose input mapped to dimension } D_{model}$$
 
-$CLS = \text{Class Token}$ 
+$$CLS = \text{Class Token}$$ 
 
-$PE = \text{Positional Embedding}$
+$$PE = \text{Positional Embedding}$$
 
-$\text{Input Tokens} = [CLS, X] + PE$
+$$\text{Input Tokens} = [CLS, X] + PE$$
 
 
 ### Transformer Encoder
 
-|![image](../assets/images/team10/transformer_encoder_architecture.png)|
+|![image](/CS188-Projects-2023Winter/assets/images/team10/transformer_encoder_architecture.png)|
 |:--:| 
 | AcT Architecture. |
 
@@ -129,7 +129,7 @@ One problem is that the keypoints that are extracted are not nearly as dense as 
 
 We added a single convolutional layer at the start of the AcT model. This convolutional layer uses ReLU activation and consists of 10 filters with parameters (K = 2, S = 1) with bias. The kernel size of 2 essentially learns features across two consecutive frames in the input sequence.
 
-|![image](../assets/images/team10/conv_transformer.jpg)|
+|![image](/CS188-Projects-2023Winter/assets/images/team10/conv_transformer.jpg)|
 |:--:| 
 | Convolutional AcT Architecture. |
 
@@ -185,11 +185,11 @@ After running the baseline AcT model on each of the 4 datasets, we took the data
 
 #### Training Accuracy Curves
 
-![image](../assets/images/team10/training_acc.png)
+![image](/CS188-Projects-2023Winter/assets/images/team10/training_acc.png)
 
 #### Validation Accuracy Curves
 
-![image](../assets/images/team10/val_acc.png)
+![image](/CS188-Projects-2023Winter/assets/images/team10/val_acc.png)
 
 #### Test Accuracy
 

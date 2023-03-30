@@ -9,6 +9,13 @@ date: 2023-03-29
 
 > The manual labelling of high quality datasets for the purposes of training Computer Vision models remains one of the most time consuming tasks for Computer Vision research. Consequently, alternative methods of extracting label information from existing images and visual data is one of the areas of focus for recent research. In this blog we explore one of the state of the art models in pre-training Image Classification models, namely CLIP (Contrastive Language–Image Pre-training). Extracting latent labels from images already associated with text widely available on the internet is a promising method to fast-track the training of Computer Vision models using text *and* image encoders. These models demonstrate the power of Contrastive Pre-training to perform well with "zero-shot" classification, or classifying images which the model has not been trained on or seen before.
 
+
+<!--more-->
+{: class="table-of-content"}
+
+* TOC
+{:toc}
+
 <iframe
     width="738"
     height="417"
@@ -18,12 +25,6 @@ date: 2023-03-29
     allowfullscreen
 >
 </iframe>
-
-<!--more-->
-{: class="table-of-content"}
-
-* TOC
-{:toc}
 
 - [Introduction](#introduction)
 - [Background](#background)
