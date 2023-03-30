@@ -190,13 +190,14 @@ In this way, the model size can be cut in half, renderings becomes more accurate
 ![Instant NeRF]({{ '/assets/images/team17/img8.png' | relative_url }})
 {: style="width: 700px; max-width: 100%;"}
 *Fig 8. Instant NeRF*.
+
 Instant NeRF utilizes a multi-layer hash encoding to solve the difficulties of storing latent features. In simplier way, it's uses a multi resolution hash table to store features. 
 
-Given an input coordinate $x$, the first step in the multiresolution hash encoding process is to locate the surrounding voxels at $L$ different resolution levels. Once we have identified these voxels, we assign indices to their corners by hashing their integer coordinates.
+Given an input coordinate $x$, the first step in the multiresolution hash encoding process is to locate the surrounding voxels at $L$ different resolution levels. Once having identified these voxels, we assign indices to their corners by hashing their integer coordinates.
 
-Then we look up the corresponding $𝐹$-dimensional feature vectors from the hash tables 𝜃𝑙 for each index. This makes it possible to store the features in the Hash Table.
+Then we look up the corresponding $F$-dimensional feature vectors from the hash tables $\theta l$ for each index. This makes it possible to store the features in the Hash Table.
 
-The Linear Interpolation step linearly interpolate the $F$-dimensional feature vectors based on the relative position of the input coordinate $x$ within its respective 𝑙-th voxel.
+The Linear Interpolation step linearly interpolate the $F$-dimensional feature vectors based on the relative position of the input coordinate $x$ within its respective $l$-th voxel.
 
 After the linear interpolation, we then concatenate the resulting feature vectors from each resolution level. We will also include auxiliary inputs $\xi ∈ \R^𝐸$ to create the encoded MLP (Multilayer Perceptron) input $𝑦 ∈ \R^{𝐿𝐹 + 𝐸}$.
 
