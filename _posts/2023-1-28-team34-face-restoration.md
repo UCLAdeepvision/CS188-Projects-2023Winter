@@ -25,6 +25,7 @@ date: 2023-1-29
   - [GPEN Model vs Real-ESRGAN Model](#gpen-model-vs-real-esrgan-model)
   - [Multiple Run-Through of Same Image](#multiple-run-through-of-same-image)
 - [Future Projects and Improvements](#future-projects-and-improvements)
+- [Presentation](#presentation)
 - [Codebase](#codebase)
 - [Most Relevant Research Papers](#most-relevant-research-papers)
 - [Most Relevant Code](#most-relevant-code)
@@ -225,15 +226,21 @@ Here are a list of some future projects and improvements to the models:
 
 3. Combine a segmentation model with these super-resolution models in order to enhance the accuracy of the segmentation models. This could save a lot of money in hardware as the software would be capable of enhancing the quality and so the older, outdated cameras and equipment would not have to be replaced. 
 
+## Presentation
+
 <iframe
     width="640"
     height="480"
-    src="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"
+    src="https://www.youtube.com/watch?v=XVcJwdhvYHA"
     frameborder="0"
     allow="autoplay; encrypted-media"
     allowfullscreen
 >
 </iframe>
+
+Here is a link to the youtube video as well: https://www.youtube.com/watch?v=XVcJwdhvYHA
+
+I also put it in a [google drive folder](https://drive.google.com/file/d/1ywAgehY5u8K-ARL0w_kPZ1o50PNY3Fi_/view?usp=sharing) in the case that the embed youtube does not work.
 
 
 ## Codebase 
