@@ -202,10 +202,10 @@ Overall, with these innovations, Instant NeRF makes it possible to render high-r
 
 ## Generate NeRF
 
-![NeRF]({{ '/assets/images/team17/video1.mk4' | relative_url }})
+![NeRF]({{ '/assets/images/team17/video1.gif' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 *Fig 8. NeRF of a toy car*.
-![NeRF]({{ '/assets/images/team17/video2.mkv' | relative_url }})
+![NeRF]({{ '/assets/images/team17/video2.gif' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 *Fig 8. NeRF of a poster*.
 Once the model is fully trained, it is relatively simple for the NeRF model to generate 3D scenes. Similarly to Assignment 4, we can generate the 3D views of a toy car. We can also generate the 3D views of the poster. 
