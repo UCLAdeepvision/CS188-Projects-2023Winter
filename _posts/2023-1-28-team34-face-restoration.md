@@ -106,7 +106,7 @@ SRGAN is a generative adversarial network that focuses on super-resolution, or g
 
 For a short description of ESRGAN, it improves upon SRGAN by replacing the batch normalization layers with residual scaling and smaller initializations, use a discriminator that is focused on determining whether an image is more realistic than the other versus the usual discriminator determining whether an image is fake or not, improving the perceptual loss in SRGAN by using VGG features from after activation to before activation, and introducing a Residual-in-Residual Dense Block. [15] A Residual-in-Residual Dense Block, or RRDB, consists of dense blocks which are multiple convolution layers that take input from all previous convolution layers before it, and combines it with a residual block. The block is meant to make the original SRGAN model more deep and complex, and is made possible without the issues of deep models such as vanishing gradients due to the other optimizations listed before.
 
-Real-ESRGAN focuses on blind-world degradations and the issue that a model like ESRGAN is not complex enough to recognize all of the multitude of degradations that can occur in the real-world, and be able to identify them all. Real-ESRGAN like GPEN both utilize the U-Net architecture, and in Real-ESRGAN's case it replaces the VGG features in ESRGAN with an U-Net design. Spectral normalization regularization is also incorporated with 
+Real-ESRGAN focuses on blind-world degradations and the issue that a model like ESRGAN is not complex enough to recognize all of the multitude of degradations that can occur in the real-world, and be able to identify them all. Real-ESRGAN like GPEN both utilize the U-Net architecture, and in Real-ESRGAN's case it replaces the VGG features in ESRGAN with an U-Net design. 
 
 ### Examples of Output
 
@@ -122,24 +122,85 @@ Due to several factors such as simplicity of the model, lack of features to help
 
 Looking up online, multiple additional methods are suggested that could help the discriminator not converge towards 0, but towards some loss greater than 0, such as implementing dropout into the discriminator architecture, and other methods to fix (or help alleviate) the vanishing gradient problem, mode collapse problem, and other issues. 
 
-
 #### StyleGAN2-ADA Model
-
-
 
 Below is a gif/mp4 of linear interpolation over the z-space of StyleGAN2-ADA and how we can see the change over the different features of the face such as hair, facial expression, clothing, and even the direction of which the person is facing. Throughout the different frames of the GIF, we can see that the output from the model can be considered as generally close to actual human faces (at a quick glance due to the high frame rate of the GIF). However, we can also see issues within each image, especially of blurry splotches around the hair and background. The StyleGAN2 paper addresses these issues and talks about splitting their Adaptive Instance Normalization block/method into separate parts and introducing weights/latent space will be effective at helping erase the blurs, at least better than StyleGAN1 did. These generated frames were based on a pretrained model from this [github repo](https://github.com/justinpinkney/awesome-pretrained-stylegan2/#faces-FFHQ-config-e-256x256) and the specific dataset and weights used were based on the FFHQ dataset but with a 256x256 resolution. 
 
 ![StyleGAN2-ADA Linear Interpolation GIF]({{'/assets/images/team34/Stylegan/lin-interpolation-gif.gif' | relative_url}})
 
-### Codebase 
+We can see from the change of different features the effect that changing the latent code z has on capturing the different styles that were found during training. This discovery will carry on in both the GPEN model and the Real-ESRGAN model and how they will use the latent code z as a tool to preserve and modify the styles/content in the low-quality image and how it will these features will be propagated to future layers in the model in order to influence the end result.
 
-This [google colab file](https://colab.research.google.com/drive/1VblHwExiZdwkeRgAYNCQRfXnmWNqRduL?usp=sharing) is a self-implementation of the DCGAN architecture which was heavily based off of d2l's [own implementation of DCGAN](https://d2l.ai/chapter_generative-adversarial-networks/dcgan.html). I created this notebook to better help my understanding on how Generative Adversarial Networks work and also to understand how the different componenents work with on another in order to generate the final images. I had downscaled my architecture from d1l's 64x64 resolution to 32x32 in order to reduce computational time.
+
+#### GPEN Model vs Real-ESRGAN Model
+
+The setup for the comparison between these two models was to download 256x256 images of faces from [this Kaggle dataset](https://www.kaggle.com/datasets/rahulbhalley/ffhq-256x256?resource=download). For this project, I had only utilized 100 images which is understandably a small amount of samples. I then stack blurred the image on [this website](https://pinetools.com/bulk-batch-blur-image) in order to obtain the low-quality image that will be the input for both models. Using the image quality classification metrics in the python [sewar library](https://sewar.readthedocs.io/en/latest/), I made [this google colab notebook](https://colab.research.google.com/drive/1lvBs3M-EKbB_WW9XeWP0PXN6v9b7v3wC?usp=sharing) in order to retrieve the different scores for the ground-truth images against the stack blurred low-quality image as a baseline, the GPEN generated image, and the Real-ESRGAN generated image. Below is a table with the scores calculated for each image and then averaged. For each of these metrics, the higher the score, the better. 
+
+|  | Blurred | GPEN | Real-ESRGAN |  |
+|---|---|---|---|---|
+| SSIM | 0.2278 | 0.3290 | 0.6379 | 
+| PSNR | 9.406 | 11.93 | 22.20 |
+| UQI | 0.6052 | 0.7211 | 0.9364 |
+
+We can see that both GPEN and Real-ESRGAN both achieved scores in all metrics better than the baseline blurred image that was the input, but Real-ESRGAN achieved much higher scores in SSIM and PSNR, and a slightly higher score in UQI. This was surprising to see as 
+
+Below are some GIFS that showcase the different generated images and the ground truth images for a small sample of the tested data. 
+
+![Ground Truth GIF]({{'/assets/images/team34/output/gt_gif.gif' | relative_url}})
+
+![Blurred Image GIF]({{'/assets/images/team34/output/blur_gif.gif' | relative_url}})
+
+![GPEN GIF]({{'/assets/images/team34/output/gpen_gif.gif' | relative_url}})
+
+![Real-ESRGAN GIF]({{'/assets/images/team34/output/resrgan_gif.gif' | relative_url}})
+
+Observing this small sample, we can see that specific features in the person's face (such as eyes, mouth, and nose) generally appear much more clear than the blurred image, although at times other features such as the hair of the person appears blurred occasionally for both models. From just looking at these outputs, it seems that both models tend to increase the quality of the image mostly around the face, as the hair closest to the face tends to be higher quality than those farther away. Perhaps we could conclude this as a possible issue of the models determining the background from the person's hair or that when the hair becomes much more "solid" and not just strands of hair, the models method of downscaling and upsampling could have just reduced the hair as a singular color. Also for both models, the background tends to remain blurred even after running through each model. 
+
+
+### Multiple Run-Through of Same Image
+
+I wanted to experiment on how these super-resolution models behave when repeatedly running the generated output image as the input image through the same model multiple times, and see what what conclusions we can draw about how these models work.
+
+I selected one blurred image here:
+
+![Blurred Image]({{'/assets/images/team34/output/blurred.png' | relative_url}})
+
+And here is the original high-quality image for reference as well:
+
+![Ground Truth Image]({{'/assets/images/team34/output/gt.png' | relative_url}})
+
+I then ran the image through both the GPEN model and the Real-ESRGAN model 10 times and created a GIF to show the change over time of the generated image.
+
+Here is a timeline of the GPEN output:
+
+![Multiple Output GPEN GIF]({{'/assets/images/team34/output/mult_gpen_gif.gif' | relative_url}})
+
+Here is a timeline of the Real-ESRGAN output:
+
+![Multiple Output GPEN GIF]({{'/assets/images/team34/output/mult_resrgan_gif.gif' | relative_url}})
+
+The Real-ESRGAN output increases in size due to how the Real-ESRGAN output was modified to increase in scale by x1.1 each run.
+
+First, I was very surprised about the outputs of both models. At the beginning of both models, the generated output seems believable enough to the actual ground truth image as it possesses the characteristics that an image of a person should have. What this means is that an image of a person should not have such "solid" colors and appear to have distinct edges to their features, but rather it should be smooth and blend into each other. But, as the later outputs in the GIFs show, this is not the case. This made me curious as my original belief in how these super-resolution models work is to not only generated high-quality images, but also keep the images believable enough to resembling an actual person. But in this case, the later outputs don't resemble an actual person at all, but rather a more cartoon/drawn/bolded image of a person. If both of these models train on actual images of human beings, then why did the models decide to increasingly bolden the colors and certain features in a manner that would (likely) not reflect any of the training images at all?
+
+Also, although this is just one sample and not necessarily indicative of how these models work on all images, we can see from the GPEN output that, in my opinion, I believe it actually does a better image at trying to retain the image of a person. The gleam/reflection of light from the person's hair in the GPEN GIF stays fairly consistent throughout the different outputs, but for the Real-ESRGAN output, it becomes this solid cloth on the person's head. Although for GPEN the colors become much more pronounced as the it runs through the model more and more, different features of the person retain a sense of realness to them such as the hair, since in the Real-ESRGAN output, it looks like strands of color are inserted in her hair. In the summary of ESRGAN earlier in the project, it is stated that the discriminator was modified to determine whether an object is more "realistic" or not. But when doing this experiment, it begs the question as to whether it did a good job at this or not.
+
+Another interesting aspect to this experiment is that it reveals, at least in Real-ESRGAN, the impact of noise and downsampling on the output. If we focus on the mouth of the person, we can see the individual's teeth until the few last outputs where the lips close gradually over time. This was an interesting revelation to me as I had believed that when repeatedly running the image over and over, the model would pick up on the teeth being present in the image. Perhaps either due to noise, or due to the downsampling nature of the model, it was possible that the latent code corresponding to whether the teeth should be present or not ended up being manipulated towards the end. 
+
+It may be possible that with repeated testing of this method on different samples, that we can see what specific features a model focuses on making "high-quality" depending on which features stay more consistent throughout the repeated process versus those that end up less realistic. 
+
+Understandably, the outputs do make some sense as the purpose of these models is to simply create high-quality images from degraded images, and not necessarily realistic images of a human face. If the purpose was to create a believable realistic human face from any image, then I would understand that to train both models, a combination of feeding high-quality images that appear unrealistic (such as the ones in the final outputs of the repeated trial) and low-quality images would suffice. 
+
+## Codebase 
+
+This [google colab file](https://colab.research.google.com/drive/1VblHwExiZdwkeRgAYNCQRfXnmWNqRduL?usp=sharing) is a self-implementation of the DCGAN architecture which was heavily based off of d2l's [own implementation of DCGAN](https://d2l.ai/chapter_generative-adversarial-networks/dcgan.html). I created this notebook to better help my understanding on how Generative Adversarial Networks work and also to understand how the different componenents work with on another in order to generate the final images. I had downscaled my architecture from d2l's 64x64 resolution to 32x32 in order to reduce computational time.
 
 This [google colab file](https://colab.research.google.com/drive/1480gFVbJpARX_RBYZHHWccSFJW1iSvdA?usp=sharing) is another individual (@Derrick Schultz) implementation of StyleGAN2-ADA which applies a slight modification in the StyleGANv2 architecture and how the Adaptive Instance Normalization is built in. Pretrained weights were loaded into this model taken from this github repo (https://github.com/justinpinkney/awesome-pretrained-stylegan2/#faces-FFHQ-config-e-256x256) where the weights were trained on the FFHQ dataset but with a resolution of 256x256 rather than the original 1024x1024 (once again to save on computation time). 
 
 This [google colab file](https://colab.research.google.com/drive/1lO3QKY0uCHAGMWSij_GUCw1pRhVEHTzc#scrollTo=_81kxZFFlwGM) is a file that contains a pretrained model of GPEN. This google colab file will (hopefully) be the focus of the project and will also assist in ablation studies along with StyleGAN2-ADA.
 
 This [google colab file](https://colab.research.google.com/drive/1lvBs3M-EKbB_WW9XeWP0PXN6v9b7v3wC?usp=sharing) is what I used to calculate the different image quality assessment metrics between the different generated images and the high-quality ground truth images.
+
+This [google colab file](https://colab.research.google.com/drive/10JV30Bj0Spx4UnwoxOPkE57Ls7bds_0Z?usp=sharing) is what I used to generate the Real-ESRGAN outputs. 
 
 ## Most Relevant Research Papers
 
@@ -155,11 +216,13 @@ This [google colab file](https://colab.research.google.com/drive/1lvBs3M-EKbB_WW
 
 6. This [paper](https://openaccess.thecvf.com/content/ICCV2021W/AIM/papers/Wang_Real-ESRGAN_Training_Real-World_Blind_Super-Resolution_With_Pure_Synthetic_Data_ICCVW_2021_paper.pdf) talks about the Real-ESRGAN model.
 
-### Most Relevant Code
+## Most Relevant Code
 
 This [github repository](https://github.com/justinpinkney/awesome-pretrained-stylegan2/#faces-FFHQ-config-e-256x256) contains a list of pretrained weights for the StyleGAN2-ADA model on different datasets.
 
-This [github repository](https://github.com/pranjaldatta/SSIM-PyTorch) has an implementation of the SSIM metric that will be used to compare the ground truth original images to the generated images from the models that we are testing. 
+This [github repository](https://github.com/yangxy/GPEN) is the official repository for the GPEN model. 
+
+This [github repository](https://github.com/xinntao/Real-ESRGAN) is a repository for the Real-ESRGAN model.
 
 
 ## Reference
@@ -194,6 +257,9 @@ This [github repository](https://github.com/pranjaldatta/SSIM-PyTorch) has an im
 [15] Wang, Xintao, et al. "Esrgan: Enhanced super-resolution generative adversarial networks." Proceedings of the European conference on computer vision (ECCV) workshops. 2018.
 
 [16] Ledig, Christian, et al. "Photo-realistic single image super-resolution using a generative adversarial network." Proceedings of the IEEE conference on computer vision and pattern recognition. 2017.
+
+[17] Miyato, Takeru, et al. "Spectral normalization for generative adversarial networks." arXiv preprint arXiv:1802.05957 (2018).
+
 
 
 
