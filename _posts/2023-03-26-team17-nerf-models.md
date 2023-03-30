@@ -34,7 +34,7 @@ Even though NeRF models have recently added many advanced optimizations and feat
 In order to explore different NeRF models with varying implementations. This project will use primarily the Lego NeRF and the Fern Nerf. There are also additions of photos taken by our team to show the power of NeRF models. 
 
 
-## 1. A Closer Look into NeRF
+## A Closer Look into NeRF
 
 ### NeRF Overview
 The main idea of NeRF involves taking the 5D input $(x, y, z, \theta, \phi)$ in which $(x, y, z)$ are 3D coordinates of the camera and $(\theta, \phi)$ are viewing direction angles of the given camera. In more detail, $x$ usually refers to the horizontal axis, $y$ usually to the vertical axis, and $z$ usually to the depth axis. These 3D coordinates are taken as input to evaluate the radiance and density at each point in the scene. $\theta$ is taken as a polar angle in spherical coordinates that represents the inclination of the viewing direction vector with respect to the positive z-axis. It has a range of 0 to 180 degrees (or 0 to $\pi$ radians). $\phi$ is taken as the azimuthal angel in spherical coordinates that represents the orientation of the viewing direction vector with respect to the positive x axis.. It has a range of 0 to 360 degrees (or 0 to w $\pi$ radians). Both $\theta$ and $\phi$ help to describe the viewing direction of the given camera. 
@@ -109,7 +109,7 @@ $t$ is represented as the depth of the radiation field and $T(t)$ is represented
 However, since it's very computationally expensive to have a continuous function representation in PyTorch, a discrete method is used to estimate the result of color instead:
 
 $$
-\hat{C}(\mathbf{r}) = \sum_{i = 1}^{N} T_i (1 - exp(-\sigma_i\delta_i))\mathbf{c}_i, \textrm{where} T_i = exp(-\sum_{j = 1}^{i - 1}\sigma_j \delta_j)
+\hat{C}(\mathbf{r}) = \sum_{i = 1}^{N} T_i (1 - exp(-\sigma_i\delta_i))\mathbf{c}_i, \textrm{where } T_i = exp(-\sum_{j = 1}^{i - 1}\sigma_j \delta_j)
 $$
 
 in which $\delta_i = t_{i+1} - t$ is the distance between adjacent samples. In this way, the rays are divided into N small intervals. We then randomly sample a point in each interval and perform a weighted summation of colors to get the final color. 
