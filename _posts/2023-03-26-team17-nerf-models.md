@@ -217,6 +217,10 @@ Overall, with these innovations, Instant NeRF makes it possible to render high-r
 *Fig 8. NeRF of a poster, made by [nerfstudio](https://github.com/nerfstudio-project/nerfstudio)*.
 Once the model is fully trained, it is relatively simple for the NeRF model to generate 3D scenes. Similarly to Assignment 4, we can generate the 3D views of a toy car. We can also generate the 3D views of the poster. 
 
+### Video Demo
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Grzko-9mhTw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
 ## Discussion
 Even thoug Neural Radiance Fields (NeRF) is a powerful method for synthesizing novel views of a scene from a set of input images, there are also some limitations of NeRF. NeRF is computational expensive that it requires large VRAM and time to successfully train a model. It also has limited generalization that NeRF models are scene-specific such that a new model must be trained for a new scene. 
 
