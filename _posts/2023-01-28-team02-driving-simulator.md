@@ -8,14 +8,16 @@ date: 2023-03-26
 
 >In this blog, we explore the effectiveness of supervised learning (classification) models that are trained by imitation learning in autonomous driving simulators.
 
-
+{: style="text-align: center;"}
 <!--more-->
 {: class="table-of-content"}
 * TOC
 {:toc}
+
 <iframe width="738" height="417" src="https://youtu.be/MukdkUluzEc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-*Overview* Backup link: https://youtu.be/MukdkUluzEc
-{: style="text-align: center;"}
+*Overview* 
+*Backup link: https://youtu.be/MukdkUluzEc*
+
 
 ## Preliminaries
 Driving simulators provide the fundamental platform for autonomous driving researches. By integrating various deep learning or reinforcement learning pipelines and engines, driving simulators facilitate and standardize model training, validation, testing, and evaluation. The iterations in driving simulators have aimed at a better integration of powerful DL/RL platforms and realistic scene simulations.
