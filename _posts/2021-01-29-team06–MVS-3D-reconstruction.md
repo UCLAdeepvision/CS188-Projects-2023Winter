@@ -19,7 +19,7 @@ Multi View Stereo (MVS) reconstructs a dense 3D geometry of an object or scene f
 ## DTU MVS
 The DTU MVS dataset is a publicly available dataset used for evaluating MVS algorithms. It was created by the Technical University of Denmark (DTU) and contains a variety of scenes, each captured from multiple viewpoints. The dataset includes 59 scenes that contain 59 camera positions and 21 that contain 64 camera positions. The scenes vary in geometric complexity, texture, and specularity. Each image is 1200x1600 pixels in 8-bit RGB color. 
 
-![DTUMVS]({{ '/assets/images/06/DTUMVS.png' | relative_url }})
+![DTUMVS]({{ '/assets/images/team06/DTUMVS.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 *Fig 1. Examples of reference point clouds in DTUMVS dataset. The subset includes scenes of various texture, geometry, and reflectance* [1].
 
@@ -33,11 +33,11 @@ Transformer, originally proposed for natural language processing, has gained inc
 
 ### Architecture 
 
-![TransMVSNet]({{ '/assets/images/06/TransMVSNet.png' | relative_url }})
+![TransMVSNet]({{ '/assets/images/team06/TransMVSNet.png' | relative_url }})
 {: style="width: 700px; max-width: 100%;"}
 *Fig 2. TransMVSNet architecture* [1].
 
-TransMVSNet is an end-to-end deep neural network model for MVS reconstruction. Fig. 2 shows the architecture of TransMVSNet. TransMVSNet first applies a Feature Pyramid Network (FPN) to obtain three deep image features with different resolutions. Then, the scope of these extracted features are adaptively adjusted through an Adaptive Receptive Field Module (ARF) that is implemented by deformable convolution with learnable offsets for sampling.  The features adjusted to the same resolutions are then fed to the FeatureMatching Transformer (FMT). The FMT first performs positional encoding to these features and flattens them. Then, the flattened feature map is fed to a sequence of attention blocks. In each block, all features first compute an intr-attention with shared weights, and then each reference feature is updated with a unidirectional inter-attention information from the source feature. The feature maps processed by FMT then go through a correlation volume and  3D CNNs for regularization to obtain a regularized probability volume. Then, winner-take-all is used to determine the final prediction. 
+TransMVSNet is an end-to-end deep neural network model for MVS reconstruction. Fig. 2 shows the architecture of TransMVSNet. TransMVSNet first applies a Feature Pyramid Network (FPN) to obtain three deep image features with different resolutions. Then, the scope of these extracted features are adaptively adjusted through an Adaptive Receptive Field Module (ARF) that is implemented by deformable convolution with learnable offsets for sampling.  The features adjusted to the same resolutions are then fed to the Feature Matching Transformer (FMT). The FMT first performs positional encoding to these features and flattens them. Then, the flattened feature map is fed to a sequence of attention blocks. In each block, all features first compute an intr-attention with shared weights, and then each reference feature is updated with a unidirectional inter-attention information from the source feature. The feature maps processed by FMT then go through a correlation volume and  3D CNNs for regularization to obtain a regularized probability volume. Then, winner-take-all is used to determine the final prediction. 
 
 ### Architecture Blocks and Code Implementation
 
@@ -105,7 +105,7 @@ class FeatureNet(nn.Module):
 
 The architecture of **Feature Matching Transformer (FMT)** is presented in Fig. 3. In FMT, the reference and neighboring feature maps are first added a positional encoding to enhance TransMVSNet’s robustness with different image resolutions. For each view, the flattened feature map is then processed by $$N_a$$ attention blocks sequentially. Within each block, as shown in Fig. 3, the reference feature and neighboring features first compute their respective intra-attention, where their shared weights are updated to capture global context information. Then, inter-attention is computed between the reference feature and each neighboring feature, and only the reference features are updated to ensure comparability between each pair. The following code is an implementation of the attention block in FMT, where intra- and inter-attention operations are performed in the forward pass. 
 
-![FMT]({{ '/assets/images/06/FMT.png' | relative_url }})
+![FMT]({{ '/assets/images/team06/FMT.png' | relative_url }})
 {: style="width: 700px; max-width: 100%;"}
 *Fig 3. FMT block* [1].
 
@@ -191,15 +191,31 @@ $$
 
 where $$P^{(d)}(\mathbf{p})$$ denotes the predicted probability of $$d$$ as pixel $$\mathbf{p}$$. $$\tilde{d}$$ is the depth value that is closest to the ground truth. $$\{ \mathbf{p}_v \}$$ represents a subset of pixels with valid ground truths. $$\gamma$$ is the focusing parameter, and this loss becomes cross entropy loss with this value set to 0. 
 
-### Results 
+### Results and Discussion 
 
-The performance of TransMVSNet is measured by the average of accuracy and completeness. Accuray of MVS tasks measures the mean absolute point-cloud-to-point-cloud distance between the ground truth and the reconstruction. Completeness evaluates the percentage of the ground truth 3D points that are correctly reconstructed in the output model. 
+The performance of TransMVSNet is measured by the average of accuracy and completeness. Accuracy of MVS tasks measures the mean absolute point-cloud-to-point-cloud distance between the ground truth and the reconstruction. Completeness evaluates the percentage of the ground truth 3D points that are correctly reconstructed in the output model.
+
+The first thing we would like to note is that TransMVSNet shows good generalizability and performs well both in indoor and outdoor data. The DTU dataset contains images of objects, whereas Tanks and Temples dataset contains indoor and outdoor scenes. In the paper, the authors have demonstrated that the use of Feature Matching Transformer (FMT) enhances TransMVSNet’s effectiveness in real-world scenes. 
+
+Secondly, we have also noticed a difference between our visualization of depth maps and those presented in the paper. Fig. 4 shows five examples of depth maps TransMVSNet generates in one case. One difference between our visualization the ones in the paper is that our depth maps include noise in the background. The objects in the depth maps contain a smooth surface, whereas the background shows more variation in depth values. However, the depth maps presented in the paper contains less noise in the background, as shown in Fig. 2. This is because depth filtering and fusion is applied to reduce noise in depth data. In TransMVSNet, this task is done with a dynamic checking strategy that involves both confidence thresholding and geometric consistency. 
+
+![Depths]({{ '/assets/images/team06/5depths.png' | relative_url }})
+{: style="width: 700px; max-width: 100%;"}
+*Fig 4. 5 depth maps from DTU test set*.
+
+Moreover, TransMVSNet, as one of the start-of-the-art MVS frameworks, reveals a general challenge in MVS task. Fig. 5 shows our visualization of 3D point cloud of case 4 in DTU testing set. From this example, we could see that the point cloud prediction is less dense in occluded regions such us the region between the feet of the toy duck and the underlying surface.
+
+![Duck]({{ '/assets/images/team06/duck.jpg' | relative_url }})
+{: style="width: 700px; max-width: 100%;"}
+*Fig 5. Visualization of point cloud*.
+
+Finally, TransMVSNet is a computationally expensive method, as it involves processing multiple input images and producing dense depth maps for each pixel with attention mechanism. This can be a bottleneck when processing large datasets or real-time applications. One way to improve the efficiency of the network is to reduce the resolution of the input images or the output depth maps, or to use a more lightweight network architecture.
 
 ## CDS-MVSNet
 
-![CDS-MVSnet]({{ '/assets/images/06/CDS-MVSnet.png' | relative_url }}) 
+![CDS-MVSnet]({{ '/assets/images/team06/CDS-MVSnet.png' | relative_url }}) 
 {: style="width: 700px; max-width: 100%;"} 
-*Fig 4. CDS-MVSnet architecture* [3].
+*Fig 6. CDS-MVSnet architecture* [3].
 ### Motivation
 
 Learning-based MVS methods are usually better than traditional methods at ambiguity and high computational complexity matching. The learning-based methods are usually composed of three steps: feature extraction, cost volume formulation, and cost volume regularization. Many researches have been conducted on the latter two steps, whereas the authors of CDS-MVSnet propose a novel feature extraction network, the CDSFNet. It is composed of multiple novel convolution layers, each of which can select a proper patch scale for each pixel guided by the normal curvature of the image surface.
@@ -366,6 +382,42 @@ def  forward(self, x, epipole=None, temperature=0.001):
 
 The CDS-MVSNet adopted the cascade structure of CasMVSNet [5] as the baseline structure. The network is composed of multiple cascade stages to predict the depth maps in a coarse-to-fine manner. 
 Each stage estimates a depth through three steps: feature extraction, cost volume formulation, cost volume regularization & depth regression. CDS-MVSNet formulates a 3D cost volume based on the output features of CDSFNet. The features of CDSFNet effectively reduce the matching ambiguity by considering the proper pixel scales.
+
+#### Discussion
+
+![CDS-MVSnet]({{ '/assets/images/team06/cds_ad.png' | relative_url }}) 
+{: style="width: 700px; max-width: 100%;"} 
+*Fig 7. scale map of CDS-MVSNet* [3].
+
+
+The CDS-MVSNet is good at extracting features of images with different viewpoints and camera pose. In Fig. 7a, the closer viewpoint is, the larger scales are estimated on the scale map. In Fig. 7b, the reference and source scale maps are similar when the difference of camera poses is small. And when it is large, the scale map of reference view is changed to adapt the source view, which is marked in the red circle.
+
+Also, with the stacking of mutiple CDSConvlayers layers, the searching scale-space is expanded profoundly even when only 2-3 candidate kernel scales are chosen at each layer. This helps in reducing the complexity of the model significantly.
+
+## Comparing TransMVSNet and CDS-MVSNet
+
+As shown in figure 8, CDS-MVSNet predictions are clearer on the edges of objects and have fewer noises in the backgroud.
+
+![CDS-MVSnet]({{ '/assets/images/team06/Pred_prediction.png' | relative_url }}) 
+{: style="width: 700px; max-width: 100%;"} 
+*Fig 8. Depth map of CDS-MVSNet Output* [3].
+
+As shown in table 1, when having similar results on the DTU test dataset, CDS-MVSNet has a slightly less complex model and a much faster prediction speed per image than the TransMVSNet.
+
+
+| model       | learnable params | average prediction time/image (sec) | Acc.  | Comp. | Overall |
+|    :---:    |       :---:      |               :---:             | :---:| :---:|  :---:  |
+| TransMVSNet |     1148924      |            2.13                 | 0.321 | 0.289 | 0.305   |
+| CDS-MVSNet  |     981622       |            1.08                 | 0.352 | 0.280 | 0.316   |
+
+*Table 1. Comparison Between two models(Acc., Comp., and Overall are DTU testing results, the lower the better)*
+  
+## Appendix
+
+Code Base: <https://colab.research.google.com/drive/1vdBaPXzHRh5jkdQUMWRb9Jy-cnMCCtdL?usp=sharing>.
+
+Spotlight Video: <https://www.youtube.com/watch?v=Mu6Q2pgj66Q>.
+
 
 ---
 # Reference
