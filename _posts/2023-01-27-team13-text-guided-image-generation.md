@@ -9,14 +9,15 @@ date: 2023-01-27
 
 > Text-to-image models are machine learning models which take as input a natural language description and produce an image matching the given description. We will explore the architecture and design of one such model, Stable Diffusion, and explore extensions of Stable Diffusion through experiments with prompt-to-prompt editing and model finetuning.
 
-<iframe width="738" height="417" src="https://www.youtube.com/embed/J8umt6A7e-8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-*Video 1. Spotlight Overview*.
 {: style="text-align: center;"}
 
 <!--more-->
 {: class="table-of-content"}
 * TOC
 {:toc}
+<iframe width="738" height="417" src="https://www.youtube.com/embed/J8umt6A7e-8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+*Video 1. Spotlight Overview*.
+
 ## Introduction
 Stable Diffusion is an open-source, state-of-the-art text-to-image model. In this paper, we take an in-depth look at Stable Diffusion itself and extend its applications with Prompt-to-Prompt editing and finetuning. With prompt-to-prompt, we explore the usage of cross-attention maps and how we can leverage them to precisely modify specific parts of a generated image while preserving the rest of the image. For fine-tuning, we finetune Stable Diffusion on a pokemon dataset to create pokemon-like outputs, comparing the before and after results of such finetuning. We conclude with an assessment of the capabilities and limitations of Stable Diffusion, and talk about its potential societal impact.
 
