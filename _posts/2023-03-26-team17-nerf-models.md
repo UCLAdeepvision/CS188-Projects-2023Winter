@@ -140,14 +140,17 @@ since $F'_0\theta$ is a Multi-Layer Perceptron(MLP) and $\gamma$ is a mapping fr
 Furthermore, because the density distribution in the space is uneven, if the rays are uniformly and randomly sampled, the rendering efficiency will be relatively low. In this case. the rays may pass through fewer high-density points after passing through a long distance. From the above analysis, we can see that the entire rendering process is nothing more than a weighted summation of the colors of the sampling points on the ray. In this case, the weight $w_i = T_i(1 - exp(-\sigma_i\delta_i))$. 
 
 We can weight the colors in the rendering formula with $w_i$ as the probability of sampling in the corresponding interval. We can then train a fine and a coarse network to improve the efficienty. The coarse network use $w_i$ as estimations to the sampling probability. The fuction is as follow:
+
 $$
 \hat{C}_c(\mathbf{r}) = \sum_{i = 1}^{N_c} w_i c_i, w_i = T_i(1 - exp(-\sigma_i \delta_i))
 $$
 
 In the fine network, we utilized 
+
 $$
 \hat{w}_i = \frac{w_i}{\sum_{j = 1}^{N_c} w_j}
 $$
+
 function which uses $\hat{w}_i$ as the sampling probability for $N_f$ points. This way, a better result can be produced. 
 
 ### Architecture
@@ -161,7 +164,7 @@ The architecture of NeRF is to have the coordinates $\mathbf{x} = (x, y, z)$ int
 ## Innovations
 
 ### Mip-NeRF
-MiP NeRF(Multiscale Inference and Prediction Neural Radiance Fields) has innnovations over the original NeRF to improve the performance.
+Mip NeRF(Multiscale Inference and Prediction Neural Radiance Fields) has innnovations over the original NeRF to improve the performance.
 
 ![Mip-NeRF]({{ '/assets/images/team17/img5.png' | relative_url }})
 {: style="width: 700px; max-width: 100%;"}
