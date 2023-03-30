@@ -170,11 +170,9 @@ We can see that both GPEN and Real-ESRGAN both achieved scores in all metrics be
 
 Another possible explanation for the difference in performance is due to the GAN prior used in GPEN. The model tested used StyleGANv2 as the generative prior which possibly performed weaker than Real-ESRGAN due to not enough finetuning or the difficulty in handling the latent code generation from StyleGANv2 to generate high-quality features that matches the input image. An interesting interaction between Real-ESRGAN and GPEN is that due to the nature of GPEN and its ability to incorporate generally any GAN as long as it can generated high-quality images and the GAN can be embedded as a decoder, technically Real-ESRGAN could be the generative prior for GPEN which could lead to much higher performance with the combination of the both of them.
 
-Below are some GIFS that showcase the different generated images and the ground truth images for a small sample of the tested data. 
+Below are some GIFS that showcase the different generated images and the ground truth images for a small sample of the tested data. The order of the GIFS are: Ground Truth, GPEN, and then Real-ESRGAN.
 
 ![Ground Truth GIF]({{'/assets/images/team34/output/gt_gif.gif' | relative_url}})
-
-![Blurred Image GIF]({{'/assets/images/team34/output/blur_gif.gif' | relative_url}})
 
 ![GPEN GIF]({{'/assets/images/team34/output/gpen_gif.gif' | relative_url}})
 
