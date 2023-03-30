@@ -179,9 +179,11 @@ One of the main contributions of Mip-NeRF is cone tracing, the original renderin
 The Featurization procedure is also different, the original NeRF involves obtaining point-sampled positional encoding features (depicted as dots) along each pixel's ray. However, because these point-sampled features don't have shape and size of the volume viewed by each ray, ambiguity can occur when different cameras capture the same position at varying scales. In this case, NeRF's performance will be negatively impacted. Instead, Mip-NeRF utilizes cones instead of rays and explicitly models the volume of each sampled conical frustum (represented as trapezoids), effectively addressing this ambiguity.
 
 There are also differences in hierarchical sampling procedure, NeRF utilizes two distict MLPs that one is "coarse" and one is "fine". There are also uneven samples of "coarse" and "fine" in the original NeRF. In Mip-NeRF, there's only a single MLP with equal samples for "coarse" and "fine". The even samples are a result of the single MLP which is shown in the following optimization problem:
+
 $$
 \min_{\theta} \sum_{r \in \R} (\lambda || \mathbf{C}^*(\mathbf{r}) - \mathbf{C}^*(\mathbf{r}; \Theta, \mathbf{t}^c)||^2_2 + || \mathbf{C}^*(\mathbf{r}) - \mathbf{C}^*(\mathbf{r}; \Theta, \mathbf{t}^f))
 $$
+
 In this way, the model size can be cut in half, renderings becomes more accurate, sampling is more efficient, and the overal structure becomes simplier. 
 
 ### Instant NeRF
