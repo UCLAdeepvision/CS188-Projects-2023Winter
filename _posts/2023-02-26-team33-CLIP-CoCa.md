@@ -1,9 +1,9 @@
 ---
 layout: post
 comments: true
-title: Transferable Visual Models with NLP Supervision
+title: Contrastive Language–Image Pre-training Benchmarks and Explainability
 author: Michael Simon, Victor Lin
-date: 2023-03-25
+date: 2023-03-29
 ---
 
 
@@ -32,11 +32,16 @@ date: 2023-03-25
 - [Explainability](#explainability)
   - [Setup](#setup)
   - [Results](#results-1)
-      - [Experiment 1](#experiment-1)
-      - [Experiment 2](#experiment-2)
-      - [Experiment 3](#experiment-3)
-      - [Experiment 4](#experiment-4)
-      - [Experiment 5](#experiment-5)
+      - [Experiment 1a](#experiment-1a)
+      - [Experiment 1b](#experiment-1b)
+      - [Experiment 1c](#experiment-1c)
+      - [Experiment 2a](#experiment-2a)
+      - [Experiment 2b](#experiment-2b)
+      - [Experiment 2c](#experiment-2c)
+      - [Experiment 3a](#experiment-3a)
+      - [Experiment 3b](#experiment-3b)
+      - [Experiment 3c](#experiment-3c)
+  - [Discussion](#discussion)
     - [Code](#code-1)
 - [References](#references)
 - [Appendix](#appendix)
@@ -44,10 +49,7 @@ date: 2023-03-25
 
 # Introduction
 
-Our project aims to examine the robustness and explainability of novel contrastive approaches to pre-training image classification models. While the original CLIP model and associated paper were released in early 2021 by OpenAI, there have already been extensive efforts done by researchers to benchmark the model's "zero-shot" classification capabilities on standards like ImageNet CITE. Nonetheless we expanded upon the existing benchmarks with more obscure datasets, including the Miniplaces dataset used this class to derive further insights into the model's capabilities. Moreover, we attempt to visualize the self-attention of the Transformer modules within CLIP models to observe how model robustness is affected by the overall architecture as well as choice of pre-training dataset. 
-
-POTENTIALLY compare CoCa attention to CLIP (figure out hugging face stuff)
-
+Our project aims to examine the robustness and explainability of novel contrastive approaches to pre-training image classification models. While the original CLIP model and associated paper were released in early 2021 by OpenAI, there have already been extensive efforts done by researchers to benchmark the model's "zero-shot" classification capabilities [3] on standards like ImageNet. Nonetheless we expanded upon the existing benchmarks with more obscure datasets, including the Miniplaces dataset used this class to derive further insights into the model's capabilities. Moreover, we attempt to visualize the self-attention of the Transformer modules within CLIP models to observe how model robustness is affected by the overall architecture as well as choice of pre-training dataset. 
 
 # Background
 
@@ -74,7 +76,7 @@ To adopt additional labels unseen during pre-training, all that needs to be done
 The Image Encoder can either be a ResNet backbone or a Vision Transformer model.  Both will function properly with a given text encoder so long as they extract image features properly and project them into the latent embedding space.
 
 #### ResNets
-ResNet models are deep convolutional neural networks that use residual connections proposed by Kaiming He, which allow deep neural networks to easily learn the identity function and reduces the impact of vanishing gradients CITE. Below is an example of a simple ResNet architecture, where the curved arrows bypassing stacked 3x3 convolutions represent the residual connections.
+ResNet models are deep convolutional neural networks that use residual connections proposed by Kaiming He, which allow deep neural networks to easily learn the identity function and reduces the impact of vanishing gradients [8]. Below is an example of a simple ResNet architecture, where the curved arrows bypassing stacked 3x3 convolutions represent the residual connections.
 
 ![ResNet18 Architecture](assets/images/team-33/ResNet18.png "ResNet18")
 
@@ -82,7 +84,7 @@ ResNet models are deep convolutional neural networks that use residual connectio
 
 #### Vision Transformers
 
-Vision Transformers take inspiration from the success of Transformer models in NLP tasks. The input image is first divided into small patches of fixed size, which are then fed into a Transformer encoder. The Transformer encoder consists of multiple layers of self-attention and feedforward neural networks, which allow the model to discover the importance of each patch and learn complex representations of the image. Finally, a classification head is added on top of the Transformer encoder to predict the class label of the image.
+Vision Transformers take inspiration from the success of Transformer models in NLP tasks [2]. The input image is first divided into small patches of fixed size, which are then fed into a Transformer encoder. The Transformer encoder consists of multiple layers of self-attention and feedforward neural networks, which allow the model to discover the importance of each patch and learn complex representations of the image. Finally, a classification head is added on top of the Transformer encoder to predict the class label of the image.
 
 ![ViT](assets/images/team-33/ViT.png "ViT")
 
@@ -203,7 +205,7 @@ Here "B" refers to the "baseline" CLIP models with the smallest number of total 
 
 ## Pre-training datasets
 
-Although the OpenAI models were trained on an a dataset never fully disclosed, the original paper details how the dataset consisted of 400 million image and text pairs scraped from the internet, typically images with associated captions [1]. The LAION created datasets of various sizes seeking to create an open source replication of the results from OpenAI's CLIP models. We'll explore the models trained on LAION 400m, a dataset of 400 million text image pairs, as well as LAION 2b with 2 billion pairs.
+Although the OpenAI models were trained on an a dataset never fully disclosed, the original paper details how the dataset consisted of 400 million image and text pairs scraped from the internet, typically images with associated captions [1]. The LAION created datasets of various sizes seeking to create an open source replication of the results from OpenAI's CLIP models. We'll explore the models trained on LAION 400m, a dataset of 400 million text image pairs [5], as well as LAION 2b with 2 billion pairs.
 
 Note that while ViT-g/14 is the largest the researchers at LAION ran into errors during training which forced them to prematurely stop training, leaving the model to have observed a number of images comparable to that of LAION 400m. ViT-L has versions trained on both LAION 400m and LAION 2b, while and ViT-H was trained exclusively on LAION 2b.
 
@@ -226,13 +228,14 @@ We can already observe contrasts in general performance for the same classificat
 
 The zero-shot accuries of the aforementioned datasets compete with or surpass the SoTA for zero-shot and few-shot learning and are within a reasonable margin of models trained on the dataset itself.
 
-However, the CLIP models struggle with another form of intra-class differentiation with the FGVC-Aircraft dataset. The best CLIP model was the ViT-H/14 model from LAION with 42.6% accuracy, compared to the 95.11% accuracy for Inceptionv4 which is SoTA 
+<!-- However, the CLIP models struggle with another form of intra-class differentiation with the FGVC-Aircraft dataset. The best CLIP model was the ViT-H/14 model from LAION with 42.6% accuracy, compared to the 95.11% accuracy for Inceptionv4 which is SoTA 
 
-https://paperswithcode.com/sota/few-shot-learning-on-fgvc-aircraft-1
+https://paperswithcode.com/sota/few-shot-learning-on-fgvc-aircraft-1 -->
 
 
-Lastly, all CLIP models struggle on the dsprites datasets, all failing to surpass 10% accuracy. However, this is not surprising considering 
+Lastly, all CLIP models struggle on the dsprites datasets, all failing to surpass 10% accuracy. However, this is not surprising considering that dataset is position and pose focused and is a nontraditional classification task.
 
+Generally speaking, CLIP performs very well on regular zero-shot classification tasks like ImageNet and CIFAR, as well as intra-class differentiation when there are significant physical difference between classes like with cars. It performs less than optimal on non-traditional classification tasks like predicting sprite coordinates or character recognition.
 
 
 ## Our Zero-Shot Datasets
@@ -258,11 +261,11 @@ As a result of the subtraction in `acc1_adjusted`, we gain the benefit of having
 
 #### Code
 
-A more detailed view of our zero-shot benchmarking can be found in this [colab](https://drive.google.com/file/d/1triv0P3MMXO3qP5bDU--Dk6xFGW_wUQO/view?usp=sharing).
+A more detailed view of our zero-shot benchmarking can be found in this [colab](https://drive.google.com/file/d/1triv0P3MMXO3qP5bDU--Dk6xFGW_wUQO/view?usp=sharing). A full table of results are available in tables 1 and 2 in the appendix.
 
 ### Miniplaces
 
-We also decided it would be interesting to conduct some zero-shot analysis on Miniplaces, the toy dataset used for the class classification competition created originally by Dr. Zhou at MIT.
+We also decided it would be interesting to conduct some zero-shot analysis on Miniplaces, the toy dataset used for the class classification competition created originally in part by Dr. Zhou at MIT [7].
 
 We constructed our [notebook](https://colab.research.google.com/drive/1Jxg_Y73J9dt42gBA9XI8qU_3fl5WDmO3?usp=sharing) using the zero-shot classifier setup from CLIP_benchmark repository from LAION. We also download the Miniplaces dataset from the google drive link in the assignments and perform the necessary unzipping setup. The template we used to convert the labels into captions was "A photo of a {classname}". After encoding the class captions, we ran zero-shot classification on the Miniplaces test set and submitted to the Kaggle competition to get top1 accuracy results.
 
@@ -285,14 +288,14 @@ Now we conduct an analysis of the self-attention across different CLIP architect
 
 ## Setup
 
-We base our notebooks off the CLIP-explainability notebook from Chefer et al's paper [4] and corresponding repository Transformer-MM-Explainability. We modified it to include images of our own choosing to probe specificity and limits of CLIP's visual and text encoders. While the original notebook only used ViT models from OpenAI, we also included a variety of models from OpenCLIP to allow for a more complete analysis.
+We base our notebooks off the CLIP-explainability notebook [6] from Chefer et al's paper [5] and corresponding repository Transformer-MM-Explainability. We modified it to include images of our own choosing to probe specificity and limits of CLIP's visual and text encoders. While the original notebook only used ViT models from OpenAI, we also included a variety of models from OpenCLIP to allow for a more complete analysis.
 
-<!-- Note that the method of visualizing attention in [4] uses co-attention, which is better suited for CLIP than self-attention because it assumes context is being provided as the queries and keys to the attention mechanism. -->
+<!-- Note that the method of visualizing attention in [5] uses co-attention, which is better suited for CLIP than self-attention because it assumes context is being provided as the queries and keys to the attention mechanism. -->
 
 ## Results
 
 
-#### Experiment 1
+#### Experiment 1a
 
 Prompt: "A photo of a pair of elephants"
 
@@ -315,7 +318,7 @@ The attention results for the ViT-L/14 models are consistent between OpenAI and 
 
 Now let's see what happens when we change the prompt.
 
-#### Experiment 2
+#### Experiment 1b
 
 Prompt: "A photo of a pond"
 
@@ -333,7 +336,7 @@ There are some more interesting differences here. The ViT-B/32-2b from LAION onc
 
 It's also interesting to see the ViT-L/14 from LAION perform the worst here, with weak attention across the pond and two random hotspots in the sky. The fact that this particular ViT-L/14, the ViT-B/16, and the ViT-B/32 specified as 400m were all pretrained on the same dataset, yet have such drastically different results, suggests architecture does matter significantly even when dealing with datasets with 400 million image-text pairs. Even that large a dataset can be considered relatively small in the context of CLIP models.
 
-#### Experiment 3
+#### Experiment 1c
 
 Prompt: "A photo of a group of ducks"
 
@@ -347,9 +350,9 @@ Prompt: "A photo of a group of ducks"
 | OpenAI ViT-L/14  | ![opanai-ViT-L14-ducks](assets/images/team-33/openAI-ViT-L:14-ducks.png)  | 
 | LAION ViT-L/14-400m  | ![laion-ViT-L14-ducks](assets/images/team-33/laion-L:14-ducks.png)  |
 
-All of the models perform surprisingly well here considering the ducks themselves are tiny relative to the size of the photo. The only model which perform mediocre are the ViT-B/32 from OpenAI which misses the two left duck groups, and the ViT-B/32-400m from LAION which does the same and has the same attention artifact at the bottom of the image as the first two prompts.
+All of the models perform surprisingly well here considering the ducks themselves are tiny relative to the size of the photo. Perhaps the lack of detail due to the ducks being small and low resolution are outweighed by the context of them floating in the pond. The only model which perform mediocre are the ViT-B/32 from OpenAI which misses the two left duck groups, and the ViT-B/32-400m from LAION which does the same and has the same attention artifact at the bottom of the image as the first two prompts. The two left groups are in the area of the water where the trees are being reflected, so the water is green rather than blue. Perhaps the poorly performing models missed the context of ducks in non-blue water during their pre-training.
 
-#### Experiment 4
+#### Experiment 2a
 
 Prompt: "sushi rolls"
 
@@ -363,13 +366,13 @@ Prompt: "sushi rolls"
 | OpenAI ViT-L/14  | ![opanai-ViT-L14-sushi](assets/images/team-33/openAI-ViT-L:14-sushi.png)  | 
 | LAION ViT-L/14-400m  | ![laion-ViT-L14-sushi](assets/images/team-33/laion-L:14-sushi.png)  |
 
-All models do fairly well here, with the majority of the attention hotspot focusing on the sushi rolls at the bottom left of the photo. One potential reason for the consistency is that food, particularly sushi, is generally well photographed and published on social media, perhaps increasing the representation of sushi-like photos in the pre-training datasets.
+All models do fairly well here, with the majority of the attention hotspot focusing on the sushi rolls at the bottom left of the photo. One potential reason for the consistency is that food, particularly sushi, is generally well photographed and published on social media, perhaps increasing the representation of sushi-like photos in the pre-training datasets. The models do well despite the fact that we didn't include the prefix "A photo of" in the prompt, demonstrating the CLIP text encoder's capability to perform without caption-like text encodings.
 
-For some reason, the LAION ViT-B/14 has many small attention artifacts throughout the image.
+For some reason, the LAION ViT-L/14 has many small attention artifacts throughout the image. There's no direct explanation that can be derived from this, other than the fact that no attention mechanism is foolproof. Maybe the larger model size and increased number of tranformer models caused the LAION ViT-L/14 to learn incorrect context associations, such as identifying white areas (the table) with sushi.
 
 Let's see how the attention shifts with other prompts:
 
-#### Experiment 5
+#### Experiment 2b
 
 Prompt: "an egg"
 
@@ -385,6 +388,84 @@ Prompt: "an egg"
 
 This prompt leads to more differentiation between models. The ViT-B/32 from OpenAI is particulaly bad here, with attention hotspots on the soy sauce container and table larger than the egg at the bottom right of the photo. In contrast, the LAION ViT-L/14 was nearly perfect, with attention almost exclusively on the egg. Another interesting observation is the fact the ViT-B/32-2b has attention artifacts on the sushi and potatos on the left of the image despite having been trained on a larger dataset. 
 
+#### Experiment 2c
+
+Prompt: "sriracha"
+
+| Model | Original/Attention | 
+| :--------: | :--------: | 
+| OpenAI ViT-B/16   |  ![opanai-ViT-B16-sriracha](assets/images/team-33/openAI-ViT-B:16-sriracha.png)  | 
+| LAION ViT-B/16-400m   | ![laion-ViT-B16-sriracha](assets/images/team-33/laion-B:16-sriracha.png)   | 
+| OpenAI ViT-B/32   | ![opanai-ViT-B32-sriracha](assets/images/team-33/openAI-ViT-B:32-sriracha.png)   | 
+| LAION ViT-B/32-400m   | ![laion-ViT-B32-400m-sriracha](assets/images/team-33/laion-B:32-400m-sriracha.png)   | 
+| LAION ViT-B/32-2b   | ![laion-ViT-B32-2b-sriracha](assets/images/team-33/laion-B:32-2b-sriracha.png)  | 
+| OpenAI ViT-L/14  | ![opanai-ViT-L14-sriracha](assets/images/team-33/openAI-ViT-L:14-sriracha.png)  | 
+| LAION ViT-L/14-400m  | ![laion-ViT-L14-sriracha](assets/images/team-33/laion-L:14-sriracha.png)  |
+
+Here the CLILP demonstrates its ability to learn the meaning of more obscure words. Six out of seven models have a large attention hotspot on the sriracha container at the top of the image. While sriracha is a distinctly red sauce, the lighting in the photo changes the color to be a darker red. Moreover, the other red areas of the image near the meat on the bottom right are not positively identified as sriracha. We can infer that sriracha was a image-text pair probably included in all pretraining datasets, because its meaning can't be derived from other english words; its originally a Thai word.
+
+The ViT-B/32 models continue to have the largest attention hotspots, which makes intuitive sense because of its larger patch size and thus lower level of granularity; a positive attention hit on a patch will occupy at minimum the entirety of the 32x32 patch.
+
+The poor performance of LAION ViT-L/14 on this prompt despite being pretrained on the same 400 million text image pairs are the smaller ViT-B models suggests that larger CLIP models may require a larger pretraining dataset or longer training to perform well in all situations.
+
+Let's examine another image.
+
+#### Experiment 3a
+
+Prompt: "a photo of a coke bottle"
+
+| Model | Original/Attention | 
+| :--------: | :--------: | 
+| OpenAI ViT-B/16   |  ![opanai-ViT-B16-coke](assets/images/team-33/openAI-ViT-B:16-coke.png)  | 
+| LAION ViT-B/16-400m   | ![laion-ViT-B16-coke](assets/images/team-33/laion-B:16-coke.png)   | 
+| OpenAI ViT-B/32   | ![opanai-ViT-B32-coke](assets/images/team-33/openAI-ViT-B:32-coke.png)   | 
+| LAION ViT-B/32-400m   | ![laion-ViT-B32-400m-coke](assets/images/team-33/laion-B:32-400m-coke.png)   | 
+| LAION ViT-B/32-2b   | ![laion-ViT-B32-2b-coke](assets/images/team-33/laion-B:32-2b-coke.png)  | 
+| OpenAI ViT-L/14  | ![opanai-ViT-L14-coke](assets/images/team-33/openAI-ViT-L:14-coke.png)  | 
+| LAION ViT-L/14-400m  | ![laion-ViT-L14-coke](assets/images/team-33/laion-L:14-coke.png)  |
+
+The results here demonstrate the power of having a larger pretraining dataset. The LAION ViT-B/32-2b has the best attention heatmap focusing almost entirely on the word "Coca" in the Coca-Cola logo on the bottle. While the ViT-B/32 from OpenAI also has a strong emphasis on the logo, it also has attention distributed around the whole image, including the hand and random patches of the background. The LAION ViT-B/32-400m continues to have attention hotspot artifacts in places irrelevant to the prompt, in this case in the sky. Lastly, the LAION ViT-L/14-400m	performs the worse once again, despite having the largest image encoding ViT.
+
+#### Experiment 3b
+
+Prompt: "a photo of the ocean"
+
+| Model | Original/Attention | 
+| :--------: | :--------: | 
+| OpenAI ViT-B/16   |  ![opanai-ViT-B16-ocean](assets/images/team-33/openAI-ViT-B:16-ocean.png)  | 
+| LAION ViT-B/16-400m   | ![laion-ViT-B16-ocean](assets/images/team-33/laion-B:16-ocean.png)   | 
+| OpenAI ViT-B/32   | ![opanai-ViT-B32-ocean](assets/images/team-33/openAI-ViT-B:32-ocean.png)   | 
+| LAION ViT-B/32-400m   | ![laion-ViT-B32-400m-ocean](assets/images/team-33/laion-B:32-400m-ocean.png)   | 
+| LAION ViT-B/32-2b   | ![laion-ViT-B32-2b-ocean](assets/images/team-33/laion-B:32-2b-ocean.png)  | 
+| OpenAI ViT-L/14  | ![opanai-ViT-L14-ocean](assets/images/team-33/openAI-ViT-L:14-ocean.png)  | 
+| LAION ViT-L/14-400m  | ![laion-ViT-L14-ocean](assets/images/team-33/laion-L:14-ocean.png)  |
+
+Here we test the models' ability to positively assign attention to the background of the image which is also partially out of focus. The ViT-B/32 models all perform the best, even when considering LAION ViT-B/32-400m's persistent visual artifact in the sky. The larger patch size appears to be better at synthesizing more global information. It's also interesting that LAION ViT-B/32-400m has attention on the ocean when it was unable to do so for the [pond](#experiment-1b). In this case, we can't determine the reason for this. It could be a difference in word understanding for "ocean" and "pond" in the text encoder, the particular images chosen, or another reason.
+
+#### Experiment 3c
+
+Prompt: "a photo of a hand"
+
+| Model | Original/Attention | 
+| :--------: | :--------: | 
+| OpenAI ViT-B/16   |  ![opanai-ViT-B16-hand](assets/images/team-33/openAI-ViT-B:16-hand.png)  | 
+| LAION ViT-B/16-400m   | ![laion-ViT-B16-hand](assets/images/team-33/laion-B:16-hand.png)   | 
+| OpenAI ViT-B/32   | ![opanai-ViT-B32-hand](assets/images/team-33/openAI-ViT-B:32-hand.png)   | 
+| LAION ViT-B/32-400m   | ![laion-ViT-B32-400m-hand](assets/images/team-33/laion-B:32-400m-hand.png)   | 
+| LAION ViT-B/32-2b   | ![laion-ViT-B32-2b-hand](assets/images/team-33/laion-B:32-2b-hand.png)  | 
+| OpenAI ViT-L/14  | ![opanai-ViT-L14-hand](assets/images/team-33/openAI-ViT-L:14-hand.png)  | 
+| LAION ViT-L/14-400m  | ![laion-ViT-L14-hand](assets/images/team-33/laion-L:14-hand.png)  |
+
+Here we test the ability of CLIP models to see objects through distorted glass. All models are able to achieve some level of attention localization on the hand at the bottom of the image. In line with previous results, the ViT-B/32 models from both organizations are the best at the broad strokes heatmaps, with the hotspot covering the entire hand. Where the LAION ViT-L/14-400m struggled before with this image, it now succeeds in localizing the hand. The inconsistent results for the same model, same image, with different prompts, suggests that further training on a larger dataset would benefit this model.
+
+## Discussion
+
+This method of attention visualization for the purposes of explainability is useful to observe qualitative differences between models. We observed how some models consistently included visual attention artifacts across multiple images. We also saw how the patch size impacted the downstream attention heatmap, with larger patch sizes having larger "blobs" of attention. We also saw how smaller patch sizes allow attention to be more localized for smaller objects in an image. Finally, even our simple attention visualization comparison was able to reveal which models had shortcomings in their trainings, despite the fact they scores similarly on standard benchmarks across model sizes. The ViT-L/14 model trained on 400 million paris from LAION either performed very well or very poorly, suggesting the dataset size wasn't enought to make the larger model robust. This is supported by the fact the LAION ViT-B/32-2b consistently outperformed the LAION ViT-B/32-400m.
+
+For CLIP based models, patch size may be adjusted to control the granularity of details the model is better at finding, whereas model size (mainly related to Vision Transformer size) can generally improve model performance but requires more data to be robust. Perhaps in the future, attention heatmap precision and consistency may become a new benchmark for the quality of CLIP and other largely ViT based models.
+
+Architectural extensions of CLIP are already being rapidly explored, including CoCa (Contrastive Captioners) which use a unimodal and multimodal text decoder [10]. CoCa combines the contrastive learning methods of CLIP with techniques from Generative Adversarial Networks. It also improves up on the contrastive loss of CLIP by also using a captioning loss, for another one of CLIP's downstream tasks (generative captioning) that was not explored in this blog. The inclusion of both the captioning loss and the contrastive loss diversifies the training process and likely allows the model to extract more semantic meaning from the latent text labels. Needless to say the future of CLIP and it's extensions continues to be bright.
+
 ### Code
 
 A full implentation of our explainability analysis can be found at the following colabs:
@@ -397,35 +478,25 @@ A full implentation of our explainability analysis can be found at the following
 - [ViT-B/32-2b LAION](https://colab.research.google.com/drive/1Qvkt0rke7ulC1-mf8jH0CZHg7ws2vfpq?usp=sharing)
 - [ViT-L/14 LAION](https://colab.research.google.com/drive/1rW5P2FJ7PXs-_05ehXylojq-EMXMvaW_?usp=sharing)
 
-<!-- # CoCa
-
-In 2022 an extension of the ideas explored by CLIP was published in the form of CoCa (Contrastive Captioners). CoCa combines the contrastive learning methods of CLIP with techniques from Generative Adversarial Networks. First, note that CoCa uses a single image-text foundation that contains the to execute three different downstream tasks including Visual Recognition (single encoder), Crossmodal Alignment (dual encoder), and Image Captioning & Multimodal Understanding (encoder-decoder). However, for the purposes of this blog we will focus solely on the Image Classification capabilities of the architecture while leaving the other capabilities to a brief discussion. The dual encoder model shown below is used for downstream Image Classification.
-
-![CoCa Overview](assets/images/team-33/coca2.jpg "overview-b")
-*Figure 3: CoCa Overview*
-
-The primary change made to the architecture is the separation of the text decoder transformer into two parts, a unimodal decoder and a multimodal decoder. For the test-time downstream image classification task, only the Unimodal Text Decoder is used. However, the model itself is trained using a combination of the contrastive loss from the image encoding and unimodal text encodings as well as the captioning loss from the multimodal text encodings and the cross  attentional pooling of image encodings. The inclusion of both the captioning loss and the contrastive loss diversifies the training process and likely allows the model to extract more semantic meaning from the latent text labels because of the added focus on captioning loss (for the purposes of generative captioning).
-
-![Dataset creation and Zero-shot prediction](assets/images/team-33/coca.jpg "overview-b")
-*Figure 4: CoCa architecture and PseudoCode* -->
-
-
-
 # References
 
 [1] Radford, Alec, et al. "Learning transferable visual models from natural language supervision." International conference on machine learning. PMLR, 2021.
 
-[2] Yu, Jiahui, et al. "Coca: Contrastive captioners are image-text foundation models." arXiv preprint arXiv:2205.01917 (2022).
+[2] Dosovitskiy, Alexey, et al. "An image is worth 16x16 words: Transformers for image recognition at scale." arXiv preprint arXiv:2010.11929 (2020).
 
-[3] Dosovitskiy, Alexey, et al. "An image is worth 16x16 words: Transformers for image recognition at scale." arXiv preprint arXiv:2010.11929 (2020).
+[3] LAION-AI. CLIP_benchmark. GitHub, 2021, https://github.com/LAION-AI/CLIP_benchmark.
 
-[4] LAION-AI. CLIP_benchmark. GitHub, 2021, https://github.com/LAION-AI/CLIP_benchmark.
+[4] Schuhmann, Christoph, et al. "LAION-400M: Open Dataset of CLIP-Filtered 400 Million Image-Text Pairs." CoRR, vol. abs/2111.02114, 2021, arXiv:2111.02114.
 
 [5] Chefer, Hila, et al. "Generic Attention-model Explainability for Interpreting Bi-Modal and Encoder-Decoder Transformers." CoRR, vol. abs/2103.15679, 2021, arXiv:2103.15679.
 
 [6] Chefer, Hila. Transformer-MM-Explainability. GitHub, 2021, https://github.com/hila-chefer/Transformer-MM-Explainability.
 
-[7] Zhao, Andrew, et al. miniplaces. GitHub, 2016, https://github.com/CSAILVision/miniplaces.
+[7] CSAILVision. miniplaces. GitHub, 2016, https://github.com/CSAILVision/miniplaces.
+
+[8] He, Kaiming, et al. "Deep Residual Learning for Image Recognition." CoRR, vol. abs/1512.03385, 2015, arXiv:1512.03385.
+
+[9] Yu, Jiahui, et al. "Coca: Contrastive captioners are image-text foundation models." arXiv preprint arXiv:2205.01917 (2022).
 
 # Appendix
 ---
@@ -468,7 +539,7 @@ The primary change made to the architecture is the separation of the text decode
 | vtab/smallnorb_label_elevation      |                0.0984362 |         0.118601  |                         0.108066  |              0.108724  |                    0.114979  |         0.11786   |                          0.097284  |                    0.111276  |                    0.109465  |                0.109712  |         0.114321  |             0.112346  |                    0.113416  |
 | vtab/svhn                           |                0.386063  |         0.304817  |                         0.362823  |              0.385218  |                    0.410226  |         0.123694  |                          0.278695  |                    0.561271  |                    0.463045  |                0.381761  |         0.570682  |             0.553549  |                    0.603334  |
 
-*Table 1: Top1 Accuracy across all tested models*
+*Table 1: Top1 Accuracy across all tested models (OpenCLIP)*
 
 *Note that the term following the model name denotes the pre-training dataset used.\
 *QuickGELU refers to a fast implementation of GELU (Gaussian Error Linear Unit), an activation function used mainly in Transformer architectures.
@@ -513,6 +584,54 @@ The primary change made to the architecture is the separation of the text decode
 | vtab/smallnorb_label_elevation      |                0.0977694 |         0.117643  |                         0.10851   |              0.108625  |                    0.115905  |         0.120896  |                          0.0973287 |                    0.110218  |                    0.109893  |                0.108132  |         0.113863  |             0.113338  |                    0.114651  |
 | vtab/svhn                           |                0.368531  |         0.350374  |                         0.403349  |              0.379297  |                    0.421682  |         0.133264  |                          0.2796    |                    0.556531  |                    0.486993  |                0.405775  |         0.588689  |             0.559174  |                    0.568346  |
 
-*Table 2: Mean Accuracy per Class Recall*
+*Table 2: Mean Accuracy per Class Recall (OpenCLIP)*
+
+---
+
+| dataset                   |   ViT-B-16 laion400m_e32 |   ViT-B-16 openai |   ViT-B-16-plus-240 laion400m_e32 |   ViT-B-32 laion2b_e16 |   ViT-B-32 laion2b_s34b_b79k |   ViT-B-32 openai |   ViT-B-32-quickgelu laion400m_e32 |   ViT-H-14 laion2b_s32b_b79k |   ViT-L-14 laion2b_s32b_b82k |   ViT-L-14 laion400m_e32 |   ViT-L-14 openai |   ViT-L-14-336 openai |   ViT-g-14 laion2b_s12b_b42k |
+|:--------------------------|-------------------------:|------------------:|----------------------------------:|-----------------------:|-----------------------------:|------------------:|-----------------------------------:|-----------------------------:|-----------------------------:|-------------------------:|------------------:|----------------------:|-----------------------------:|
+| tfds/caltech_birds2010    |                0.589     |         0.485333  |                         0.621     |              0.568333  |                  0.58        |         0.412667  |                         0.528667   |                    0.792333  |                  0.711667    |                0.694667  |         0.541333  |            0.558      |                    0.750667  |
+| tfds/caltech_birds2011    |                0.60194   |         0.484323  |                         0.636308  |              0.580419  |                  0.592264    |         0.431603  |                         0.551723   |                    0.770275  |                  0.713719    |                0.686358  |         0.552891  |            0.562901   |                    0.741413  |
+| tfds/cassava              |               -0.110361  |         0.0537129 |                        -0.145191  |             -0.141478  |                 -0.0493635   |         0.0540665 |                        -0.087553   |                   -0.143423  |                 -0.0612093   |               -0.128748  |        -0.117256  |           -0.124328   |                   -0.13476   |
+| tfds/cats_vs_dogs         |                0.49583   |         0.497937  |                         0.49583   |              0.494025  |                  0.494841    |         0.496303  |                         0.49123    |                    0.49798   |                  0.49755     |                0.496862  |         0.498796  |            0.498925   |                    0.497378  |
+| tfds/citrus_leaves        |                0.0227273 |         0.150673  |                         0.0631313 |             -0.0698653 |                  0.0917508   |        -0.135522  |                         0.00925926 |                   -0.0126263 |                 -0.000841751 |                0.0883838 |         0.113636  |            0.201178   |                   -0.0227273 |
+| tfds/cmaterdb             |                0.0556    |         0.0006    |                         0.028     |              0.0446    |                  0.0428      |         0.0024    |                        -0.0114     |                    0.0756    |                  0.0464      |                0.0444    |         0.0366    |            0.0406     |                    0.0964    |
+| tfds/colorectal_histology |                0.011     |         0.0064    |                         0.0422    |              0.1074    |                  0.0706      |         0.104     |                         0.0024     |                    0.063     |                  0.111       |                0.0364    |         0.1466    |            0.1306     |                    0.0926    |
+| tfds/deep_weeds           |               -0.0261262 |        -0.0116765 |                        -0.0347504 |             -0.0308096 |                 -0.0273827   |        -0.0452022 |                        -0.0223568  |                   -0.0215572 |                 -0.0354357   |               -0.0263547 |         0.0335002 |            0.0346425  |                   -0.019958  |
+| tfds/dtd                  |                0.448404  |         0.413298  |                         0.491489  |              0.492021  |                  0.492553    |         0.407979  |                         0.48883    |                    0.587234  |                  0.570213    |                0.505319  |         0.498936  |            0.510106   |                    0.595745  |
+| tfds/eurosat              |                0.222741  |         0.251852  |                         0.25363   |              0.23537   |                  0.323222    |         0.225259  |                         0.223222   |                    0.336148  |                  0.0182963   |                0.37337   |         0.419778  |            0.398481   |                    0.349889  |
+| tfds/horses_or_humans     |                0.5       |         0.5       |                         0.5       |              0.5       |                  0.5         |         0.5       |                         0.5        |                    0.5       |                  0.5         |                0.49221   |         0.5       |            0.5        |                    0.5       |
+| tfds/imagenette           |                0.893347  |         0.893664  |                         0.892713  |              0.890707  |                  0.890073    |         0.889756  |                         0.886271   |                    0.896832  |                  0.895881    |                0.894614  |         0.895881  |            0.89567    |                    0.895881  |
+| tfds/imagewang            |                0.930708  |         0.936093  |                         0.931389  |              0.925663  |                  0.927231    |         0.929412  |                         0.920618   |                    0.940729  |                  0.938343    |                0.935002  |         0.940183  |            0.94141    |                    0.939502  |
+| tfds/malaria              |                0.0477538 |         0.092895  |                        -0.0220988 |             -0.0445969 |                  0.000217723 |        -0.126969  |                        -0.0785616  |                    0.303941  |                 -0.0754046   |                0.0145874 |        -0.0257276 |            0.00587851 |                   -0.1683    |
+| tfds/plant_village        |                0.0537719 |         0.0299242 |                         0.024639  |              0.0194644 |                  0.0639371   |         0.0326496 |                         0.0191145  |                    0.100307  |                  0.064066    |                0.0140135 |         0.213174  |            0.245198   |                    0.0448221 |
+| tfds/stanford_dogs        |                0.527833  |         0.497417  |                         0.521833  |              0.487167  |                  0.517667    |         0.44225   |                         0.4745     |                    0.659083  |                  0.604       |                0.5455    |         0.555333  |            0.534667   |                    0.664417  |
+| tfds/uc_merced            |                0.479048  |         0.572381  |                         0.48381   |              0.540476  |                  0.54619     |         0.523333  |                         0.464286   |                    0.674762  |                  0.627143    |                0.555714  |         0.69      |            0.699048   |                    0.662857  |
+
+*Table 3: Top1 Accuracy across all tested models (Our TFDS results)*
+
+---
+
+| dataset                   |   ViT-B-16 laion400m_e32 |   ViT-B-16 openai |   ViT-B-16-plus-240 laion400m_e32 |   ViT-B-32 laion2b_e16 |   ViT-B-32 laion2b_s34b_b79k |   ViT-B-32 openai |   ViT-B-32-quickgelu laion400m_e32 |   ViT-H-14 laion2b_s32b_b79k |   ViT-L-14 laion2b_s32b_b82k |   ViT-L-14 laion400m_e32 |   ViT-L-14 openai |   ViT-L-14-336 openai |   ViT-g-14 laion2b_s12b_b42k |
+|:--------------------------|-------------------------:|------------------:|----------------------------------:|-----------------------:|-----------------------------:|------------------:|-----------------------------------:|-----------------------------:|-----------------------------:|-------------------------:|------------------:|----------------------:|-----------------------------:|
+| tfds/caltech_birds2010    |                0.593     |         0.487     |                         0.626333  |              0.572333  |                    0.585667  |         0.418667  |                          0.533667  |                     0.797333 |                    0.716333  |                0.699667  |          0.547333 |              0.563    |                    0.755333  |
+| tfds/caltech_birds2011    |                0.60681   |         0.48892   |                         0.640609  |              0.58527   |                    0.596483  |         0.436868  |                          0.556655  |                     0.77477  |                    0.718362  |                0.691305  |          0.557109 |              0.567345 |                    0.746563  |
+| tfds/cassava              |                0.169204  |         0.198854  |                         0.193237  |              0.20031   |                    0.188463  |         0.220028  |                          0.198061  |                     0.201717 |                    0.253904  |                0.173166  |          0.223627 |              0.210694 |                    0.198826  |
+| tfds/cats_vs_dogs         |                0.995828  |         0.997936  |                         0.995826  |              0.994024  |                    0.994842  |         0.996303  |                          0.991221  |                     0.997979 |                    0.997551  |                0.99686   |          0.998796 |              0.998925 |                    0.99738   |
+| tfds/citrus_leaves        |                0.20812   |         0.30919   |                         0.257552  |              0.163077  |                    0.259235  |         0.0972482 |                          0.225428  |                     0.354018 |                    0.200505  |                0.246324  |          0.318883 |              0.383279 |                    0.177398  |
+| tfds/cmaterdb             |                0.1562    |         0.1006    |                         0.1282    |              0.1446    |                    0.1428    |         0.1024    |                          0.0884    |                     0.1758   |                    0.1462    |                0.1444    |          0.1366   |              0.1406   |                    0.196     |
+| tfds/colorectal_histology |                0.1358    |         0.1308    |                         0.1672    |              0.2322    |                    0.1952    |         0.2268    |                          0.1274    |                     0.1878   |                    0.2358    |                0.1608    |          0.2716   |              0.2552   |                    0.2174    |
+| tfds/deep_weeds           |                0.14978   |         0.182372  |                         0.137884  |              0.139018  |                    0.149445  |         0.121523  |                          0.160858  |                     0.134345 |                    0.119701  |                0.136648  |          0.238618 |              0.245935 |                    0.13193   |
+| tfds/dtd                  |                0.469681  |         0.434043  |                         0.512766  |              0.512766  |                    0.51383   |         0.429255  |                          0.509043  |                     0.609043 |                    0.591489  |                0.526596  |          0.519681 |              0.531915 |                    0.617021  |
+| tfds/eurosat              |                0.326573  |         0.344777  |                         0.36715   |              0.343303  |                    0.42777   |         0.31182   |                          0.315173  |                     0.45353  |                    0.127227  |                0.473707  |          0.524587 |              0.5076   |                    0.462637  |
+| tfds/horses_or_humans     |                1         |         1         |                         1         |              1         |                    1         |         1         |                          1         |                     1        |                    1         |                0.99241   |          1        |              1        |                    1         |
+| tfds/imagenette           |                0.993309  |         0.993501  |                         0.992548  |              0.990511  |                    0.990093  |         0.989882  |                          0.986159  |                     0.996842 |                    0.995841  |                0.994529  |          0.995937 |              0.995719 |                    0.995821  |
+| tfds/imagewang            |                0.942027  |         0.961699  |                         0.941966  |              0.933488  |                    0.93735   |         0.937387  |                          0.915764  |                     0.967223 |                    0.960353  |                0.954621  |          0.971373 |              0.976013 |                    0.965438  |
+| tfds/malaria              |                0.547754  |         0.592895  |                         0.477901  |              0.455403  |                    0.500218  |         0.373031  |                          0.421438  |                     0.803941 |                    0.424595  |                0.514587  |          0.474272 |              0.505879 |                    0.3317    |
+| tfds/plant_village        |                0.0782852 |         0.0647474 |                         0.0601518 |              0.0579321 |                    0.0770141 |         0.071468  |                          0.0563513 |                     0.124688 |                    0.0826264 |                0.0559109 |          0.149298 |              0.167592 |                    0.0873264 |
+| tfds/stanford_dogs        |                0.536583  |         0.50575   |                         0.529583  |              0.495583  |                    0.526083  |         0.45      |                          0.482417  |                     0.66725  |                    0.612083  |                0.553583  |          0.563667 |              0.5425   |                    0.6725    |
+| tfds/uc_merced            |                0.526667  |         0.620952  |                         0.531905  |              0.587619  |                    0.594286  |         0.570952  |                          0.511905  |                     0.722381 |                    0.674762  |                0.60381   |          0.737143 |              0.745714 |                    0.710476  |
+
+*Table 4: Mean Accuracy per Class Recall (Our TFDS results)*
 
 ---
