@@ -9,6 +9,16 @@ date: 2023-03-29
 
 > The manual labelling of high quality datasets for the purposes of training Computer Vision models remains one of the most time consuming tasks for Computer Vision research. Consequently, alternative methods of extracting label information from existing images and visual data is one of the areas of focus for recent research. In this blog we explore one of the state of the art models in pre-training Image Classification models, namely CLIP (Contrastive Language–Image Pre-training). Extracting latent labels from images already associated with text widely available on the internet is a promising method to fast-track the training of Computer Vision models using text *and* image encoders. These models demonstrate the power of Contrastive Pre-training to perform well with "zero-shot" classification, or classifying images which the model has not been trained on or seen before.
 
+<iframe
+    width="738"
+    height="417"
+    src="https://www.youtube.com/embed/q4pB0vsG9aU"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+>
+</iframe>
+
 
 - [Introduction](#introduction)
 - [Background](#background)
@@ -226,7 +236,7 @@ No one model holds consistent superiority across all the VTAB (Visual Task Adapt
 We can already observe contrasts in general performance for the same classification sub-task. The VTAB/flowers dataset (known better as Oxford Flowers102) and cars dataset (Stanford Cars) both test intra-class differentiation, where objects sharing a greater category (flowers and cars) must be further differentiated (flower species and car make/model/year). Here the CLIP models perform fairly well, reaching over ~70% accuracy for the Flowers102 dataset and over ~80% on the Stanford Cars dataset averaged across all models. While these metrics pale in comparison to standard classification SoTA is 99.76% for Flowers102 and 96.32% for Stanford Cars, they're competive for zero-shot. The single zero-shot data point on Papers with Code is for VAE-GAN model at [70.8% top1 accuracy](https://paperswithcode.com/sota/zero-shot-learning-on-oxford-102-flower). ViT-H/14 from LAION reaches 80.2% top1 accuracy, making it SoTA on Papers with Code. The Stanford Cars doesn't have a current leaderboard on Papers with Code, but the 80%+ zero-shot top1 accuracy surpases the SoTA for few-shot classification on Papers with Code, which is currently only [73.15%](https://paperswithcode.com/sota/few-shot-image-classification-on-stanford-2).
 
 
-The zero-shot accuries of the aforementioned datasets compete with or surpass the SoTA for zero-shot and few-shot learning and are within a reasonable margin of models trained on the dataset itself.
+The zero-shot accuracies of the aforementioned datasets compete with or surpass the SoTA for zero-shot and few-shot learning and are within a reasonable margin of models trained on the dataset itself.
 
 <!-- However, the CLIP models struggle with another form of intra-class differentiation with the FGVC-Aircraft dataset. The best CLIP model was the ViT-H/14 model from LAION with 42.6% accuracy, compared to the 95.11% accuracy for Inceptionv4 which is SoTA 
 
@@ -402,7 +412,7 @@ Prompt: "sriracha"
 | OpenAI ViT-L/14  | ![opanai-ViT-L14-sriracha](assets/images/team-33/openAI-ViT-L:14-sriracha.png)  | 
 | LAION ViT-L/14-400m  | ![laion-ViT-L14-sriracha](assets/images/team-33/laion-L:14-sriracha.png)  |
 
-Here the CLILP demonstrates its ability to learn the meaning of more obscure words. Six out of seven models have a large attention hotspot on the sriracha container at the top of the image. While sriracha is a distinctly red sauce, the lighting in the photo changes the color to be a darker red. Moreover, the other red areas of the image near the meat on the bottom right are not positively identified as sriracha. We can infer that sriracha was a image-text pair probably included in all pretraining datasets, because its meaning can't be derived from other english words; its originally a Thai word.
+Here the CLIP demonstrates its ability to learn the meaning of more obscure words. Six out of seven models have a large attention hotspot on the sriracha container at the top of the image. While sriracha is a distinctly red sauce, the lighting in the photo changes the color to be a darker red. Moreover, the other red areas of the image near the meat on the bottom right are not positively identified as sriracha. We can infer that sriracha was a image-text pair probably included in all pretraining datasets, because its meaning can't be derived from other english words; its originally a Thai word.
 
 The ViT-B/32 models continue to have the largest attention hotspots, which makes intuitive sense because of its larger patch size and thus lower level of granularity; a positive attention hit on a patch will occupy at minimum the entirety of the 32x32 patch.
 
