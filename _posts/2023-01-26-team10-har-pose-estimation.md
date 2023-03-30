@@ -189,7 +189,7 @@ After running the baseline AcT model on each of the 4 datasets, we took the data
 
 #### Validation Accuracy Curves
 
-![image]({{'/CS188-Projects-2023Winter/assets/images/team10/val_acc.png' | relative_url}})
+![image]({{'/assets/images/team10/val_acc.png' | relative_url}})
 
 #### Test Accuracy
 
