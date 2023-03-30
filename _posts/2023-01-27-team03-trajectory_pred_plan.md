@@ -11,11 +11,7 @@ date: 2023-03-25
 > In this article, we investigate modern architectures which tackle the trajectory prediction task in autonomous driving. We perform a close-up analysis of Multipath++, a vectorized neural network that approximates the self-attention mechanism using Multi-Context Gating. We improved upon the community implementation of Multipath++(MPA) and observed significant performance gains with our implementation while training with limited samples and epochs. Empirically, our prediction visualization converges faster within a few epochs, outperforming the baseline MPA. 
 
 
-<center>
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/6PdJc6_3SGM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
-</center>
 
 
 
@@ -23,6 +19,11 @@ date: 2023-03-25
 * TOC
 {:toc}
 
+<center>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/6PdJc6_3SGM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+</center>
 
 
 ## Introduction
