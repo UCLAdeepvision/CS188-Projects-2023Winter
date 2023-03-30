@@ -111,7 +111,7 @@ $$
 L=L_A + \alpha L_C+\beta L_F
 $$
 
-Alpha and Beta are hyperparameters to set, and in the GPEN paper, they empirically set $\alpha$ = 1 and $\beta$ = 0.02.
+Alpha and Beta are hyperparameters to set, and in the GPEN paper, they empirically set alpha = 1 and beta = 0.02.
 
 ### Real-ESRGAN, ESRGAN, and SRGAN
 
