@@ -21,7 +21,7 @@ NeRF is a technique for synthesizing novel views of a scene from a set of input 
 
 The main idea of NeRF is to represent a scene as a continuous volumetric function, which maps 3D coordinates to a density and a color value. This function can be parameterized by a neural network that learns to generate different views of the scene. NeRF optimizes the network to minimize the difference between the rendered images and the input images in both color and density
 
-![YOLO]({{ '/assets/images/team17/img1.png' | relative_url }})
+![NeRF]({{ '/assets/images/team17/img1.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 *Fig 1. The General Idea of NeRF*.
 
@@ -39,7 +39,7 @@ In order to explore different NeRF models with varying implementations. This pro
 ### NeRF Overview
 The main idea of NeRF involves taking the 5D input $(x, y, z, \theta, \phi)$ in which $(x, y, z)$ are 3D coordinates of the camera and $(\theta, \phi)$ are viewing direction angles of the given camera. In more detail, $x$ usually refers to the horizontal axis, $y$ usually to the vertical axis, and $z$ usually to the depth axis. These 3D coordinates are taken as input to evaluate the radiance and density at each point in the scene. $\theta$ is taken as a polar angle in spherical coordinates that represents the inclination of the viewing direction vector with respect to the positive z-axis. It has a range of 0 to 180 degrees (or 0 to $\pi$ radians). $\phi$ is taken as the azimuthal angel in spherical coordinates that represents the orientation of the viewing direction vector with respect to the positive x axis.. It has a range of 0 to 360 degrees (or 0 to w $\pi$ radians). Both $\theta$ and $\phi$ help to describe the viewing direction of the given camera. 
 
-![YOLO]({{ '/assets/images/team17/img2.png' | relative_url }})
+![NeRF]({{ '/assets/images/team17/img2.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 *Fig 2. NeRF models in a closer view*.
 
@@ -118,7 +118,7 @@ in which $\delta_i = t_{i+1} - t$ is the distance between adjacent samples. In t
 
 #### Positional Encoding 
 
-![YOLO]({{ '/assets/images/team17/img4.png' | relative_url }})
+![NeRF Positional Encoding]({{ '/assets/images/team17/img4.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 *Fig 4. Positional Encoding*.
 
@@ -154,7 +154,7 @@ function which uses $\hat{w}_i$ as the sampling probability for $N_f$ points. Th
 
 The architecture of NeRF is to have the coordinates $\mathbf{x} = (x, y, z)$ into a 60-dimensional vector as an input to the fully connected network to get the density $\sigma$. The viewing angle $\mathbf{d} = (\theta, \phi)$ is then added to the output of the network. After getting through the MLP, RGB value can be obtained. Below is an image of the architecture.
 
-![YOLO]({{ '/assets/images/team17/img3.png' | relative_url }})
+![NeRF Architecture]({{ '/assets/images/team17/img3.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 *Fig 3. NeRF Architecture*.
 
@@ -163,13 +163,13 @@ The architecture of NeRF is to have the coordinates $\mathbf{x} = (x, y, z)$ int
 ### Mip-NeRF
 MiP NeRF(Multiscale Inference and Prediction Neural Radiance Fields) has innnovations over the original NeRF to improve the performance.
 
-![YOLO]({{ '/assets/images/team17/img5.png' | relative_url }})
+![Mip-NeRF]({{ '/assets/images/team17/img5.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 *Fig 5. NeRF vs Mip-NeRF*.
 
 One of the main contributions of Mip-NeRF is cone tracing, the original rendering procedure of NeRF is to have a ray per pixel, however, in Mip-NeRF, the procedure is to have a 3D conical frustum per pixel. The conical frustums are then characterized using an integrated positional encoding (IPE). This process involves approximating the frustum with a multivariate Gaussian and subsequently calculating the integral $E[γ(x)]$ over the positional encodings of the coordinates within the Gaussian in a closed-form manner.
 
-![YOLO]({{ '/assets/images/team17/img6.png' | relative_url }})
+![Mip-NeRF]({{ '/assets/images/team17/img6.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 *Fig 6. Mip-NeRF Utilized Cone Instead of a Ray for Each Pixel*.
 
@@ -182,7 +182,7 @@ $$
 In this way, the model size can be cut in half, renderings becomes more accurate, sampling is more efficient, and the overal structure becomes simplier. 
 
 ### Instant NeRF
-![YOLO]({{ '/assets/images/team17/img8.png' | relative_url }})
+![Instant NeRF]({{ '/assets/images/team17/img8.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 *Fig 8. Instant NeRF*.
 Instant NeRF utilizes a multi-layer hash encoding to solve the difficulties of storing latent features. In simplier way, it's uses a multi resolution hash table to store features. 
@@ -202,11 +202,12 @@ Overall, with these innovations, Instant NeRF makes it possible to render high-r
 
 ## Generate NeRF
 
-![YOLO]({{ '/assets/images/team17/video1.mk4' | relative_url }})
+![NeRF]({{ '/assets/images/team17/video1.mk4' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
 *Fig 8. NeRF of a toy car*.
-
-
+![NeRF]({{ '/assets/images/team17/video2.mkv' | relative_url }})
+{: style="width: 400px; max-width: 100%;"}
+*Fig 8. NeRF of a poster*.
 Once the model is fully trained, it is relatively simple for the NeRF model to generate 3D scenes. Similarly to Assignment 4, we can generate the 3D views of a toy car. We can also generate the 3D views of the poster. 
 
 ## Discussion
