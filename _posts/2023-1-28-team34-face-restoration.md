@@ -74,7 +74,39 @@ A picture of the different parts of the GPEN architecture as well as a simplifie
 
 We can see in Figure 3c that the degraded image is the original input to the model, and from there, will be downsampled (as this is the first part to the U-Net architecture that the GPEN model is based on), but the shallower features of the encoder will be sent to the GAN prior network so as to retain the features of the original image, such as the background of the face image and overall structure of the face. We can see in the picture that the deeper features of the encoder will be sent to the fully connected layer and converted into an intermediate latent code z, as discussed above. 
 
-#### Real ESRGAN
+Training the GPEN model begins with first training the GAN prior on high-quality images (essentially the same as StyleGANv2 and other style-based architectures), but then when the GAN prior is embedded into the deep neural network, it must then be trained by a series of synthesized low-quality and high-quality images in order to finetune it for blind-face restoration. Three loss functions are implemented in order to finetune the model: the adversarial loss, the content loss, and the feature matching loss.
+
+The adversarial loss comes from the GAN prior network and is:
+
+$$
+L_A={min\atop{G}}{max\atop{D}}E_{(X)}log(1+exp(-D(G(\tilde{X}))))
+$$
+
+The content loss is calculated from comparing the generated high-quality image and the actual ground-truth image that isn't degraded using the L1-norm distance. This loss is meant to preserve the color information of the original image and the fine features. 
+
+The feature matching loss is similar to a perceptual loss where a perceptual loss is used to compare high-level differences such as style and the overall content of the image. This is different than other loss functions that only compare pixel to pixel which may output a huge loss between a generated image and the ground truth image if the generated image is only slightly shifted/translated but still retains most of the original features of the ground truth image. This is an issue as we are more focused on preserving the overall features of the low-quality image and enhancing them in the generated high-quality image. The formula for it is: 
+
+$$
+L_F={min\atop{G}}E_{(X)}(\sum^{T}_{i=0}||D^i(X)-D^i(G(\tilde{X}))||_2)
+$$
+
+All three loss functions are then combined into one final output function:
+
+$$
+L=L_A + \alpha L_C+\beta L_F
+$$
+
+Alpha and Beta are hyperparameters to set, and in the GPEN paper, they empirically set $\alpha$ = 1 and $\beta$ = 0.02.
+
+#### Real-ESRGAN, ESRGAN, and SRGAN
+
+This project utilizes an implementation of Real-ESRGAN, which builds upon ESRGAN, and ESRGAN builds upon SRGAN. SRGAN 
+
+SRGAN is a generative adversarial network that focuses on super-resolution, or generating/predicting a high-quality image from its low-quality image counterpart. The SRGAN model comprises of a deep residual network (such as ResNet) with skip-connections which also makes use of the perceptual loss function that was discussed above, rather than the pixel-to-pixel loss. [16]
+
+For a short description of ESRGAN, it improves upon SRGAN by replacing the batch normalization layers with residual scaling and smaller initializations, use a discriminator that is focused on determining whether an image is more realistic than the other versus the usual discriminator determining whether an image is fake or not, improving the perceptual loss in SRGAN by using VGG features from after activation to before activation, and introducing a Residual-in-Residual Dense Block. [15] A Residual-in-Residual Dense Block, or RRDB, consists of dense blocks which are multiple convolution layers that take input from all previous convolution layers before it, and combines it with a residual block. The block is meant to make the original SRGAN model more deep and complex, and is made possible without the issues of deep models such as vanishing gradients due to the other optimizations listed before.
+
+Real-ESRGAN focuses on blind-world degradations and the issue that a model like ESRGAN is not complex enough to recognize all of the multitude of degradations that can occur in the real-world, and be able to identify them all. Real-ESRGAN like GPEN both utilize the U-Net architecture, and in Real-ESRGAN's case it replaces the VGG features in ESRGAN with an U-Net design. Spectral normalization regularization is also incorporated with 
 
 ### Examples of Output
 
@@ -105,9 +137,11 @@ This [google colab file](https://colab.research.google.com/drive/1VblHwExiZdwkeR
 
 This [google colab file](https://colab.research.google.com/drive/1480gFVbJpARX_RBYZHHWccSFJW1iSvdA?usp=sharing) is another individual (@Derrick Schultz) implementation of StyleGAN2-ADA which applies a slight modification in the StyleGANv2 architecture and how the Adaptive Instance Normalization is built in. Pretrained weights were loaded into this model taken from this github repo (https://github.com/justinpinkney/awesome-pretrained-stylegan2/#faces-FFHQ-config-e-256x256) where the weights were trained on the FFHQ dataset but with a resolution of 256x256 rather than the original 1024x1024 (once again to save on computation time). 
 
-This [google colab file](https://colab.research.google.com/drive/1lO3QKY0uCHAGMWSij_GUCw1pRhVEHTzc#scrollTo=_81kxZFFlwGM) is a google colab file that contains a pretrained model of GPEN. This google colab file will (hopefully) be the focus of the project and will also assist in ablation studies along with StyleGAN2-ADA.
+This [google colab file](https://colab.research.google.com/drive/1lO3QKY0uCHAGMWSij_GUCw1pRhVEHTzc#scrollTo=_81kxZFFlwGM) is a file that contains a pretrained model of GPEN. This google colab file will (hopefully) be the focus of the project and will also assist in ablation studies along with StyleGAN2-ADA.
 
-## Three Most Relevant Research Papers
+This [google colab file](https://colab.research.google.com/drive/1lvBs3M-EKbB_WW9XeWP0PXN6v9b7v3wC?usp=sharing) is what I used to calculate the different image quality assessment metrics between the different generated images and the high-quality ground truth images.
+
+## Most Relevant Research Papers
 
 1. This [paper](https://openaccess.thecvf.com/content/CVPR2021/papers/Wang_Towards_Real-World_Blind_Face_Restoration_With_Generative_Facial_Prior_CVPR_2021_paper.pdf) talks about utilizing a pre-trained GAN along with "rich and diverse priors" to be restore low-quality inputs.(1)
 
@@ -118,6 +152,8 @@ This [google colab file](https://colab.research.google.com/drive/1lO3QKY0uCHAGMW
 4. This [paper](https://arxiv.org/pdf/2006.06676.pdf) talks about the particular StyleGAN2 model that was used in this project which was StyleGAN2-ADA. 
 
 5. This [paper](https://arxiv.org/pdf/1511.06434v2.pdf) talks about the DCGAN model.
+
+6. This [paper](https://openaccess.thecvf.com/content/ICCV2021W/AIM/papers/Wang_Real-ESRGAN_Training_Real-World_Blind_Super-Resolution_With_Pure_Synthetic_Data_ICCVW_2021_paper.pdf) talks about the Real-ESRGAN model.
 
 ### Most Relevant Code
 
@@ -150,6 +186,15 @@ This [github repository](https://github.com/pranjaldatta/SSIM-PyTorch) has an im
 [11] Ioffe, Sergey, and Christian Szegedy. "Batch normalization: Accelerating deep network training by reducing internal covariate shift." International conference on machine learning. pmlr, 2015.
 
 [12] Huang, Xun, and Serge Belongie. "Arbitrary style transfer in real-time with adaptive instance normalization." Proceedings of the IEEE international conference on computer vision. 2017.
+
+[13] Johnson, Justin, Alexandre Alahi, and Li Fei-Fei. "Perceptual losses for real-time style transfer and super-resolution." Computer Vision–ECCV 2016: 14th European Conference, Amsterdam, The Netherlands, October 11-14, 2016, Proceedings, Part II 14. Springer International Publishing, 2016.
+
+[14] Wang, Xintao, et al. "Real-esrgan: Training real-world blind super-resolution with pure synthetic data." Proceedings of the IEEE/CVF International Conference on Computer Vision. 2021.
+
+[15] Wang, Xintao, et al. "Esrgan: Enhanced super-resolution generative adversarial networks." Proceedings of the European conference on computer vision (ECCV) workshops. 2018.
+
+[16] Ledig, Christian, et al. "Photo-realistic single image super-resolution using a generative adversarial network." Proceedings of the IEEE conference on computer vision and pattern recognition. 2017.
+
 
 
 ---
