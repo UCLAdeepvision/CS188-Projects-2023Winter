@@ -3,17 +3,21 @@ layout: post
 comments: true
 title: Adversarial examples to DNNs
 author: Yuxiao Lu
-date: 2023-02-24
+date: 2023-03-25
 ---
 
 
 > DNN driven image recognition have been used in many real-world scenarios, such as for detection of road case or people. However, the DNNs could be vulnerable to adversarial examples (AEs), which are designed by attackers and can mislead the model to predict incorrect outputs while hardly be distinguished by human eyes. This blog aims to introduce how to generate AEs and how to defend these attacks.
+
+
 
 <!--more-->
 {: class="table-of-content"}
 
 * TOC
 {:toc}
+
+YouTube link of the demo: https://youtu.be/3G267xLYzPU
 
 ## What is adversarial examples
 
@@ -76,7 +80,7 @@ For black-box attack, usually a DNN is trained to simulate the unknown target DN
 
 Therefore, in this blog, I introduce white-box attack technologies in detail and black-box ones roughly. With clear understand of the white-box attack algorithms, it becomes really easy to further learn about the black-box algorithms.
 
-###  Fast gradient sign method (FSGM)
+###  Fast gradient sign method (FGSM)
 
 FSGM is the most classical white-box attack algorithm, proposed in the work *Explaining and harnessing adversarial examples.* Since it is really important, I will introduce some motivation of this algorithm to help understand instead of only giving algorithms.
 
@@ -99,7 +103,7 @@ The task to find an AE can be regarded to find an image vector in a sphere with 
 
 ![1677186470769](../assets/images/team23/1677186470769.png)
 
-Fig. 2.  An example of illustrating the FGSM idea.
+*Fig. 2.  An example of illustrating the FGSM idea.*
 Now let's see the FGSM from the view of loss function. Its mathematical nature is to force the generated AE to have a possibly much loss to be classified into the correct class. It is easy to understand that if we make the loss function of the AE as large as possible, we can hopefully make the NN misclassify it.
 
 A FGSM implementation is shown as follows:
@@ -156,7 +160,7 @@ Some AEs are shown as follows:
 
 ![1677181438726](../assets/images/team23/1677181438726.png)
 
-Fig. 3.  Examples of AEs that successfully fool the NN. The first line is clean images that are not modified, so they are correctly recognized by the NN.
+*Fig. 3.  Examples of AEs that successfully fool the NN. The first line is clean images that are not modified, so they are correctly recognized by the NN.*
 
 From the above results, we see that as the $\epsilon$ increases, the accuracy of the NN is greatly degraded, however, form the AEs we can see that the modification of images becomes more easy to detect by our eyes when $\epsilon$ goes too much.
 
@@ -264,7 +268,7 @@ Since this is the first AE defense algorithm I introduce, in this part, I will a
 Let's review the AE generation methods, they commonly find a small perturbation and add it to the original image to fool the NN while not discarded by human eyes. It can be regarded as a sample search in the area with a small radius $\epsilon$ centered at the original image vector point. The paper provides a good diagram to show us this case:
 
 ![1677244933852](../assets/images/team23/1677244933852.png)
-Fig. 5. A diagram of a hardness metric in [5], which is a metric defining the robustness of an NN to AEs. I will explain the underlying idea of justifying a roubustness of NNs to AEs on this basis.
+*Fig. 5. A diagram of a hardness metric in [5], which is a metric defining the robustness of an NN to AEs. I will explain the underlying idea of justifying a roubustness of NNs to AEs on this basis.*
 
 From Fig. 5, we see that AEs are usally chosen in the gray area. If we promise that all examples in the gray area are classified as a same class as X. Then the AEs will not make sense any more. For this purpose, we need to ensure that the *smooth* of the classifier. To help understand what the *smooth* is, and why we should ensure it, I draw a diagram as follows:
 
@@ -303,7 +307,7 @@ $$\min_\theta \rho(\theta), \quad \text { where } \quad \rho(\theta)=\mathbb{E}_
 By optimize this loss function, the interface of the classifier tends to become more robustness to AEs. The authors gives a good diagram to show us the classifier interface using ordinary training and adversarial training, shown as follows:
 
 ![1677248425490](../assets/images/team23/1677248425490.png)
-Fig. 8. Illustration of the change of classifier using adversarial training [3]. Left: A set of points that can be easily separated with a simple (in this case, linear) decision boundary. Middle: The simple decision boundary does not separate the $\ell_{\infty}$-balls (here, squares) around the data points. Hence there are adversarial examples (the red stars) that will be misclassified. Right: Separating the $\ell_{\infty}$-balls requires a significantly more complicated decision boundary. The resulting classifier is robust to adversarial examples with bounded $\ell_{\infty}$-norm perturbations.
+*Fig. 8. Illustration of the change of classifier using adversarial training [3]. Left: A set of points that can be easily separated with a simple (in this case, linear) decision boundary. Middle: The simple decision boundary does not separate the $\ell_{\infty}$-balls (here, squares) around the data points. Hence there are adversarial examples (the red stars) that will be misclassified. Right: Separating the $\ell_{\infty}$-balls requires a significantly more complicated decision boundary. The resulting classifier is robust to adversarial examples with bounded $\ell_{\infty}$-norm perturbations.*
 
 Note that through the adversarial training, the robustness to the AEs become better, but it usually brings degraded performance in classifying other clear images. From Fig. 8 we can infer this result, since the classifier interface by adversarial training actually loses generalization to some extent.
 
@@ -316,7 +320,7 @@ We take  SafetyNet [7] as an example to introduce this way. SafetyNet extracted 
 SafetyNet consists of the original classifier, and an adversary detector which looks at the internal state of the later layers in the original classifier, as in Fig. 9. If the adversary detector declares that an example is adversarial, then the sample is rejected. 
 
 ![1677250983379](../assets/images/team23/1677250983379.png)
-Fig. 9. Diagram of the SafetyNet [6]. SafetyNet consists of a conventional classifier with an RBFSVM that uses discrete codes computed from late stage ReLUs to detect adversarial examples.
+*Fig. 9. Diagram of the SafetyNet [6]. SafetyNet consists of a conventional classifier with an RBFSVM that uses discrete codes computed from late stage ReLUs to detect adversarial examples.*
 
 The detailed design are shown as follows:
 
@@ -325,6 +329,185 @@ The detailed design are shown as follows:
 >  
 > $$f(\mathbf{c})=\sum_i^N \alpha_i y_i \exp \left(-\left\|\mathbf{c}-\mathbf{c}_i\right\|^2 / 2 \sigma^2\right)+b$$
 > In this objective function, when $\sigma$ is small, the detector produces essentially no gradient unless the attacking code $\mathbf{c}$ is very close to a positive example $\mathbf{c}_i$. Our quantization process makes the detector more robust and the gradients even harder to get. Experiments show that this form of gradient obfuscation is quite robust, and that confusing the detector is very difficult without access to the RBF-SVM, and still  difficult even when access is possible.
+
+## Experiments
+
+Before, I show an example of attacking a simple CNN on simple datasets.
+
+In this part, I will show the effect of the AEs to attack real-world datasets on high-performance DNNs.
+
+I conduct the experiment from the following aspects:
+
+- How does different AE generating methods perform on attacking a resnet trained on Miniplace dataset.
+- How does the $\epsilon$ affect the attack performance.
+- How does the AEs perform on models with same structure but different parameters.
+- How does the AEs perform on  models with different structures.
+
+All the codes can be found at https://colab.research.google.com/drive/1ziAHLjacNlcHh97ykYEEUaBoN3-8xX11#scrollTo=CHYNVVoKGcT1
+
+### Comparison among AE generation methods
+
+All kinds of AE generation methods are shown as follows:
+
+```python
+from advertorch.attacks import GradientSignAttack, LinfBasicIterativeAttack, LinfPGDAttack, LinfMomentumIterativeAttack, \
+    CarliniWagnerL2Attack, JacobianSaliencyMapAttack, ElasticNetL1Attack
+from advertorch.attacks.utils import attack_whole_dataset, predict_from_logits
+
+def adv_attack(model, val_loader, criterion, attack_type, adv_eps, adv_steps, coeff):
+
+    model.eval()
+
+    correct_or_not = []
+    test_iter = tqdm(val_loader, desc='Batch', leave=False, position=2)
+
+    if (attack_type == "pgd"):
+        adversary = LinfPGDAttack(
+            model, loss_fn=criterion, eps=adv_eps,
+            nb_iter=adv_steps, eps_iter=adv_eps / 10, rand_init=True, clip_min=0., clip_max=1.,
+            targeted=False)
+    elif (attack_type == "fgsm"):
+        adversary = GradientSignAttack(
+            model, loss_fn=criterion, eps=adv_eps,
+            clip_min=0., clip_max=1., targeted=False)
+    elif (attack_type == "mim"):
+        adversary = LinfMomentumIterativeAttack(
+            model, loss_fn=criterion, eps=adv_eps,
+            nb_iter=adv_steps, eps_iter=adv_eps / 10, clip_min=0., clip_max=1.,
+            targeted=False)
+    elif (attack_type == "bim"):
+        adversary = LinfBasicIterativeAttack(
+            model, loss_fn=criterion, eps=adv_eps,
+            nb_iter=adv_steps, eps_iter=adv_eps / adv_steps, clip_min=0., clip_max=1.,
+            targeted=False)
+    elif (attack_type == "cw"):
+        adversary = CarliniWagnerL2Attack(
+            model, confidence=0.1, max_iterations=1000, clip_min=0., clip_max=1.,
+            targeted=False, num_classes=10, binary_search_steps=1, initial_const=coeff)
+
+    elif (attack_type == "ela"):
+        adversary = ElasticNetL1Attack(
+            model, initial_const=coeff, confidence=0.1, max_iterations=100, clip_min=0., clip_max=1.,
+            targeted=False, num_classes=10
+        )
+    elif (attack_type == "jsma"):
+        adversary = JacobianSaliencyMapAttack(
+            model, clip_min=0., clip_max=1., num_classes=10, gamma=coeff)
+
+    lst_adv, label, pred, advpred = attack_whole_dataset(adversary, test_iter, device="cuda")
+
+    correct_or_not.append(label == advpred)
+            
+    correct_or_not = torch.stack(correct_or_not, dim=-1).all(dim=-1)
+
+    print("")
+    if (attack_type == "cw" or attack_type == "ela"):
+        print("%s (c = %.2f): %.2f (Before), %.2f (After)" % (attack_type.upper(), adv_eps,
+            100. * (label == pred).sum().item() / len(label),
+            100. * correct_or_not.sum().item() / len(label)))
+    elif (attack_type == "jsma"):
+        print("%s (gamma = %.2f): %.2f (Before), %.2f (After)" % (attack_type.upper(), adv_eps,
+            100. * (label == pred).sum().item() / len(label),
+            100. * correct_or_not.sum().item() / len(label)))
+    else:
+        print("%s (eps = %.2f): %.2f (Before), %.2f (After)" % (attack_type.upper(), adv_eps,
+            100. * (label == pred).sum().item() / len(label),
+            100. * correct_or_not.sum().item() / len(label)))
+        
+    return lst_adv, label, pred, advpred
+```
+
+I set the $\epsilon$  as 1/255, and attack the resnet model with methods FGSM, BIM and PGD.
+
+The results are shown as follows:
+
+| Attack Methods | None   | FGSM  | BIM   | PGD   |
+| -------------- | ------ | ----- | ----- | ----- |
+| Accuracy       | 49.53% | 5.08% | 1.51% | 2.82% |
+
+We see that with small $\epsilon$, PGD (step=10) and BIM have better attack performance than FGSM. Moreover, I show an example of AE as follows by FGSM:
+
+![1679564662876](..\assets\images\team23\1679564662876.png)
+
+*Fig. 10. An example of AE on Miniplace dataset generated by FGSM. The true label is **bamboo_forest** and the prediction on the attack image is **botanical_garden**.*
+
+### Parameter analysis of $\epsilon$
+
+In this experiment, I evaluate the impact of $\epsilon$ on the attack performance of different methods on Miniplace dataset. The corresponding results of the resnet accuracy on AEs  are presented as follows:
+
+| $\epsilon$ |  FSGM  |  BIM   |  PGD   |
+| :--------: | :----: | :----: | :----: |
+|     0      | 49.53% | 49.53% | 49.53% |
+|   1/255    | 5.08%  | 1.51%  | 2.82%  |
+|   2/255    | 1.87%  | 0.52%  | 0.36%  |
+|   3/255    | 1.25%  | 0.09%  | 0.12%  |
+|   4/255    | 1.00%  | 0.08%  | 0.05%  |
+|   5/255    | 0.95%  | 0.04%  | 0.04%  |
+|   6/255    | 0.95%  | 0.02%  | 0.01%  |
+|   7/255    | 0.89%  |   <    | 0.01%  |
+|   8/255    | 0.90%  |   <    |   <    |
+|   9/255    | 0.87%  |   <    |   <    |
+|   10/255   | 0.90%  |   <    |   <    |
+
+'<' represents accuracy lower than 0.01%.
+
+We see that as $\epsilon$ increases, the attack performance of AEs becomes better. 
+
+For FGSM, the best performance is reached when $\epsilon$ reaches 7/255. For larger $\epsilon$, the attacked resnet's accuracy by FGSM is in the neighborhood of 1.00%.
+
+For BIM and PGD, we see they more powerful than FGSM, it could make more efficient attack than FGSM with same $\epsilon$. Moreover, BIM and PGD can make the model's accuracy lower than 0.01% and perform more stable than FGSM. 
+
+Note that BIM and PGD are iterative methods that cost much more time than FGSM.
+
+### Models trained on Miniplace v.s. pre-trained  on ImageNet
+
+This experiment wants to show the attack effect of AEs on a model with the same structure but different weights.
+
+I trained two Resnet18:
+
+R1's weights are trained on Miniplace (Acc = 49.53%).
+
+R2's weights are pretrained on ImageNet and frozen, and only the last linear layer is trained to fit the Miniplace dataset (Acc = 38.51%).
+
+I generate AEs on R1 with different methods and test the attack effect of these AEs on R2, and vice versa. The results are shown as follows ($\epsilon=0.03$ ):
+
+|                            | No-attack | FSGM on R1 | FSGM on R2 |
+| -------------------------- | --------- | ---------- | ---------- |
+| R1 (Trained on Miniplace)  | 49.53%    | 0.88%      | 6.22%      |
+| R2 (Pre-trained on ImgNet) | 38.51%    | 3.51%      | 0.95%      |
+
+|                            | No-attack | BIM on R1 | BIM on R2 |
+| -------------------------- | --------- | --------- | --------- |
+| R1 (Trained on Miniplace)  | 49.53%    | <         | 2.13%     |
+| R2 (Pre-trained on ImgNet) | 38.51%    | 0.16%     | <         |
+
+|                            | No-attack | PGD on R1 | PGD on R2 |
+| -------------------------- | --------- | --------- | --------- |
+| R1 (Trained on Miniplace)  | 49.53%    | <         | 3.06%     |
+| R2 (Pre-trained on ImgNet) | 38.51%    | 0.23%     | <         |
+
+'<' represents accuracy lower than 0.01%.
+
+We see that the AEs generated based on one model can still effectively attack the other one, which indicates that the AE can attack identical model structures even with different weights.
+
+### Attacking models of different structures with same AEs
+
+This experiment aims to evaluate the attack effect of AEs on another model with different structures.
+
+I trained a Resnet18 and an Alexnet on Miniplace.
+
+I generate AEs on the Resnet18 and use the AEs to attack the Alexnet.
+
+The results are shown as follows:
+
+|          | No-attack | FSGM on R1 | BIM on R1 | PGD on R1 |
+| -------- | --------- | ---------- | --------- | --------- |
+| Resnet18 | 49.53%    | 0.88%      | <         | <         |
+| Alexnet  | 40.58%    | **30.57%** | 36.27%    | 36.83%    |
+
+We see that the AEs still have effect to attack a model with different structures of the attacked one. However, the effect is much  degraded compared to attacking models with same structures and different parameters.
+
+Moreover, we notice that in this experiment, the FGSM out-competes BIM and PGD on attacking Alexnet, while BIM and PGD are much better than FGSM in experiments 1-3. This is like the overfit in machine learning. BIM and PGD could find the most effective AEs on the target model, which may lose generalization when applied on different model structures.
 
 ## Code respositories
 
