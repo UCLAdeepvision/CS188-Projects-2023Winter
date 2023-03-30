@@ -11,7 +11,7 @@ date: 2022-01-29
 ## Introduction: 
 Deepfakes, or artificial intelligence-generated videos that depict real people doing and saying things they never did, have become a growing concern in recent years. This artificially generated content can be used to spread misinformation, manipulate public opinion, and even harm individuals. Therefore, the ability to detect deepfakes is crucial to ensure the integrity of information and protect people from potential harm.
 
-<img src="../assets/images/team24/deepfakeExample.gif" alt="Deepfake Example" width="500">
+<img src="/CS188-Projects-2023Winter/assets/images/team24/deepfakeExample.gif" alt="Deepfake Example" width="500">
 
 
 ## Proposal:
@@ -23,7 +23,7 @@ The main objective of this project is to experiment with existing advanced machi
 
 Celeb-DF is a dataset used for deepfake forensics. It includes 590 original videos collected from YouTube with subjects of different ages, ethnic groups and genders, and 5639 correspondingDeepFake videos. Unlike most other DeepFake datasets, Celeb-DF contains high visual quality videos that better resemble DeepFake videos circulated on the Internet. 
 
-<img src="../assets/images/team24/celebdfExample.jpg" alt="CelebDF Example" width="600">
+<img src="/CS188-Projects-2023Winter/assets/images/team24/celebdfExample.jpg" alt="CelebDF Example" width="600">
 
 ### Other notes
 We also considered Facebook's Deepfake Detection Challenge (DFDC) dataset, which consists of more than 100,000 videos. It is the largest publicly available datset, but we stuck with Celeb-DF as the time for testing is faster due to the dataset being more than 470 GBs. 
@@ -35,12 +35,12 @@ We also considered Facebook's Deepfake Detection Challenge (DFDC) dataset, which
 
 The first model we will explore is ResNetLSTM. ResNetLSTM is a combination of two deep learning architectures: Residual Neural Networks (ResNet) and Long Short-Term Memory (LSTM) networks. ResNet is a type of deep neural network that is specifically designed to address the problem of vanishing gradients that can occur in very deep networks. It does this by using residual connections to skip over certain layers in the network, which can help information flow more easily through the network. LSTM networks, on the other hand, are a type of recurrent neural network that are well-suited for processing sequential data, such as time-series data (in our case, video examples). The implementation of ResNetLSTM we will be evaluating consists of a Resnet50 + LSTM with 512 hidden units. The model was pretrained on the ImageNet dataset and will be fintuned on the CelebDF deepfake detection dataset.
 
-<img src="../assets/images/team24/resnetlstmArchitecture.jpg" alt="ResNetLSTM Architecture" width="700" align="middle">
+<img src="/CS188-Projects-2023Winter/assets/images/team24/resnetlstmArchitecture.jpg" alt="ResNetLSTM Architecture" width="700" align="middle">
 
 ### MesoNet 
 MesoNet is a deep learning architecture designed for the detection of manipulated images. MesoNet is based on a combination of convolutional neural networks (CNNs) and long short-term memory (LSTM) networks. However, the specific MesoNet architecture we will be exploring, MesoInception4 (developed by Darius Afchar, Vincent Nozick, Junichi Yamagishi, Isao Echizen) does not implement an LSTM block.  Mesoinception4 is an extension of the Inception architecture, which is a family of deep neural networks that are commonly used for image classification and recognition tasks. It is based on a combination of Inception and Inception-ResNet blocks. These blocks use different types of convolutional layers, including 1x1, 3x3, and 5x5 convolutions, to extract features from the input image. The architecture also includes other notable neural network layers such as max pooling layers, which aggregates the features across the spatial dimensions of the image, and dropout layers to help regularize our model. The model was pretrained on the Mesonet dataset and will be fintuned on the CelebDF deepfake detection dataset.
 
-<img src="../assets/images/team24/mesonetArchitecture.jpg" alt="Mesonet Architecture" width="500" align="middle">
+<img src="/CS188-Projects-2023Winter/assets/images/team24/mesonetArchitecture.jpg" alt="Mesonet Architecture" width="500" align="middle">
 
 ### Other Notes
 Other notable deepfake detection models that were considered include EfficientNet B1 LTSM and Xception architectures.
@@ -149,7 +149,7 @@ This resulted in three levels of data augmentation on the dataset. We have the o
 
 | No augmentation | Rotation/Flipping | Heavy Augmentation | 
 | :------: | :-----------------: | :---------: |
-| <img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.10.14 PM.png" alt="No Augmentation Example" width="300" align="middle"> | <img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.41.42 PM.png" alt="Rotation/Flipping Example" width="300" align="middle"> | <img src="../assets/images/team24/Screen Shot 2023-03-26 at 3.40.01 PM.png" alt="Heavy Augmentation Example" width="300" align="middle"> | 
+| <img src="/CS188-Projects-2023Winter/assets/images/team24/Screen Shot 2023-03-26 at 3.10.14 PM.png" alt="No Augmentation Example" width="300" align="middle"> | <img src="/CS188-Projects-2023Winter/assets/images/team24/Screen Shot 2023-03-26 at 3.41.42 PM.png" alt="Rotation/Flipping Example" width="300" align="middle"> | <img src="/CS188-Projects-2023Winter/assets/images/team24/Screen Shot 2023-03-26 at 3.40.01 PM.png" alt="Heavy Augmentation Example" width="300" align="middle"> | 
 
 ### Results
 When testing the model weights on the CelebDF test dataset, we observed the following metrics. This is on the CelebDF test dataset with no data augmentation:
