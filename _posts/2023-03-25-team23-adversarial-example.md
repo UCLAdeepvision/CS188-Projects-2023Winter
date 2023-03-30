@@ -9,13 +9,15 @@ date: 2023-03-25
 
 > DNN driven image recognition have been used in many real-world scenarios, such as for detection of road case or people. However, the DNNs could be vulnerable to adversarial examples (AEs), which are designed by attackers and can mislead the model to predict incorrect outputs while hardly be distinguished by human eyes. This blog aims to introduce how to generate AEs and how to defend these attacks.
 
-YouTube link of the demo: https://youtu.be/3G267xLYzPU
+
 
 <!--more-->
 {: class="table-of-content"}
 
 * TOC
 {:toc}
+
+YouTube link of the demo: https://youtu.be/3G267xLYzPU
 
 ## What is adversarial examples
 
