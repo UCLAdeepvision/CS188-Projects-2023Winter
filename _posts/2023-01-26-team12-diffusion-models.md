@@ -15,6 +15,10 @@ date: 2023-01-26
 * TOC
 {:toc}
 
+## 10 Minute Spotlight Presentation
+[Youtube Link](https://youtu.be/HFepqTpr4cs)
+Link to Notebook at bottom.
+
 ## What are diffusion models?
 Diffusion models are a popular way to generate new images that are of a similar type to the training data. The diffusion technique is found in Dall-E, Lensa, and more! The strategy behind diffusion models is to gradually destroy the training images by adding noise, and then recovering the image by learning how to remove noise. By learning this recovery process using a neural network, we can generate new images by applying the recovery process to random noise.
 
@@ -29,7 +33,7 @@ For the purposes of exploring diffusion models, our project focuses on the Celeb
 
 ![YOLO]({{ '/assets/images/team12/img1.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
-*Fig 1. CelebA Faces Dataset*.
+*Fig.  CelebA Faces Dataset*.
 
 ## 1. The Forward Diffusion Process
 The forward process of the diffusion model involves adding noise to an image. This is done by adding noise to each of the three channels(r, g, b) of each pixel. In this diffusion model, we add Gaussian noise, which is noise that has a normal(or Gaussian) distribution. Gaussian noise has two parameters, the mean and the standard deviation. We usually set the mean to 0 and the standard deviation is determined by a scheduler whose input is the timestep. 
@@ -81,11 +85,11 @@ This is an example of adding noise to an image in the dataset.
 
 ![YOLO]({{ '/assets/images/team12/img7.png' | relative_url }})
 {: style="width: 700px; max-width: 100%;"}
-*Fig 1. CelebA Faces Dataset*.
+*Fig. Example of Forward Diffusion Process*.
 
 ## 2. The Reverse Diffusion Process
 
-Now that we’ve generated samples of images with gaussian noise added according to a beta scheduler, we have to design our Neural Network to recover the original image given a noisy image. To do this, we must generate the probability distribution of noise pixels across the image. The goal of this is to learn the mean of the Gaussian distributions that were used to generate the noise at each timestep during the forward-diffusion process. Below is the math from the literature which describes this behavior. We want to predict the t - 1 timestep from the t timeste
+Now that we’ve generated samples of images with gaussian noise added according to a beta scheduler, we have to design our Neural Network to recover the original image given a noisy image. To do this, we must generate the probability distribution of noise pixels across the image. The goal of this is to learn the mean of the Gaussian distributions that were used to generate the noise at each timestep during the forward-diffusion process. Below is the math from the literature which describes this behavior. We want to predict the t - 1 timestep from the t timestep
 
 $$
 p_\theta\left(\mathbf{x}_{0: T}\right)=p\left(\mathbf{x}_T\right) \prod_{t=1}^T p_\theta\left(\mathbf{x}_{t-1} \mid \mathbf{x}_t\right)
@@ -100,7 +104,7 @@ In implementation we use the UNet model, named as such because of the shape of t
 
 ![YOLO]({{ '/assets/images/team12/img10.png' | relative_url }})
 {: style="width: 700px; max-width: 100%;"}
-*Fig 1. CelebA Faces Dataset*.
+*Fig. U-Net Architecture*.
 
 ```
 # Initial projection
@@ -124,7 +128,7 @@ The neural network has shared parameters across time meaning that it is unable t
 
 ![YOLO]({{ '/assets/images/team12/img12.png' | relative_url }})
 {: style="width: 700px; max-width: 100%;"}
-*Fig 1. CelebA Faces Dataset*.
+*Fig. Position Encoding Graph*.
 
 The last detail of the model is the loss functions, which dictates the way the parameters of the model are trained. In our case, we simply take the L1 or L2 distance between the prediction of our noise image and the actual noise image that was added for the image. In implementation, we simply use the forward diffusion process we designed earlier to generate the actual noise.
 
@@ -139,34 +143,55 @@ After training for several epochs, here are some examples of generated images. T
 
 ![YOLO]({{ '/assets/images/team12/img14.png' | relative_url }})
 {: style="width: 700px; max-width: 100%;"}
-*Fig 1. CelebA Faces Dataset*.
+*Fig. Training Results*.
 
 ## Generating Random Images
 
-Once the model is fully trained, it is relatively simple for our model to generate noise. All you need is to generate random noise in the dimensions of the training data, and run that noise through the neural network we trained earlier. 
+Once the model is fully trained, it is relatively simple for our model to generate noise. All you need is to generate random noise in the dimensions of the training data, and run that noise through the UNet  we trained earlier. The UNet will perform the reverse diffusion process, removing some noise from the random image at each time step. At the end of the reverse diffusion process, we have a perfectly random-generated celebrity face.
 
 ## Comparisons to VAE and GAN
 
-Generative Adversarial Networks and Variational Autoencoders were both previous alternatives to doing image generation. With the release of technologies such as DALLE-2, we now see the fascinating power of diffusion models for generating images. How do these three compare? TO BE FINISHED
+Generative Adversarial Networks and Variational Autoencoders were both previous alternatives to doing image generation. With the release of technologies such as DALLE-2, we now see the fascinating power of diffusion models for generating images. How do these three compare?
 
 ![YOLO]({{ '/assets/images/team12/img15.png' | relative_url }})
 {: style="width: 700px; max-width: 100%;"}
-*Fig 1. CelebA Faces Dataset*.
+*Fig. Comparison to GAN and VAE*.
+
+GANs are known to have a potentially unstable training process and may also train to have less diversity in generating images. This is due to their adversarial nature during training which can lead to unstable/vanishing gradients. Through techniques such as PGGAN, it is also able to generate high resolution images by gradually increasing the resolution during training. On the other hand, VAEs can struggle to generate high quality samples because they are designed to maximize the probability of the input data given the latent space. This nature means that VAEs can only capture the average features of the input data resulting in lower-resolution images. Finally Diffusion Models have slow sampling compared to the other two models. This is due to the iterative nature of the reverse diffusion process. This reverse process usually contains a number of steps that must be done sequentially for every image generated. High quality and diversity of generation have been prioritized more recently and have led to the popularity of diffusion models. In addition, diffusion models work very easily with conditional generation as we’ll see next.
 
 ## Further Exploration: Conditional Image Generation with Diffusion Models
 
 A particular interesting addition to diffusion models would be conditional diffusion, or guided diffusion models. These models will generate images that are guided by, or conditional on the prompt it is given. This is the technology behind image generation models like DALLE-2. Engineering guided diffusion models involve using NLP to generate an encoding of the input text and then using that encoding as an additional input into the diffusion model we built in this demonstration.
 
+![YOLO]({{ '/assets/images/team12/img16.png' | relative_url }})
+{: style="width: 700px; max-width: 100%;"}
+*Fig. CLIP Model*.
 
-## References TO FINISH
+DALLE-2 specifically uses the CLIP model, which was developed by OpenAI in the paper “Learning Transferable Visual Models From Natural Language Supervision”. The CLIP model aims to create a cross-embedding space between text and images. In the figure above, we see the caption “Pepper the aussie pup” accompanied below with its corresponding image. To train a joint-embedding space, the paper took many pairs of pictures together with their captions. The Text Encoder generates the text embedding using Transformers in NLP which is the state of the art for most textual tasks today. The Image Encoder is a separate convolutional network which creates an embedding for our image. With both the text embedding and image embedding we can take the dot product of both representations to obtain the similarity between text and image. The goal of this task is to classify which image belongs to which caption and vice versa. By training the model against this task, we train an embedding space that can both represent images and text. This has powerful applications not only in zero-shot learning (predicting unknown classes of images by using text, etc) but also several down-stream textual/image tasks as we’ve seen with DALLE-2. 
+
+![YOLO]({{ '/assets/images/team12/img17.png' | relative_url }})
+{: style="width: 700px; max-width: 100%;"}
+*Fig. DALLE-2 Architecture*.
+
+The above diagram demonstrates how DALLE-2 is trained with the diffusion and CLIP concepts we’ve described in this article. Above the dotted line is where the training of the CLIP model is done. That is we are learning the joint representation between image and text. Below the dotted line, there are two parts of DALLE-2, the prior and the decoder. The decoder is the reverse diffusion process we’ve described in the previous parts. As we’ve learned from the reverse diffusion process, generating an image requires starting from a noisy image and denoising the image to obtain the generated image. The goal of the prior is to identify parts of the noise distribution and condition the noise on the textual embedding. For example, given the caption “a corgi playing a flame throwing trumpet”, we aim to identify the distribution of noisy images that when passed through the decoder, will generate the corresponding image. The entire network is then jointly trained to allow for conditional generation on the caption.
+
+## COLAB Notebook
+
+Feel free to explore the implementation or play around with the modules discussed in this article via our [COLAB Notebook](https://colab.research.google.com/drive/1wucc_7N7T_aV7K9PZGwYvP0vtUW7mmxm?usp=sharing).
+
+## References
 
 Papers:
-* [Denoising Diffusion Probabilistic Models](https://arxiv.org/abs/2006.11239)
-    * [Github](https://github.com/hojonathanho/diffusion)
-* [Diffusion Models Beat GANs on Image Synthesis](https://arxiv.org/abs/2105.05233)
+* [Dhariwal, Prafulla, and Alex Nichol. “Diffusion Models Beat Gans on Image Synthesis.” ArXiv.org, 1 June 2021,](https://arxiv.org/abs/2105.05233)
     * [Github](https://github.com/openai/guided-diffusion)
+* [Ho, Jonathan, et al. “Denoising Diffusion Probabilistic Models.” ArXiv.org, 16 Dec. 2020,](https://arxiv.org/abs/2006.11239)
+    * [Github](https://github.com/hojonathanho/diffusion)
+* [Luo, Calvin. “Understanding Diffusion Models: A Unified Perspective.” ArXiv.org, 25 Aug. 2022,](https://arxiv.org/abs/2208.11970)
+* [Radford, Alec, et al. “Learning Transferable Visual Models from Natural Language Supervision.” ArXiv.org, 26 Feb. 2021,](https://arxiv.org/pdf/2103.00020.pdf)
+    * [Github](https://github.com/leaderj1001/CLIP)
+
+Other Articles:
 * [A Path to the Variational Diffusion Loss](https://blog.alexalemi.com/diffusion.html)
     * [COLAB](https://colab.research.google.com/github/google-research/vdm/blob/main/colab/SimpleDiffusionColab.ipynb)
-* [Understanding Diffusion Models: A Unified Perspective](https://arxiv.org/abs/2208.11970)
 
 ---

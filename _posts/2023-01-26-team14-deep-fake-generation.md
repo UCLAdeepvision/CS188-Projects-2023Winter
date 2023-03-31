@@ -6,10 +6,9 @@ author: Sarah Mauricio and Andres Cruz
 date: 2023-01-26
 ---
 
-## Abstract
-
 > The use of deep learning methods in deep fake generation has contributed to the rise of fake of fake images which has some very serious ethical dilemmas. We will look at two different ways to generate deepfake pictures and videos, and will then focus in on Image-to-Image Translation. CycleGAN and StarGAN are two different models we will by studying to create deep fake images using Image-to-Image Translation.
 <!--more-->
+
 ## Table of Contents
 
 * [Introduction](#intro)
@@ -42,33 +41,33 @@ Deepfake is a term used to describe artificially constructed media that portrays
 
 Image to image translation is the process of extracting features from a source image and emulating those features in another image. An example would be Neural Style Transfer, where a source image is used to create an art style to transfer to another image.
 
-![Style Transfer](/assets/images/team14/style_transfer.png)
+![Style Transfer](/CS188-Projects-2023Winter/assets/images/team14/style_transfer.png)
 * Fig 1. Example of Neural Style Transfer (Image source: https://www.v7labs.com/blog/neural-style-transfer)
 
 Below are some common architectures seen for image to image translation.
 
-![image to image](/assets/images/team14/image-to-image.png)
+![image to image](/CS188-Projects-2023Winter/assets/images/team14/image-to-image.png)
 * Fig 2. Example of image to image translation architectures (Image source: https://www.researchgate.net/publication/366191121_Enhancing_cancer_differentiation_with_synthetic_MRI_examinations_via_generative_models_a_systematic_review)
 
 ### Example: Image Animation <a name="ia"></a>
 
 Image Animation is the action of generating a video where the object from an image is animated using the action from a driving video. For example, if we had an image of a water bottle and a driving video of a ball flying across the screen, the output video would be a water bottle flying across the screen. Thus, it will create an animation based on a single image.
 
-![GAN Flow](/assets/images/team14/pipeline.png)
-* Fig 3. Example flow of Image Animation
+![GAN Flow](/CS188-Projects-2023Winter/assets/images/team14/pipeline.png)
+* Fig 3. Example flow of Image Animation (Image Source: [10])
 
 Once applying the model, we would see results similar to the following:
 
-![Image Animation Output](/assets/images/team14/vox-teaser.gif)
-* Figure 4. Example output from Image Animation
+![Image Animation Output](/CS188-Projects-2023Winter/assets/images/team14/vox-teaser.gif)
+* Figure 4. Example output from Image Animation (Image Source: [9])
 
 
 ## What is a Generative Adversarial Network (GAN) <a name="gan"></a>
 
 Generative Adversarial Network, or GAN, is the core framework behind a lot of the DeepFake algorithms you may come across. It is an approach to generate a model for a dataset using deep learning priciples. Generative modeling automatically discovers and learns the patterns in the data so that the model can be used to generate new images that could have been a part of the original dataset. GANs train a generative model that consists of two sub-components: the generator models which is trained to generate new images and the discriminator model which tries to classify an image as real or fake. The generative models and the discriminator model are trained together in an adversarial way, meaning until the discrimnator model classifies images incorrectly about half of the time. This would mean that the generator model generates DeepFake images that could pass as being real.
 
-![GAN Flow](/assets/images/team14/gan1.JPG)
-* Fig 5. Example of GAN Flow
+![GAN Flow](/CS188-Projects-2023Winter/assets/images/team14/gan1.JPG)
+* Fig 5. Example of GAN Flow (Image Source: [11])
 
 Below we look into two different models using ideas from GAN.
 
@@ -76,7 +75,7 @@ Below we look into two different models using ideas from GAN.
 
 ### Motivation <a name="mot1"></a>
 
-![unpaired images](/assets/images/team14/unpaired-images.webp)
+![unpaired images](/CS188-Projects-2023Winter/assets/images/team14/unpaired-images.webp)
 * Fig 6. Example of paired and unpaired images, (Image source: https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d)
 
 CycleGAN was used in order to use unpaired image to image translations rather than paired image to image translations. This would allow for more training data and more robust outputs for translations. This model seems to work well on tasks that involve color or texture changes, like day-to-night photo translations, or photo-to-painting tasks like collection style transfer. However, tasks that require substantial geometric changes to the image, such as cat-to-dog translations, usually fail [5].
@@ -86,16 +85,16 @@ CycleGAN was used in order to use unpaired image to image translations rather th
 
 The architecture of CycleGAN consists of a generator taken from Johnson et al [3], which consists of 3 convolutional layers, 6 residual block layers, 2 transpose convolutional layers and a final convolution output layer. Should also be noted that all layers similar to Johnson et al are followed by instance normalization.
 
-![CycleGAN Generator](/assets/images/team14/cycleGAN-generator.png)
+![CycleGAN Generator](/CS188-Projects-2023Winter/assets/images/team14/cycleGAN-generator.png)
 * Fig 7. Example of CycleGAN Generator architecture (Image source: https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d)
 
 The discriminator uses a 70x70 PatchGAN architecture, which are used to classify 70x70 overlapped images to see if they are real or fake. The PatchGAN architecture consists of 5 convolutional layers with instance normalization [5].
 
-![CycleGAN Discriminator](/assets/images/team14/cycleGAN-discriminator.webp)
+![CycleGAN Discriminator](/CS188-Projects-2023Winter/assets/images/team14/cycleGAN-discriminator.webp)
 * Fig 8. Example of CycleGAN Discriminator architecture (Image source: https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d)
 
 The complete model consists of two Generators and two Discriminators. Each Generator/Discriminator pair tries to map an image from one domain to another while the other pair tries to map the reverse of the image.
-![CycleGAN Complete Model](/assets/images/team14/CycleGAN-complete.jpg)
+![CycleGAN Complete Model](/CS188-Projects-2023Winter/assets/images/team14/CycleGAN-complete.jpg)
 *  Fig 9. CycleGAN architecture with all generators and discriminators. (Image source: https://cvnote.ddlee.cc/2019/08/21/image-to-image-translation-pix2pix-cyclegan-unit-bicyclegan-stargan)
  
  
@@ -308,198 +307,260 @@ class NLayerDiscriminator(nn.Module):
 
 
 ### Results <a name="res1"></a>
+Using the pretrained models monet2photo and style_monet from the cycleGAN repository, I was able to get the following results:
 
-## Star GAN <a name="stargan"></a>
+![monet2photo results](/CS188-Projects-2023Winter/assets/images/team14/monet-to-real.png)
+* Fig 10. Monet painting being converted to realistic photo. Original image on right and generated image on left.
+
+![style_monet results](/CS188-Projects-2023Winter/assets/images/team14/real-to-monet.png)
+* Fig 11. Realistic photo being converted to monet styled painting. Original image on right and generated image on left.
+
+#### Dicsussion
+With this GAN architecture, it is able to perform better than other GAN architectures primarily because the cycle consistency loss keeps the model stable. The model has to be able to return back to the original image when ran through the other network, so with this it keeps the mappings consistent with each other. It should also be noted that when the models were trained without GAN + forward cycle loss or GAN + backward cycle loss it resulted in training instability and mode collapse, primarily for the removed direction, ensued.
+
+The pretrained models are trained with $\lambda = 10$ for the cycle-consistency loss. The batch sized used is 1 and the learning rate is 0.0002 for the first 100 epochs and linearly decreases rate to zero over the next 100 epochs.
+
+However, there are also images that do not work well with the models. If the image needs to be changed drastically or the images are far to different from the training data provided then the results aren't as great. For example, on the task of dog→cat transfiguration, the learned translation degenerates into making minimal changes to the input. According to Zhu et al., the failure could be caused by the generator architecture which are designed for more appearance changes rather than geometric transformations. Another factor would be the training data used, for example, using wild horse and zebra images for training so an image containing a human riding a horse would skew the results.
+
+![fails](/CS188-Projects-2023Winter/assets/images/team14/fail-images.png)
+* Fig 12. Table of images that failed the image translation. (Image source: [7])
+
+## Star GAN v2 <a name="stargan"></a>
 
 ### Motivation <a name="mot2"></a>
-StarGAN is a generative adversarial network that learns the mappings among multiple domains using only a single generator and a discriminator, training effectively from images of all domains (Choi 2). The topology could be represented as a star where multi-domains are connected, thus receiveing the name StarGAN. 
+StarGAN is a generative adversarial network that learns the mappings among multiple domains using only a single generator and a discriminator, training effectively from images of all domains (Choi 2). The topology could be represented as a star where multi-domains are connected, thus receiveing the name StarGAN. In this article, we will be looking at StarGAN v2. The main differentiation between versions is that v2 is "a scalable approach that can generate diverse images across multiple domains" (Choi v2 pg2). The domain label is replaced with the domain specific style code. The goal is that v2 will yield better results in terms of visual qulaity and diveristy than the original StarGAN.
 
-![StarGAN Results](/assets/images/team14/star1.JPG)
-* Fig 10. Example of multi-domain image-to-image translation on CelebA dataset using StarGAN
+![StarGAN v2 Results](/CS188-Projects-2023Winter/assets/images/team14/style2.JPG)
+* Fig 13. Example of image synthesis results on CelebA dataset using StarGAN v2. The source and reference images are in the first rown and column, and they are real images, while the rest of the images are generated. (Image source: [6])
 
 StarGAN consists of two modules, a discriminator and a generator. The discriminator learns to differentiate between real and fake images and begins to clssify the real images with its proper domain. The generator takes an image and a target domain label as input and generates a fake image with them. The target domain label is then spatially replicated and concatenated with the image given as input. The generator attempts to reconstruct the orginal image via the fake image when given the original domain label. Lastly, the generator tries to generate images that are almost identical to the real images and will be classified as being from the target domain by the discriminator.
 
-![StarGAN Flow](/assets/images/team14/star2.JPG)
-* Fig 11. Example flow of StarGAN where D represents the discriminator and G represents the generator
+![StarGAN v2 Flow](/CS188-Projects-2023Winter/assets/images/team14/style1.JPG)
+* Fig 14. Example flow of StarGAN v2 where D represents the discriminator, G represents the generator, F represents the mapping network, and E represents the style encoder (Image Source: [6])
 
-The overarching goal of StarGAN is to translate images from one domain to the other domain. For example, translating an image with a red leaves to an image with yellow leaves.
+The overarching goal of StarGAN v2 is to train a generator that can generate diverse images of each of the domains that correspond to an image. A domain specific style vectors in the learned style space of each of the trains and then train the generator to reflect the style vectors.
 
 ### Architecture <a name="arch2"></a>
 
-The architecture of StarGAN consists of a generator, which consists of two convolutional layers with a stride size of two for downsampling, six residual blocks, and two tranposed convolutional layers with a stride size of two for upsampling. Instance normalization is also used in all layers except the last. The architecture we use for this is an adaptation of the CycleGAN generator.
+The Generator Architecture consists of 4 downsampling blocks that use instance normalization (IN), four intermediate blocks, and four upsampling blocks that use adaptive instance normalization (AdaIN). These blocks all have pre-activation residual units. Style code is injected into all the AdaIN layers. 
 
-In both this image and the next, N is the number of output channels, K is the kernel size, S is the stride sie, P is the padding size, IN is the instance normalization, n_d is the number of the domain, and n_x is the dimension of the domain labels.
+![StarGAN v2 Generator Architecture](/CS188-Projects-2023Winter/assets/images/team14/style3.JPG)
+* Fig 15. Example of StarGAN v2 Generator Architecture (Image source: [6])
 
-![StarGAN Generator](/assets/images/team14/star4.JPG)
-* Fig 12. Example of StarGAN Generator Architecture (Image source: https://arxiv.org/pdf/1711.09020v3.pdf)
+The Mapping Network Architecture consists of an MLP with k (number of domains) output branches. Four fully connected layers are shared among domains, and they are followed by four fully conected layers for each individual domain.
 
-The discriminator uses a single convolutional layer for the input layer, then 5 hidden convolutional layers, then 2 convolutional output layers. It uses Leaky ReLU with a negative slope of 0.01. This stride size is 2 for the input and hidden layers, and the stride is 1 in the output layers.
+![StarGAN v2 Mappning Network Architecture](/CS188-Projects-2023Winter/assets/images/team14/style4.JPG)
+* Fig 16. Example of StarGAN v2 mapping netwrok architecture (Image source: [6])
 
-![StarGAN Discriminator](/assets/images/team14/star5.JPG)
-* Fig 13. Example of StarGAN Discriminator architecture (Image source: https://arxiv.org/pdf/1711.09020v3.pdf)
+The Style Encoder Architecture consists of CNN with k (number of domains) output branches. Six pre-activation residual blocks are shared among domains, and they are followed by one fully connected layer for each individual domain.
+
+The Discriminator Architecture consists of six pre-activation residual blocks with leaky ReLY. k (number of domains) fully connected layers are used for real/fake classification among each domain.
+
+![StarGAN v2 Style Encoder and Discriminator Architecture](/CS188-Projects-2023Winter/assets/images/team14/style5.JPG)
+* Fig 17. Example of StarGAN v2 style encoder and discriminator architecture, where D and K are the output dimensions (Image Source: [6])
 
 #### Loss Functions
 
-The discriminator produces probability distributions over source and domain labels as follows:
+The StarGAN v2 netwrok is trained using adversarial objective, style reconstruction, style diversification, and preserving source characteristics. (Equation Source: [6])
+
+* Adversarial Objective:
+
+  The generator G takes an image x and $\tilde{s}$ as input and learns to generate an output image G(x, $\tilde{s}$ ) via adversarial loss which is defined as
 
 $$
-\mathbf{D} : \mathbf{x}\rightarrow\{D_{src}(x), D_{cls}(x)\}
+\mathcal{L}_{adv} = \mathbb{E}_{x,y}[log D_{y}(x)] + \mathbb{E}_{x,\tilde{y},z}[log (1-D_{\tilde{y}}(G(x,\tilde{s})))]
 $$
 
-To ensure the generated images are indistinguishable from the real images, adversarial loss is used:
+  where x represents the latent code, $\tilde{y}$ represents the target domain, $\tilde{s}$ represents the target style code
+
+* Style Reconstruction:
+
+  To ensure the generator utillzes the style code, $\tilde{s}$, when generating G(x, $\tilde{s}$), we need to use style reconstruction loss which is defined as 
 
 $$
-\mathbf{L}_{adv} = \mathbb{E}_{x}[log D_{src}(x)] + \mathbb{E}_{x,c}[log (1-D_{src}(G(x,c)))]
+\mathcal{L}_{sty} = \mathbb{E}_{x, \tilde{y}, z}[||\tilde{s}- \mathit{E}_{\tilde{y}}(G(x, \tilde{s}))||_{1}]
 $$
 
-Here, G generates an image G(x,c) that is conditioned on the input image, x, and the target domain label, c. D then tries to determine if it is a real or fake image. 
+* Style Diversification:
 
-We need to add an auxiliary classifier on top of our D and impose the domain classification loss when optimizing D and G in order to classify the output image y that was generated from our input image dx.
-
-$$
-\mathbf{L}^{r}_{cls} = \mathbb{E}_{x, c'}[-log D_{cls}(c'|x)]
-$$
-
-Then, our loss function for domain classification is:
+  To enable the generator to produce diverse images, the generator is regularized with diversity sensitive loss which is defined as
 
 $$
-\mathbf{L}^{f}_{cls} = \mathbb{E}_{x, c}[-log D_{cls}(c|G(x,c))]
+\mathcal{L}_{ds} = \mathbb{E}_{x, \tilde{y}, z_{1}, z_{2}}[||G(x, \tilde{s}_{1}) - G(x, \tilde{s}_{2})||_{1}]
 $$
 
-Now, out adversarial and classification losses are minimized, but this does not guarantee that the translated images preserve the content of its imput images. To reduce this issue, we aneed to apply a cycle consistency loss to G:
+  where $\tilde{s_1}$ and $\tilde{s_2}$ are produced by F conditioned on two random latent codes $z_{1}$ and $z_{2}$
+
+* Preserving Source Characteristics:
+
+  To ensure the generated image G(x, $\tilde{s}$) preserves the domain invariant characteristics, we need to use cycle consitency loss which is defined as
 
 $$
-\mathbf{L}_{rec} = \mathbb{E}_{x, c, c'}[||x-G(G(x, c), c')||]
+\mathcal{L}_{cyc} = \mathbb{E}_{x, y, \tilde{y}, z}[|| x - G(G(x, \tilde{s}), \hat{s})||_{1}]
 $$
 
-Thus, the to optimize G and D we have the following formulas:
+  where $\hat{s}$ = $E_{y}(x)$ is the estimated style code of the input image x
+
+* Full Objective:
+
+  The full object is defined as 
 
 $$
-\mathbf{L}_{D} = -\mathit{L}_{adv} + {\lambda}_{cls}\mathit{L}^{r}_{cls}
+\min\limits_{G, F, E} \max\limits_{D} \mathcal{L}_{adv} + {\lambda}_{sty}\mathcal{L}_{sty} - {\lambda}_{ds}\mathcal{L}_{ds} + {\lambda}_{cyc}\mathcal{L}_{cyc}
 $$
 
-$$
-\mathbf{L}_{G} = \mathit{L}_{adv} + {\lambda}_{cls}\mathit{L}^{f}_{cls} + {\lambda}_{rec}\mathit{L}_{rec}
-$$
-
-Lastly, we improve our loss function to generate higher quality images and to stabilize the trianing process. The new loss formula uses Wasserstein's GAN objective with gradient penalty:
-
-$$
-\mathbf{L}_{adv} = \mathbb{E}_{x}[D_{src}(x)] - \mathbb{E}_{x,c}[D_{src}(G(x,c))] - {\lambda}_{gp}\mathbb{E}_{\hat{x}}[(||{\triangledown}_{\hat{x}}\mathit{D}_{src}(\hat{x})||_{2}-1)^{2}]
-$$
+  where $\lambda_{sty}$, $\lambda_{ds}$, and $\lambda_{cyc}$ are hyperparameters for each term
 
 ### Architecture Blocks and Code Implementation <a name="archblocks2"></a>
 
-This is the ResidualBlock module. It consists of the Conv2D, instance norm, and ReLu, which are all modules in PyTorch. The goal of this module is to ensure the neural network is able to expand in depth without errors occuring during backpropgation.
+The code for the part of the init() and the follow() functions for the Generator is as follows. 
 
 ```
-class ResidualBlock(nn.Module):
-    def __init__(self, in_features):
-        super(ResidualBlock, self).__init__()
+class Generator(nn.Module):
+    def __init__(self, img_size=256, style_dim=64, max_conv_dim=512, w_hpf=1):
+        super().__init__()
+        dim_in = 2**14 // img_size
+        self.img_size = img_size
+        self.from_rgb = nn.Conv2d(3, dim_in, 3, 1, 1)
+        self.encode = nn.ModuleList()
+        self.decode = nn.ModuleList()
+        self.to_rgb = nn.Sequential(
+            nn.InstanceNorm2d(dim_in, affine=True),
+            nn.LeakyReLU(0.2),
+            nn.Conv2d(dim_in, 3, 1, 1, 0))
 
-        conv_block = [
-            nn.Conv2d(in_features, in_features, 3, stride=1, padding=1, bias=False),
-            nn.InstanceNorm2d(in_features, affine=True, track_running_stats=True),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(in_features, in_features, 3, stride=1, padding=1, bias=False),
-            nn.InstanceNorm2d(in_features, affine=True, track_running_stats=True),
-        ]
+        ...
 
-        self.conv_block = nn.Sequential(*conv_block)
-
-    def forward(self, x):
-        return x + self.conv_block(x)
-```
-
-The code for the Generator is as follows. It uses the ResidualBlock module that is defined above. 
-
-```
-class GeneratorResNet(nn.Module):
-    def __init__(self, img_shape=(3, 128, 128), res_blocks=9, c_dim=5):
-        super(GeneratorResNet, self).__init__()
-        channels, img_size, _ = img_shape
-
-        # Initial convolution block
-        model = [
-            nn.Conv2d(channels + c_dim, 64, 7, stride=1, padding=3, bias=False),
-            nn.InstanceNorm2d(64, affine=True, track_running_stats=True),
-            nn.ReLU(inplace=True),
-        ]
-
-        # Downsampling
-        curr_dim = 64
-        for _ in range(2):
-            model += [
-                nn.Conv2d(curr_dim, curr_dim * 2, 4, stride=2, padding=1, bias=False),
-                nn.InstanceNorm2d(curr_dim * 2, affine=True, track_running_stats=True),
-                nn.ReLU(inplace=True),
-            ]
-            curr_dim *= 2
-
-        # Residual blocks
-        for _ in range(res_blocks):
-            model += [ResidualBlock(curr_dim)]
-
-        # Upsampling
-        for _ in range(2):
-            model += [
-                nn.ConvTranspose2d(curr_dim, curr_dim // 2, 4, stride=2, padding=1, bias=False),
-                nn.InstanceNorm2d(curr_dim // 2, affine=True, track_running_stats=True),
-                nn.ReLU(inplace=True),
-            ]
-            curr_dim = curr_dim // 2
-
-        # Output layer
-        model += [nn.Conv2d(curr_dim, channels, 7, stride=1, padding=3), nn.Tanh()]
-
-        self.model = nn.Sequential(*model)
-
-    def forward(self, x, c):
-        c = c.view(c.size(0), c.size(1), 1, 1)
-        c = c.repeat(1, 1, x.size(2), x.size(3))
-        x = torch.cat((x, c), 1)
-        return self.model(x)
+    def forward(self, x, s, masks=None):
+        x = self.from_rgb(x)
+        cache = {}
+        for block in self.encode:
+            if (masks is not None) and (x.size(2) in [32, 64, 128]):
+                cache[x.size(2)] = x
+            x = block(x)
+        for block in self.decode:
+            x = block(x, s)
+            if (masks is not None) and (x.size(2) in [32, 64, 128]):
+                mask = masks[0] if x.size(2) in [32] else masks[1]
+                mask = F.interpolate(mask, size=x.size(2), mode='bilinear')
+                x = x + self.hpf(mask * cache[x.size(2)])
+        return self.to_rgb(x)
 ```
 
 The code for the Discriminator is as follows.
 
 ```
 class Discriminator(nn.Module):
-    def __init__(self, img_shape=(3, 128, 128), c_dim=5, n_strided=6):
-        super(Discriminator, self).__init__()
-        channels, img_size, _ = img_shape
+    def __init__(self, img_size=256, num_domains=2, max_conv_dim=512):
+        super().__init__()
+        dim_in = 2**14 // img_size
+        blocks = []
+        blocks += [nn.Conv2d(3, dim_in, 3, 1, 1)]
 
-        def discriminator_block(in_filters, out_filters):
-            """Returns downsampling layers of each discriminator block"""
-            layers = [nn.Conv2d(in_filters, out_filters, 4, stride=2, padding=1), nn.LeakyReLU(0.01)]
-            return layers
+        repeat_num = int(np.log2(img_size)) - 2
+        for _ in range(repeat_num):
+            dim_out = min(dim_in*2, max_conv_dim)
+            blocks += [ResBlk(dim_in, dim_out, downsample=True)]
+            dim_in = dim_out
 
-        layers = discriminator_block(channels, 64)
-        curr_dim = 64
-        for _ in range(n_strided - 1):
-            layers.extend(discriminator_block(curr_dim, curr_dim * 2))
-            curr_dim *= 2
+        blocks += [nn.LeakyReLU(0.2)]
+        blocks += [nn.Conv2d(dim_out, dim_out, 4, 1, 0)]
+        blocks += [nn.LeakyReLU(0.2)]
+        blocks += [nn.Conv2d(dim_out, num_domains, 1, 1, 0)]
+        self.main = nn.Sequential(*blocks)
 
-        self.model = nn.Sequential(*layers)
+    def forward(self, x, y):
+        out = self.main(x)
+        out = out.view(out.size(0), -1)  # (batch, num_domains)
+        idx = torch.LongTensor(range(y.size(0))).to(y.device)
+        out = out[idx, y]  # (batch)
+        return out
+```
 
-        # Output 1: PatchGAN
-        self.out1 = nn.Conv2d(curr_dim, 1, 3, padding=1, bias=False)
-        # Output 2: Class prediction
-        kernel_size = img_size // 2 ** n_strided
-        self.out2 = nn.Conv2d(curr_dim, c_dim, kernel_size, bias=False)
+The code for the style encoder is as follows.
+```
+class StyleEncoder(nn.Module):
+    def __init__(self, img_size=256, style_dim=64, num_domains=2, max_conv_dim=512):
+        super().__init__()
+        dim_in = 2**14 // img_size
+        blocks = []
+        blocks += [nn.Conv2d(3, dim_in, 3, 1, 1)]
 
-    def forward(self, img):
-        feature_repr = self.model(img)
-        out_adv = self.out1(feature_repr)
-        out_cls = self.out2(feature_repr)
-        return out_adv, out_cls.view(out_cls.size(0), -1)
+        repeat_num = int(np.log2(img_size)) - 2
+        for _ in range(repeat_num):
+            dim_out = min(dim_in*2, max_conv_dim)
+            blocks += [ResBlk(dim_in, dim_out, downsample=True)]
+            dim_in = dim_out
+
+        blocks += [nn.LeakyReLU(0.2)]
+        blocks += [nn.Conv2d(dim_out, dim_out, 4, 1, 0)]
+        blocks += [nn.LeakyReLU(0.2)]
+        self.shared = nn.Sequential(*blocks)
+
+        self.unshared = nn.ModuleList()
+        for _ in range(num_domains):
+            self.unshared += [nn.Linear(dim_out, style_dim)]
+
+    def forward(self, x, y):
+        h = self.shared(x)
+        h = h.view(h.size(0), -1)
+        out = []
+        for layer in self.unshared:
+            out += [layer(h)]
+        out = torch.stack(out, dim=1)  # (batch, num_domains, style_dim)
+        idx = torch.LongTensor(range(y.size(0))).to(y.device)
+        s = out[idx, y]  # (batch, style_dim)
+        return s
 ```
 
 
 
 ### Results <a name="res2"></a>
+Here are the results from running the trained model with different learning rates, weight decays, alpha, and beta values. 
+
+![Results 1](/CS188-Projects-2023Winter/assets/images/team14/vid1.gif)
+* Fig 18. Chosen Model: lr=1e-4, fLr=1e-6, alpha=0, beta=0.99, weightDecay=1e-4
+
+![Results 2](/CS188-Projects-2023Winter/assets/images/team14/vid2.gif)
+* Fig 19. Alternate Model 1: lr=1e-4, fLr=1e-6, alpha=.5, beta=0.5, weightDecay=1e-4
+
+![Results 3](/CS188-Projects-2023Winter/assets/images/team14/vid3.gif)
+* Fig 20. Alternate Model 2: lr=1e-4, fLr=1e-6, alpha=.5, beta=0.5, weightDecay=1e-5
+
+![Results 4](/CS188-Projects-2023Winter/assets/images/team14/vid4.gif)
+* Fig 21. Alternate Model 3: lr=1e-4, fLr=1e-6, alpha=.5, beta=0.5, weightDecay=1e-3
+
+Running the model on different images with the best model, the one listed in Fig 17 results in the following:
+![Results 5](/CS188-Projects-2023Winter/assets/images/team14/vid5.gif)
+* Fig 22. Chosen Model with cropped images
+
+#### Dicsussion
+As we can see from the results, this model heavily relies on images being cropped similarly to the data used to train the model. For example, we can see that the image with the guy in the blue shirt is not generated correctly in some instances. We can specifically see this in the eyebrows and neck area. However, when we look at all three women, who were in the train dataset, their generations look perfect. 
+
+You can see that the hairstyle, makeup, and more from the reference image is applied to the facial expression of the source image. 
+
+One downside of this method is hair generation. You can see in the first source image that generating some of the women's hairstyles had some small issue. This is also the case when generating the hair on the source images on the right hand side. Facial hair also proves to be an issue in this model. When looking at the guy in the blue shirt, the deepfake generation images still have pieces leftover from the beard. However, it is not the full beard that we can see in the source image. This can be attributed to a training dataset that is lacking in men with beards. I think the model would be better if the source image's facial hair was removed in the final deepfake generation image. 
+
+The model with lr-1e-4, fixed lr = 1e-6, alhpa=0, beta = .99, and weightDecay = 1e-4 is the best because of the generation of featuers. The hairstyles are slightly better in this model (Fig 17). The flyaways and leftover remnants from the source image are not as apparent in the chosen model than the other ones. The final resulting colors are also slighly better in the chosen model. The shape of the lips is also slightly better in the chosen model. We wanted the shape to be the same as the source image, and that is the case in the chosen model. The eye shape is also better. This is apparent in the first source image. You can see that the eye shape in the generated image matches the eye shap ein the source image perfect. It is not affacted by the reference image at all, which is the goal. The color of the eyes and makeup, however, are modified to match the reference image, which is what we want. 
+
+There are multiple reasons why StyleGAN v2 is superior to other deep fake image generation models. Because the style code is separately generated per domain and style encoder, the generator can only focus on using the style code, whose information from the domain can be found using the mapping network. Additionally, the model is able to render many distinctive styles, such as bangs, beard, makeup, and hairstyle. In other models, only the color distribution of reference images are matched. StyleGAN v2 also produces high quality images across all domains, while other models do not. Because other models are trained for each pair of domains, the output quality will differ across the different domains.
+
+Some of the biggest changes to StyleGAN v2 include weight demodulation, lazy regularization, path length regularization, progressive growth, and large networks. These changes resulted in StyleGAN v2 being superior to StyleGAN. For example, the style space is produced by learned transformations in v2, providing it more flexibility. This resulted in better generated images that could be mistaken for real images. StyleGAN also has blob-life artifacts in the generated image, making it harder for a person to beleive it was not generated. This stems from using instance normalization in AdaIN, which was targeted for style transfer to replace the style in one image with one in the other.  This issue is not apparent in StyleGAN v2 and seen in the generated result images. 
+
+I believe the factor that had the biggest impact on the results being better than StyleGAN was the weight demodulation. It removed how the constant was processed at the beginning of training, made it so that the mean was not needed when normalizing the different features, and moved the noise module outside the style module. Because of these changes, the blob-like features were not apparent in the StyleGAN v2 generated images. And as stated previously, this was the biggest issue with StyleGAN. Because this issue was resolved, we see much better images in StyleGANv2 that would have a greater likelihood of passing for a real image.
+
+I think having a StyleEncoder also made a big difference compared to other image generation techniques. It allowed the style to be translated pretty well in most of the images. 
+
 
 ## Demo <a name="demo"></a>
+
+Click the Picture to Watch the Video!
+
+[![Watch the video](https://img.youtube.com/vi/4ncHV9toDD0/default.jpg)](https://youtu.be/4ncHV9toDD0)
+
+link to Google Folder: https://drive.google.com/drive/folders/1omGMAXLLt7Bc2HivJ6o-6-96DmPh6OPH?usp=sharing
+
+link to Google Collab: https://colab.research.google.com/drive/1vEm8I2ZddkUOCu0pFBUWhIdxdcnbG_mY?usp=sharing
 
 ## References <a name="ref"></a>
 
@@ -519,8 +580,16 @@ https://github.com/deepfakes/faceswap
 
 [5] Wolf, Sarah. “CycleGAN: Learning to Translate Images (Without Paired Training Data).” Medium, 20 Nov. 2018, https://towardsdatascience.com/cyclegan-learning-to-translate-images-without-paired-training-data-5b4e93862c8d.
 
-[6] Zhang, Tao. “Deepfake Generation and Detection, a Survey.” Multimedia Tools and Applications, vol. 81, no. 5, Feb. 2022, pp. 6259–76. DOI.org (Crossref), https://doi.org/10.1007/s11042-021-11733-y.
+[6] Choi, Yunjey, et al. “Stargan v2: Diverse Image Synthesis for Multiple Domains.” ArXiv.org, 26 Apr. 2020, https://arxiv.org/abs/1912.01865. 
 
 [7] Zhu, Jun-Yan, et al. Unpaired Image-to-Image Translation Using Cycle-Consistent Adversarial Networks. arXiv, 24 Aug. 2020. arXiv.org, https://doi.org/10.48550/arXiv.1703.10593.
 
 [8] “Pytorch-CycleGAN-and-Pix2pix/Models at Master · Junyanz/Pytorch-CycleGAN-and-Pix2pix.” GitHub, https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix. Accessed 26 Feb. 2023.
+
+[9] Cretin, Nathanael. “[Part 1/2] Using Distributed Learning for Deepfake Detection.” Labelia (Ex Substra Foundation), Labelia (Ex Substra Foundation), 8 Oct. 2021, https://www.labelia.org/en/blog/deepfake1. 
+
+[10] Jingles (Jing, Hong). “Realistic Deepfakes in 5 Minutes on Colab.” Medium, Towards Data Science, 27 Nov. 2020, https://towardsdatascience.com/realistic-deepfakes-colab-e13ef7b2bba7. 
+
+[11] Mach, Joey. “Deepfakes: The Ugly, and the Good.” Medium, Towards Data Science, 2 Dec. 2019, https://towardsdatascience.com/deepfakes-the-ugly-and-the-good-49115643d8dd. 
+
+[12] Hui, Jonathan. “Gan - Stylegan & stylegan2.” Medium, Medium, 10 Mar. 2020, https://jonathan-hui.medium.com/gan-stylegan-stylegan2-479bdf256299. 
