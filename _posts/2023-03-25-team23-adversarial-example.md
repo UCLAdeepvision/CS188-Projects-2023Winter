@@ -9,15 +9,13 @@ date: 2023-03-25
 
 > DNN driven image recognition have been used in many real-world scenarios, such as for detection of road case or people. However, the DNNs could be vulnerable to adversarial examples (AEs), which are designed by attackers and can mislead the model to predict incorrect outputs while hardly be distinguished by human eyes. This blog aims to introduce how to generate AEs and how to defend these attacks.
 
-
+YouTube link of the demo: https://youtu.be/3G267xLYzPU
 
 <!--more-->
 {: class="table-of-content"}
 
 * TOC
 {:toc}
-
-YouTube link of the demo: https://youtu.be/3G267xLYzPU
 
 ## What is adversarial examples
 
@@ -29,7 +27,7 @@ However, the DNN is easily attacked by targeted attack. Images could be modified
 
 > Their success is undeniable, nevertheless a flaw has been spotted in their performance. They are not stable under adversarial perturbations. Adversarial perturbations are intentionally worst case designed noises that aim at changing the output of a DNN to an incorrect one. The perturbations are most of the time so small that an ordinary observer may not even notice it, and even the state-of-theart DNNs are highly confident in their, wrong, classification of these adversarial examples.
 
-![1677072572062](../assets/images/team23/1677072572062.png)
+![AE Example]({{ '/assets/images/team23/1677072572062.png' | relative_url }}) {: style="width: 400px; max-width: 100%;"}
 
 Fig. 1.  A demonstration of adversarial examples generated using the FGSM (introduced later). By adding an imperceptibly small vector, GoogLeNet’s classification of the image can be changed [1].
 
@@ -101,7 +99,7 @@ Take the MSE as an example, $J(\boldsymbol{\theta}, \boldsymbol{x}, y) = cF(\bol
 
 The task to find an AE can be regarded to find an image vector in a sphere with radius $\epsilon$ centered on the original image vector point. And FGSM shows us an idea that with **enough numbers of dimension**, we can find a extremely small vector added to a known example to make the it move to a position of another class. The image just satisfies this condition. Therefore, the natural way is to move the example along the orthogonal direction to the nearest boundary, and FGSM tries to do the same thing. I present an example to help understanding this as follows, and it shows the case in the 2-dimension scenario.
 
-![1677186470769](../assets/images/team23/1677186470769.png)
+![FGSM]({{ '/assets/images/team23/1677186470769.png' | relative_url }}) {: style="width: 400px; max-width: 100%;"}
 
 *Fig. 2.  An example of illustrating the FGSM idea.*
 Now let's see the FGSM from the view of loss function. Its mathematical nature is to force the generated AE to have a possibly much loss to be classified into the correct class. It is easy to understand that if we make the loss function of the AE as large as possible, we can hopefully make the NN misclassify it.
@@ -158,7 +156,7 @@ $$\begin{aligned}
 
 Some AEs are shown as follows:
 
-![1677181438726](../assets/images/team23/1677181438726.png)
+![AEfoolNN]({{ '/assets/images/team23/1677181438726.png' | relative_url }}) {: style="width: 400px; max-width: 100%;"}
 
 *Fig. 3.  Examples of AEs that successfully fool the NN. The first line is clean images that are not modified, so they are correctly recognized by the NN.*
 
@@ -170,7 +168,7 @@ BIM algorithm is proposed by the work *Adversarial examples in the physical worl
 
 The authors attack an  TensorFlow Camera Demo app, they took a image of washer and the app correctly recognize it. Then they use BIM to generate some AEs and print them, and the camera app misclassified the  printed AE photograph. The examples are presented as follows:
 
-![1677183273295](../assets/images/team23/1677183273295.png)
+![REALWorldExperiment]({{ '/assets/images/team23/1677183273295.png' | relative_url }}) {: style="width: 400px; max-width: 100%;"}
 
 Fig. 4.  The real-world experiment that the authors conduct [4].
 
@@ -267,12 +265,11 @@ Since this is the first AE defense algorithm I introduce, in this part, I will a
 
 Let's review the AE generation methods, they commonly find a small perturbation and add it to the original image to fool the NN while not discarded by human eyes. It can be regarded as a sample search in the area with a small radius $\epsilon$ centered at the original image vector point. The paper provides a good diagram to show us this case:
 
-![1677244933852](../assets/images/team23/1677244933852.png)
-*Fig. 5. A diagram of a hardness metric in [5], which is a metric defining the robustness of an NN to AEs. I will explain the underlying idea of justifying a roubustness of NNs to AEs on this basis.*
+![diagram]({{ '/assets/images/team23/1677244933852.png' | relative_url }}) {: style="width: 400px; max-width: 100%;"}
 
-From Fig. 5, we see that AEs are usally chosen in the gray area. If we promise that all examples in the gray area are classified as a same class as X. Then the AEs will not make sense any more. For this purpose, we need to ensure that the *smooth* of the classifier. To help understand what the *smooth* is, and why we should ensure it, I draw a diagram as follows:
+From Fig. 5, we see that AEs are usually chosen in the gray area. If we promise that all examples in the gray area are classified as a same class as X. Then the AEs will not make sense any more. For this purpose, we need to ensure that the *smooth* of the classifier. To help understand what the *smooth* is, and why we should ensure it, I draw a diagram as follows:
 
-![1677245730994](../assets/images/team23/1677245730994.png)
+![draw Diagram]({{ '/assets/images/team23/1677245730994.png' | relative_url }}) {: style="width: 400px; max-width: 100%;"}
 Fig. 6. An example that there is an image point of different class in the neighborhood of the target example.
 
 From the above example, we see that if there is an image point of different class in the neighborhood of the target example, the interface of the classifier should be extremely bent to reach such a result. This will cause the gradient of partial classifying interface to be high, which means that the classifier is not *smooth* enough. If the classifier classify all the examples in the area of the dashed circle, then the interface is a circle and it is *smooth*, which then has a good robustness to AEs. Therefore, the aim of the AE defense algorithm is to train the target NN as *smooth* as possible to defend AEs.
@@ -291,7 +288,7 @@ The detailed process is presented as follows:
 
 The diagram of the algorithm is shown as follows:
 
-![1677246690126](../assets/images/team23/1677246690126.png)
+![algorithm]({{ '/assets/images/team23/1677246690126.png' | relative_url }}) {: style="width: 400px; max-width: 100%;"}
 Fig. 7. Overview of the Network Distillation to defend AEs [5].
 
 ### Adversarial Training
@@ -306,7 +303,7 @@ Next, the authors modify the definition of population risk $\mathbb{E}_{\mathcal
 $$\min_\theta \rho(\theta), \quad \text { where } \quad \rho(\theta)=\mathbb{E}_{(x, y) \sim \mathcal{D}}\left[\max_{\delta \in \mathcal{S}} L(\theta, x+\delta, y)\right]$$
 By optimize this loss function, the interface of the classifier tends to become more robustness to AEs. The authors gives a good diagram to show us the classifier interface using ordinary training and adversarial training, shown as follows:
 
-![1677248425490](../assets/images/team23/1677248425490.png)
+![classifier]({{ '/assets/images/team23/1677248425490.png' | relative_url }}) {: style="width: 400px; max-width: 100%;"}
 *Fig. 8. Illustration of the change of classifier using adversarial training [3]. Left: A set of points that can be easily separated with a simple (in this case, linear) decision boundary. Middle: The simple decision boundary does not separate the $\ell_{\infty}$-balls (here, squares) around the data points. Hence there are adversarial examples (the red stars) that will be misclassified. Right: Separating the $\ell_{\infty}$-balls requires a significantly more complicated decision boundary. The resulting classifier is robust to adversarial examples with bounded $\ell_{\infty}$-norm perturbations.*
 
 Note that through the adversarial training, the robustness to the AEs become better, but it usually brings degraded performance in classifying other clear images. From Fig. 8 we can infer this result, since the classifier interface by adversarial training actually loses generalization to some extent.
@@ -319,7 +316,7 @@ We take  SafetyNet [7] as an example to introduce this way. SafetyNet extracted 
 
 SafetyNet consists of the original classifier, and an adversary detector which looks at the internal state of the later layers in the original classifier, as in Fig. 9. If the adversary detector declares that an example is adversarial, then the sample is rejected. 
 
-![1677250983379](../assets/images/team23/1677250983379.png)
+![SafetyNet]({{ '/assets/images/team23/1677250983379.png' | relative_url }}) {: style="width: 400px; max-width: 100%;"}
 *Fig. 9. Diagram of the SafetyNet [6]. SafetyNet consists of a conventional classifier with an RBFSVM that uses discrete codes computed from late stage ReLUs to detect adversarial examples.*
 
 The detailed design are shown as follows:
@@ -427,7 +424,7 @@ The results are shown as follows:
 
 We see that with small $\epsilon$, PGD (step=10) and BIM have better attack performance than FGSM. Moreover, I show an example of AE as follows by FGSM:
 
-![1679564662876](..\assets\images\team23\1679564662876.png)
+![AE on FGSM]({{ '/assets/images/team23/1679564662876.png' | relative_url }}) {: style="width: 400px; max-width: 100%;"}
 
 *Fig. 10. An example of AE on Miniplace dataset generated by FGSM. The true label is **bamboo_forest** and the prediction on the attack image is **botanical_garden**.*
 
