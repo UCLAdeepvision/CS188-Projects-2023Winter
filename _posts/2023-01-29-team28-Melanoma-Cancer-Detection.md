@@ -26,6 +26,7 @@ In recent years, doctors have begun to use AI algorithms to augment their decisi
 
 In our project, we set up the data and collab file in this following [link](https://drive.google.com/drive/folders/1e688RzfSggSscRLffN9iBGkpKcn-brcE?usp=share_link).
 
+We have the youtube video here: [link](https://youtu.be/38BDXbkKgbk).
 
 ### Introduction to CV Models used in thie Project:
 
