@@ -15,7 +15,6 @@ date: 2023-03-26
 * TOC
 {:toc}
 
-![](https://youtu.be/38BDXbkKgbk)
 
 
 ## Introduction
@@ -122,13 +121,13 @@ Performances will be compared between all 3 pretrained models in both Linear and
 
  So far our experiments have focused largely on measuring the efficacy of the training models, and the emphasis has not been skin-cancer specific. Here, we look at the accuracy by skin category, to see if certain labels are worse performing than others.
 
- ### Experiment 4
+### Experiment 4
 
  Apply model visualization techniques to compare feature extraction for 7 categories from three deep learning models.
 
- ## Results
+## Results
 
- ### Baseline models
+### Baseline models
 
 ![Resnet]({{ '/assets/images/team28/accuracy_base.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
@@ -138,7 +137,7 @@ Performances will be compared between all 3 pretrained models in both Linear and
 {: style="width: 400px; max-width: 100%;"}
 "*Fig 7a. Loss of baseline models* 
 
- ### Experiment 1
+### Experiment 1
 
  ![Resnet]({{ '/assets/images/team28/accuracy_400.png' | relative_url }})
 {: style="width: 400px; max-width: 100%;"}
